@@ -32,7 +32,7 @@ async function createAdminUser() {
       // Update password
       const hashedPassword = await bcrypt.hash(password, 10);
       await executeWrite(
-        'UPDATE admins SET password = ?, updated_at = CURRENT_TIMESTAMP WHERE username = ?',
+        'UPDATE admins SET password = ? WHERE username = ?',
         [hashedPassword, username]
       );
       
@@ -73,6 +73,7 @@ createAdminUser()
     console.error('Error:', error);
     process.exit(1);
   });
+
 
 
 

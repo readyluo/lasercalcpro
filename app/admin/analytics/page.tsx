@@ -97,10 +97,6 @@ export default function AnalyticsPage() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
                 <BarChart3 className="h-8 w-8 text-blue-600" />
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  <TrendingUp className="h-3 w-3 mr-1" />
-                  +12.5%
-                </span>
               </div>
               <h3 className="text-sm font-medium text-gray-600 mb-1">
                 总计算次数
@@ -109,17 +105,13 @@ export default function AnalyticsPage() {
                 {stats?.calculations?.total?.toLocaleString() || '0'}
               </p>
               <p className="text-xs text-gray-500 mt-2">
-                本周: {stats?.calculations?.this_week || 0}
+                本周: {stats?.calculations?.this_week || 0} | 今日: {stats?.calculations?.today || 0}
               </p>
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
                 <PieChart className="h-8 w-8 text-green-600" />
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  <TrendingUp className="h-3 w-3 mr-1" />
-                  +8.3%
-                </span>
               </div>
               <h3 className="text-sm font-medium text-gray-600 mb-1">
                 订阅用户
@@ -137,10 +129,6 @@ export default function AnalyticsPage() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
                 <LineChartIcon className="h-8 w-8 text-purple-600" />
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                  <TrendingDown className="h-3 w-3 mr-1" />
-                  -3.2%
-                </span>
               </div>
               <h3 className="text-sm font-medium text-gray-600 mb-1">
                 日均活跃

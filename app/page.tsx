@@ -15,6 +15,8 @@ import {
   Shield
 } from 'lucide-react';
 import { FAQSection } from '@/components/home/FAQSection';
+import { getCalculationStats } from '@/lib/db/calculations';
+import { getSubscriberStats } from '@/lib/db/subscribers';
 
 export const metadata = generateMetadata({
   title: 'Professional Manufacturing Cost Calculators - LaserCalc Pro',
@@ -22,87 +24,121 @@ export const metadata = generateMetadata({
   keywords: ['laser cutting calculator', 'CNC machining cost estimator', 'ROI calculator', 'manufacturing cost calculator', 'energy cost calculator', 'material utilization calculator'],
 });
 
-export default function HomePage() {
+export const revalidate = 3600; // Revalidate every hour
+
+async function getStats() {
+  try {
+    const [calculationStats, subscriberStats] = await Promise.all([
+      getCalculationStats(),
+      getSubscriberStats(),
+    ]);
+    return {
+      totalCalculations: calculationStats.total,
+      totalSubscribers: subscriberStats.total,
+    };
+  } catch (error) {
+    console.error('Failed to fetch stats:', error);
+    return {
+      totalCalculations: 0,
+      totalSubscribers: 0,
+    };
+  }
+}
+
+export default async function HomePage() {
+  const stats = await getStats();
   return (
     <>
       <Navigation />
       <main>
-        {/* Hero Section */}
-        <section className="gradient-primary relative overflow-hidden py-20 text-white md:py-32">
-          {/* Animated Background Elements */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute left-1/4 top-20 h-64 w-64 animate-pulse rounded-full bg-white blur-3xl"></div>
-            <div className="absolute bottom-20 right-1/4 h-96 w-96 animate-pulse rounded-full bg-blue-300 blur-3xl" style={{ animationDelay: '1s' }}></div>
-          </div>
-
+        {/* Hero Section - Simplified */}
+        <section className="relative bg-gradient-to-br from-gray-50 via-blue-50 to-white py-12 md:py-16">
           <div className="container relative mx-auto px-4">
-            <div className="mx-auto max-w-4xl text-center">
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm backdrop-blur-sm">
-                <Award className="h-4 w-4" />
-                <span>Trusted by 10,000+ Manufacturers Worldwide</span>
+            <div className="mx-auto max-w-4xl">
+              {/* Badge */}
+              <div className="mb-6 flex justify-center">
+                <div className="inline-flex items-center gap-2 rounded-full border border-primary-200 bg-primary-50 px-4 py-1.5 text-sm font-medium text-primary-700">
+                  <Award className="h-4 w-4" />
+                  <span>Trusted by {stats.totalSubscribers > 0 ? `${(Math.floor(stats.totalSubscribers / 1000) * 1000).toLocaleString()}+` : '1,000+'} manufacturers</span>
+                </div>
               </div>
               
-              <h1 className="mb-6 text-5xl font-bold leading-tight md:text-6xl lg:text-7xl">
-                Professional Manufacturing Cost Calculators
+              {/* Heading */}
+              <h1 className="mb-4 text-center text-4xl font-bold leading-tight text-gray-900 md:text-5xl lg:text-6xl">
+                Manufacturing Cost <span className="text-primary-600">Calculators</span>
               </h1>
-              <p className="mb-8 text-xl text-blue-100 md:text-2xl">
-                Accurate, instant, and free tools for laser cutting, CNC machining, ROI analysis, and more
+              
+              {/* Subheading */}
+              <p className="mb-8 text-center text-lg text-gray-600 md:text-xl">
+                Free, accurate tools for laser cutting, CNC machining, and ROI analysis. Get instant results with detailed breakdowns.
               </p>
               
-              <div className="flex flex-col justify-center gap-4 sm:flex-row">
+              {/* CTA Buttons */}
+              <div className="mb-10 flex flex-col justify-center gap-3 sm:flex-row">
                 <Link
                   href="/calculators/laser-cutting"
-                  className="btn-lg group inline-flex items-center gap-2 rounded-lg bg-white px-8 py-4 font-semibold text-primary-600 shadow-xl transition-all hover:scale-105 hover:bg-gray-100 hover:shadow-2xl"
+                  className="group inline-flex items-center justify-center gap-2 rounded-lg bg-primary-600 px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-primary-700 hover:shadow-md"
                 >
                   <Calculator className="h-5 w-5" />
-                  Start Calculating
-                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  Start Free Calculator
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <Link
-                  href="/about"
-                  className="btn-lg inline-flex items-center gap-2 rounded-lg border-2 border-white px-8 py-4 font-semibold text-white transition-all hover:bg-white hover:text-primary-600"
+                  href="/calculators"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition-all hover:border-gray-400 hover:bg-gray-50"
                 >
-                  Learn More
+                  View All Tools
                 </Link>
               </div>
 
-              {/* Trust Indicators */}
-              <div className="mt-12 flex flex-wrap justify-center gap-6 text-blue-100 md:gap-8">
-                <div className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 backdrop-blur-sm">
-                  <CheckCircle className="h-5 w-5" />
-                  <span className="font-medium">100% Free</span>
+              {/* Trust Indicators - Compact */}
+              <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-600">
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span>100% Free</span>
                 </div>
-                <div className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 backdrop-blur-sm">
-                  <Shield className="h-5 w-5" />
-                  <span className="font-medium">No Sign-up Required</span>
+                <div className="flex items-center gap-1.5">
+                  <Shield className="h-4 w-4 text-blue-600" />
+                  <span>No Sign-up</span>
                 </div>
-                <div className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 backdrop-blur-sm">
-                  <Zap className="h-5 w-5" />
-                  <span className="font-medium">Instant Results</span>
+                <div className="flex items-center gap-1.5">
+                  <Zap className="h-4 w-4 text-yellow-600" />
+                  <span>Instant Results</span>
                 </div>
-                <div className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 backdrop-blur-sm">
-                  <FileText className="h-5 w-5" />
-                  <span className="font-medium">PDF Export</span>
+                <div className="flex items-center gap-1.5">
+                  <FileText className="h-4 w-4 text-purple-600" />
+                  <span>PDF Export</span>
                 </div>
               </div>
 
-              {/* Stats Section */}
-              <div className="mt-16 grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-8">
-                <div className="rounded-lg bg-white/10 p-6 backdrop-blur-sm">
-                  <div className="mb-2 text-3xl font-bold md:text-4xl">10K+</div>
-                  <div className="text-sm text-blue-100">Active Users</div>
+              {/* Stats - Inline */}
+              <div className="mt-12 flex flex-wrap items-center justify-center gap-8 text-center">
+                <div>
+                  <div className="text-3xl font-bold text-gray-900">
+                    {stats.totalCalculations > 0 
+                      ? `${(Math.floor(stats.totalCalculations / 1000) * 1000 / 1000).toFixed(0)}K+` 
+                      : '10K+'}
+                  </div>
+                  <div className="text-sm text-gray-600">Calculations</div>
                 </div>
-                <div className="rounded-lg bg-white/10 p-6 backdrop-blur-sm">
-                  <div className="mb-2 text-3xl font-bold md:text-4xl">50K+</div>
-                  <div className="text-sm text-blue-100">Calculations</div>
+                <div className="h-8 w-px bg-gray-300"></div>
+                <div>
+                  <div className="text-3xl font-bold text-gray-900">
+                    {stats.totalSubscribers > 0 
+                      ? `${(Math.floor(stats.totalSubscribers / 1000) * 1000 / 1000).toFixed(0)}K+` 
+                      : '1K+'}
+                  </div>
+                  <div className="text-sm text-gray-600">Users</div>
                 </div>
-                <div className="rounded-lg bg-white/10 p-6 backdrop-blur-sm">
-                  <div className="mb-2 text-3xl font-bold md:text-4xl">98%</div>
-                  <div className="text-sm text-blue-100">Accuracy</div>
+                <div className="h-8 w-px bg-gray-300"></div>
+                <div>
+                  <div className="text-3xl font-bold text-gray-900">98%</div>
+                  <div className="text-sm text-gray-600">Accuracy</div>
                 </div>
-                <div className="rounded-lg bg-white/10 p-6 backdrop-blur-sm">
-                  <div className="mb-2 text-3xl font-bold md:text-4xl">24/7</div>
-                  <div className="text-sm text-blue-100">Available</div>
+                <div className="h-8 w-px bg-gray-300"></div>
+                <div>
+                  <div className="text-3xl font-bold text-gray-900">24/7</div>
+                  <div className="text-sm text-gray-600">Available</div>
                 </div>
               </div>
             </div>

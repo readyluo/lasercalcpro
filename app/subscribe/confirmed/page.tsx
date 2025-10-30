@@ -4,6 +4,12 @@ import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { CheckCircle, Mail } from 'lucide-react';
 
+export const metadata = {
+  title: 'Subscription Confirmed - LaserCalc Pro',
+  description: 'Thank you for confirming your subscription to LaserCalc Pro updates.',
+  robots: 'noindex, nofollow',
+};
+
 export default function SubscribeConfirmedPage() {
   return (
     <>

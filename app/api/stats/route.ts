@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCalculationStats } from '@/lib/db/calculations';
 import { getSubscriberStats } from '@/lib/db/subscribers';
+import { getArticleStats } from '@/lib/db/articles';
 
 export const runtime = 'edge';
 
@@ -9,9 +10,10 @@ export const runtime = 'edge';
  */
 export async function GET(request: NextRequest) {
   try {
-    const [calculationStats, subscriberStats] = await Promise.all([
+    const [calculationStats, subscriberStats, articleStats] = await Promise.all([
       getCalculationStats(),
       getSubscriberStats(),
+      getArticleStats(),
     ]);
 
     return NextResponse.json({
@@ -25,6 +27,12 @@ export async function GET(request: NextRequest) {
       subscribers: {
         total: subscriberStats.total,
         confirmed: subscriberStats.confirmed,
+      },
+      articles: {
+        total: articleStats.total,
+        published: articleStats.published,
+        draft: articleStats.draft,
+        total_views: articleStats.totalViews,
       },
       popular_tools: Object.entries(calculationStats.byTool)
         .sort((a, b) => b[1] - a[1])

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { generateMetadata } from '@/lib/seo/metadata';
 import { 
   Calculator, 
   Zap, 
@@ -97,6 +98,14 @@ export default function CalculatorsPage() {
     indigo: 'border-indigo-500 bg-indigo-50 text-indigo-600',
   };
 
+  const borderClasses = {
+    blue: 'border-blue-500',
+    purple: 'border-purple-500',
+    green: 'border-green-500',
+    yellow: 'border-yellow-500',
+    indigo: 'border-indigo-500',
+  } as const;
+
   return (
     <>
       <Navigation />
@@ -128,8 +137,7 @@ export default function CalculatorsPage() {
                 <Link
                   key={calc.id}
                   href={calc.href}
-                  className="group card card-hover flex flex-col border-l-4 transition-all hover:shadow-xl"
-                  style={{ borderLeftColor: `var(--color-${calc.color}-500)` }}
+                  className={`group card card-hover flex flex-col border-l-4 transition-all hover:shadow-xl ${borderClasses[calc.color]}`}
                 >
                   <div className="mb-4 flex items-center gap-4">
                     <div className={`rounded-lg p-3 ${colorClasses[calc.color]}`}>

@@ -55,7 +55,7 @@ export default async function BlogArticlePage({ params }: Props) {
   incrementArticleViews(article.id).catch(() => {});
 
   // Get related articles
-  const { articles: relatedArticles } = await getRecentArticles(3);
+  const relatedArticles = await getRecentArticles(3);
   const tags = article.tags ? JSON.parse(article.tags) : [];
 
   const readingTime = Math.ceil(article.content.split(' ').length / 200); // ~200 words per minute
@@ -236,6 +236,8 @@ export default async function BlogArticlePage({ params }: Props) {
     </>
   );
 }
+
+
 
 
 

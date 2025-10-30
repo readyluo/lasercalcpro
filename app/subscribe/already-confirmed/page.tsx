@@ -4,6 +4,12 @@ import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Info } from 'lucide-react';
 
+export const metadata = {
+  title: 'Already Confirmed - LaserCalc Pro',
+  description: 'Your subscription is already confirmed.',
+  robots: 'noindex, nofollow',
+};
+
 export default function AlreadyConfirmedPage() {
   return (
     <>

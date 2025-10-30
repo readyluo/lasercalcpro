@@ -13,11 +13,35 @@ import { Button } from '@/components/ui/Button';
 import { energySchema, energyDefaults, type EnergyInput } from '@/lib/validations/energy';
 import { calculateEnergy, type EnergyResult, calculateTotalPotentialSavings } from '@/lib/calculators/energy';
 import { Calculator, Download, RotateCcw, Zap, Leaf, AlertCircle, TrendingUp, DollarSign } from 'lucide-react';
+import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 
 export default function EnergyCalculatorPage() {
   const t = useEnglish();
   const [result, setResult] = useState<EnergyResult | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+
+  const howToSchema = generateCalculatorHowToSchema(
+    'Energy Cost Calculator',
+    'Calculate equipment energy costs and carbon footprint',
+    [
+      { name: 'Select Equipment', text: 'Choose equipment type and enter power rating' },
+      { name: 'Set Operating Time', text: 'Enter daily and yearly operating hours' },
+      { name: 'Configure Rates', text: 'Input electricity rate and efficiency factor' },
+      { name: 'Calculate Costs', text: 'Get energy consumption, costs, and carbon footprint' },
+    ]
+  );
+
+  const faqSchema = generateFAQSchema([
+    {
+      question: 'How accurate is the energy cost calculator?',
+      answer: 'The calculator provides estimates within 5-10% accuracy based on rated power and operating hours. Actual costs vary with equipment efficiency, power factor, and variable loads.',
+    },
+    {
+      question: 'What is included in total power consumption?',
+      answer: 'Total power includes equipment rated power plus auxiliary systems (cooling, extraction, controls). The calculator adds 30% overhead for auxiliary loads by default.',
+    },
+  ]);
 
   const {
     register,
@@ -32,12 +56,26 @@ export default function EnergyCalculatorPage() {
   const onSubmit = async (data: EnergyInput) => {
     setIsCalculating(true);
 
-    setTimeout(() => {
+    setTimeout(async () => {
       const calculationResult = calculateEnergy(data);
       setResult(calculationResult);
       setIsCalculating(false);
 
       document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
+
+      try {
+        await fetch('/api/calculate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            toolType: 'energy',
+            params: data,
+            result: calculationResult,
+          }),
+        });
+      } catch (error) {
+        console.error('Failed to save calculation:', error);
+      }
     }, 300);
   };
 
@@ -56,6 +94,8 @@ export default function EnergyCalculatorPage() {
 
   return (
     <>
+      <SchemaMarkup schema={howToSchema} />
+      <SchemaMarkup schema={faqSchema} />
       <Navigation />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">

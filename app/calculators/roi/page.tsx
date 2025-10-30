@@ -28,11 +28,39 @@ import {
   Calendar,
   Target,
 } from 'lucide-react';
+import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 
 export default function ROICalculatorPage() {
   const t = useEnglish();
   const [result, setResult] = useState<ROIResult | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+
+  const howToSchema = generateCalculatorHowToSchema(
+    'Equipment ROI Calculator',
+    'Calculate return on investment for equipment purchases',
+    [
+      { name: 'Enter Investment', text: 'Input equipment cost, installation, and training costs' },
+      { name: 'Set Revenue', text: 'Enter annual revenue and operating costs' },
+      { name: 'Configure Parameters', text: 'Set analysis period, discount rate, and growth rates' },
+      { name: 'Analyze Results', text: 'Get NPV, IRR, payback period, and cash flow projections' },
+    ]
+  );
+
+  const faqSchema = generateFAQSchema([
+    {
+      question: 'What is a good ROI for equipment?',
+      answer: 'Good ROI varies by industry. Generally, 15-25% annual ROI is considered good. Payback period under 3 years is acceptable for most manufacturing equipment.',
+    },
+    {
+      question: 'What is NPV and why is it important?',
+      answer: 'Net Present Value (NPV) shows the current value of future cash flows. Positive NPV means the investment will create value. Higher NPV indicates better investment.',
+    },
+    {
+      question: 'How is IRR different from ROI?',
+      answer: 'IRR (Internal Rate of Return) is the discount rate that makes NPV zero. It represents the annualized return rate. ROI is simpler profit/investment ratio.',
+    },
+  ]);
 
   const {
     register,
@@ -47,12 +75,26 @@ export default function ROICalculatorPage() {
   const onSubmit = async (data: ROIInput) => {
     setIsCalculating(true);
 
-    setTimeout(() => {
+    setTimeout(async () => {
       const calculationResult = calculateROI(data);
       setResult(calculationResult);
       setIsCalculating(false);
 
       document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
+
+      try {
+        await fetch('/api/calculate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            toolType: 'roi',
+            params: data,
+            result: calculationResult,
+          }),
+        });
+      } catch (error) {
+        console.error('Failed to save calculation:', error);
+      }
     }, 300);
   };
 
@@ -63,6 +105,8 @@ export default function ROICalculatorPage() {
 
   return (
     <>
+      <SchemaMarkup schema={howToSchema} />
+      <SchemaMarkup schema={faqSchema} />
       <Navigation />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">

@@ -17,7 +17,6 @@ import { laserCuttingSchema, laserCuttingDefaults, type LaserCuttingInput } from
 import { calculateLaserCutting, type LaserCuttingResult } from '@/lib/calculators/laser-cutting';
 import { Calculator, Download, RotateCcw, TrendingUp, Zap, DollarSign, Clock, Info } from 'lucide-react';
 import { ExportButton } from '@/components/calculators/ExportButton';
-
 export default function LaserCuttingCalculatorPage() {
   const t = useEnglish();
   const [result, setResult] = React.useState<LaserCuttingResult | null>(null);

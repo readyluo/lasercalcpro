@@ -112,22 +112,20 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* 系统状态 */}
+        {/* 文章数量 */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="mb-4 flex items-center justify-between">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-              <Activity className="h-6 w-6 text-green-600" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-100">
+              <Activity className="h-6 w-6 text-yellow-600" />
             </div>
-            <span className="rounded-full bg-green-100 px-2 py-1 text-xs text-green-800">
-              运行中
-            </span>
+            <span className="text-sm text-gray-500">总计</span>
           </div>
           <div className="mb-1 text-3xl font-bold text-gray-900">
-            99.9%
+            {stats?.articles?.total?.toLocaleString() || '0'}
           </div>
-          <div className="text-sm text-gray-600">系统可用率</div>
+          <div className="text-sm text-gray-600">文章数量</div>
           <div className="mt-3 text-xs text-gray-500">
-            最近30天
+            已发布: {stats?.articles?.published || 0}
           </div>
         </div>
       </div>
@@ -183,7 +181,12 @@ export default function AdminDashboard() {
                 </span>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-gray-200">
-                <div className="h-full bg-blue-600" style={{ width: '75%' }} />
+                <div 
+                  className="h-full bg-blue-600" 
+                  style={{ 
+                    width: `${Math.min(100, ((stats?.calculations?.this_month || 0) / 30 / 100) * 100)}%` 
+                  }} 
+                />
               </div>
             </div>
 
@@ -197,7 +200,14 @@ export default function AdminDashboard() {
                 </span>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-gray-200">
-                <div className="h-full bg-green-600" style={{ width: '45%' }} />
+                <div 
+                  className="h-full bg-green-600" 
+                  style={{ 
+                    width: `${stats?.subscribers?.total && stats?.calculations?.total
+                      ? Math.min(100, (stats.subscribers.total / stats.calculations.total) * 100)
+                      : 0}%` 
+                  }} 
+                />
               </div>
             </div>
 
@@ -211,7 +221,14 @@ export default function AdminDashboard() {
                 </span>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-gray-200">
-                <div className="h-full bg-purple-600" style={{ width: '68%' }} />
+                <div 
+                  className="h-full bg-purple-600" 
+                  style={{ 
+                    width: `${stats?.subscribers?.total && stats?.subscribers?.confirmed
+                      ? (stats.subscribers.confirmed / stats.subscribers.total) * 100
+                      : 0}%` 
+                  }} 
+                />
               </div>
             </div>
           </div>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEnglish } from '@/lib/i18n';
-import { Menu, X, Calculator, ChevronDown } from 'lucide-react';
+import { Menu, X, Calculator, ChevronDown, Zap, TrendingUp, BarChart3, Leaf, Package } from 'lucide-react';
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,73 +13,129 @@ export function Navigation() {
   const t = useEnglish();
 
   const tools = [
-    { name: 'Laser Cutting Calculator', href: '/calculators/laser-cutting' },
-    { name: 'CNC Machining Estimator', href: '/calculators/cnc-machining' },
-    { name: 'ROI Calculator', href: '/calculators/roi' },
-    { name: 'Energy Cost Calculator', href: '/calculators/energy' },
-    { name: 'Material Utilization', href: '/calculators/material-utilization' },
+    { 
+      name: 'Laser Cutting', 
+      href: '/calculators/laser-cutting',
+      description: 'Calculate cutting costs with precision',
+      icon: <Zap className="h-5 w-5" />,
+      popular: true
+    },
+    { 
+      name: 'CNC Machining', 
+      href: '/calculators/cnc-machining',
+      description: 'Estimate machining time and costs',
+      icon: <Package className="h-5 w-5" />
+    },
+    { 
+      name: 'Equipment ROI', 
+      href: '/calculators/roi',
+      description: 'Analyze investment returns',
+      icon: <TrendingUp className="h-5 w-5" />
+    },
+    { 
+      name: 'Energy Cost', 
+      href: '/calculators/energy',
+      description: 'Track power consumption',
+      icon: <Leaf className="h-5 w-5" />
+    },
+    { 
+      name: 'Material Utilization', 
+      href: '/calculators/material-utilization',
+      description: 'Optimize material usage',
+      icon: <BarChart3 className="h-5 w-5" />
+    },
   ];
 
   const isActive = (path: string) => pathname === path;
 
   return (
-    <nav className="sticky top-0 z-50 bg-white shadow-md">
+    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <Calculator className="h-8 w-8 text-primary-600" />
-            <span className="text-xl font-bold text-gray-900">
+            <Calculator className="h-7 w-7 text-primary-600" />
+            <span className="text-lg font-bold text-gray-900">
               LaserCalc <span className="text-primary-600">Pro</span>
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden items-center space-x-8 md:flex">
+          <div className="hidden items-center space-x-1 md:flex">
             <Link
               href="/"
-              className={`font-medium transition-colors hover:text-primary-600 ${
-                isActive('/') ? 'text-primary-600' : 'text-gray-700'
+              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                isActive('/') ? 'text-primary-600 bg-primary-50' : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
               }`}
             >
               {t.nav.home}
             </Link>
 
-            {/* Calculators Dropdown */}
+            {/* Calculators Mega Menu */}
             <div
               className="relative"
               onMouseEnter={() => setIsCalculatorsOpen(true)}
               onMouseLeave={() => setIsCalculatorsOpen(false)}
             >
               <button
-                className={`flex items-center font-medium transition-colors hover:text-primary-600 ${
-                  pathname.startsWith('/calculators') ? 'text-primary-600' : 'text-gray-700'
+                className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                  pathname.startsWith('/calculators') ? 'text-primary-600 bg-primary-50' : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
                 }`}
               >
                 {t.nav.calculators}
-                <ChevronDown className="ml-1 h-4 w-4" />
+                <ChevronDown className={`h-4 w-4 transition-transform ${isCalculatorsOpen ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* Dropdown Menu */}
+              {/* Mega Menu */}
               {isCalculatorsOpen && (
-                <div className="absolute left-0 mt-2 w-72 animate-fade-in rounded-lg bg-white py-2 shadow-xl">
-                  {tools.map(tool => (
-                    <Link
-                      key={tool.href}
-                      href={tool.href}
-                      className="block px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-primary-50 hover:text-primary-600"
-                    >
-                      {tool.name}
-                    </Link>
-                  ))}
+                <div className="absolute left-0 top-full mt-1 w-96 animate-fade-in">
+                  <div className="mt-2 rounded-xl bg-white shadow-xl ring-1 ring-black ring-opacity-5">
+                    <div className="p-4">
+                      <div className="mb-3 flex items-center justify-between">
+                        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Calculators</h3>
+                        <Link 
+                          href="/calculators"
+                          className="text-xs text-primary-600 hover:text-primary-700 font-medium"
+                        >
+                          View All →
+                        </Link>
+                      </div>
+                      <div className="space-y-1">
+                        {tools.map(tool => (
+                          <Link
+                            key={tool.href}
+                            href={tool.href}
+                            className="group flex items-start gap-3 rounded-lg p-3 transition-colors hover:bg-gray-50"
+                          >
+                            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600 transition-colors group-hover:bg-primary-100">
+                              {tool.icon}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="text-sm font-semibold text-gray-900 group-hover:text-primary-600">
+                                  {tool.name}
+                                </p>
+                                {tool.popular && (
+                                  <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                                    Popular
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-gray-600 mt-0.5">{tool.description}</p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
 
             <Link
               href="/blog"
-              className={`font-medium transition-colors hover:text-primary-600 ${
-                isActive('/blog') ? 'text-primary-600' : 'text-gray-700'
+              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                pathname.startsWith('/blog') ? 'text-primary-600 bg-primary-50' : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
               }`}
             >
               {t.nav.blog}
@@ -87,8 +143,8 @@ export function Navigation() {
 
             <Link
               href="/about"
-              className={`font-medium transition-colors hover:text-primary-600 ${
-                isActive('/about') ? 'text-primary-600' : 'text-gray-700'
+              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                isActive('/about') ? 'text-primary-600 bg-primary-50' : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
               }`}
             >
               {t.nav.about}
@@ -96,8 +152,8 @@ export function Navigation() {
 
             <Link
               href="/contact"
-              className={`font-medium transition-colors hover:text-primary-600 ${
-                isActive('/contact') ? 'text-primary-600' : 'text-gray-700'
+              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                isActive('/contact') ? 'text-primary-600 bg-primary-50' : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
               }`}
             >
               {t.nav.contact}
@@ -105,9 +161,10 @@ export function Navigation() {
 
             <Link
               href="/calculators/laser-cutting"
-              className="btn-primary btn-sm rounded-lg px-4 py-2"
+              className="ml-4 inline-flex items-center gap-1.5 bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors"
             >
-              Get Started
+              <Calculator className="h-4 w-4" />
+              Try Free
             </Link>
           </div>
 

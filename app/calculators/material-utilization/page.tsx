@@ -29,11 +29,40 @@ import {
   TrendingUp,
   AlertTriangle,
 } from 'lucide-react';
+import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 
 export default function MaterialUtilizationPage() {
   const t = useEnglish();
   const [result, setResult] = useState<MaterialUtilizationResult | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+
+  const howToSchema = generateCalculatorHowToSchema(
+    'Material Utilization Calculator',
+    'Optimize sheet material nesting to reduce waste and save costs',
+    [
+      { name: 'Enter Sheet Size', text: 'Input the dimensions of your standard sheet material' },
+      { name: 'Define Part Size', text: 'Enter part dimensions and quantity needed' },
+      { name: 'Set Parameters', text: 'Configure kerf, margins, spacing, and rotation options' },
+      { name: 'Add Material Details', text: 'Select material type, thickness, and pricing' },
+      { name: 'Calculate Nesting', text: 'Get utilization rate, layouts, and waste cost analysis' },
+    ]
+  );
+
+  const faqSchema = generateFAQSchema([
+    {
+      question: 'What is a good material utilization rate?',
+      answer: '80%+ is excellent, 70-80% is good, 60-70% is acceptable, below 60% requires optimization. Industry average is 65-75% for manual nesting and 75-85% with software.',
+    },
+    {
+      question: 'Should I allow 90-degree rotation?',
+      answer: 'Yes, rotation typically improves utilization by 5-15%. However, consider material grain direction for stress-critical parts and aesthetic considerations for visible surfaces.',
+    },
+    {
+      question: 'How do I reduce material waste?',
+      answer: 'Use nesting software, allow rotation, batch similar parts, minimize edge margins, optimize part spacing, consider common remnants for smaller parts, and negotiate standard sheet sizes with suppliers.',
+    },
+  ]);
 
   const {
     register,
@@ -51,12 +80,27 @@ export default function MaterialUtilizationPage() {
   const onSubmit = async (data: MaterialUtilizationInput) => {
     setIsCalculating(true);
 
-    setTimeout(() => {
+    setTimeout(async () => {
       const calculationResult = calculateMaterialUtilization(data);
       setResult(calculationResult);
       setIsCalculating(false);
 
       document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
+
+      // Save for analytics
+      try {
+        await fetch('/api/calculate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            toolType: 'material-utilization',
+            params: data,
+            result: calculationResult,
+          }),
+        });
+      } catch (error) {
+        console.error('Failed to save calculation:', error);
+      }
     }, 300);
   };
 
@@ -75,6 +119,8 @@ export default function MaterialUtilizationPage() {
 
   return (
     <>
+      <SchemaMarkup schema={howToSchema} />
+      <SchemaMarkup schema={faqSchema} />
       <Navigation />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
