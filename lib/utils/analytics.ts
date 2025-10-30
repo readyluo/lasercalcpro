@@ -1,0 +1,79 @@
+/**
+ * Google Analytics utilities
+ */
+
+export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID;
+
+// Track pageview
+export const pageview = (url: string) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('config', GA_TRACKING_ID!, {
+      page_path: url,
+    });
+  }
+};
+
+// Track custom events
+export const event = ({
+  action,
+  category,
+  label,
+  value,
+}: {
+  action: string;
+  category: string;
+  label?: string;
+  value?: number;
+}) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('event', action, {
+      event_category: category,
+      event_label: label,
+      value: value,
+    });
+  }
+};
+
+// Track calculator usage
+export const trackCalculatorUse = (calculatorName: string) => {
+  event({
+    action: 'calculator_use',
+    category: 'Calculators',
+    label: calculatorName,
+  });
+};
+
+// Track PDF export
+export const trackPDFExport = (calculatorName: string) => {
+  event({
+    action: 'pdf_export',
+    category: 'Exports',
+    label: calculatorName,
+  });
+};
+
+// Track subscription
+export const trackSubscription = (source: string) => {
+  event({
+    action: 'subscribe',
+    category: 'Engagement',
+    label: source,
+  });
+};
+
+// Extend Window interface for gtag
+declare global {
+  interface Window {
+    gtag: (
+      command: string,
+      targetId: string,
+      config?: {
+        page_path?: string;
+        event_category?: string;
+        event_label?: string;
+        value?: number;
+      }
+    ) => void;
+  }
+}
+

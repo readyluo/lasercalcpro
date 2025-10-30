@@ -1,0 +1,45 @@
+⚡️ @cloudflare/next-on-pages CLI v.1.13.16
+⚡️ Detected Package Manager: npm (10.9.2)
+⚡️ Preparing project...
+⚡️ Project is ready
+⚡️ Building project...
+▲  Vercel CLI 48.6.7
+▲  WARN! Build not running on Vercel. System environment variables will not be available.
+▲  Warning: Detected "engines": { "node": ">=18.17.0" } in your `package.json` that will automatically upgrade when a new major Node.js Version is released. Learn More: http://vercel.link/node-version
+▲  Installing dependencies...
+▲  npm error code ERESOLVE
+▲  npm error ERESOLVE could not resolve
+▲  npm error
+▲  npm error While resolving: lucide-react@0.344.0
+▲  npm error Found: react@19.2.0
+▲  npm error node_modules/react
+▲  npm error   react@"^19.2.0" from the root project
+▲  npm error   peer react@"^17.0.2 || ^18 || ^19" from next-auth@4.24.13
+▲  npm error   node_modules/next-auth
+▲  npm error     next-auth@"^4.24.5" from the root project
+▲  npm error   4 more (react-chartjs-2, react-dom, react-hook-form, styled-jsx)
+▲  npm error
+▲  npm error Could not resolve dependency:
+▲  npm error peer react@"^16.5.1 || ^17.0.0 || ^18.0.0" from lucide-react@0.344.0
+▲  npm error node_modules/lucide-react
+▲  npm error   lucide-react@"^0.344.0" from the root project
+▲  npm error
+▲  npm error Conflicting peer dependency: react@18.3.1
+▲  npm error node_modules/react
+▲  npm error   peer react@"^16.5.1 || ^17.0.0 || ^18.0.0" from lucide-react@0.344.0
+▲  npm error   node_modules/lucide-react
+▲  npm error     lucide-react@"^0.344.0" from the root project
+▲  npm error
+▲  npm error Fix the upstream dependency conflict, or retry
+▲  npm error this command with --force or --legacy-peer-deps
+▲  npm error to accept an incorrect (and potentially broken) dependency resolution.
+▲  npm error
+▲  npm error
+▲  npm error For a full report see:
+▲  npm error /Users/luokun/.npm/_logs/2025-10-30T05_17_42_728Z-eresolve-report.txt
+▲  npm error A complete log of this run can be found in: /Users/luokun/.npm/_logs/2025-10-30T05_17_42_728Z-debug-0.log
+▲  Error: Command "npm install" exited with 1
+
+⚡️ The Vercel build (`npx vercel build`) command failed. For more details see the Vercel logs above.
+⚡️ If you need help solving the issue, refer to the Vercel or Next.js documentation or their repositories.
+

@@ -1,0 +1,715 @@
+# LaserCalc Pro - Cursor AI Rules
+# Domain: lasercalcpro.com
+# Tech Stack: Next.js 14 + Cloudflare Pages + D1 Database
+
+## 项目概述
+LaserCalc Pro是一个面向全球制造业的专业成本计算器平台。
+- 前台：纯英文界面（SEO优化）
+- 后台：纯中文界面（管理友好）
+- 部署：Cloudflare Pages + Workers + D1
+
+## 关键配置文件引用
+@file ./next.config.js
+@file ./tsconfig.json
+@file ./wrangler.toml
+@file ./tailwind.config.ts
+@file ./package.json
+
+## 技术栈规范
+
+### Next.js 14 (App Router)
+- 使用 App Router 而非 Pages Router
+- 所有路由放在 `app/` 目录
+- 使用 Server Components 作为默认
+- Client Components 需明确标注 `'use client'`
+- 使用 `next/navigation` 而非 `next/router`
+
+### TypeScript 严格模式
+- 启用 `strict: true`
+- 所有组件必须有类型定义
+- Props 使用 interface 或 type 定义
+- 避免使用 `any`，使用 `unknown` 代替
+- 函数必须声明返回类型
+
+### Tailwind CSS 规范
+- 使用 Tailwind 类名，避免内联样式
+- 组件复用使用 `@apply` 或创建组件
+- 响应式设计：mobile-first (sm: md: lg: xl:)
+- 颜色使用：primary-* 系列（蓝色主题）
+- 暗色模式：使用 `dark:` 前缀（未来支持）
+
+### Cloudflare Pages 集成
+- 使用 `@cloudflare/next-on-pages` 适配器
+- 环境变量通过 Cloudflare Pages 设置
+- 静态资源使用 Cloudflare CDN
+- API路由兼容 Workers 运行时
+
+### Cloudflare D1 数据库
+- 使用 Wrangler CLI 管理数据库
+- 所有查询使用 prepared statements
+- 避免 SQL 注入风险
+- 数据访问层封装在 `lib/db/` 目录
+
+## 代码组织规范
+
+### 目录结构
+```
+app/
+├── (frontend)/          # 前台英文页面
+├── calculators/         # 计算器页面
+├── admin/               # 后台中文页面（需认证）
+└── api/                 # API路由
+
+components/
+├── ui/                  # 通用UI组件
+├── calculators/         # 计算器组件（英文）
+├── admin/               # 后台组件（中文）
+└── layout/              # 布局组件
+
+lib/
+├── calculators/         # 计算引擎
+├── db/                  # 数据库操作
+├── auth/                # NextAuth配置
+├── i18n/                # 语言文本
+│   ├── en.ts            # 前台英文
+│   └── zh.ts            # 后台中文
+├── utils/               # 工具函数
+└── validations/         # Zod schemas
+```
+
+### 命名规范
+- **组件**: PascalCase - `Navigation.tsx`, `LaserCalculator.tsx`
+- **函数/变量**: camelCase - `calculateCost`, `userData`
+- **常量**: UPPER_SNAKE_CASE - `MAX_RETRY_COUNT`, `API_BASE_URL`
+- **文件名**: kebab-case（路由）, PascalCase（组件）
+- **CSS类名**: kebab-case（Tailwind原生）
+
+### 组件编写规范
+
+#### React Server Component (默认)
+```typescript
+// 默认为 Server Component，无需 'use client'
+import { calculateCost } from '@/lib/calculators/laser';
+
+interface Props {
+  params: { id: string };
+}
+
+export default async function CalculatorPage({ params }: Props) {
+  const data = await fetchData(params.id);
+  
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold">{data.title}</h1>
+    </div>
+  );
+}
+```
+
+#### React Client Component
+```typescript
+'use client';
+
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+interface CalculatorFormProps {
+  initialData?: CalculationInput;
+  onSubmit: (data: CalculationInput) => void;
+}
+
+export function CalculatorForm({ initialData, onSubmit }: CalculatorFormProps) {
+  const [loading, setLoading] = useState(false);
+  
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: zodResolver(calculatorSchema),
+    defaultValues: initialData,
+  });
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {/* Form fields */}
+    </form>
+  );
+}
+```
+
+### 双语架构规范
+
+#### 前台英文文本（lib/i18n/en.ts）
+```typescript
+export const en = {
+  nav: {
+    home: 'Home',
+    calculators: 'Calculators',
+    blog: 'Blog',
+  },
+  calculator: {
+    title: 'Laser Cutting Cost Calculator',
+    calculate: 'Calculate',
+    reset: 'Reset',
+  },
+} as const;
+
+export type EnglishTexts = typeof en;
+```
+
+#### 后台中文文本（lib/i18n/zh.ts）
+```typescript
+export const zh = {
+  admin: {
+    dashboard: '仪表板',
+    content: '内容管理',
+    analytics: '数据分析',
+  },
+  common: {
+    save: '保存',
+    cancel: '取消',
+    delete: '删除',
+  },
+} as const;
+
+export type ChineseTexts = typeof zh;
+```
+
+#### 使用语言文本
+```typescript
+// 前台页面
+import { useEnglish } from '@/lib/i18n';
+const t = useEnglish();
+console.log(t.nav.home); // "Home"
+
+// 后台页面
+import { useChinese } from '@/lib/i18n';
+const t = useChinese();
+console.log(t.admin.dashboard); // "仪表板"
+```
+
+### API 路由规范
+
+#### GET 请求
+```typescript
+// app/api/calculators/[id]/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { getCalculation } from '@/lib/db/calculations';
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const calculation = await getCalculation(params.id);
+    
+    if (!calculation) {
+      return NextResponse.json(
+        { error: 'Calculation not found' },
+        { status: 404 }
+      );
+    }
+    
+    return NextResponse.json(calculation);
+  } catch (error) {
+    console.error('API Error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+```
+
+#### POST 请求（带验证）
+```typescript
+// app/api/calculate/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { calculateLaserCuttingCost } from '@/lib/calculators/laser';
+import { saveCalculation } from '@/lib/db/calculations';
+
+const requestSchema = z.object({
+  toolType: z.enum(['laser-cutting', 'cnc-machining', 'roi']),
+  params: z.object({
+    materialType: z.string(),
+    thickness: z.number().min(0.5).max(50),
+    // ... more fields
+  }),
+});
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    
+    // Zod 验证
+    const validatedData = requestSchema.parse(body);
+    
+    // 执行计算
+    const result = calculateLaserCuttingCost(validatedData.params);
+    
+    // 保存到数据库
+    await saveCalculation({
+      toolType: validatedData.toolType,
+      inputParams: validatedData.params,
+      result,
+      userIp: request.headers.get('x-forwarded-for') || 'unknown',
+    });
+    
+    return NextResponse.json({ success: true, result });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: error.errors },
+        { status: 400 }
+      );
+    }
+    
+    console.error('Calculation error:', error);
+    return NextResponse.json(
+      { error: 'Calculation failed' },
+      { status: 500 }
+    );
+  }
+}
+```
+
+### 数据库操作规范
+
+#### 数据访问层（DAO）
+```typescript
+// lib/db/calculations.ts
+import { getDB } from './client';
+
+export interface Calculation {
+  id: number;
+  toolType: string;
+  inputParams: object;
+  result: object;
+  userIp: string;
+  createdAt: Date;
+}
+
+export async function saveCalculation(data: {
+  toolType: string;
+  inputParams: object;
+  result: object;
+  userIp: string;
+}) {
+  const db = getDB();
+  
+  const stmt = db.prepare(`
+    INSERT INTO calculations (tool_type, input_params, result, user_ip)
+    VALUES (?, ?, ?, ?)
+  `);
+  
+  const result = await stmt.bind(
+    data.toolType,
+    JSON.stringify(data.inputParams),
+    JSON.stringify(data.result),
+    data.userIp
+  ).run();
+  
+  return result.meta.last_row_id;
+}
+
+export async function getCalculationHistory(limit = 10) {
+  const db = getDB();
+  
+  const stmt = db.prepare(`
+    SELECT * FROM calculations 
+    ORDER BY created_at DESC 
+    LIMIT ?
+  `);
+  
+  const { results } = await stmt.bind(limit).all();
+  
+  return results.map(row => ({
+    ...row,
+    inputParams: JSON.parse(row.input_params),
+    result: JSON.parse(row.result),
+  }));
+}
+```
+
+### 表单验证规范（Zod）
+
+```typescript
+// lib/validations/calculator.ts
+import { z } from 'zod';
+
+export const laserCuttingSchema = z.object({
+  materialType: z.enum([
+    'stainless_steel',
+    'aluminum',
+    'copper',
+    'mild_steel',
+  ], {
+    errorMap: () => ({ message: 'Please select a valid material type' }),
+  }),
+  
+  thickness: z.number({
+    required_error: 'Thickness is required',
+    invalid_type_error: 'Thickness must be a number',
+  })
+    .min(0.5, 'Minimum thickness is 0.5mm')
+    .max(50, 'Maximum thickness is 50mm'),
+  
+  cuttingLength: z.number()
+    .min(1, 'Cutting length must be at least 1mm')
+    .max(10000, 'Maximum cutting length is 10,000mm'),
+  
+  laserPower: z.number()
+    .min(1, 'Minimum power is 1kW')
+    .max(30, 'Maximum power is 30kW'),
+  
+  electricityRate: z.number()
+    .min(0, 'Rate cannot be negative')
+    .max(1, 'Rate seems too high'),
+  
+  laborRate: z.number()
+    .min(0, 'Rate cannot be negative')
+    .max(200, 'Rate seems too high'),
+});
+
+export type LaserCuttingInput = z.infer<typeof laserCuttingSchema>;
+```
+
+### SEO 优化规范
+
+#### 页面 Metadata
+```typescript
+// app/calculators/laser-cutting/page.tsx
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Laser Cutting Cost Calculator - Free & Accurate | LaserCalc Pro',
+  description: 'Calculate laser cutting costs instantly. Free tool for estimating material, labor, energy costs. Trusted by manufacturers worldwide.',
+  keywords: 'laser cutting calculator, cost estimator, manufacturing calculator',
+  
+  openGraph: {
+    title: 'Laser Cutting Cost Calculator',
+    description: 'Professional cost estimation tool for laser cutting',
+    url: 'https://lasercalcpro.com/calculators/laser-cutting',
+    siteName: 'LaserCalc Pro',
+    images: [
+      {
+        url: '/og-laser-cutting.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Laser Cutting Calculator',
+      },
+    ],
+    type: 'website',
+  },
+  
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Laser Cutting Cost Calculator',
+    description: 'Free professional calculator',
+    images: ['/twitter-laser-cutting.jpg'],
+  },
+  
+  alternates: {
+    canonical: 'https://lasercalcpro.com/calculators/laser-cutting',
+  },
+};
+```
+
+#### 结构化数据
+```typescript
+// components/seo/StructuredData.tsx
+export function HowToSchema({ title, steps }: { title: string; steps: string[] }) {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": title,
+    "step": steps.map((text, index) => ({
+      "@type": "HowToStep",
+      "position": index + 1,
+      "name": `Step ${index + 1}`,
+      "text": text,
+    })),
+  };
+  
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+```
+
+### 性能优化规范
+
+#### 图片优化
+```typescript
+import Image from 'next/image';
+
+// 正确用法
+<Image
+  src="/calculator-hero.jpg"
+  alt="Laser Cutting Calculator Interface"
+  width={1200}
+  height={630}
+  priority  // 首屏图片
+  placeholder="blur"
+  blurDataURL="data:image/..."
+/>
+
+// 响应式图片
+<Image
+  src="/tool-icon.png"
+  alt="Calculator Tool"
+  fill
+  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+  className="object-cover"
+/>
+```
+
+#### 动态导入
+```typescript
+// 懒加载重型组件
+import dynamic from 'next/dynamic';
+
+const ChartComponent = dynamic(() => import('@/components/charts/LineChart'), {
+  loading: () => <div>Loading chart...</div>,
+  ssr: false, // 禁用 SSR（如果组件依赖 window）
+});
+
+const RichTextEditor = dynamic(() => import('@/components/admin/Editor'), {
+  ssr: false,
+});
+```
+
+### 错误处理规范
+
+#### 全局错误边界
+```typescript
+// app/error.tsx
+'use client';
+
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold mb-4">Something went wrong</h1>
+        <p className="text-gray-600 mb-6">{error.message}</p>
+        <button
+          onClick={reset}
+          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Try again
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+#### 404 页面
+```typescript
+// app/not-found.tsx
+import Link from 'next/link';
+
+export default function NotFound() {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-6xl font-bold text-gray-900 mb-4">404</h1>
+        <p className="text-xl text-gray-600 mb-8">Page not found</p>
+        <Link
+          href="/"
+          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Go Home
+        </Link>
+      </div>
+    </div>
+  );
+}
+```
+
+### 安全规范
+
+#### 后台路由保护
+```typescript
+// middleware.ts
+import { withAuth } from 'next-auth/middleware';
+import { NextResponse } from 'next/server';
+
+export default withAuth(
+  function middleware(req) {
+    // 所有 /admin 路由需要认证
+    const token = req.nextauth.token;
+    
+    if (req.nextUrl.pathname.startsWith('/admin') && !token) {
+      return NextResponse.redirect(new URL('/admin/login', req.url));
+    }
+    
+    return NextResponse.next();
+  },
+  {
+    callbacks: {
+      authorized: ({ token, req }) => {
+        if (req.nextUrl.pathname === '/admin/login') {
+          return true;
+        }
+        return !!token;
+      },
+    },
+  }
+);
+
+export const config = {
+  matcher: ['/admin/:path*'],
+};
+```
+
+#### 输入验证
+```typescript
+// 所有用户输入必须验证
+import { z } from 'zod';
+
+// ❌ 错误：直接使用未验证的输入
+const result = calculateCost(req.body);
+
+// ✅ 正确：先验证再使用
+const schema = z.object({
+  value: z.number().min(0),
+});
+
+try {
+  const validatedInput = schema.parse(req.body);
+  const result = calculateCost(validatedInput);
+} catch (error) {
+  // 处理验证错误
+}
+```
+
+### 测试规范（可选）
+
+#### 单元测试
+```typescript
+// __tests__/calculators/laser.test.ts
+import { calculateLaserCuttingCost } from '@/lib/calculators/laser';
+
+describe('Laser Cutting Calculator', () => {
+  test('calculates basic cost correctly', () => {
+    const result = calculateLaserCuttingCost({
+      materialType: 'stainless_steel',
+      thickness: 3,
+      cuttingLength: 1000,
+      laserPower: 6,
+      electricityRate: 0.12,
+      laborRate: 25,
+    });
+    
+    expect(result.totalCost).toBeGreaterThan(0);
+    expect(result.breakdown.materialCost).toBeGreaterThan(0);
+  });
+});
+```
+
+## 开发工作流
+
+### Git Commit 规范
+```
+feat: 添加激光切割计算器
+fix: 修复CNC计算公式错误
+docs: 更新API文档
+style: 格式化代码
+refactor: 重构数据库访问层
+perf: 优化图片加载
+test: 添加单元测试
+chore: 更新依赖包
+```
+
+### 分支策略
+- `main` - 生产环境
+- `develop` - 开发环境
+- `feature/*` - 功能分支
+- `fix/*` - 修复分支
+
+## 常见问题处理
+
+### Cloudflare Workers 兼容性
+```typescript
+// ❌ 不兼容：Node.js APIs
+import fs from 'fs';
+import path from 'path';
+
+// ✅ 兼容：Web Standard APIs
+const response = await fetch('https://api.example.com');
+const data = await response.json();
+```
+
+### 环境变量访问
+```typescript
+// ❌ 错误：直接访问 process.env（在 Workers 中不可用）
+const apiKey = process.env.API_KEY;
+
+// ✅ 正确：通过 env 对象访问（Cloudflare Pages）
+export default {
+  async fetch(request, env) {
+    const apiKey = env.API_KEY;
+  }
+}
+```
+
+### D1 数据库查询
+```typescript
+// ❌ 错误：字符串拼接（SQL注入风险）
+const query = `SELECT * FROM users WHERE id = ${userId}`;
+
+// ✅ 正确：Prepared Statements
+const stmt = db.prepare('SELECT * FROM users WHERE id = ?');
+const result = await stmt.bind(userId).first();
+```
+
+## 代码质量检查清单
+
+- [ ] 所有组件有 TypeScript 类型定义
+- [ ] 使用 Zod 验证所有用户输入
+- [ ] API 路由有错误处理
+- [ ] 数据库查询使用 prepared statements
+- [ ] 图片使用 Next.js Image 组件
+- [ ] 前台使用英文，后台使用中文
+- [ ] 添加必要的 SEO metadata
+- [ ] 响应式设计适配移动端
+- [ ] 无 console.log（生产环境）
+- [ ] 代码格式化（Prettier）
+
+## AI 助手指令
+
+当我让你编写代码时：
+1. **严格遵循以上所有规范**
+2. **前台代码必须使用英文**（UI文本、注释、变量名）
+3. **后台代码可以使用中文**（仅限 /admin 路由）
+4. **使用 TypeScript**，不要使用 JavaScript
+5. **优先使用 Server Components**，必要时才用 Client Components
+6. **所有用户输入必须验证**（Zod schema）
+7. **数据库操作必须安全**（prepared statements）
+8. **考虑 SEO 优化**（metadata, 结构化数据）
+9. **代码必须适配 Cloudflare Workers**（避免 Node.js APIs）
+10. **遵循 Next.js 14 App Router 最佳实践**
+
+## 参考文档
+- Next.js: https://nextjs.org/docs
+- Cloudflare Pages: https://developers.cloudflare.com/pages
+- Cloudflare D1: https://developers.cloudflare.com/d1
+- NextAuth.js: https://next-auth.js.org
+- Tailwind CSS: https://tailwindcss.com/docs
+- Zod: https://zod.dev
+
+---
+
+**项目域名**: lasercalcpro.com  
+**文档版本**: v1.0  
+**最后更新**: 2025-10-30
+

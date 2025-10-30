@@ -1,0 +1,115 @@
+import { Metadata } from 'next';
+
+const SITE_URL = 'https://lasercalcpro.com';
+const SITE_NAME = 'LaserCalc Pro';
+const SITE_DESCRIPTION = 'Free, accurate cost estimation tools for laser cutting, CNC machining, and equipment ROI analysis. Trusted by manufacturers worldwide.';
+
+export interface SEOProps {
+  title?: string;
+  description?: string;
+  keywords?: string[];
+  canonicalUrl?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  authors?: string[];
+  noindex?: boolean;
+}
+
+export function generateMetadata(props: SEOProps = {}): Metadata {
+  const {
+    title,
+    description = SITE_DESCRIPTION,
+    keywords = [],
+    canonicalUrl,
+    ogImage = '/og-image.jpg',
+    ogType = 'website',
+    publishedTime,
+    modifiedTime,
+    authors,
+    noindex = false,
+  } = props;
+
+  const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME;
+  const canonical = canonicalUrl || SITE_URL;
+
+  const metadata: Metadata = {
+    title: fullTitle,
+    description,
+    keywords: [
+      'laser cutting calculator',
+      'CNC machining cost',
+      'manufacturing cost estimator',
+      'ROI calculator',
+      'material utilization',
+      'energy cost calculator',
+      ...keywords,
+    ],
+    authors: authors ? authors.map(name => ({ name })) : [{ name: 'LaserCalc Pro Team' }],
+    creator: SITE_NAME,
+    publisher: SITE_NAME,
+    robots: {
+      index: !noindex,
+      follow: !noindex,
+      googleBot: {
+        index: !noindex,
+        follow: !noindex,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
+    openGraph: {
+      type: ogType,
+      locale: 'en_US',
+      url: canonical,
+      siteName: SITE_NAME,
+      title: fullTitle,
+      description,
+      images: [
+        {
+          url: `${SITE_URL}${ogImage}`,
+          width: 1200,
+          height: 630,
+          alt: fullTitle,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: fullTitle,
+      description,
+      images: [`${SITE_URL}${ogImage}`],
+    },
+    alternates: {
+      canonical,
+    },
+  };
+
+  if (ogType === 'article' && publishedTime) {
+    metadata.openGraph = {
+      ...metadata.openGraph,
+      type: 'article',
+      publishedTime,
+      modifiedTime: modifiedTime || publishedTime,
+      authors,
+    };
+  }
+
+  return metadata;
+}
+
+export function generateCalculatorMetadata(
+  toolName: string,
+  description: string,
+  keywords: string[]
+): Metadata {
+  return generateMetadata({
+    title: toolName,
+    description,
+    keywords,
+    canonicalUrl: `${SITE_URL}/calculators/${toolName.toLowerCase().replace(/\s+/g, '-')}`,
+  });
+}
+
