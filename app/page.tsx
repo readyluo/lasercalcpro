@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { useEnglish } from '@/lib/i18n';
 import { Navigation } from '@/components/layout/Navigation';
