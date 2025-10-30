@@ -202,3 +202,4 @@ export function getMaterialDensity(materialType: string): number {
   return MATERIAL_DENSITY[materialType] || 0;
 }
 
+

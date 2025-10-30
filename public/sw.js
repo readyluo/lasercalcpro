@@ -115,3 +115,4 @@ async function syncCalculations() {
   console.log('Service Worker: Syncing calculations...');
 }
 
+

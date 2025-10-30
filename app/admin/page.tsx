@@ -263,3 +263,4 @@ function formatToolName(tool: string): string {
   return names[tool] || tool;
 }
 
+

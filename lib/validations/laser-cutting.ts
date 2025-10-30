@@ -116,3 +116,4 @@ export const laserCuttingDefaults: Partial<LaserCuttingInput> = {
   annualWorkingHours: 2000,
 };
 
+

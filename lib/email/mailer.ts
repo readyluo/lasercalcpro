@@ -1,34 +1,45 @@
-// Email Service using Nodemailer
-import nodemailer from 'nodemailer';
-import type { Transporter } from 'nodemailer';
-
-// Email configuration
-const SMTP_CONFIG = {
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: false, // true for 465, false for other ports
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-};
+// Email Service - Graceful degradation for Cloudflare
+// Note: Nodemailer requires Node.js runtime. For Cloudflare Workers, use alternative email services.
 
 const EMAIL_FROM = process.env.EMAIL_FROM || 'noreply@lasercalcpro.com';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://lasercalcpro.com';
 
-// Create reusable transporter
-let transporter: Transporter | null = null;
+// Check if email service is available
+function isEmailServiceAvailable(): boolean {
+  // Check if we're in Node.js environment with SMTP configured
+  return !!(
+    typeof process !== 'undefined' &&
+    process.env.SMTP_USER &&
+    process.env.SMTP_PASS &&
+    typeof require !== 'undefined'
+  );
+}
 
-function getTransporter(): Transporter {
-  if (!transporter) {
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      throw new Error('SMTP credentials not configured');
-    }
-
-    transporter = nodemailer.createTransporter(SMTP_CONFIG);
+// Lazy load nodemailer only when available
+async function getTransporter() {
+  if (!isEmailServiceAvailable()) {
+    throw new Error('Email service not available in this environment');
   }
 
-  return transporter;
+  try {
+    // Dynamic import for Node.js environments only
+    const nodemailer = await import('nodemailer');
+    
+    const SMTP_CONFIG = {
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.SMTP_PORT || '587'),
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    };
+
+    return nodemailer.default.createTransporter(SMTP_CONFIG);
+  } catch (error) {
+    console.warn('Failed to load email service:', error);
+    throw new Error('Email service not available');
+  }
 }
 
 /**
@@ -39,8 +50,14 @@ export async function sendSubscriptionConfirmationEmail(
   name: string | null,
   token: string
 ): Promise<boolean> {
+  // Graceful degradation: skip if email service not available
+  if (!isEmailServiceAvailable()) {
+    console.log('📧 Email service not configured - skipping confirmation email');
+    return false;
+  }
+
   try {
-    const transport = getTransporter();
+    const transport = await getTransporter();
     const confirmUrl = `${SITE_URL}/api/subscribe/confirm?token=${token}`;
 
     const mailOptions = {
@@ -141,8 +158,14 @@ export async function sendWelcomeEmail(
   email: string,
   name: string | null
 ): Promise<boolean> {
+  // Graceful degradation: skip if email service not available
+  if (!isEmailServiceAvailable()) {
+    console.log('📧 Email service not configured - skipping welcome email');
+    return false;
+  }
+
   try {
-    const transport = getTransporter();
+    const transport = await getTransporter();
 
     const mailOptions = {
       from: `"LaserCalc Pro" <${EMAIL_FROM}>`,
@@ -236,8 +259,13 @@ You're receiving this because you subscribed at ${SITE_URL}
  * Verify SMTP connection
  */
 export async function verifyEmailConnection(): Promise<boolean> {
+  if (!isEmailServiceAvailable()) {
+    console.log('📧 Email service not configured');
+    return false;
+  }
+
   try {
-    const transport = getTransporter();
+    const transport = await getTransporter();
     await transport.verify();
     console.log('✅ Email service is ready');
     return true;

@@ -95,3 +95,4 @@ export const energyDefaults: Partial<EnergyInput> = {
   gridCarbonIntensity: 400,
 };
 
+

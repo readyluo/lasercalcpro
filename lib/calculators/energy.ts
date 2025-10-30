@@ -261,3 +261,4 @@ export function calculateTotalPotentialSavings(recommendations: EnergyResult['re
   return recommendations.reduce((total, rec) => total + rec.potentialSavings, 0);
 }
 
+

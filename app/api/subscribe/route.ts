@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSubscriber } from '@/lib/db/subscribers';
-import { sendSubscriptionConfirmationEmail } from '@/lib/email/mailer';
 import { z } from 'zod';
 
-// Use Node.js runtime for email sending
-export const runtime = 'nodejs';
+// Use edge runtime for compatibility with Cloudflare
+export const runtime = 'edge';
 
 const subscribeSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -55,28 +54,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Send confirmation email
+    // Note: Email sending is optional and should be configured via external service
+    // For now, log the confirmation URL (in production, integrate with email service like SendGrid/Mailgun)
     if (result.token) {
-      try {
-        const emailSent = await sendSubscriptionConfirmationEmail(
-          email,
-          null, // name is optional
-          result.token
-        );
-
-        if (!emailSent) {
-          console.warn('Confirmation email failed to send, but subscription created');
-        }
-      } catch (emailError) {
-        console.error('Email sending error:', emailError);
-        // Continue anyway - subscription is created
+      console.log('📧 Subscription created. Confirmation token:', result.token);
+      
+      // In development, log the full confirmation URL
+      if (process.env.NODE_ENV === 'development') {
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://lasercalcpro.com';
+        console.log('Confirmation URL:', `${siteUrl}/api/subscribe/confirm?token=${result.token}`);
       }
-    }
-
-    // In development, also log the confirmation URL
-    if (process.env.NODE_ENV === 'development' && result.token) {
-      console.log('Confirmation token:', result.token);
-      console.log('Confirmation URL:', `${process.env.NEXT_PUBLIC_SITE_URL}/api/subscribe/confirm?token=${result.token}`);
+      
+      // TODO: In production, trigger email via webhook to external email service
+      // Example: Cloudflare Email Worker, SendGrid API, etc.
     }
 
     return NextResponse.json({

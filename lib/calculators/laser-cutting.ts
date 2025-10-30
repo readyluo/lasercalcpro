@@ -210,3 +210,4 @@ export function validateInputs(input: Partial<LaserCuttingInput>): string[] {
   return errors;
 }
 
+

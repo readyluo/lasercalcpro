@@ -36,3 +36,4 @@ export function getTranslations(locale: 'en' | 'zh'): EnglishTexts | ChineseText
 // Re-export for convenience
 export { en, zh };
 
+

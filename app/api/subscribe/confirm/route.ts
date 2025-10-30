@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { confirmSubscription, getSubscriberByToken } from '@/lib/db/subscribers';
-import { sendWelcomeEmail } from '@/lib/email/mailer';
 
-// Use Node.js runtime for email sending
-export const runtime = 'nodejs';
+// Use edge runtime for Cloudflare compatibility
+export const runtime = 'edge';
 
 /**
  * GET /api/subscribe/confirm?token=xxx - Confirm subscription
@@ -46,13 +45,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Send welcome email
-    try {
-      await sendWelcomeEmail(subscriber.email, subscriber.name);
-    } catch (emailError) {
-      console.error('Failed to send welcome email:', emailError);
-      // Continue anyway - subscription is confirmed
-    }
+    // Note: Welcome email should be sent via external service (SendGrid/Mailgun)
+    // TODO: Trigger welcome email via webhook to email service
+    console.log('✅ Subscription confirmed for:', subscriber.email);
 
     // Redirect to success page
     return NextResponse.redirect(

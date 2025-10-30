@@ -90,3 +90,4 @@ export const materialUtilizationDefaults: Partial<MaterialUtilizationInput> = {
   scrapValuePerKg: 0.5,
 };
 
+
