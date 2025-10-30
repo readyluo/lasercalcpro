@@ -74,7 +74,7 @@ Professional manufacturing cost calculators for laser cutting, CNC machining, an
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/lasercalcpro.git
+git clone https://github.com/readyluo/lasercalcpro.git
 cd lasercalcpro
 
 # Install dependencies
@@ -221,13 +221,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Website**: https://lasercalcpro.com
 - **Email**: support@lasercalcpro.com
-- **Issues**: [GitHub Issues](https://github.com/yourusername/lasercalcpro/issues)
+- **Issues**: [GitHub Issues](https://github.com/readyluo/lasercalcpro/issues)
 
 ---
 
 ## 🌟 Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=yourusername/lasercalcpro&type=Date)](https://star-history.com/#yourusername/lasercalcpro&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=readyluo/lasercalcpro&type=Date)](https://star-history.com/#readyluo/lasercalcpro&Date)
 
 ---
 
