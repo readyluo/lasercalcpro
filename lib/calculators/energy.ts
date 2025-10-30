@@ -262,3 +262,10 @@ export function calculateTotalPotentialSavings(recommendations: EnergyResult['re
 }
 
 
+
+
+
+
+
+
+

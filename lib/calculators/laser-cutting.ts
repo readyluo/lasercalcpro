@@ -211,3 +211,10 @@ export function validateInputs(input: Partial<LaserCuttingInput>): string[] {
 }
 
 
+
+
+
+
+
+
+

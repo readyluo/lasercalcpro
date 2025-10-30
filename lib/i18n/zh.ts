@@ -396,9 +396,17 @@ export const zh = {
     downloadFile: '下载文件',
     copyToClipboard: '复制到剪贴板',
     copied: '已复制',
+    required_field_warning: '此字段为必填项',
   },
 } as const;
 
 export type ChineseTexts = typeof zh;
+
+
+
+
+
+
+
 
 

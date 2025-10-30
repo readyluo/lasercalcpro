@@ -37,3 +37,10 @@ export function getTranslations(locale: 'en' | 'zh'): EnglishTexts | ChineseText
 export { en, zh };
 
 
+
+
+
+
+
+
+
