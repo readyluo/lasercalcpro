@@ -135,6 +135,180 @@ export function CalculatorForm({ initialData, onSubmit }: CalculatorFormProps) {
 }
 ```
 
+### ⚠️ 关键错误经验（必须遵守）
+
+#### 1. Client Component 标记规则
+**问题**: Event handlers cannot be passed to Client Component props
+**解决**: 任何使用以下内容的组件必须添加 `'use client'`：
+- ✅ React Hooks: `useState`, `useEffect`, `useRef`, `useCallback`, `useMemo`
+- ✅ Next.js Client Hooks: `useRouter`, `usePathname`, `useSearchParams`, `useParams`
+- ✅ 事件处理器: `onClick`, `onChange`, `onSubmit` 等
+- ✅ 自定义 Hooks: 任何调用上述 hooks 的自定义 hook
+
+**必须添加 'use client' 的组件示例**:
+```typescript
+'use client';  // ← 必须！
+
+import { useEnglish } from '@/lib/i18n';  // 使用了自定义 hook
+import { Button } from '@/components/ui/Button';  // Button 是客户端组件
+
+export function MyComponent() {
+  const t = useEnglish();  // 内部使用了 hooks
+  return <Button onClick={() => {}}>Click</Button>;
+}
+```
+
+#### 2. 动态渲染 vs 静态生成
+**问题**: useSearchParams() should be wrapped in a suspense boundary
+**原因**: Navigation/Breadcrumbs 等组件使用了 `usePathname()` 或 `useSearchParams()`
+**解决方案选择**:
+
+**方案A（推荐）**: 在根 layout 强制动态渲染
+```typescript
+// app/layout.tsx
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+```
+
+**方案B**: 使用 Suspense 边界包裹
+```typescript
+import { Suspense } from 'react';
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Navigation />
+      <Content />
+    </Suspense>
+  );
+}
+```
+
+**方案C**: 特定页面禁用静态生成
+```typescript
+// app/some-page/page.tsx
+export const dynamic = 'force-dynamic';
+
+export default function SomePage() {
+  return <div>...</div>;
+}
+```
+
+#### 3. Edge Runtime 兼容性
+**问题**: Module not found: Can't resolve 'crypto'
+**原因**: Cloudflare Workers (Edge Runtime) 不支持 Node.js 内置模块
+**解决**: 使用 Web 标准 API
+
+**❌ 错误示例**:
+```typescript
+import crypto from 'crypto';
+
+function generateToken() {
+  return crypto.randomBytes(32).toString('hex');
+}
+```
+
+**✅ 正确示例**:
+```typescript
+// 使用 Web Crypto API
+function generateToken(): string {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+}
+```
+
+**其他 Edge Runtime 限制**:
+- ❌ `fs`, `path`, `os` 等 Node.js 模块
+- ❌ `child_process`, `net`, `tls`
+- ✅ 使用 `fetch`, `crypto`, `TextEncoder/Decoder`
+- ✅ 使用 `Response`, `Request`, `Headers`
+
+#### 4. React 导入与 JSX
+**问题**: Expected '>', got 'type' 或 JSX syntax error
+**原因**: 某些构建环境需要显式导入 React
+**解决**:
+
+```typescript
+// 始终在文件顶部导入 React（如果使用 JSX）
+import React from 'react';
+
+// 对于动态创建的元素，使用 React.createElement
+export function renderSchema(schema: any): React.ReactElement {
+  return React.createElement('script', {
+    type: 'application/ld+json',
+    dangerouslySetInnerHTML: {
+      __html: JSON.stringify(schema),
+    },
+  });
+}
+```
+
+#### 5. Tailwind CSS 配置完整性
+**问题**: The border-border class does not exist
+**原因**: Tailwind 配置中缺少颜色定义
+**解决**: 确保 `tailwind.config.ts` 完整配置
+
+```typescript
+// tailwind.config.ts
+export default {
+  theme: {
+    extend: {
+      colors: {
+        border: 'hsl(var(--border) / <alpha-value>)',
+        // ... 其他颜色
+      },
+      borderColor: {
+        DEFAULT: 'hsl(var(--border) / <alpha-value>)',
+      },
+    },
+  },
+};
+```
+
+**同时确保 globals.css 定义了 CSS 变量**:
+```css
+@layer base {
+  :root {
+    --border: 214.3 31.8% 91.4%;
+    /* ... 其他变量 */
+  }
+}
+```
+
+#### 6. 构建错误调试流程
+当遇到构建错误时，按此顺序检查：
+
+1. **检查 'use client' 指令**
+   - 是否所有使用 hooks 的组件都标记了？
+   - 是否所有接受事件处理器的组件都标记了？
+
+2. **检查动态渲染配置**
+   - 使用 `usePathname/useSearchParams` 的页面是否配置了动态渲染？
+   - 是否需要在 layout 中全局配置？
+
+3. **检查 Edge Runtime 兼容性**
+   - 是否使用了 Node.js 内置模块？
+   - 是否可以用 Web 标准 API 替代？
+
+4. **临时绕过（仅用于定位问题）**
+   ```typescript
+   // next.config.js
+   module.exports = {
+     typescript: {
+       ignoreBuildErrors: true,  // 临时跳过 TS 错误
+     },
+     eslint: {
+       ignoreDuringBuilds: true,  // 临时跳过 ESLint 错误
+     },
+   };
+   ```
+   ⚠️ 注意：定位问题后必须移除这些配置并修复真正的错误！
+
+5. **查看构建日志**
+   - Vercel/Cloudflare 构建日志通常会指出具体错误位置
+   - 关注错误堆栈的第一行（最具体的错误信息）
+
 ### 双语架构规范
 
 #### 前台英文文本（lib/i18n/en.ts）
