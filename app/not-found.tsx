@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import { useEnglish } from '@/lib/i18n';
 import { Home, ArrowLeft, Calculator } from 'lucide-react';

@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
@@ -20,8 +18,8 @@ import { ExportButton } from '@/components/calculators/ExportButton';
 
 export default function LaserCuttingCalculatorPage() {
   const t = useEnglish();
-  const [result, setResult] = useState<LaserCuttingResult | null>(null);
-  const [isCalculating, setIsCalculating] = useState(false);
+  const [result, setResult] = React.useState<LaserCuttingResult | null>(null);
+  const [isCalculating, setIsCalculating] = React.useState(false);
 
   // SEO structured data
   const howToSchema = generateCalculatorHowToSchema(
