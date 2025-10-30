@@ -1,28 +1,28 @@
-'use client';
-
 import React from 'react';
 import Link from 'next/link';
-import { useEnglish } from '@/lib/i18n';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
+import { generateMetadata } from '@/lib/seo/metadata';
 import { 
   Calculator, 
   TrendingUp, 
   Zap, 
   FileText, 
   CheckCircle, 
-  Users, 
-  Globe,
   Award,
   ArrowRight,
   BarChart3,
-  Shield,
-  Clock
+  Shield
 } from 'lucide-react';
+import { FAQSection } from '@/components/home/FAQSection';
+
+export const metadata = generateMetadata({
+  title: 'Professional Manufacturing Cost Calculators - LaserCalc Pro',
+  description: 'Free laser cutting, CNC machining, ROI, and energy cost calculators. Industry-standard formulas trusted by 10,000+ manufacturers worldwide. Export PDF reports instantly.',
+  keywords: ['laser cutting calculator', 'CNC machining cost estimator', 'ROI calculator', 'manufacturing cost calculator', 'energy cost calculator', 'material utilization calculator'],
+});
 
 export default function HomePage() {
-  const t = useEnglish();
-
   return (
     <>
       <Navigation />
@@ -43,10 +43,10 @@ export default function HomePage() {
               </div>
               
               <h1 className="mb-6 text-5xl font-bold leading-tight md:text-6xl lg:text-7xl">
-                {t.hero.title}
+                Professional Manufacturing Cost Calculators
               </h1>
               <p className="mb-8 text-xl text-blue-100 md:text-2xl">
-                {t.hero.subtitle}
+                Accurate, instant, and free tools for laser cutting, CNC machining, ROI analysis, and more
               </p>
               
               <div className="flex flex-col justify-center gap-4 sm:flex-row">
@@ -55,14 +55,14 @@ export default function HomePage() {
                   className="btn-lg group inline-flex items-center gap-2 rounded-lg bg-white px-8 py-4 font-semibold text-primary-600 shadow-xl transition-all hover:scale-105 hover:bg-gray-100 hover:shadow-2xl"
                 >
                   <Calculator className="h-5 w-5" />
-                  {t.hero.cta.primary}
+                  Start Calculating
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <Link
                   href="/about"
                   className="btn-lg inline-flex items-center gap-2 rounded-lg border-2 border-white px-8 py-4 font-semibold text-white transition-all hover:bg-white hover:text-primary-600"
                 >
-                  {t.hero.cta.secondary}
+                  Learn More
                 </Link>
               </div>
 
@@ -114,7 +114,7 @@ export default function HomePage() {
           <div className="container mx-auto px-4">
             <div className="mx-auto mb-16 max-w-3xl text-center">
               <h2 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">
-                {t.features.title}
+                Why Choose LaserCalc Pro?
               </h2>
               <p className="text-xl text-gray-600">
                 Professional-grade calculators designed for accuracy, speed, and ease of use
@@ -127,8 +127,8 @@ export default function HomePage() {
                 <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary-100 transition-all group-hover:scale-110 group-hover:bg-primary-600">
                   <Calculator className="h-8 w-8 text-primary-600 transition-colors group-hover:text-white" />
                 </div>
-                <h3 className="mb-2 text-xl font-semibold text-gray-900">{t.features.free.title}</h3>
-                <p className="text-gray-600">{t.features.free.description}</p>
+                <h3 className="mb-2 text-xl font-semibold text-gray-900">100% Free Forever</h3>
+                <p className="text-gray-600">All calculators are completely free with no hidden fees or usage limits</p>
               </div>
 
               {/* Feature 2 */}
@@ -136,8 +136,8 @@ export default function HomePage() {
                 <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-green-100 transition-all group-hover:scale-110 group-hover:bg-green-600">
                   <BarChart3 className="h-8 w-8 text-green-600 transition-colors group-hover:text-white" />
                 </div>
-                <h3 className="mb-2 text-xl font-semibold text-gray-900">{t.features.accurate.title}</h3>
-                <p className="text-gray-600">{t.features.accurate.description}</p>
+                <h3 className="mb-2 text-xl font-semibold text-gray-900">Industry Accuracy</h3>
+                <p className="text-gray-600">Based on real manufacturing formulas achieving 98% accuracy rate</p>
               </div>
 
               {/* Feature 3 */}
@@ -145,8 +145,8 @@ export default function HomePage() {
                 <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-yellow-100 transition-all group-hover:scale-110 group-hover:bg-yellow-600">
                   <Zap className="h-8 w-8 text-yellow-600 transition-colors group-hover:text-white" />
                 </div>
-                <h3 className="mb-2 text-xl font-semibold text-gray-900">{t.features.instant.title}</h3>
-                <p className="text-gray-600">{t.features.instant.description}</p>
+                <h3 className="mb-2 text-xl font-semibold text-gray-900">Instant Results</h3>
+                <p className="text-gray-600">Real-time calculations in under 500ms with detailed breakdowns</p>
               </div>
 
               {/* Feature 4 */}
@@ -154,8 +154,8 @@ export default function HomePage() {
                 <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-purple-100 transition-all group-hover:scale-110 group-hover:bg-purple-600">
                   <FileText className="h-8 w-8 text-purple-600 transition-colors group-hover:text-white" />
                 </div>
-                <h3 className="mb-2 text-xl font-semibold text-gray-900">{t.features.professional.title}</h3>
-                <p className="text-gray-600">{t.features.professional.description}</p>
+                <h3 className="mb-2 text-xl font-semibold text-gray-900">Professional Reports</h3>
+                <p className="text-gray-600">Export comprehensive PDF reports for presentations and documentation</p>
               </div>
             </div>
           </div>
@@ -338,43 +338,7 @@ export default function HomePage() {
         </section>
 
         {/* FAQ Section */}
-        <section className="bg-gray-50 py-20">
-          <div className="container mx-auto px-4">
-            <div className="mx-auto mb-16 max-w-3xl text-center">
-              <h2 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">Frequently Asked Questions</h2>
-              <p className="text-xl text-gray-600">
-                Everything you need to know about our calculators
-              </p>
-            </div>
-
-            <div className="mx-auto max-w-3xl space-y-4">
-              <FAQItem
-                question="Are the calculators really free to use?"
-                answer="Yes, absolutely! All our calculators are 100% free with no hidden fees, no credit card required, and no usage limits. We believe in providing valuable tools to the manufacturing community."
-              />
-              <FAQItem
-                question="How accurate are the cost calculations?"
-                answer="Our calculators use industry-standard formulas and real manufacturing data, achieving 95-98% accuracy. However, actual costs may vary based on specific conditions, equipment, and local factors."
-              />
-              <FAQItem
-                question="Can I export my calculation results?"
-                answer="Yes! You can export detailed PDF reports with comprehensive cost breakdowns, charts, and recommendations. Perfect for presentations and documentation."
-              />
-              <FAQItem
-                question="Do I need to create an account?"
-                answer="No account necessary! You can start using our calculators immediately without any sign-up. However, creating a free account lets you save your calculations and access history."
-              />
-              <FAQItem
-                question="What materials are supported?"
-                answer="We support all common manufacturing materials including various grades of steel, aluminum, copper, brass, and plastics. Material properties are based on industry specifications."
-              />
-              <FAQItem
-                question="Can I use these for commercial projects?"
-                answer="Absolutely! Our calculators are designed for professional use. Many manufacturing companies, job shops, and fabricators use our tools daily for quotations and planning."
-              />
-            </div>
-          </div>
-        </section>
+        <FAQSection />
 
         {/* CTA Section */}
         <section className="gradient-primary relative overflow-hidden py-20 text-white">
@@ -409,37 +373,6 @@ export default function HomePage() {
       </main>
       <Footer />
     </>
-  );
-}
-
-// FAQ Component
-function FAQItem({ question, answer }: { question: string; answer: string }) {
-  const [isOpen, setIsOpen] = React.useState(false);
-
-  return (
-    <div className="rounded-lg border border-gray-200 bg-white transition-all hover:shadow-md">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between p-6 text-left transition-colors"
-      >
-        <h3 className="text-lg font-semibold text-gray-900">{question}</h3>
-        <svg
-          className={`h-6 w-6 flex-shrink-0 text-primary-600 transition-transform ${
-            isOpen ? 'rotate-180' : ''
-          }`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-      {isOpen && (
-        <div className="border-t border-gray-200 px-6 pb-6 pt-4">
-          <p className="text-gray-700">{answer}</p>
-        </div>
-      )}
-    </div>
   );
 }
 
@@ -480,4 +413,3 @@ const calculatorCards = [
     badge: null,
   },
 ];
-

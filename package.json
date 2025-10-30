@@ -16,6 +16,8 @@
     "db:init": "tsx scripts/init-turso-db.ts",
     "db:init-admin": "tsx scripts/init-admin-db.ts",
     "db:query": "echo 'Use Turso CLI or dashboard for queries'",
+    "create-admin": "tsx scripts/create-admin.ts",
+    "seed-blog": "tsx scripts/seed-blog-articles.ts",
     "pages:build": "npx @cloudflare/next-on-pages",
     "pages:deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static",
     "pages:dev": "npx wrangler pages dev .vercel/output/static --compatibility-flag=nodejs_compat"

@@ -30,7 +30,7 @@ export default function AdminLoginPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
+        throw new Error(data.message || '登录失败，请检查用户名和密码');
       }
 
       // Store token in localStorage as backup
@@ -42,7 +42,7 @@ export default function AdminLoginPage() {
       router.push('/admin');
       router.refresh();
     } catch (err: any) {
-      setError(err.message || 'Login failed. Please try again.');
+      setError(err.message || '登录失败，请重试');
     } finally {
       setLoading(false);
     }
@@ -57,10 +57,10 @@ export default function AdminLoginPage() {
             <Shield className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            管理后台
+            管理后台登录
           </h1>
           <p className="text-gray-600">
-            LaserCalc Pro Administration
+            LaserCalc Pro Admin Login
           </p>
         </div>
 
@@ -80,7 +80,7 @@ export default function AdminLoginPage() {
             {/* Username Field */}
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                用户名
+                用户名 <span className="text-gray-500 font-normal">(Username)</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -102,7 +102,7 @@ export default function AdminLoginPage() {
             {/* Password Field */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                密码
+                密码 <span className="text-gray-500 font-normal">(Password)</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -144,7 +144,7 @@ export default function AdminLoginPage() {
           {/* Footer Info */}
           <div className="mt-6 pt-6 border-t border-gray-200">
             <p className="text-center text-sm text-gray-600">
-              🔒 安全连接 • 仅限授权访问
+              🔒 安全连接 (Secure Connection) • 仅限授权访问 (Authorized Access Only)
             </p>
           </div>
         </div>

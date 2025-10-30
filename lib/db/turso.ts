@@ -13,10 +13,14 @@ export function getTursoClient(): Client {
     const authToken = process.env.TURSO_AUTH_TOKEN;
 
     if (!url) {
+      console.error('⚠️  TURSO_DATABASE_URL environment variable is not set');
+      console.error('⚠️  Please configure environment variables in Vercel Dashboard:');
+      console.error('⚠️  Settings → Environment Variables → Add TURSO_DATABASE_URL and TURSO_AUTH_TOKEN');
       throw new Error('TURSO_DATABASE_URL environment variable is not set');
     }
 
     if (!authToken) {
+      console.error('⚠️  TURSO_AUTH_TOKEN environment variable is not set');
       throw new Error('TURSO_AUTH_TOKEN environment variable is not set');
     }
 
@@ -25,7 +29,8 @@ export function getTursoClient(): Client {
       authToken,
     });
 
-    console.log('✅ Turso client initialized');
+    console.log('✅ Turso client initialized successfully');
+    console.log('✅ Database URL:', url.substring(0, 30) + '...');
   }
 
   return tursoClient;

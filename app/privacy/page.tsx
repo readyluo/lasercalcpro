@@ -1,13 +1,13 @@
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
-import { generateMetadata } from '@/lib/seo/metadata';
+import { Shield, Lock, Eye, Database, UserX, Mail } from 'lucide-react';
 
-export const metadata = generateMetadata({
-  title: 'Privacy Policy',
-  description: 'Privacy Policy for LaserCalc Pro - Learn how we collect, use, and protect your data.',
-  noindex: false,
-});
+export const metadata = {
+  title: 'Privacy Policy - LaserCalc Pro',
+  description: 'Learn how LaserCalc Pro collects, uses, and protects your personal information. Our commitment to your privacy and data security.',
+  robots: 'index, follow',
+};
 
 export default function PrivacyPage() {
   return (
@@ -17,125 +17,214 @@ export default function PrivacyPage() {
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
 
-          <div className="card mx-auto max-w-4xl">
-            <h1 className="mb-4 text-4xl font-bold text-gray-900">Privacy Policy</h1>
-            <p className="mb-8 text-gray-600">
-              Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+          {/* Hero Section */}
+          <div className="mb-12 text-center">
+            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
+              <Shield className="h-8 w-8 text-primary-600" />
+            </div>
+            <h1 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">
+              Privacy Policy
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-gray-600">
+              Last updated: October 30, 2025
+            </p>
+          </div>
+
+          {/* Quick Overview */}
+          <div className="mb-12 card bg-primary-50">
+            <h2 className="mb-4 text-2xl font-bold text-gray-900">Our Commitment to Privacy</h2>
+            <p className="text-gray-700 leading-relaxed">
+              At LaserCalc Pro, we take your privacy seriously. This Privacy Policy explains how we collect, 
+              use, disclose, and safeguard your information when you visit our website. We are committed to 
+              ensuring that your privacy is protected and that your data is handled responsibly.
+            </p>
+          </div>
+
+          {/* Main Content */}
+          <div className="card prose prose-lg max-w-none">
+            <h2 className="flex items-center gap-3 text-2xl font-bold text-gray-900">
+              <Database className="h-6 w-6 text-primary-600" />
+              Information We Collect
+            </h2>
+            
+            <h3>Personal Information</h3>
+            <p>
+              We may collect personal information that you voluntarily provide to us when you:
+            </p>
+            <ul>
+              <li>Subscribe to our newsletter or email updates</li>
+              <li>Fill out contact forms</li>
+              <li>Request customer support</li>
+              <li>Participate in surveys or promotions</li>
+            </ul>
+            <p>
+              This information may include: name, email address, phone number, and company information.
             </p>
 
-            <div className="prose max-w-none">
-              <h2 className="mb-4 text-2xl font-bold text-gray-900">1. Introduction</h2>
-              <p className="mb-6 text-gray-700">
-                LaserCalc Pro ("we," "our," or "us") respects your privacy and is committed to protecting your personal data. 
-                This privacy policy explains how we collect, use, disclose, and safeguard your information when you visit 
-                our website lasercalcpro.com.
-              </p>
+            <h3>Automatically Collected Information</h3>
+            <p>
+              When you visit our website, we may automatically collect certain information about your device, including:
+            </p>
+            <ul>
+              <li>IP address and browser type</li>
+              <li>Operating system and device information</li>
+              <li>Pages visited and time spent on pages</li>
+              <li>Referring website addresses</li>
+              <li>Calculation inputs and results (anonymized)</li>
+            </ul>
 
-              <h2 className="mb-4 text-2xl font-bold text-gray-900">2. Information We Collect</h2>
-              <h3 className="mb-2 text-xl font-semibold text-gray-900">2.1 Information You Provide</h3>
-              <ul className="mb-4 list-disc space-y-2 pl-6 text-gray-700">
-                <li>Email address (when subscribing to our newsletter)</li>
-                <li>Name and contact information (when submitting contact forms)</li>
-                <li>Calculator input data (temporarily stored for generating reports)</li>
-              </ul>
+            <h3>Cookies and Tracking Technologies</h3>
+            <p>
+              We use cookies and similar tracking technologies to enhance your experience, including:
+            </p>
+            <ul>
+              <li><strong>Essential Cookies:</strong> Required for the website to function properly</li>
+              <li><strong>Analytics Cookies:</strong> Help us understand how visitors use our site (Google Analytics)</li>
+              <li><strong>Advertising Cookies:</strong> Used to deliver relevant advertisements (Google AdSense)</li>
+            </ul>
 
-              <h3 className="mb-2 text-xl font-semibold text-gray-900">2.2 Automatically Collected Information</h3>
-              <ul className="mb-6 list-disc space-y-2 pl-6 text-gray-700">
-                <li>IP address and geographic location (for analytics and security)</li>
-                <li>Browser type and version</li>
-                <li>Device information</li>
-                <li>Pages visited and time spent on pages</li>
-                <li>Referring website addresses</li>
-                <li>Cookie data (see Cookie Policy below)</li>
-              </ul>
+            <hr className="my-8 border-gray-200" />
 
-              <h2 className="mb-4 text-2xl font-bold text-gray-900">3. How We Use Your Information</h2>
-              <p className="mb-2 text-gray-700">We use the collected information for:</p>
-              <ul className="mb-6 list-disc space-y-2 pl-6 text-gray-700">
-                <li>Providing and improving our calculator services</li>
-                <li>Sending newsletters and updates (with your consent)</li>
-                <li>Responding to your inquiries and support requests</li>
-                <li>Analyzing website usage and improving user experience</li>
-                <li>Detecting and preventing fraud and abuse</li>
-                <li>Complying with legal obligations</li>
-              </ul>
+            <h2 className="flex items-center gap-3 text-2xl font-bold text-gray-900">
+              <Eye className="h-6 w-6 text-primary-600" />
+              How We Use Your Information
+            </h2>
+            <p>We use the collected information for the following purposes:</p>
+            <ul>
+              <li><strong>Provide Services:</strong> To deliver our calculation tools and generate reports</li>
+              <li><strong>Communication:</strong> To respond to inquiries and send updates you've subscribed to</li>
+              <li><strong>Analytics:</strong> To analyze usage patterns and improve our services</li>
+              <li><strong>Marketing:</strong> To send newsletters and promotional materials (with your consent)</li>
+              <li><strong>Security:</strong> To protect against fraud, abuse, and unauthorized access</li>
+              <li><strong>Legal Compliance:</strong> To comply with applicable laws and regulations</li>
+            </ul>
 
-              <h2 className="mb-4 text-2xl font-bold text-gray-900">4. Cookies and Tracking Technologies</h2>
-              <p className="mb-2 text-gray-700">We use cookies and similar tracking technologies to:</p>
-              <ul className="mb-4 list-disc space-y-2 pl-6 text-gray-700">
-                <li>Remember your preferences and settings</li>
-                <li>Analyze website traffic with Google Analytics</li>
-                <li>Display relevant advertisements with Google AdSense</li>
-                <li>Track calculation history (stored locally in your browser)</li>
-              </ul>
-              <p className="mb-6 text-gray-700">
-                You can control cookies through your browser settings. However, disabling cookies may limit some 
-                functionality of our website.
-              </p>
+            <hr className="my-8 border-gray-200" />
 
-              <h2 className="mb-4 text-2xl font-bold text-gray-900">5. Data Sharing and Disclosure</h2>
-              <p className="mb-2 text-gray-700">We do not sell your personal data. We may share information with:</p>
-              <ul className="mb-6 list-disc space-y-2 pl-6 text-gray-700">
-                <li><strong>Service Providers:</strong> Cloudflare (hosting), Google Analytics (analytics), Google AdSense (advertising)</li>
-                <li><strong>Legal Requirements:</strong> When required by law or to protect our rights</li>
-                <li><strong>Business Transfers:</strong> In connection with mergers, acquisitions, or asset sales</li>
-              </ul>
+            <h2 className="flex items-center gap-3 text-2xl font-bold text-gray-900">
+              <Lock className="h-6 w-6 text-primary-600" />
+              Data Security
+            </h2>
+            <p>
+              We implement appropriate technical and organizational security measures to protect your personal 
+              information against unauthorized access, alteration, disclosure, or destruction. These measures include:
+            </p>
+            <ul>
+              <li>SSL/TLS encryption for data transmission</li>
+              <li>Secure database storage with access controls</li>
+              <li>Regular security audits and updates</li>
+              <li>Employee training on data protection</li>
+              <li>Limited access to personal information on a need-to-know basis</li>
+            </ul>
+            <p className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <strong>Important:</strong> While we strive to protect your personal information, no method of 
+              transmission over the internet or electronic storage is 100% secure. We cannot guarantee absolute security.
+            </p>
 
-              <h2 className="mb-4 text-2xl font-bold text-gray-900">6. Data Security</h2>
-              <p className="mb-6 text-gray-700">
-                We implement appropriate technical and organizational measures to protect your personal data, including 
-                SSL encryption, secure servers, and access controls. However, no method of transmission over the internet 
-                is 100% secure.
-              </p>
+            <hr className="my-8 border-gray-200" />
 
-              <h2 className="mb-4 text-2xl font-bold text-gray-900">7. Your Rights (GDPR & CCPA)</h2>
-              <p className="mb-2 text-gray-700">You have the right to:</p>
-              <ul className="mb-6 list-disc space-y-2 pl-6 text-gray-700">
-                <li>Access your personal data</li>
-                <li>Correct inaccurate data</li>
-                <li>Request deletion of your data</li>
-                <li>Object to data processing</li>
-                <li>Request data portability</li>
-                <li>Withdraw consent at any time</li>
-                <li>Opt-out of marketing communications</li>
-              </ul>
-              <p className="mb-6 text-gray-700">
-                To exercise these rights, contact us at <a href="mailto:privacy@lasercalcpro.com" className="text-primary-600 hover:underline">privacy@lasercalcpro.com</a>.
-              </p>
+            <h2>Data Sharing and Disclosure</h2>
+            <p>We do not sell your personal information. We may share your information with:</p>
+            <ul>
+              <li><strong>Service Providers:</strong> Third-party companies that help us operate our website (e.g., hosting, analytics)</li>
+              <li><strong>Advertising Partners:</strong> Google AdSense for displaying relevant advertisements</li>
+              <li><strong>Legal Authorities:</strong> When required by law or to protect our rights and safety</li>
+              <li><strong>Business Transfers:</strong> In connection with a merger, acquisition, or sale of assets</li>
+            </ul>
 
-              <h2 className="mb-4 text-2xl font-bold text-gray-900">8. Data Retention</h2>
-              <p className="mb-6 text-gray-700">
-                We retain personal data only as long as necessary for the purposes outlined in this policy or as required 
-                by law. Calculator data is retained for up to 12 months, and subscriber data is kept until you unsubscribe.
-              </p>
+            <h3>Third-Party Services</h3>
+            <p>We use the following third-party services:</p>
+            <ul>
+              <li><strong>Google Analytics:</strong> For website analytics - <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline">Privacy Policy</a></li>
+              <li><strong>Google AdSense:</strong> For displaying advertisements - <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline">Ad Policy</a></li>
+              <li><strong>Cloudflare:</strong> For website hosting and security - <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline">Privacy Policy</a></li>
+            </ul>
 
-              <h2 className="mb-4 text-2xl font-bold text-gray-900">9. Children's Privacy</h2>
-              <p className="mb-6 text-gray-700">
-                Our website is not intended for children under 16. We do not knowingly collect personal data from children. 
-                If you believe we have collected data from a child, please contact us immediately.
-              </p>
+            <hr className="my-8 border-gray-200" />
 
-              <h2 className="mb-4 text-2xl font-bold text-gray-900">10. International Data Transfers</h2>
-              <p className="mb-6 text-gray-700">
-                Your data may be transferred to and processed in countries outside your residence. We ensure adequate 
-                safeguards are in place for such transfers, in compliance with applicable data protection laws.
-              </p>
+            <h2 className="flex items-center gap-3 text-2xl font-bold text-gray-900">
+              <UserX className="h-6 w-6 text-primary-600" />
+              Your Privacy Rights
+            </h2>
+            <p>Depending on your location, you may have the following rights:</p>
+            <ul>
+              <li><strong>Access:</strong> Request a copy of the personal information we hold about you</li>
+              <li><strong>Correction:</strong> Request correction of inaccurate or incomplete information</li>
+              <li><strong>Deletion:</strong> Request deletion of your personal information</li>
+              <li><strong>Objection:</strong> Object to our processing of your personal information</li>
+              <li><strong>Data Portability:</strong> Request transfer of your data to another service</li>
+              <li><strong>Withdraw Consent:</strong> Withdraw consent for marketing communications at any time</li>
+            </ul>
+            <p>
+              To exercise these rights, please contact us at <a href="mailto:privacy@lasercalcpro.com" className="text-primary-600 hover:underline">privacy@lasercalcpro.com</a>
+            </p>
 
-              <h2 className="mb-4 text-2xl font-bold text-gray-900">11. Changes to This Policy</h2>
-              <p className="mb-6 text-gray-700">
-                We may update this privacy policy from time to time. We will notify you of significant changes by posting 
-                the new policy on this page with an updated "Last updated" date.
-              </p>
+            <hr className="my-8 border-gray-200" />
 
-              <h2 className="mb-4 text-2xl font-bold text-gray-900">12. Contact Us</h2>
-              <p className="mb-2 text-gray-700">
-                If you have questions about this privacy policy or our data practices, contact us at:
-              </p>
-              <ul className="list-none space-y-1 text-gray-700">
-                <li>Email: <a href="mailto:privacy@lasercalcpro.com" className="text-primary-600 hover:underline">privacy@lasercalcpro.com</a></li>
-                <li>Website: <a href="https://lasercalcpro.com/contact" className="text-primary-600 hover:underline">lasercalcpro.com/contact</a></li>
-              </ul>
+            <h2>Data Retention</h2>
+            <p>
+              We retain your personal information only for as long as necessary to fulfill the purposes outlined 
+              in this Privacy Policy, unless a longer retention period is required by law. Calculation history 
+              is anonymized and may be retained for analytics purposes.
+            </p>
+
+            <hr className="my-8 border-gray-200" />
+
+            <h2>Children's Privacy</h2>
+            <p>
+              Our services are not directed to individuals under the age of 18. We do not knowingly collect 
+              personal information from children. If you become aware that a child has provided us with personal 
+              information, please contact us immediately.
+            </p>
+
+            <hr className="my-8 border-gray-200" />
+
+            <h2>International Data Transfers</h2>
+            <p>
+              Your information may be transferred to and processed in countries other than your own. We ensure 
+              that appropriate safeguards are in place to protect your information in accordance with this Privacy Policy.
+            </p>
+
+            <hr className="my-8 border-gray-200" />
+
+            <h2>Changes to This Policy</h2>
+            <p>
+              We may update this Privacy Policy from time to time. We will notify you of any changes by posting 
+              the new Privacy Policy on this page and updating the "Last updated" date. We encourage you to 
+              review this Privacy Policy periodically.
+            </p>
+
+            <hr className="my-8 border-gray-200" />
+
+            <h2 className="flex items-center gap-3 text-2xl font-bold text-gray-900">
+              <Mail className="h-6 w-6 text-primary-600" />
+              Contact Us
+            </h2>
+            <p>
+              If you have any questions or concerns about this Privacy Policy or our data practices, please contact us:
+            </p>
+            <div className="bg-gray-50 rounded-lg p-6 not-prose">
+              <p className="mb-2"><strong>Email:</strong> <a href="mailto:privacy@lasercalcpro.com" className="text-primary-600 hover:underline">privacy@lasercalcpro.com</a></p>
+              <p className="mb-2"><strong>Mail:</strong> LaserCalc Pro, 123 Manufacturing Street, Industrial Park, CA 94000, United States</p>
+              <p><strong>Phone:</strong> +1 (555) 012-3456</p>
             </div>
+          </div>
+
+          {/* Additional Resources */}
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            <a href="/terms" className="card-hover group">
+              <h3 className="mb-2 text-lg font-semibold text-gray-900 group-hover:text-primary-600">
+                Terms of Service →
+              </h3>
+              <p className="text-gray-600">Read our terms and conditions for using LaserCalc Pro</p>
+            </a>
+            
+            <a href="/disclaimer" className="card-hover group">
+              <h3 className="mb-2 text-lg font-semibold text-gray-900 group-hover:text-primary-600">
+                Disclaimer →
+              </h3>
+              <p className="text-gray-600">Important information about calculation accuracy and liability</p>
+            </a>
           </div>
         </div>
       </main>
@@ -143,12 +232,3 @@ export default function PrivacyPage() {
     </>
   );
 }
-
-
-
-
-
-
-
-
-
