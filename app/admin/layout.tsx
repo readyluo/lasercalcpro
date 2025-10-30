@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { AdminLayout } from '@/components/admin/AdminLayout';
+import { AdminLayoutWrapper } from './admin-layout-wrapper';
 
 export const metadata: Metadata = {
   title: '管理后台 - LaserCalc Pro',
@@ -12,8 +12,6 @@ export default function RootAdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Note: Login page should NOT use this layout (it has its own full page layout)
-  // The AdminLayout component handles auth checks and redirects
-  return <AdminLayout>{children}</AdminLayout>;
+  return <AdminLayoutWrapper>{children}</AdminLayoutWrapper>;
 }
 
