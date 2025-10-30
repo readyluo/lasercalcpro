@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSubscriber } from '@/lib/db/subscribers';
+import { sendSubscriptionConfirmationEmail } from '@/lib/email/mailer';
 import { z } from 'zod';
 
-export const runtime = 'edge';
+// Use Node.js runtime for email sending
+export const runtime = 'nodejs';
 
 const subscribeSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -53,8 +55,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // In production, send confirmation email here
-    // For now, we'll return the token (in production, don't expose this)
+    // Send confirmation email
+    if (result.token) {
+      try {
+        const emailSent = await sendSubscriptionConfirmationEmail(
+          email,
+          null, // name is optional
+          result.token
+        );
+
+        if (!emailSent) {
+          console.warn('Confirmation email failed to send, but subscription created');
+        }
+      } catch (emailError) {
+        console.error('Email sending error:', emailError);
+        // Continue anyway - subscription is created
+      }
+    }
+
+    // In development, also log the confirmation URL
     if (process.env.NODE_ENV === 'development' && result.token) {
       console.log('Confirmation token:', result.token);
       console.log('Confirmation URL:', `${process.env.NEXT_PUBLIC_SITE_URL}/api/subscribe/confirm?token=${result.token}`);

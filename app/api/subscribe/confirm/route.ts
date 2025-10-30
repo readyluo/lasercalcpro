@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { confirmSubscription, getSubscriberByToken } from '@/lib/db/subscribers';
+import { sendWelcomeEmail } from '@/lib/email/mailer';
 
-export const runtime = 'edge';
+// Use Node.js runtime for email sending
+export const runtime = 'nodejs';
 
 /**
  * GET /api/subscribe/confirm?token=xxx - Confirm subscription
@@ -42,6 +44,14 @@ export async function GET(request: NextRequest) {
         { error: 'Failed to confirm subscription' },
         { status: 500 }
       );
+    }
+
+    // Send welcome email
+    try {
+      await sendWelcomeEmail(subscriber.email, subscriber.name);
+    } catch (emailError) {
+      console.error('Failed to send welcome email:', emailError);
+      // Continue anyway - subscription is confirmed
     }
 
     // Redirect to success page
