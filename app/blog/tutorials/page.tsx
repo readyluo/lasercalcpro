@@ -1,3 +1,4 @@
+import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { BookOpen, Clock, Award, Download, Video, FileText, CheckCircle2, Calculator } from 'lucide-react';
