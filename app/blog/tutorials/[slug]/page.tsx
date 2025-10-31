@@ -1304,7 +1304,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               </table>
             </div>
             <ul className="ml-5 list-disc space-y-2 text-gray-700">
-              <li><strong>Grouping by size:</strong> Nest similar-sized parts together. Large parts (>500mm) separate from small parts (&lt;100mm) to avoid wasted space.</li>
+              <li><strong>Grouping by size:</strong> Nest similar-sized parts together. Large parts (&gt;500mm) separate from small parts (&lt;100mm) to avoid wasted space.</li>
               <li><strong>Grouping by shape:</strong> Rectangular parts nest efficiently together. Complex organic shapes need more trial-and-error or software optimization.</li>
               <li><strong>Pierce optimization:</strong> Group parts to minimize total pierces. Shared edges or common line cutting can eliminate pierces between adjacent parts.</li>
               <li><strong>Lead-in placement:</strong> Position lead-ins toward scrap areas, not into adjacent parts. Use tangent or perpendicular lead-ins (0.5-2mm) to minimize dross.</li>
@@ -1475,7 +1475,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 <div><strong>Total annual benefit:</strong> $9,000/year</div>
                 <div><strong>Software cost:</strong> $10,000/year (advanced CAM)</div>
                 <div><strong>Payback period:</strong> 13 months</div>
-                <div className="pt-2 mt-2 border-t border-blue-300"><strong>Decision:</strong> Invest if material spend >$30K/year or >150 jobs/year</div>
+                <div className="pt-2 mt-2 border-t border-blue-300"><strong>Decision:</strong> Invest if material spend &gt;$30K/year or &gt;150 jobs/year</div>
               </div>
             </div>
           </div>
@@ -1584,7 +1584,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               <div className="rounded-lg border border-gray-200 p-3">
                 <h5 className="mb-1 font-semibold text-gray-900">❌ Parts Too Close to Sheet Edge</h5>
                 <p className="text-sm text-gray-700"><strong>Problem:</strong> Edge warping, clamp interference, parts fall off table.</p>
-                <p className="text-sm text-green-700"><strong>Solution:</strong> Maintain 8-12mm minimum edge margin. Increase to 15mm for thick materials (>10mm).</p>
+                <p className="text-sm text-green-700"><strong>Solution:</strong> Maintain 8-12mm minimum edge margin. Increase to 15mm for thick materials (&gt;10mm).</p>
               </div>
               <div className="rounded-lg border border-gray-200 p-3">
                 <h5 className="mb-1 font-semibold text-gray-900">❌ Insufficient Part-to-Part Spacing</h5>
@@ -2430,7 +2430,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
   },
 };
 
-export default function TutorialPage({ params }: { params: { slug: string } }): JSX.Element {
+export default function TutorialPage({ params }: { params: { slug: string } }) {
   const tutorial = TUTORIALS[params.slug];
   if (!tutorial) return notFound();
 
@@ -2442,50 +2442,51 @@ export default function TutorialPage({ params }: { params: { slug: string } }): 
       <main className="bg-gray-50 py-16">
         <SchemaMarkup schema={howTo} />
         <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-3xl">
-          <Link href="/blog/tutorials" className="text-sm font-semibold text-primary-600">← Back to tutorials</Link>
-          <h1 className="mt-3 text-4xl font-bold text-gray-900">{tutorial.title}</h1>
-          <p className="mt-2 text-gray-600">{tutorial.description}</p>
-          <div className="mt-3 flex items-center gap-3 text-sm text-gray-500">
-            <span className="rounded-full bg-gray-100 px-3 py-1 font-medium text-gray-700">{tutorial.level}</span>
-            <span>Duration: {tutorial.duration}</span>
-          </div>
+          <div className="mx-auto max-w-3xl">
+            <Link href="/blog/tutorials" className="text-sm font-semibold text-primary-600">← Back to tutorials</Link>
+            <h1 className="mt-3 text-4xl font-bold text-gray-900">{tutorial.title}</h1>
+            <p className="mt-2 text-gray-600">{tutorial.description}</p>
+            <div className="mt-3 flex items-center gap-3 text-sm text-gray-500">
+              <span className="rounded-full bg-gray-100 px-3 py-1 font-medium text-gray-700">{tutorial.level}</span>
+              <span>Duration: {tutorial.duration}</span>
+            </div>
 
-          <div className="prose prose-gray mt-8 max-w-none">
-            {tutorial.sections.map(section => (
-              <section key={section.heading} className="mb-8">
-                <h2 className="mb-3 text-2xl font-semibold text-gray-900">{section.heading}</h2>
-                <div>{section.content}</div>
-              </section>
-            ))}
-          </div>
-
-          <div className="mt-10 rounded-2xl border bg-white p-6">
-            <h3 className="mb-3 text-lg font-semibold text-gray-900">Downloadables</h3>
-            <ul className="ml-5 list-disc space-y-2 text-sm text-gray-700">
-              <li>
-                <Link href="/calculators/laser-cutting" className="text-primary-600 hover:underline">
-                  Open Laser Cutting Calculator
-                </Link>
-              </li>
-              <li>
-                <Link href="/calculators/cost-center/hourly-rate" className="text-primary-600 hover:underline">
-                  Open Hourly Rate Builder
-                </Link>
-              </li>
-              <li>
-                <Link href="/calculators/cost-center/quotation-margin" className="text-primary-600 hover:underline">
-                  Open Quotation Margin Simulator
-                </Link>
-              </li>
-              {tutorial.downloads?.map(d => (
-                <li key={d.href}>
-                  <a href={d.href} className="text-primary-600 hover:underline" download>
-                    {d.label}
-                  </a>
-                </li>
+            <div className="prose prose-gray mt-8 max-w-none">
+              {tutorial.sections.map(section => (
+                <section key={section.heading} className="mb-8">
+                  <h2 className="mb-3 text-2xl font-semibold text-gray-900">{section.heading}</h2>
+                  <div>{section.content}</div>
+                </section>
               ))}
-            </ul>
+            </div>
+
+            <div className="mt-10 rounded-2xl border bg-white p-6">
+              <h3 className="mb-3 text-lg font-semibold text-gray-900">Downloadables</h3>
+              <ul className="ml-5 list-disc space-y-2 text-sm text-gray-700">
+                <li>
+                  <Link href="/calculators/laser-cutting" className="text-primary-600 hover:underline">
+                    Open Laser Cutting Calculator
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/calculators/cost-center/hourly-rate" className="text-primary-600 hover:underline">
+                    Open Hourly Rate Builder
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/calculators/cost-center/quotation-margin" className="text-primary-600 hover:underline">
+                    Open Quotation Margin Simulator
+                  </Link>
+                </li>
+                {tutorial.downloads?.map(d => (
+                  <li key={d.href}>
+                    <a href={d.href} className="text-primary-600 hover:underline" download>
+                      {d.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </main>

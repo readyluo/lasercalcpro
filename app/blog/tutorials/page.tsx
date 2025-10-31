@@ -297,46 +297,46 @@ const levelColors = {
   'Strategic': 'bg-amber-100 text-amber-800',
 };
 
-export default function TutorialsLibraryPage(): JSX.Element {
+export default function TutorialsLibraryPage() {
   return (
     <div>
       <Navigation />
       <main className="bg-gradient-to-b from-gray-50 to-white">
         {/* Header */}
         <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white">
-        <div className="container mx-auto px-4 py-16">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full mb-6">
-              <BookOpen className="h-4 w-4" />
-              <span className="text-sm font-semibold">Professional Tutorial Library</span>
-            </div>
-            <h1 className="text-5xl font-bold mb-6">
-              Manufacturing Cost Mastery Tutorials
-            </h1>
-            <p className="text-xl text-primary-100 mb-8">
-              Comprehensive, step-by-step guides with real-world examples, downloadable worksheets, Excel templates, and actionable checklists to help you master manufacturing cost calculations.
-            </p>
-            <div className="flex flex-wrap justify-center gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5" />
-                <span>Detailed Guides</span>
+          <div className="container mx-auto px-4 py-16">
+            <div className="max-w-4xl mx-auto text-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full mb-6">
+                <BookOpen className="h-4 w-4" />
+                <span className="text-sm font-semibold">Professional Tutorial Library</span>
               </div>
-              <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                <span>PDF Worksheets</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Download className="h-5 w-5" />
-                <span>Excel Templates</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5" />
-                <span>Checklists</span>
+              <h1 className="text-5xl font-bold mb-6">
+                Manufacturing Cost Mastery Tutorials
+              </h1>
+              <p className="text-xl text-primary-100 mb-8">
+                Comprehensive, step-by-step guides with real-world examples, downloadable worksheets, Excel templates, and actionable checklists to help you master manufacturing cost calculations.
+              </p>
+              <div className="flex flex-wrap justify-center gap-6 text-sm">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="h-5 w-5" />
+                  <span>Detailed Guides</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  <span>PDF Worksheets</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Download className="h-5 w-5" />
+                  <span>Excel Templates</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5" />
+                  <span>Checklists</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
       {/* Tutorial Comparison Table */}
       <div className="container mx-auto px-4 py-12">
@@ -555,6 +555,7 @@ export default function TutorialsLibraryPage(): JSX.Element {
             </div>
           </div>
         </div>
+      </div>
       </main>
       <Footer />
     </div>
