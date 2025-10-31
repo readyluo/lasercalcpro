@@ -1,23 +1,29 @@
 {
-  "name": "LaserCalc Pro",
-  "short_name": "LaserCalc",
-  "description": "Free, accurate cost estimation tools for laser cutting, CNC machining, and equipment ROI analysis.",
+  "name": "LaserCalc Pro - Manufacturing Cost Calculators",
+  "short_name": "LaserCalc Pro",
+  "description": "Professional cost estimation tools for laser cutting, CNC machining, and equipment ROI analysis",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
   "icons": [
     {
-      "src": "/android-chrome-192x192.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/android-chrome-512x512.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ],
   "categories": ["productivity", "business", "utilities"],

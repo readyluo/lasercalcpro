@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { Suspense } from 'react';
 import { generateMetadata } from '@/lib/seo/metadata';
 import { generateOrganizationSchema, generateWebSiteSchema } from '@/lib/seo/schema';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
@@ -41,11 +42,13 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased`}>
         <SchemaMarkup schema={organizationSchema} />
         <SchemaMarkup schema={websiteSchema} />
-        <GoogleAnalytics />
-        <AdSenseScript />
-        <PageViewTracker />
-        <WebVitals />
-        <CookieBanner />
+        <Suspense fallback={null}>
+          <GoogleAnalytics />
+          <AdSenseScript />
+          <PageViewTracker />
+          <WebVitals />
+          <CookieBanner />
+        </Suspense>
         {children}
       </body>
     </html>

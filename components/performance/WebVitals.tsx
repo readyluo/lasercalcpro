@@ -8,26 +8,40 @@ export function WebVitals() {
     if (typeof window === 'undefined') return;
 
     // Track Core Web Vitals (FID deprecated → use INP)
-    import('web-vitals').then(({ onCLS, onFCP, onINP, onLCP, onTTFB }) => {
-      onCLS((metric) => {
-        trackPerformance('CLS', metric.value);
-      });
+    import('web-vitals').then((vitalsModule) => {
+      const { onCLS, onFCP, onINP, onLCP, onTTFB } = vitalsModule;
+      
+      if (typeof onCLS === 'function') {
+        onCLS((metric) => {
+          trackPerformance('CLS', metric.value);
+        });
+      }
 
-      onFCP((metric) => {
-        trackPerformance('FCP', metric.value);
-      });
+      if (typeof onFCP === 'function') {
+        onFCP((metric) => {
+          trackPerformance('FCP', metric.value);
+        });
+      }
 
-      onINP((metric) => {
-        trackPerformance('INP', metric.value);
-      });
+      if (typeof onINP === 'function') {
+        onINP((metric) => {
+          trackPerformance('INP', metric.value);
+        });
+      }
 
-      onLCP((metric) => {
-        trackPerformance('LCP', metric.value);
-      });
+      if (typeof onLCP === 'function') {
+        onLCP((metric) => {
+          trackPerformance('LCP', metric.value);
+        });
+      }
 
-      onTTFB((metric) => {
-        trackPerformance('TTFB', metric.value);
-      });
+      if (typeof onTTFB === 'function') {
+        onTTFB((metric) => {
+          trackPerformance('TTFB', metric.value);
+        });
+      }
+    }).catch((error) => {
+      console.error('Failed to load web-vitals:', error);
     });
   }, []);
 
