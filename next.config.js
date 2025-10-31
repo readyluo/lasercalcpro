@@ -4,12 +4,12 @@ const nextConfig = {
   reactStrictMode: true,
 
   // 编译器配置
-  compiler: {
-    // 生产环境移除 console
-    removeConsole: process.env.NODE_ENV === 'production' ? {
-      exclude: ['error', 'warn'],
-    } : false,
-  },
+  // compiler: {
+  //   // 生产环境移除 console
+  //   removeConsole: process.env.NODE_ENV === 'production' ? {
+  //     exclude: ['error', 'warn'],
+  //   } : false,
+  // },
 
   // 不设置 output，保留默认值以支持动态功能
   // Cloudflare Pages 通过 @cloudflare/next-on-pages 支持 SSR
@@ -52,13 +52,13 @@ const nextConfig = {
   // TypeScript 配置
   typescript: {
     // 生产构建时暂时忽略类型错误（部署后可以修复）
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
 
   // ESLint 配置
   eslint: {
     // 生产构建时暂时忽略 lint 错误（部署后可以修复）
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
 
   // 页面扩展名
