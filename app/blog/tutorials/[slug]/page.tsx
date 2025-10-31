@@ -305,39 +305,601 @@ const TUTORIALS: Record<string, TutorialConfig> = {
     level: 'Advanced',
     sections: [
       {
-        heading: '1) Identify fixed vs variable time',
+        heading: '1) Understanding Fixed vs Variable Costs',
         content: (
-          <ul className="ml-5 list-disc space-y-2 text-gray-700">
-            <li>Setup time (fixtures, program load) is fixed; amortize across batch size.</li>
-            <li>Spindle time, tool changes, deburr are variable per part.</li>
-          </ul>
+          <>
+            <p className="mb-3 text-gray-700">
+              Accurate CNC pricing requires distinguishing between fixed costs (amortized across batch size) and variable costs (incurred per part).
+            </p>
+            <div className="mb-4 rounded-lg bg-blue-50 p-4">
+              <h4 className="mb-2 font-semibold text-blue-900">Fixed Costs (One-Time Setup)</h4>
+              <ul className="ml-5 list-disc space-y-1 text-sm text-blue-800">
+                <li><strong>Fixture & workholding setup:</strong> 15-45 minutes depending on complexity</li>
+                <li><strong>Program loading & verification:</strong> 10-20 minutes for CAM setup and toolpath validation</li>
+                <li><strong>Tool setup & presetting:</strong> 5-15 minutes per tool (offset measurement, runout check)</li>
+                <li><strong>First article inspection:</strong> 10-30 minutes to verify dimensions and surface finish</li>
+                <li><strong>Machine warm-up:</strong> 5-10 minutes for thermal stability on precision work</li>
+              </ul>
+            </div>
+            <div className="mb-4 rounded-lg bg-green-50 p-4">
+              <h4 className="mb-2 font-semibold text-green-900">Variable Costs (Per Part)</h4>
+              <ul className="ml-5 list-disc space-y-1 text-sm text-green-800">
+                <li><strong>Spindle time:</strong> Actual machining time per operation (roughing, finishing, drilling)</li>
+                <li><strong>Tool changes:</strong> 3-8 seconds per tool change × number of operations</li>
+                <li><strong>Tooling wear:</strong> $0.50-$15 per part depending on material hardness and tool life</li>
+                <li><strong>Deburring & cleaning:</strong> 2-10 minutes manual work per part</li>
+                <li><strong>Material cost:</strong> Stock size × material rate with 10-20% waste allowance</li>
+                <li><strong>Secondary operations:</strong> Tapping, heat treatment, surface finishing if required</li>
+              </ul>
+            </div>
+            <div className="mb-4 rounded-lg bg-purple-50 p-4">
+              <h4 className="mb-2 font-semibold text-purple-900">Cost Formula</h4>
+              <div className="space-y-2 text-sm text-purple-800">
+                <div><strong>Setup Cost per Part</strong> = Total Setup Time ÷ Batch Quantity</div>
+                <div><strong>Variable Cost per Part</strong> = (Cycle Time + Tool Changes) × Machine Rate + Tooling Wear + Material</div>
+                <div><strong>Total Unit Cost</strong> = Setup Cost per Part + Variable Cost per Part</div>
+                <div><strong>Quote Price</strong> = Total Unit Cost × (1 + Target Margin%)</div>
+              </div>
+            </div>
+          </>
         ),
       },
       {
-        heading: '2) Choose batch sizes and compute unit cost',
+        heading: '2) Setup Cost Amortization Across Batch Sizes',
         content: (
-          <ul className="ml-5 list-disc space-y-2 text-gray-700">
-            <li>Model quantities (1, 10, 50, 200) and distribute setup time accordingly.</li>
-            <li>Add tooling wear per part and machine hourly rate.</li>
-          </ul>
+          <>
+            <p className="mb-3 text-gray-700">
+              The dramatic cost reduction from batch manufacturing comes from spreading fixed setup costs across more units.
+            </p>
+            <div className="mb-4 overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Batch Quantity</th>
+                    <th className="px-3 py-2 text-right border">Setup Cost per Part</th>
+                    <th className="px-3 py-2 text-right border">Variable Cost</th>
+                    <th className="px-3 py-2 text-right border">Total Unit Cost</th>
+                    <th className="px-3 py-2 text-right border">Setup % of Total</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">1 piece</td>
+                    <td className="px-3 py-2 text-right border">$300.00</td>
+                    <td className="px-3 py-2 text-right border">$15.00</td>
+                    <td className="px-3 py-2 text-right border font-semibold">$315.00</td>
+                    <td className="px-3 py-2 text-right border text-red-700">95.2%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">10 pieces</td>
+                    <td className="px-3 py-2 text-right border">$30.00</td>
+                    <td className="px-3 py-2 text-right border">$15.00</td>
+                    <td className="px-3 py-2 text-right border font-semibold">$45.00</td>
+                    <td className="px-3 py-2 text-right border text-orange-700">66.7%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">50 pieces</td>
+                    <td className="px-3 py-2 text-right border">$6.00</td>
+                    <td className="px-3 py-2 text-right border">$15.00</td>
+                    <td className="px-3 py-2 text-right border font-semibold">$21.00</td>
+                    <td className="px-3 py-2 text-right border text-yellow-700">28.6%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">100 pieces</td>
+                    <td className="px-3 py-2 text-right border">$3.00</td>
+                    <td className="px-3 py-2 text-right border">$15.00</td>
+                    <td className="px-3 py-2 text-right border font-semibold">$18.00</td>
+                    <td className="px-3 py-2 text-right border text-green-700">16.7%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">500 pieces</td>
+                    <td className="px-3 py-2 text-right border">$0.60</td>
+                    <td className="px-3 py-2 text-right border">$15.00</td>
+                    <td className="px-3 py-2 text-right border font-semibold">$15.60</td>
+                    <td className="px-3 py-2 text-right border text-green-700">3.8%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">1,000 pieces</td>
+                    <td className="px-3 py-2 text-right border">$0.30</td>
+                    <td className="px-3 py-2 text-right border">$15.00</td>
+                    <td className="px-3 py-2 text-right border font-semibold">$15.30</td>
+                    <td className="px-3 py-2 text-right border text-green-700">2.0%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="rounded-lg bg-yellow-50 p-4">
+              <h4 className="mb-2 font-semibold text-yellow-900">Key Insights from the Table</h4>
+              <ul className="ml-5 list-disc space-y-1 text-sm text-yellow-800">
+                <li><strong>Dramatic drop from 1→10 units:</strong> Cost falls 86% ($315 → $45) as setup spreads across 10 parts</li>
+                <li><strong>10→100 pieces:</strong> 60% reduction ($45 → $18) as setup becomes less dominant</li>
+                <li><strong>100+ pieces:</strong> Cost stabilizes near variable cost floor ($15.30 at 1,000 units)</li>
+                <li><strong>Break-even analysis:</strong> At $300 setup + $15 variable, profitable pricing requires minimum 10-20 pieces for most shops</li>
+              </ul>
+            </div>
+          </>
         ),
       },
       {
-        heading: '3) Publish tiered prices',
+        heading: '3) Tooling Life Cycle & Wear Cost Calculation',
         content: (
-          <ul className="ml-5 list-disc space-y-2 text-gray-700">
-            <li>Target margin 25–35% for custom work; relax for strategic accounts.</li>
-            <li>Export a table with Qty, Unit Price, Margin for the quote.</li>
-          </ul>
+          <>
+            <p className="mb-3 text-gray-700">
+              Tooling costs vary dramatically by material hardness, cutting parameters, and tool quality. Accurate tooling cost per part is critical for sustainable pricing.
+            </p>
+            <div className="mb-4 overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Material Type</th>
+                    <th className="px-3 py-2 text-left border">Tool Type</th>
+                    <th className="px-3 py-2 text-right border">Tool Cost</th>
+                    <th className="px-3 py-2 text-right border">Tool Life (parts)</th>
+                    <th className="px-3 py-2 text-right border">Cost per Part</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border">Aluminum 6061</td>
+                    <td className="px-3 py-2 border">Carbide end mill</td>
+                    <td className="px-3 py-2 text-right border">$45</td>
+                    <td className="px-3 py-2 text-right border">500-800</td>
+                    <td className="px-3 py-2 text-right border font-medium text-green-700">$0.06-$0.09</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Mild Steel 1018</td>
+                    <td className="px-3 py-2 border">Coated carbide</td>
+                    <td className="px-3 py-2 text-right border">$65</td>
+                    <td className="px-3 py-2 text-right border">200-400</td>
+                    <td className="px-3 py-2 text-right border font-medium text-yellow-700">$0.16-$0.33</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Stainless 304</td>
+                    <td className="px-3 py-2 border">Coated carbide</td>
+                    <td className="px-3 py-2 text-right border">$75</td>
+                    <td className="px-3 py-2 text-right border">100-200</td>
+                    <td className="px-3 py-2 text-right border font-medium text-orange-700">$0.38-$0.75</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Titanium Ti-6Al-4V</td>
+                    <td className="px-3 py-2 border">Premium carbide</td>
+                    <td className="px-3 py-2 text-right border">$120</td>
+                    <td className="px-3 py-2 text-right border">40-80</td>
+                    <td className="px-3 py-2 text-right border font-medium text-red-700">$1.50-$3.00</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Tool Steel D2</td>
+                    <td className="px-3 py-2 border">Premium coated</td>
+                    <td className="px-3 py-2 text-right border">$95</td>
+                    <td className="px-3 py-2 text-right border">60-120</td>
+                    <td className="px-3 py-2 text-right border font-medium text-red-700">$0.79-$1.58</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Inconel 718</td>
+                    <td className="px-3 py-2 border">Ceramic insert</td>
+                    <td className="px-3 py-2 text-right border">$180</td>
+                    <td className="px-3 py-2 text-right border">20-40</td>
+                    <td className="px-3 py-2 text-right border font-medium text-red-700">$4.50-$9.00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <ul className="ml-5 list-disc space-y-2 text-gray-700">
+              <li><strong>Tool life factors:</strong> Cutting speed (SFM), feed rate, depth of cut, coolant quality, and tool coating type all affect wear rate.</li>
+              <li><strong>Multi-tool operations:</strong> A complex part may use 4-8 different tools (roughing end mill, finishing mill, drills, taps). Sum wear cost for all tools.</li>
+              <li><strong>Tool reconditioning:</strong> Some tools can be resharpened 2-4 times at 30-40% of new cost, reducing effective per-part cost.</li>
+              <li><strong>Insert vs solid tools:</strong> Indexable inserts have lower per-edge cost but higher initial investment. Analyze based on production volume.</li>
+              <li><strong>Track tool life:</strong> Use CNC control software to log tool usage and predict replacement timing to avoid scrapped parts from worn tools.</li>
+            </ul>
+          </>
+        ),
+      },
+      {
+        heading: '4) Machine Utilization & Hourly Rate Optimization',
+        content: (
+          <>
+            <p className="mb-3 text-gray-700">
+              Machine hourly rate must cover equipment depreciation, maintenance, energy, and overhead while achieving target utilization rates.
+            </p>
+            <div className="mb-4 rounded-lg bg-blue-50 p-4">
+              <h4 className="mb-2 font-semibold text-blue-900">Machine Hourly Rate Components</h4>
+              <div className="space-y-2 text-sm text-blue-800">
+                <div><strong>Equipment depreciation:</strong> $150,000 machine ÷ 5 years ÷ 2,080 hours = $14.42/hr</div>
+                <div><strong>Maintenance & repairs:</strong> 8-12% of machine cost annually = $8.65/hr</div>
+                <div><strong>Energy consumption:</strong> 15-25 kW × $0.12/kWh = $1.80-$3.00/hr</div>
+                <div><strong>Tooling overhead:</strong> Average tool consumption across jobs = $4.00/hr</div>
+                <div><strong>Coolant & consumables:</strong> Filters, coolant replacement, shop supplies = $2.50/hr</div>
+                <div><strong>Facility overhead:</strong> Rent, insurance, admin allocation = $12.00/hr</div>
+                <div className="pt-2 mt-2 border-t border-blue-300"><strong>Total Machine Hour Rate:</strong> $43.37-$44.57/hr</div>
+              </div>
+            </div>
+            <div className="mb-4 overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Utilization Target</th>
+                    <th className="px-3 py-2 text-right border">Annual Hours</th>
+                    <th className="px-3 py-2 text-right border">Required Rate</th>
+                    <th className="px-3 py-2 text-left border">Scenario</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">50% (1,040 hrs)</td>
+                    <td className="px-3 py-2 text-right border">1,040</td>
+                    <td className="px-3 py-2 text-right border font-semibold text-red-700">$86.50/hr</td>
+                    <td className="px-3 py-2 border text-sm">Low utilization – need higher rate or more work</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">65% (1,352 hrs)</td>
+                    <td className="px-3 py-2 text-right border">1,352</td>
+                    <td className="px-3 py-2 text-right border font-semibold text-orange-700">$66.50/hr</td>
+                    <td className="px-3 py-2 border text-sm">Typical job shop target</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">80% (1,664 hrs)</td>
+                    <td className="px-3 py-2 text-right border">1,664</td>
+                    <td className="px-3 py-2 text-right border font-semibold text-green-700">$54.00/hr</td>
+                    <td className="px-3 py-2 border text-sm">High efficiency – competitive pricing possible</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">90% (1,872 hrs)</td>
+                    <td className="px-3 py-2 text-right border">1,872</td>
+                    <td className="px-3 py-2 text-right border font-semibold text-green-700">$48.00/hr</td>
+                    <td className="px-3 py-2 border text-sm">Production environment – maximum efficiency</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <ul className="ml-5 list-disc space-y-2 text-gray-700">
+              <li><strong>Opportunity cost:</strong> When utilization exceeds 85%, consider premium pricing for rush jobs or investing in additional capacity.</li>
+              <li><strong>Multi-shift operation:</strong> Second shift can reduce hourly rate by 30-40% through depreciation spreading, but requires labor premium (10-15%).</li>
+              <li><strong>Machine capability premium:</strong> 5-axis or high-speed machining centers can command 20-40% higher rates due to capability advantage.</li>
+              <li><strong>Benchmark rates:</strong> Industry standard CNC hourly rates range $45-$95/hr depending on region, machine type, and shop specialization.</li>
+            </ul>
+          </>
+        ),
+      },
+      {
+        heading: '5) Detailed Case Studies by Complexity',
+        content: (
+          <>
+            <p className="mb-3 text-gray-700">
+              Real-world examples showing cost breakdown and pricing strategy across different part complexities.
+            </p>
+            <div className="space-y-4">
+              <div className="rounded-lg border-l-4 border-green-500 bg-gray-50 p-4">
+                <h5 className="mb-2 font-semibold text-gray-900">📊 Case 1: Simple Mounting Bracket (Low Complexity)</h5>
+                <div className="grid gap-3 text-sm md:grid-cols-2">
+                  <div>
+                    <p><strong>Part description:</strong> L-bracket with 4 mounting holes</p>
+                    <p><strong>Material:</strong> Aluminum 6061, 10mm × 80mm × 120mm stock</p>
+                    <p><strong>Operations:</strong> Face mill, drill 4× Ø8mm, chamfer edges</p>
+                    <p><strong>Batch size:</strong> 50 pieces</p>
+                    <p><strong>Setup time:</strong> 45 minutes ($67.50 total)</p>
+                  </div>
+                  <div>
+                    <p><strong>Cycle time per part:</strong> 4.5 minutes</p>
+                    <p><strong>Material cost:</strong> $3.20 per part (stock + 15% waste)</p>
+                    <p><strong>Machine time:</strong> 4.5 min × $54/hr = $4.05</p>
+                    <p><strong>Tooling wear:</strong> $0.15 per part</p>
+                    <p><strong>Setup per part:</strong> $67.50 ÷ 50 = $1.35</p>
+                  </div>
+                </div>
+                <div className="mt-3 grid gap-2 text-sm md:grid-cols-3">
+                  <div className="rounded bg-white p-2 border">
+                    <div className="text-gray-600">Total Cost per Part</div>
+                    <div className="text-lg font-bold text-gray-900">$8.75</div>
+                  </div>
+                  <div className="rounded bg-white p-2 border">
+                    <div className="text-gray-600">Quote Price (35% margin)</div>
+                    <div className="text-lg font-bold text-green-700">$11.81</div>
+                  </div>
+                  <div className="rounded bg-white p-2 border">
+                    <div className="text-gray-600">Batch Total</div>
+                    <div className="text-lg font-bold text-primary-700">$590.50</div>
+                  </div>
+                </div>
+                <p className="mt-2 text-sm text-gray-600"><strong>Key insight:</strong> Simple geometry and soft aluminum allow fast cycle time. At 50 pieces, setup cost is only 15% of total. Profitable even at 35% margin.</p>
+              </div>
+
+              <div className="rounded-lg border-l-4 border-yellow-500 bg-gray-50 p-4">
+                <h5 className="mb-2 font-semibold text-gray-900">📊 Case 2: Precision Housing (Medium Complexity)</h5>
+                <div className="grid gap-3 text-sm md:grid-cols-2">
+                  <div>
+                    <p><strong>Part description:</strong> Electronics enclosure with internal pockets</p>
+                    <p><strong>Material:</strong> 6061-T6 aluminum, 25mm × 100mm × 150mm</p>
+                    <p><strong>Operations:</strong> 3-axis milling, roughing + finishing, 12× tapped holes M4</p>
+                    <p><strong>Batch size:</strong> 25 pieces</p>
+                    <p><strong>Setup time:</strong> 75 minutes ($90 total)</p>
+                  </div>
+                  <div>
+                    <p><strong>Cycle time per part:</strong> 28 minutes</p>
+                    <p><strong>Material cost:</strong> $18.50 per part</p>
+                    <p><strong>Machine time:</strong> 28 min × $54/hr = $25.20</p>
+                    <p><strong>Tooling wear:</strong> $1.85 per part (4 tools)</p>
+                    <p><strong>Setup per part:</strong> $90 ÷ 25 = $3.60</p>
+                  </div>
+                </div>
+                <div className="mt-3 grid gap-2 text-sm md:grid-cols-3">
+                  <div className="rounded bg-white p-2 border">
+                    <div className="text-gray-600">Total Cost per Part</div>
+                    <div className="text-lg font-bold text-gray-900">$49.15</div>
+                  </div>
+                  <div className="rounded bg-white p-2 border">
+                    <div className="text-gray-600">Quote Price (42% margin)</div>
+                    <div className="text-lg font-bold text-yellow-700">$69.79</div>
+                  </div>
+                  <div className="rounded bg-white p-2 border">
+                    <div className="text-gray-600">Batch Total</div>
+                    <div className="text-lg font-bold text-primary-700">$1,744.75</div>
+                  </div>
+                </div>
+                <p className="mt-2 text-sm text-gray-600"><strong>Key insight:</strong> Longer cycle time (28 min) and complex geometry justify 42% margin. Tapping operations add significant time. Consider volume discount at 100+ pieces.</p>
+              </div>
+
+              <div className="rounded-lg border-l-4 border-red-500 bg-gray-50 p-4">
+                <h5 className="mb-2 font-semibold text-gray-900">📊 Case 3: Precision Shaft (High Complexity)</h5>
+                <div className="grid gap-3 text-sm md:grid-cols-2">
+                  <div>
+                    <p><strong>Part description:</strong> Multi-diameter turned shaft with ±0.005mm tolerance</p>
+                    <p><strong>Material:</strong> 4140 steel, Ø50mm × 200mm bar stock, heat-treated</p>
+                    <p><strong>Operations:</strong> CNC turning, OD grinding, centerless grinding</p>
+                    <p><strong>Batch size:</strong> 10 pieces (prototype run)</p>
+                    <p><strong>Setup time:</strong> 120 minutes ($150 total + $50 grinding setup)</p>
+                  </div>
+                  <div>
+                    <p><strong>Cycle time per part:</strong> 45 min lathe + 18 min grinding</p>
+                    <p><strong>Material cost:</strong> $32.00 per part (heat-treated stock)</p>
+                    <p><strong>Machine time:</strong> 45 min × $54/hr + 18 min × $72/hr = $62.10</p>
+                    <p><strong>Tooling wear:</strong> $4.20 per part (carbide inserts + grinding wheel)</p>
+                    <p><strong>Setup per part:</strong> $200 ÷ 10 = $20.00</p>
+                  </div>
+                </div>
+                <div className="mt-3 grid gap-2 text-sm md:grid-cols-3">
+                  <div className="rounded bg-white p-2 border">
+                    <div className="text-gray-600">Total Cost per Part</div>
+                    <div className="text-lg font-bold text-gray-900">$118.30</div>
+                  </div>
+                  <div className="rounded bg-white p-2 border">
+                    <div className="text-gray-600">Quote Price (55% margin)</div>
+                    <div className="text-lg font-bold text-red-700">$183.37</div>
+                  </div>
+                  <div className="rounded bg-white p-2 border">
+                    <div className="text-gray-600">Batch Total</div>
+                    <div className="text-lg font-bold text-primary-700">$1,833.70</div>
+                  </div>
+                </div>
+                <p className="mt-2 text-sm text-gray-600"><strong>Key insight:</strong> Low volume (10 pcs) means setup is 17% of total cost. Tight tolerances require precision grinding. 55% margin justified by complexity, risk, and small batch. At 100+ pieces, cost drops to $102/part.</p>
+              </div>
+            </div>
+          </>
+        ),
+      },
+      {
+        heading: '6) Volume Pricing Strategy & Tier Structure',
+        content: (
+          <>
+            <p className="mb-3 text-gray-700">
+              Structure tiered pricing to incentivize larger orders while maintaining profitability at all volume levels.
+            </p>
+            <div className="mb-4 overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Pricing Tier</th>
+                    <th className="px-3 py-2 text-right border">Quantity Range</th>
+                    <th className="px-3 py-2 text-right border">Unit Price</th>
+                    <th className="px-3 py-2 text-right border">Discount %</th>
+                    <th className="px-3 py-2 text-right border">Target Margin</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">Prototype</td>
+                    <td className="px-3 py-2 text-right border">1-10 pieces</td>
+                    <td className="px-3 py-2 text-right border font-semibold">$45.00</td>
+                    <td className="px-3 py-2 text-right border">—</td>
+                    <td className="px-3 py-2 text-right border">45-55%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">Small Batch</td>
+                    <td className="px-3 py-2 text-right border">11-50 pieces</td>
+                    <td className="px-3 py-2 text-right border font-semibold">$36.00</td>
+                    <td className="px-3 py-2 text-right border text-green-700">20%</td>
+                    <td className="px-3 py-2 text-right border">35-42%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">Standard</td>
+                    <td className="px-3 py-2 text-right border">51-200 pieces</td>
+                    <td className="px-3 py-2 text-right border font-semibold">$28.80</td>
+                    <td className="px-3 py-2 text-right border text-green-700">36%</td>
+                    <td className="px-3 py-2 text-right border">28-35%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">Production</td>
+                    <td className="px-3 py-2 text-right border">201-1,000 pieces</td>
+                    <td className="px-3 py-2 text-right border font-semibold">$23.40</td>
+                    <td className="px-3 py-2 text-right border text-green-700">48%</td>
+                    <td className="px-3 py-2 text-right border">22-28%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">Volume</td>
+                    <td className="px-3 py-2 text-right border">1,000+ pieces</td>
+                    <td className="px-3 py-2 text-right border font-semibold">$19.80</td>
+                    <td className="px-3 py-2 text-right border text-green-700">56%</td>
+                    <td className="px-3 py-2 text-right border">18-22%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="rounded-lg bg-green-50 p-4">
+              <h4 className="mb-2 font-semibold text-green-900">Pricing Strategy Guidelines</h4>
+              <ul className="ml-5 list-disc space-y-1 text-sm text-green-800">
+                <li><strong>Prototype tier (1-10):</strong> High margin (45-55%) compensates for setup dominance and risk. Premium for engineering support and quick turnaround.</li>
+                <li><strong>Small batch (11-50):</strong> Setup cost amortizes significantly. Offer 20% discount to incentivize larger orders while maintaining healthy margin.</li>
+                <li><strong>Standard (51-200):</strong> Sweet spot for most job shops. 28-35% margin balances competitiveness with profitability.</li>
+                <li><strong>Production (201-1,000):</strong> Lower margin (22-28%) acceptable due to volume. Setup cost negligible, focus on machine efficiency.</li>
+                <li><strong>Volume (1,000+):</strong> Strategic pricing at 18-22% margin. Ensure capacity, tooling investment, and quality systems can support volume.</li>
+              </ul>
+            </div>
+            <ul className="ml-5 list-disc space-y-2 text-gray-700 mt-4">
+              <li><strong>Customer segmentation:</strong> Strategic OEM accounts may get 5-8% additional discount. New customers pay list price until proven reliability.</li>
+              <li><strong>Contract pricing:</strong> Annual agreements with volume commitments can justify 10-15% discount in exchange for predictable revenue.</li>
+              <li><strong>Rush pricing:</strong> Add 25-40% premium for 24-48 hour turnaround. Add 15% for 1-week rush on standard 2-3 week lead time.</li>
+              <li><strong>Minimum order value:</strong> Consider $500-$1,000 minimum to avoid unprofitable small orders consuming setup capacity.</li>
+            </ul>
+          </>
+        ),
+      },
+      {
+        heading: '7) Design for Manufacturability (DFM) Cost Optimization',
+        content: (
+          <>
+            <p className="mb-3 text-gray-700">
+              Smart design choices can reduce CNC costs by 30-60% without compromising functionality. Collaborate with customers early in design phase.
+            </p>
+            <div className="space-y-3">
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">✓ Standardize Material Sizes</h5>
+                <p className="text-sm text-gray-700"><strong>Impact:</strong> Reduce material cost by 15-25% and minimize waste.</p>
+                <p className="text-sm text-green-700"><strong>Best practice:</strong> Design parts to fit standard stock sizes (e.g., 25mm, 50mm, 100mm). Avoid custom bar diameters or plate thicknesses requiring special orders.</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">✓ Simplify Internal Corners</h5>
+                <p className="text-sm text-gray-700"><strong>Impact:</strong> Reduce cycle time by 10-20% and eliminate secondary operations.</p>
+                <p className="text-sm text-green-700"><strong>Best practice:</strong> Use radius corners (R3-R6mm) instead of sharp internal corners. Sharp corners require EDM or multiple tool passes, adding cost and time.</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">✓ Relax Tolerances Where Possible</h5>
+                <p className="text-sm text-gray-700"><strong>Impact:</strong> Reduce machining time by 20-40% and lower scrap rate.</p>
+                <p className="text-sm text-green-700"><strong>Best practice:</strong> Use ±0.1mm standard tolerance for non-critical features. Reserve ±0.025mm or tighter for mating surfaces only. Each tighter tolerance level adds 15-30% to cycle time.</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">✓ Minimize Deep Pockets & Thin Walls</h5>
+                <p className="text-sm text-gray-700"><strong>Impact:</strong> Reduce tool wear cost by 30-50% and improve surface finish.</p>
+                <p className="text-sm text-green-700"><strong>Best practice:</strong> Keep pocket depth ≤3× tool diameter. Maintain wall thickness ≥2× material thickness to avoid chatter and deflection. Deep pockets require multiple roughing passes and slow finishing speeds.</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">✓ Reduce Number of Setups</h5>
+                <p className="text-sm text-gray-700"><strong>Impact:</strong> Save 15-45 minutes per setup, reduce tolerance stack-up errors.</p>
+                <p className="text-sm text-green-700"><strong>Best practice:</strong> Design parts for single-side machining when possible. If multiple setups required, incorporate alignment features (dowel pins, reference faces) for repeatable positioning.</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">✓ Avoid Exotic Surface Finishes</h5>
+                <p className="text-sm text-gray-700"><strong>Impact:</strong> Eliminate $50-$200 secondary operation cost per part.</p>
+                <p className="text-sm text-green-700"><strong>Best practice:</strong> Specify "as-machined" finish (Ra 1.6-3.2 μm) unless functional requirement demands better. Polishing, lapping, and coating add significant cost and lead time.</p>
+              </div>
+            </div>
+            <div className="mt-4 rounded-lg bg-blue-50 p-4">
+              <h4 className="mb-2 font-semibold text-blue-900">DFM Cost Comparison Example</h4>
+              <div className="grid gap-3 text-sm md:grid-cols-2">
+                <div>
+                  <p className="font-semibold mb-1">Original Design (Not Optimized)</p>
+                  <ul className="ml-5 list-disc space-y-1 text-blue-800">
+                    <li>Custom material size: $22.00</li>
+                    <li>Sharp internal corners: +12 min cycle time</li>
+                    <li>±0.025mm tolerance overall: +8 min grinding</li>
+                    <li>Deep pocket (6×Ø): +15 min extra passes</li>
+                    <li>Surface grinding finish: +$45 secondary op</li>
+                  </ul>
+                  <p className="font-bold mt-2 text-red-700">Total Cost: $128.50 per part</p>
+                </div>
+                <div>
+                  <p className="font-semibold mb-1">Optimized Design (DFM Applied)</p>
+                  <ul className="ml-5 list-disc space-y-1 text-blue-800">
+                    <li>Standard material size: $16.50 (25% savings)</li>
+                    <li>R4mm radius corners: -12 min cycle time</li>
+                    <li>±0.1mm standard tolerance: -8 min grinding</li>
+                    <li>Shallow pocket (3×Ø): -15 min extra passes</li>
+                    <li>As-machined finish: $0 secondary op</li>
+                  </ul>
+                  <p className="font-bold mt-2 text-green-700">Total Cost: $67.20 per part (48% reduction!)</p>
+                </div>
+              </div>
+            </div>
+          </>
+        ),
+      },
+      {
+        heading: '8) Publishing Multi-Tier Quotes',
+        content: (
+          <>
+            <p className="mb-3 text-gray-700">
+              Professional tiered quotes increase average order value by making volume discounts transparent and encouraging larger commitments.
+            </p>
+            <div className="mb-4 rounded-lg bg-purple-50 p-4">
+              <h4 className="mb-2 font-semibold text-purple-900">Quote Presentation Best Practices</h4>
+              <ul className="ml-5 list-disc space-y-1 text-sm text-purple-800">
+                <li><strong>Show all tiers:</strong> Display 3-5 quantity tiers even if customer requested only one quantity. This educates them on volume economics.</li>
+                <li><strong>Highlight sweet spot:</strong> Use visual emphasis (bold, color) on the tier with best margin:value ratio for your shop (typically 50-200 pieces).</li>
+                <li><strong>Include cost breakdown:</strong> Show material, setup, machining, and tooling separately. Transparency builds trust and justifies pricing.</li>
+                <li><strong>Add lead time by tier:</strong> Larger quantities need longer lead time. Be explicit: 1-10 pcs = 5 days, 100+ pcs = 3 weeks.</li>
+                <li><strong>Validity period:</strong> State quote valid for 30-60 days. Material prices fluctuate, protect yourself from commodity swings.</li>
+                <li><strong>Terms & conditions:</strong> Include payment terms (50% deposit, Net 30), tolerance standards (ISO 2768-m unless specified), and revision policy.</li>
+              </ul>
+            </div>
+            <div className="rounded-lg border border-gray-300 bg-white p-4">
+              <h5 className="mb-3 font-semibold text-gray-900">Sample Quote Table</h5>
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Quantity</th>
+                    <th className="px-3 py-2 text-right border">Unit Price</th>
+                    <th className="px-3 py-2 text-right border">Extended Total</th>
+                    <th className="px-3 py-2 text-right border">Lead Time</th>
+                    <th className="px-3 py-2 text-right border">Savings vs Prototype</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border">5 pieces</td>
+                    <td className="px-3 py-2 text-right border">$45.00</td>
+                    <td className="px-3 py-2 text-right border font-medium">$225.00</td>
+                    <td className="px-3 py-2 text-right border">5 days</td>
+                    <td className="px-3 py-2 text-right border">—</td>
+                  </tr>
+                  <tr className="bg-blue-50">
+                    <td className="px-3 py-2 border font-semibold">25 pieces ⭐</td>
+                    <td className="px-3 py-2 text-right border font-semibold">$36.00</td>
+                    <td className="px-3 py-2 text-right border font-bold">$900.00</td>
+                    <td className="px-3 py-2 text-right border">10 days</td>
+                    <td className="px-3 py-2 text-right border text-green-700 font-medium">20%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">100 pieces</td>
+                    <td className="px-3 py-2 text-right border">$28.80</td>
+                    <td className="px-3 py-2 text-right border font-medium">$2,880.00</td>
+                    <td className="px-3 py-2 text-right border">3 weeks</td>
+                    <td className="px-3 py-2 text-right border text-green-700 font-medium">36%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">500 pieces</td>
+                    <td className="px-3 py-2 text-right border">$23.40</td>
+                    <td className="px-3 py-2 text-right border font-medium">$11,700.00</td>
+                    <td className="px-3 py-2 text-right border">6 weeks</td>
+                    <td className="px-3 py-2 text-right border text-green-700 font-medium">48%</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p className="mt-3 text-xs text-gray-600"><strong>Note:</strong> Prices include setup, material, machining, and standard deburring. Anodizing or special finishes quoted separately. Quote valid 45 days. Payment terms: 50% deposit, balance Net 30.</p>
+            </div>
+          </>
         ),
       },
     ],
     steps: [
-      { name: 'Separate times', text: 'Classify setup vs per-part time.' },
-      { name: 'Distribute setup', text: 'Divide setup minutes by quantity tiers.' },
-      { name: 'Add machine rate', text: 'Apply hourly rate incl. overhead.' },
-      { name: 'Compute tooling', text: 'Include wear per part for cutters.' },
-      { name: 'Set margins', text: 'Price tiers to margin targets.' },
+      { name: 'Separate costs', text: 'Classify setup (fixed) vs machining/material (variable) costs with detailed breakdown.' },
+      { name: 'Calculate setup amortization', text: 'Divide total setup cost by quantity tiers (1, 10, 50, 100, 500, 1000) to see dramatic unit cost reduction.' },
+      { name: 'Apply machine rate', text: 'Use hourly rate including depreciation, maintenance, energy, and overhead based on target utilization (65-80%).' },
+      { name: 'Compute tooling wear', text: 'Calculate per-part tool cost based on material hardness, tool life, and number of operations.' },
+      { name: 'Structure pricing tiers', text: 'Create 4-5 volume tiers with appropriate margins: 45-55% prototype, 35-42% small batch, 28-35% standard, 22-28% production.' },
+      { name: 'Optimize with DFM', text: 'Review design for cost reduction opportunities: standard materials, relaxed tolerances, simplified geometry.' },
+      { name: 'Generate professional quote', text: 'Export tiered pricing table with cost breakdown, lead times, terms, and validity period.' },
+    ],
+    downloads: [
+      { label: 'CNC Volume Pricing Calculator (Excel)', href: '/downloads/tutorials/laser-cutting-cost-calculator.csv' },
+      { label: 'Tooling Cost Reference Guide', href: '/downloads/tutorials/tooling-cost-reference.csv' },
     ],
   },
   'equipment-roi-narrative': {
