@@ -156,6 +156,11 @@ export function Footer() {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
+                <Link href="/guides" className="transition-colors hover:text-primary-500">
+                  Guides
+                </Link>
+              </li>
+              <li>
                 <Link href="/blog" className="transition-colors hover:text-primary-500">
                   {t.footer.links.blog}
                 </Link>

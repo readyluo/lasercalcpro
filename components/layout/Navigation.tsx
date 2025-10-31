@@ -187,6 +187,15 @@ export function Navigation() {
             </div>
 
             <Link
+              href="/guides"
+              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                pathname.startsWith('/guides') ? 'text-primary-600 bg-primary-50' : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
+              }`}
+            >
+              Guides
+            </Link>
+
+            <Link
               href="/blog"
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                 pathname.startsWith('/blog') ? 'text-primary-600 bg-primary-50' : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
@@ -290,6 +299,16 @@ export function Navigation() {
                   </div>
                 )}
               </div>
+
+              <Link
+                href="/guides"
+                className={`block rounded-lg px-4 py-2 font-medium ${
+                  pathname.startsWith('/guides') ? 'bg-primary-50 text-primary-600' : 'text-gray-700'
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                Guides
+              </Link>
 
               <Link
                 href="/blog"
