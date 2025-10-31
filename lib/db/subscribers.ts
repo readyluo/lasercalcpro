@@ -20,6 +20,14 @@ export interface Subscriber {
   subscribed_at: string;
   confirmed_at?: string;
   unsubscribed_at?: string;
+  preferences?: {
+    weeklyUpdates?: boolean;
+    tutorials?: boolean;
+    productNews?: boolean;
+    promotions?: boolean;
+  };
+  frequency?: string;
+  unsubscribe_reason?: string;
 }
 
 export interface SubscriberInput {
@@ -218,5 +226,35 @@ export async function unsubscribe(email: string): Promise<boolean> {
 export async function deleteSubscriber(email: string): Promise<boolean> {
   const query = 'DELETE FROM subscribers WHERE email = ?';
   return executeWrite(query, [email]);
+}
+
+/**
+ * Update subscriber preferences
+ */
+export async function updateSubscriberPreferences(
+  token: string,
+  preferences: Record<string, boolean>,
+  frequency: string
+): Promise<boolean> {
+  const query = `
+    UPDATE subscribers 
+    SET preferences = ?, frequency = ?
+    WHERE confirmation_token = ?
+  `;
+
+  return executeWrite(query, [JSON.stringify(preferences), frequency, token]);
+}
+
+/**
+ * Unsubscribe user with reason
+ */
+export async function unsubscribeUser(token: string, reason: string): Promise<boolean> {
+  const query = `
+    UPDATE subscribers 
+    SET unsubscribed_at = CURRENT_TIMESTAMP, unsubscribe_reason = ?
+    WHERE confirmation_token = ? AND unsubscribed_at IS NULL
+  `;
+
+  return executeWrite(query, [reason, token]);
 }
 

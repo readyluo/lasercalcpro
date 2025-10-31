@@ -1,22 +1,37 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Save, RefreshCw, Settings as SettingsIcon } from 'lucide-react';
+import { Settings, Save, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 
-interface Setting {
-  id: number;
-  setting_key: string;
-  setting_value: string;
-  description: string;
-  is_public: boolean;
-  updated_at: string;
+interface SiteSettings {
+  siteName: string;
+  siteUrl: string;
+  contactEmail: string;
+  ga4MeasurementId: string;
+  gscPropertyUrl: string;
+  adsenseClientId: string;
+  adsenseEnabled: boolean;
+  maintenanceMode: boolean;
+  allowRegistrations: boolean;
 }
 
-export default function SystemSettingsPage() {
-  const [settings, setSettings] = useState<Setting[]>([]);
+export default function SettingsPage() {
+  const [settings, setSettings] = useState<SiteSettings>({
+    siteName: 'LaserCalc Pro',
+    siteUrl: 'https://lasercalcpro.com',
+    contactEmail: 'contact@lasercalcpro.com',
+    ga4MeasurementId: process.env.NEXT_PUBLIC_GA_ID || '',
+    gscPropertyUrl: '',
+    adsenseClientId: process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || '',
+    adsenseEnabled: true,
+    maintenanceMode: false,
+    allowRegistrations: true,
+  });
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [changes, setChanges] = useState<Record<string, string>>({});
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchSettings();
@@ -26,221 +41,275 @@ export default function SystemSettingsPage() {
     setLoading(true);
     try {
       const response = await fetch('/api/admin/settings');
-      const data = await response.json();
-
-      if (data.success) {
-        setSettings(data.data);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.settings) {
+          setSettings(data.settings);
+        }
       }
-    } catch (error) {
-      console.error('Failed to fetch settings:', error);
+    } catch (err) {
+      console.error('Failed to fetch settings:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChange = (key: string, value: string) => {
-    setChanges({ ...changes, [key]: value });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setSettings(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
   };
 
-  const handleSave = async (key: string) => {
-    if (!(key in changes)) return;
-
+  const handleSave = async () => {
     setSaving(true);
+    setError('');
+    setSaveSuccess(false);
+
     try {
       const response = await fetch('/api/admin/settings', {
-        method: 'PUT',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          setting_key: key,
-          setting_value: changes[key],
-        }),
+        body: JSON.stringify(settings),
       });
 
       if (response.ok) {
-        // Remove from changes and refresh
-        const newChanges = { ...changes };
-        delete newChanges[key];
-        setChanges(newChanges);
-        fetchSettings();
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3000);
       } else {
-        alert('保存失败');
+        const data = await response.json();
+        setError(data.error || 'Failed to save settings');
       }
-    } catch (error) {
-      console.error('Failed to save setting:', error);
-      alert('保存失败');
+    } catch (err) {
+      setError('An error occurred while saving settings');
     } finally {
       setSaving(false);
     }
   };
 
-  const handleSaveAll = async () => {
-    setSaving(true);
-    try {
-      const promises = Object.entries(changes).map(([key, value]) =>
-        fetch('/api/admin/settings', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            setting_key: key,
-            setting_value: value,
-          }),
-        })
-      );
-
-      await Promise.all(promises);
-      setChanges({});
-      fetchSettings();
-    } catch (error) {
-      console.error('Failed to save settings:', error);
-      alert('保存失败');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const getValue = (key: string, defaultValue: string): string => {
-    return key in changes ? changes[key] : defaultValue;
-  };
-
-  const groupedSettings = settings.reduce((acc, setting) => {
-    let group = 'general';
-    if (setting.setting_key.startsWith('email_')) group = 'email';
-    else if (setting.setting_key.includes('adsense') || setting.setting_key.includes('ga_')) group = 'analytics';
-    else if (setting.setting_key.includes('maintenance')) group = 'maintenance';
-    
-    if (!acc[group]) acc[group] = [];
-    acc[group].push(setting);
-    return acc;
-  }, {} as Record<string, Setting[]>);
-
-  const groupNames: Record<string, string> = {
-    general: '常规设置',
-    email: '邮件设置',
-    analytics: '分析与广告',
-    maintenance: '维护模式',
-  };
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+      </div>
+    );
+  }
 
   return (
     <div>
       {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            系统设置
-          </h1>
-          <p className="text-gray-600">
-            配置网站系统参数
-          </p>
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-2">
+          <Settings className="h-8 w-8 text-primary-600" />
+          <h1 className="text-3xl font-bold text-gray-900">Site Settings</h1>
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={fetchSettings}
-            disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
-          >
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            刷新
-          </button>
-          {Object.keys(changes).length > 0 && (
-            <button
-              onClick={handleSaveAll}
-              disabled={saving}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
-            >
-              <Save className="h-4 w-4" />
-              保存所有更改 ({Object.keys(changes).length})
-            </button>
-          )}
-        </div>
+        <p className="text-gray-600">
+          Manage global site configuration and integrations
+        </p>
       </div>
 
-      {/* Settings Groups */}
-      {loading ? (
-        <div className="text-center py-12">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent" />
-          <p className="mt-4 text-gray-600">加载中...</p>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {Object.entries(groupedSettings).map(([groupKey, groupSettings]) => (
-            <div key={groupKey} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <SettingsIcon className="h-5 w-5 text-primary-600" />
-                {groupNames[groupKey] || groupKey}
-              </h2>
-              
-              <div className="space-y-4">
-                {groupSettings.map((setting) => (
-                  <div key={setting.id} className="border-b border-gray-200 pb-4 last:border-0 last:pb-0">
-                    <div className="flex items-start gap-4">
-                      <div className="flex-1">
-                        <label className="block text-sm font-medium text-gray-900 mb-1">
-                          {setting.description || setting.setting_key}
-                        </label>
-                        <p className="text-xs text-gray-500 mb-2">
-                          Key: {setting.setting_key}
-                        </p>
-                        {setting.setting_key.includes('message') || 
-                         setting.setting_key.includes('description') ? (
-                          <textarea
-                            value={getValue(setting.setting_key, setting.setting_value)}
-                            onChange={(e) => handleChange(setting.setting_key, e.target.value)}
-                            rows={3}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                          />
-                        ) : setting.setting_key.includes('enabled') || 
-                           setting.setting_key.includes('mode') ||
-                           setting.setting_key === 'enable_pdf_export' ? (
-                          <select
-                            value={getValue(setting.setting_key, setting.setting_value)}
-                            onChange={(e) => handleChange(setting.setting_key, e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                          >
-                            <option value="true">启用</option>
-                            <option value="false">禁用</option>
-                          </select>
-                        ) : (
-                          <input
-                            type="text"
-                            value={getValue(setting.setting_key, setting.setting_value)}
-                            onChange={(e) => handleChange(setting.setting_key, e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                          />
-                        )}
-                        <p className="text-xs text-gray-500 mt-1">
-                          最后更新: {new Date(setting.updated_at).toLocaleString('zh-CN')}
-                        </p>
-                      </div>
-                      {setting.setting_key in changes && (
-                        <button
-                          onClick={() => handleSave(setting.setting_key)}
-                          disabled={saving}
-                          className="mt-6 px-3 py-1.5 bg-primary-600 text-white text-sm rounded hover:bg-primary-700 transition-colors disabled:opacity-50"
-                        >
-                          保存
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+      {/* Success/Error Messages */}
+      {saveSuccess && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3">
+          <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+          <span className="text-green-800">Settings saved successfully!</span>
         </div>
       )}
 
-      {/* Help Info */}
-      <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-blue-900 mb-2">
-          💡 使用提示
-        </h3>
-        <ul className="text-sm text-blue-800 space-y-1">
-          <li>• 修改配置后请点击"保存"按钮使更改生效</li>
-          <li>• 维护模式将使网站对普通用户不可访问</li>
-          <li>• 重要的密钥信息请妥善保管，不要泄露</li>
-        </ul>
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3">
+          <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
+          <span className="text-red-800">{error}</span>
+        </div>
+      )}
+
+      {/* Settings Form */}
+      <div className="space-y-6">
+        {/* General Settings */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">General Settings</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Site Name
+              </label>
+              <input
+                type="text"
+                name="siteName"
+                value={settings.siteName}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Site URL
+              </label>
+              <input
+                type="url"
+                name="siteUrl"
+                value={settings.siteUrl}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Contact Email
+              </label>
+              <input
+                type="email"
+                name="contactEmail"
+                value={settings.contactEmail}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Analytics & Tracking */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Analytics & Tracking</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Google Analytics 4 Measurement ID
+              </label>
+              <input
+                type="text"
+                name="ga4MeasurementId"
+                value={settings.ga4MeasurementId}
+                onChange={handleChange}
+                placeholder="G-XXXXXXXXXX"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              />
+              <p className="mt-2 text-sm text-gray-500">
+                Find this in your Google Analytics 4 property settings. Format: G-XXXXXXXXXX
+              </p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Google Search Console Property URL
+              </label>
+              <input
+                type="url"
+                name="gscPropertyUrl"
+                value={settings.gscPropertyUrl}
+                onChange={handleChange}
+                placeholder="https://lasercalcpro.com"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              />
+              <p className="mt-2 text-sm text-gray-500">
+                Your verified property URL in Google Search Console. Used for sitemap and verification.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Monetization */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Monetization</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Google AdSense Client ID
+              </label>
+              <input
+                type="text"
+                name="adsenseClientId"
+                value={settings.adsenseClientId}
+                onChange={handleChange}
+                placeholder="ca-pub-XXXXXXXXXXXXXXXX"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              />
+              <p className="mt-2 text-sm text-gray-500">
+                Your Google AdSense publisher ID. Format: ca-pub-XXXXXXXXXXXXXXXX
+              </p>
+            </div>
+            <div>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name="adsenseEnabled"
+                  checked={settings.adsenseEnabled}
+                  onChange={handleChange}
+                  className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                />
+                <span className="text-sm font-medium text-gray-700">
+                  Enable Google AdSense
+                </span>
+              </label>
+              <p className="mt-1 ml-6 text-sm text-gray-500">
+                Toggle AdSense ads on/off across the site without changing your client ID
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Site Features */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Site Features</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name="maintenanceMode"
+                  checked={settings.maintenanceMode}
+                  onChange={handleChange}
+                  className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                />
+                <span className="text-sm font-medium text-gray-700">
+                  Maintenance Mode
+                </span>
+              </label>
+              <p className="mt-1 ml-6 text-sm text-gray-500">
+                Show maintenance page to all visitors except admins
+              </p>
+            </div>
+            <div>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name="allowRegistrations"
+                  checked={settings.allowRegistrations}
+                  onChange={handleChange}
+                  className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                />
+                <span className="text-sm font-medium text-gray-700">
+                  Allow User Registrations
+                </span>
+              </label>
+              <p className="mt-1 ml-6 text-sm text-gray-500">
+                Enable or disable new user account creation
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Save Button */}
+        <div className="flex justify-end">
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex items-center gap-2 px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {saving ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="h-5 w-5" />
+                Save Settings
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
 }
-

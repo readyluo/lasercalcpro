@@ -171,13 +171,29 @@ export default function ArticlesPage() {
             管理博客文章和教程内容
           </p>
         </div>
-        <a
-          href="/admin/articles/new"
-          className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-        >
-          <Plus className="h-4 w-4" />
-          新建文章
-        </a>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={async () => {
+              const res = await fetch('/api/admin/articles/publish-due', { method: 'POST' });
+              if (res.ok) {
+                fetchArticles();
+                alert('已发布到期文章');
+              } else {
+                alert('发布失败，请重试');
+              }
+            }}
+            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            发布到期文章
+          </button>
+          <a
+            href="/admin/articles/new"
+            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            新建文章
+          </a>
+        </div>
       </div>
 
       {/* Stats Cards */}

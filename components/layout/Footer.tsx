@@ -206,6 +206,21 @@ export function Footer() {
                   {t.footer.links.disclaimer}
                 </Link>
               </li>
+              <li>
+                <Link href="/cookie-policy" className="transition-colors hover:text-primary-500">
+                  Cookie Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/cookie-settings" className="transition-colors hover:text-primary-500">
+                  Cookie Settings
+                </Link>
+              </li>
+              <li>
+                <Link href="/accessibility" className="transition-colors hover:text-primary-500">
+                  Accessibility
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

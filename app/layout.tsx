@@ -7,6 +7,7 @@ import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics';
 import { PageViewTracker } from '@/components/analytics/PageViewTracker';
 import { AdSenseScript } from '@/components/ads/AdSenseScript';
 import { WebVitals } from '@/components/performance/WebVitals';
+import CookieBanner from '@/components/cookie/CookieBanner';
 import './globals.css';
 
 const inter = Inter({ 
@@ -44,6 +45,7 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased`}>
         <PageViewTracker />
         <WebVitals />
+        <CookieBanner />
         {children}
       </body>
     </html>

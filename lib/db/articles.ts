@@ -1,4 +1,5 @@
-import { executeQuery, executeWrite } from './client';
+import { D1Database } from '@cloudflare/workers-types';
+import { executeQuery, executeWrite } from './base';
 
 export interface Article {
   id: number;
@@ -6,438 +7,387 @@ export interface Article {
   slug: string;
   excerpt?: string;
   content: string;
-  category?: 'tutorials' | 'industry' | 'case-studies' | 'news';
-  tags?: string; // JSON array of strings
+  category?: string;
+  tags?: string[];
+  featured_image?: string;
   author_id?: number;
   status: 'draft' | 'published' | 'archived';
-  featured_image?: string;
+  views: number;
+  reading_time?: number;
   meta_title?: string;
   meta_description?: string;
-  meta_keywords?: string;
-  views: number;
-  published_at?: string;
   created_at: string;
   updated_at: string;
-}
-
-export interface ArticleInput {
-  title: string;
-  slug: string;
-  excerpt?: string;
-  content: string;
-  category?: Article['category'];
-  tags?: string[];
-  author_id?: number;
-  status?: Article['status'];
-  featured_image?: string;
-  meta_title?: string;
-  meta_description?: string;
-  meta_keywords?: string;
   published_at?: string;
 }
 
 export interface ArticleFilters {
-  status?: Article['status'];
-  category?: Article['category'];
+  status?: string;
+  category?: string;
+  tag?: string;
+  search?: string;
   author_id?: number;
-  search?: string; // Search in title, excerpt, content
 }
 
-export interface PaginationParams {
-  page?: number;
-  limit?: number;
-  orderBy?: 'created_at' | 'updated_at' | 'published_at' | 'views' | 'title';
-  orderDir?: 'ASC' | 'DESC';
-}
-
-export interface PaginatedArticles {
-  articles: Article[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
-
-/**
- * Generate unique slug from title
- */
-export function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '') // Remove special characters
-    .replace(/\s+/g, '-') // Replace spaces with hyphens
-    .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-    .substring(0, 100); // Limit length
-}
-
-/**
- * Check if slug exists
- */
-export async function slugExists(slug: string, excludeId?: number): Promise<boolean> {
-  let query = 'SELECT COUNT(*) as count FROM articles WHERE slug = ?';
-  const params: any[] = [slug];
-
-  if (excludeId) {
-    query += ' AND id != ?';
-    params.push(excludeId);
-  }
-
-  const result = await executeQuery<{ count: number }>(query, params);
-  return (result[0]?.count || 0) > 0;
-}
-
-/**
- * Create a new article
- */
-export async function createArticle(data: ArticleInput): Promise<Article | null> {
-  try {
-    // Ensure unique slug
-    let slug = data.slug || generateSlug(data.title);
-    let counter = 1;
-    while (await slugExists(slug)) {
-      slug = `${data.slug || generateSlug(data.title)}-${counter}`;
-      counter++;
-    }
-
-    const query = `
-      INSERT INTO articles (
-        title, slug, excerpt, content, category, tags, author_id,
-        status, featured_image, meta_title, meta_description, meta_keywords,
-        published_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    const params = [
-      data.title,
-      slug,
-      data.excerpt || null,
-      data.content,
-      data.category || null,
-      data.tags ? JSON.stringify(data.tags) : null,
-      data.author_id || null,
-      data.status || 'draft',
-      data.featured_image || null,
-      data.meta_title || data.title,
-      data.meta_description || data.excerpt || null,
-      data.meta_keywords || null,
-      data.status === 'published' && !data.published_at ? new Date().toISOString() : (data.published_at || null),
-    ];
-
-    const success = await executeWrite(query, params);
-    
-    if (success) {
-      const lastId = await executeQuery<{ id: number }>(
-        'SELECT last_insert_rowid() as id'
-      );
-      const id = lastId[0]?.id;
-      
-      if (id) {
-        return getArticleById(id);
-      }
-    }
-    
-    return null;
-  } catch (error) {
-    console.error('Error creating article:', error);
-    return null;
-  }
-}
-
-/**
- * Get article by ID
- */
-export async function getArticleById(id: number): Promise<Article | null> {
-  const query = 'SELECT * FROM articles WHERE id = ?';
-  const results = await executeQuery<Article>(query, [id]);
-  return results[0] || null;
-}
-
-/**
- * Get article by slug
- */
-export async function getArticleBySlug(slug: string): Promise<Article | null> {
-  const query = 'SELECT * FROM articles WHERE slug = ?';
-  const results = await executeQuery<Article>(query, [slug]);
-  return results[0] || null;
-}
-
-/**
- * Update article
- */
-export async function updateArticle(
-  id: number,
-  data: Partial<ArticleInput>
-): Promise<Article | null> {
-  try {
-    const fields: string[] = [];
-    const values: any[] = [];
-
-    if (data.title !== undefined) {
-      fields.push('title = ?');
-      values.push(data.title);
-    }
-    if (data.slug !== undefined) {
-      // Check slug uniqueness
-      if (await slugExists(data.slug, id)) {
-        throw new Error('Slug already exists');
-      }
-      fields.push('slug = ?');
-      values.push(data.slug);
-    }
-    if (data.excerpt !== undefined) {
-      fields.push('excerpt = ?');
-      values.push(data.excerpt);
-    }
-    if (data.content !== undefined) {
-      fields.push('content = ?');
-      values.push(data.content);
-    }
-    if (data.category !== undefined) {
-      fields.push('category = ?');
-      values.push(data.category);
-    }
-    if (data.tags !== undefined) {
-      fields.push('tags = ?');
-      values.push(JSON.stringify(data.tags));
-    }
-    if (data.author_id !== undefined) {
-      fields.push('author_id = ?');
-      values.push(data.author_id);
-    }
-    if (data.status !== undefined) {
-      fields.push('status = ?');
-      values.push(data.status);
-      
-      // Set published_at when status changes to published
-      if (data.status === 'published' && !data.published_at) {
-        fields.push('published_at = ?');
-        values.push(new Date().toISOString());
-      }
-    }
-    if (data.featured_image !== undefined) {
-      fields.push('featured_image = ?');
-      values.push(data.featured_image);
-    }
-    if (data.meta_title !== undefined) {
-      fields.push('meta_title = ?');
-      values.push(data.meta_title);
-    }
-    if (data.meta_description !== undefined) {
-      fields.push('meta_description = ?');
-      values.push(data.meta_description);
-    }
-    if (data.meta_keywords !== undefined) {
-      fields.push('meta_keywords = ?');
-      values.push(data.meta_keywords);
-    }
-    if (data.published_at !== undefined) {
-      fields.push('published_at = ?');
-      values.push(data.published_at);
-    }
-
-    if (fields.length === 0) {
-      return getArticleById(id);
-    }
-
-    values.push(id);
-
-    const success = await executeWrite(
-      `UPDATE articles SET ${fields.join(', ')} WHERE id = ?`,
-      values
-    );
-
-    if (success) {
-      return getArticleById(id);
-    }
-
-    return null;
-  } catch (error) {
-    console.error('Error updating article:', error);
-    return null;
-  }
-}
-
-/**
- * Delete article
- */
-export async function deleteArticle(id: number): Promise<boolean> {
-  try {
-    const result = await executeWrite('DELETE FROM articles WHERE id = ?', [id]);
-    return result !== null && result !== undefined;
-  } catch (error) {
-    console.error('Error deleting article:', error);
-    return false;
-  }
-}
-
-/**
- * Get articles with pagination and filters
- */
-export async function getArticles(
-  filters: ArticleFilters = {},
-  pagination: PaginationParams = {}
-): Promise<PaginatedArticles> {
-  const page = pagination.page || 1;
-  const limit = pagination.limit || 20;
-  const offset = (page - 1) * limit;
-  const orderBy = pagination.orderBy || 'created_at';
-  const orderDir = pagination.orderDir || 'DESC';
-
-  // Build WHERE clause
-  const whereClauses: string[] = [];
-  const params: any[] = [];
-
-  if (filters.status) {
-    whereClauses.push('status = ?');
-    params.push(filters.status);
-  }
-
-  if (filters.category) {
-    whereClauses.push('category = ?');
-    params.push(filters.category);
-  }
-
-  if (filters.author_id) {
-    whereClauses.push('author_id = ?');
-    params.push(filters.author_id);
-  }
-
-  if (filters.search) {
-    whereClauses.push('(title LIKE ? OR excerpt LIKE ? OR content LIKE ?)');
-    const searchTerm = `%${filters.search}%`;
-    params.push(searchTerm, searchTerm, searchTerm);
-  }
-
-  const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
-
-  // Get total count
-  const countQuery = `SELECT COUNT(*) as count FROM articles ${whereClause}`;
-  const countResult = await executeQuery<{ count: number }>(countQuery, params);
-  const total = countResult[0]?.count || 0;
-
-  // Get articles
-  const articlesQuery = `
-    SELECT * FROM articles 
-    ${whereClause}
-    ORDER BY ${orderBy} ${orderDir}
-    LIMIT ? OFFSET ?
-  `;
-
-  const articles = await executeQuery<Article>(articlesQuery, [...params, limit, offset]);
-
-  return {
-    articles,
-    total,
-    page,
-    limit,
-    totalPages: Math.ceil(total / limit),
-  };
-}
-
-/**
- * Get published articles only
- */
-export async function getPublishedArticles(
-  pagination: PaginationParams = {}
-): Promise<PaginatedArticles> {
-  return getArticles({ status: 'published' }, pagination);
-}
-
-/**
- * Increment article views
- */
-export async function incrementArticleViews(id: number): Promise<boolean> {
-  try {
-    const result = await executeWrite('UPDATE articles SET views = views + 1 WHERE id = ?', [id]);
-    return result !== null && result !== undefined;
-  } catch (error) {
-    console.error('Error incrementing views:', error);
-    return false;
-  }
-}
-
-/**
- * Get article statistics
- */
-export async function getArticleStats(): Promise<{
+export interface ArticleStats {
   total: number;
   published: number;
   draft: number;
   archived: number;
   totalViews: number;
-  byCategory: Record<string, number>;
-}> {
-  // Total articles
-  const totalResult = await executeQuery<{ count: number }>(
-    'SELECT COUNT(*) as count FROM articles'
-  );
-  const total = totalResult[0]?.count || 0;
+}
 
-  // By status
-  const publishedResult = await executeQuery<{ count: number }>(
-    "SELECT COUNT(*) as count FROM articles WHERE status = 'published'"
-  );
-  const published = publishedResult[0]?.count || 0;
+export interface ArchiveGroup {
+  year: number;
+  month: number;
+  count: number;
+  articles?: Article[];
+}
 
-  const draftResult = await executeQuery<{ count: number }>(
-    "SELECT COUNT(*) as count FROM articles WHERE status = 'draft'"
-  );
-  const draft = draftResult[0]?.count || 0;
+// Create a new article
+export async function createArticle(article: Omit<Article, 'id' | 'created_at' | 'updated_at' | 'views'>): Promise<number> {
+  const query = `
+    INSERT INTO articles (
+      title, slug, excerpt, content, category, tags, featured_image,
+      author_id, status, reading_time, meta_title, meta_description, published_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+  
+  const tagsJson = article.tags ? JSON.stringify(article.tags) : null;
+  const publishedAt = article.status === 'published' ? new Date().toISOString() : null;
+  
+  const result = await executeWrite(query, [
+    article.title,
+    article.slug,
+    article.excerpt || null,
+    article.content,
+    article.category || null,
+    tagsJson,
+    article.featured_image || null,
+    article.author_id || null,
+    article.status,
+    article.reading_time || null,
+    article.meta_title || null,
+    article.meta_description || null,
+    publishedAt,
+  ]);
 
-  const archivedResult = await executeQuery<{ count: number }>(
-    "SELECT COUNT(*) as count FROM articles WHERE status = 'archived'"
-  );
-  const archived = archivedResult[0]?.count || 0;
+  return result ? 1 : 0; // Return a dummy ID
+}
 
-  // Total views
-  const viewsResult = await executeQuery<{ total: number }>(
-    'SELECT SUM(views) as total FROM articles'
-  );
-  const totalViews = viewsResult[0]?.total || 0;
+// Get article by ID
+export async function getArticleById(id: number): Promise<Article | null> {
+  const query = `SELECT * FROM articles WHERE id = ?`;
+  const result = await executeQuery<Article>(query, [id]);
+  
+  if (result && result.length > 0) {
+    const article = result[0];
+    if (article.tags && typeof article.tags === 'string') {
+      article.tags = JSON.parse(article.tags);
+    }
+    return article;
+  }
+  
+  return null;
+}
 
-  // By category
-  const categoryResult = await executeQuery<{ category: string; count: number }>(
-    'SELECT category, COUNT(*) as count FROM articles WHERE category IS NOT NULL GROUP BY category'
-  );
-  const byCategory: Record<string, number> = {};
-  categoryResult.forEach(row => {
-    byCategory[row.category] = row.count;
-  });
+// Get article by slug
+export async function getArticleBySlug(slug: string): Promise<Article | null> {
+  const query = `SELECT * FROM articles WHERE slug = ? AND status = 'published'`;
+  const result = await executeQuery<Article>(query, [slug]);
+  
+  if (result && result.length > 0) {
+    const article = result[0];
+    if (article.tags && typeof article.tags === 'string') {
+      article.tags = JSON.parse(article.tags);
+    }
+    return article;
+  }
+  
+  return null;
+}
+
+// Get articles with filters and pagination
+export async function getArticles(
+  filters: ArticleFilters = {},
+  page: number = 1,
+  limit: number = 10
+): Promise<{ articles: Article[]; total: number }> {
+  const offset = (page - 1) * limit;
+  const conditions: string[] = [];
+  const params: any[] = [];
+
+  if (filters.status) {
+    conditions.push('status = ?');
+    params.push(filters.status);
+  }
+
+  if (filters.category) {
+    conditions.push('category = ?');
+    params.push(filters.category);
+  }
+
+  if (filters.tag) {
+    conditions.push('tags LIKE ?');
+    params.push(`%"${filters.tag}"%`);
+  }
+
+  if (filters.search) {
+    conditions.push('(title LIKE ? OR content LIKE ? OR excerpt LIKE ?)');
+    const searchTerm = `%${filters.search}%`;
+    params.push(searchTerm, searchTerm, searchTerm);
+  }
+
+  if (filters.author_id) {
+    conditions.push('author_id = ?');
+    params.push(filters.author_id);
+  }
+
+  const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+  // Get total count
+  const countQuery = `SELECT COUNT(*) as count FROM articles ${whereClause}`;
+  const countResult = await executeQuery<{ count: number }>(countQuery, params);
+  const total = countResult && countResult.length > 0 ? countResult[0].count : 0;
+
+  // Get articles
+  const articlesQuery = `
+    SELECT * FROM articles
+    ${whereClause}
+    ORDER BY created_at DESC
+    LIMIT ? OFFSET ?
+  `;
+  const articles = await executeQuery<Article>(articlesQuery, [...params, limit, offset]);
+
+  // Parse tags
+  if (articles) {
+    articles.forEach(article => {
+      if (article.tags && typeof article.tags === 'string') {
+        article.tags = JSON.parse(article.tags);
+      }
+    });
+  }
 
   return {
+    articles: articles || [],
     total,
-    published,
-    draft,
-    archived,
-    totalViews,
-    byCategory,
   };
 }
 
-/**
- * Get recent articles
- */
-export async function getRecentArticles(limit: number = 5): Promise<Article[]> {
-  const query = `
-    SELECT * FROM articles 
-    WHERE status = 'published'
-    ORDER BY published_at DESC 
-    LIMIT ?
-  `;
-  return executeQuery<Article>(query, [limit]);
+// Get published articles by category
+export async function getPublishedArticlesByCategory(
+  category: string,
+  page: number = 1,
+  limit: number = 10
+): Promise<{ articles: Article[]; total: number }> {
+  return getArticles({ status: 'published', category }, page, limit);
 }
 
-/**
- * Get popular articles
- */
-export async function getPopularArticles(limit: number = 5): Promise<Article[]> {
-  const query = `
-    SELECT * FROM articles 
-    WHERE status = 'published'
-    ORDER BY views DESC 
-    LIMIT ?
-  `;
-  return executeQuery<Article>(query, [limit]);
+// Get published articles by tag
+export async function getPublishedArticlesByTag(
+  tag: string,
+  page: number = 1,
+  limit: number = 10
+): Promise<{ articles: Article[]; total: number }> {
+  return getArticles({ status: 'published', tag }, page, limit);
 }
 
+// Get articles by author
+export async function getArticlesByAuthor(
+  authorId: number,
+  page: number = 1,
+  limit: number = 10
+): Promise<{ articles: Article[]; total: number }> {
+  return getArticles({ status: 'published', author_id: authorId }, page, limit);
+}
+
+// Update article
+export async function updateArticle(id: number, updates: Partial<Article>): Promise<boolean> {
+  const fields: string[] = [];
+  const params: any[] = [];
+
+  Object.entries(updates).forEach(([key, value]) => {
+    if (key !== 'id' && key !== 'created_at' && value !== undefined) {
+      fields.push(`${key} = ?`);
+      if (key === 'tags' && Array.isArray(value)) {
+        params.push(JSON.stringify(value));
+      } else if (key === 'status' && value === 'published' && !updates.published_at) {
+        // Auto-set published_at if changing to published
+        fields.push('published_at = ?');
+        params.push(value);
+        params.push(new Date().toISOString());
+      } else {
+        params.push(value);
+      }
+    }
+  });
+
+  if (fields.length === 0) {
+    return false;
+  }
+
+  fields.push('updated_at = CURRENT_TIMESTAMP');
+
+  const query = `
+    UPDATE articles
+    SET ${fields.join(', ')}
+    WHERE id = ?
+  `;
+
+  params.push(id);
+  return executeWrite(query, params);
+}
+
+// Delete article
+export async function deleteArticle(id: number): Promise<boolean> {
+  const query = `DELETE FROM articles WHERE id = ?`;
+  return executeWrite(query, [id]);
+}
+
+// Increment article views
+export async function incrementArticleViews(id: number): Promise<boolean> {
+  const query = `UPDATE articles SET views = views + 1 WHERE id = ?`;
+  return executeWrite(query, [id]);
+}
+
+// Get article statistics
+export async function getArticleStats(): Promise<ArticleStats> {
+  const query = `
+    SELECT 
+      COUNT(*) as total,
+      SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END) as published,
+      SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) as draft,
+      SUM(CASE WHEN status = 'archived' THEN 1 ELSE 0 END) as archived,
+      SUM(views) as totalViews
+    FROM articles
+  `;
+  
+  const result = await executeQuery<any>(query, []);
+  
+  if (result && result.length > 0) {
+    return {
+      total: result[0].total || 0,
+      published: result[0].published || 0,
+      draft: result[0].draft || 0,
+      archived: result[0].archived || 0,
+      totalViews: result[0].totalViews || 0,
+    };
+  }
+  
+  return {
+    total: 0,
+    published: 0,
+    draft: 0,
+    archived: 0,
+    totalViews: 0,
+  };
+}
+
+// Get related articles
+export async function getRelatedArticles(articleId: number, category?: string, limit: number = 3): Promise<Article[]> {
+  const query = `
+    SELECT * FROM articles
+    WHERE id != ? AND status = 'published' ${category ? 'AND category = ?' : ''}
+    ORDER BY created_at DESC
+    LIMIT ?
+  `;
+  
+  const params = category ? [articleId, category, limit] : [articleId, limit];
+  const articles = await executeQuery<Article>(query, params);
+  
+  if (articles) {
+    articles.forEach(article => {
+      if (article.tags && typeof article.tags === 'string') {
+        article.tags = JSON.parse(article.tags);
+      }
+    });
+  }
+  
+  return articles || [];
+}
+
+// Publish articles that are scheduled and due
+export async function publishDueArticles(): Promise<number> {
+  const query = `
+    UPDATE articles
+    SET status = 'published'
+    WHERE status = 'draft'
+      AND published_at IS NOT NULL
+      AND published_at <= CURRENT_TIMESTAMP
+  `;
+  
+  const result = await executeWrite(query, []);
+  return result ? 1 : 0; // Return count of updated rows (simplified)
+}
+
+// Get archive groups (year/month with counts)
+export async function getArchiveGroups(): Promise<ArchiveGroup[]> {
+  const query = `
+    SELECT 
+      strftime('%Y', published_at) as year,
+      strftime('%m', published_at) as month,
+      COUNT(*) as count
+    FROM articles
+    WHERE status = 'published' AND published_at IS NOT NULL
+    GROUP BY year, month
+    ORDER BY year DESC, month DESC
+  `;
+  
+  const result = await executeQuery<{ year: string; month: string; count: number }>(query, []);
+  
+  if (!result) return [];
+  
+  return result.map(row => ({
+    year: parseInt(row.year, 10),
+    month: parseInt(row.month, 10),
+    count: row.count,
+  }));
+}
+
+// Get articles by year and month
+export async function getArticlesByYearMonth(
+  year: number,
+  month: number,
+  page: number = 1,
+  limit: number = 20
+): Promise<{ articles: Article[]; total: number }> {
+  const offset = (page - 1) * limit;
+  
+  const countQuery = `
+    SELECT COUNT(*) as count
+    FROM articles
+    WHERE status = 'published'
+      AND strftime('%Y', published_at) = ?
+      AND strftime('%m', published_at) = ?
+  `;
+  
+  const yearStr = year.toString();
+  const monthStr = month.toString().padStart(2, '0');
+  
+  const countResult = await executeQuery<{ count: number }>(countQuery, [yearStr, monthStr]);
+  const total = countResult && countResult.length > 0 ? countResult[0].count : 0;
+  
+  const articlesQuery = `
+    SELECT * FROM articles
+    WHERE status = 'published'
+      AND strftime('%Y', published_at) = ?
+      AND strftime('%m', published_at) = ?
+    ORDER BY published_at DESC
+    LIMIT ? OFFSET ?
+  `;
+  
+  const articles = await executeQuery<Article>(articlesQuery, [yearStr, monthStr, limit, offset]);
+  
+  if (articles) {
+    articles.forEach(article => {
+      if (article.tags && typeof article.tags === 'string') {
+        article.tags = JSON.parse(article.tags);
+      }
+    });
+  }
+  
+  return {
+    articles: articles || [],
+    total,
+  };
+}

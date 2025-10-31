@@ -34,6 +34,7 @@ export default async function BlogPage() {
   }
 
   const categories = ['tutorials', 'industry', 'case-studies', 'news'];
+  const archiveLink = '/blog/archive';
 
   return (
     <>
@@ -69,6 +70,12 @@ export default async function BlogPage() {
                 {cat.replace('-', ' ')}
               </Link>
             ))}
+            <Link
+              href={archiveLink}
+              className="rounded-full bg-white border border-primary-300 px-6 py-2 text-sm font-semibold text-primary-700 hover:bg-primary-50 transition-colors"
+            >
+              📅 Archive
+            </Link>
           </div>
 
           {/* Articles Grid */}

@@ -1,1276 +1,1285 @@
-# LaserCalc Pro - 完整实施计划与任务拆解
+# LaserCalc Pro - 缺失页面实施清单与信息架构规格
 
-> **生成日期**: 2025年10月30日  
-> **项目周期**: 10-12周  
-> **目标发布**: 2026年1月15日
-
----
-
-## 📊 项目概览
-
-### 核心目标
-- **技术目标**: 构建高性能、SEO友好的计算器工具聚合网站
-- **商业目标**: 6个月内实现月访问量5000+，AdSense月收入$500-1000
-- **战略目标**: 建立行业权威地位，创建可复制的工具站模式
-
-### 关键指标(KPI)
-| 指标类型 | 第1-3月目标 | 第4-6月目标 |
-|---------|-----------|-----------|
-| 月访问量(UV) | 500+ | 5,000+ |
-| Google索引页面 | 50+ | 100+ |
-| 自然外链数 | 3-5个 | 15+个 |
-| AdSense状态 | 准备申请 | 已批准，月收入$500+ |
-| 域名权威度(DR) | 5-10 | 20+ |
-| 邮件订阅用户 | 20+ | 100+ |
+## 文档版本
+- 版本: 1.0
+- 创建日期: 2025-10-31
+- 最后更新: 2025-10-31
+- 负责人: 开发团队
 
 ---
 
-## 🏗️ 技术架构
+## 执行概览
 
-### 技术栈选择
-```yaml
-前端框架: Next.js 14 (App Router)
-  原因: 
-    - 优秀的SEO支持（服务端渲染）
-    - 自动代码分割和性能优化
-    - 强大的API路由功能
-    - 内置国际化支持
-    
-样式方案: Tailwind CSS
-  原因:
-    - 快速开发响应式界面
-    - 极小的CSS文件体积
-    - 与Next.js完美集成
+### 批次规划
+本实施计划按照优先级分为 4 个批次，每个批次包含相关的页面开发任务。
 
-部署平台: Cloudflare Pages
-  原因:
-    - 全球CDN加速，边缘计算
-    - 免费的D1数据库
-    - 无限带宽和请求
-    - 自动SSL证书
-
-数据库: Cloudflare D1 (SQLite)
-  原因:
-    - 零成本（免费额度充足）
-    - 边缘数据库，低延迟
-    - 与Cloudflare Pages原生集成
-    
-认证系统: NextAuth.js
-  原因:
-    - 管理员登录（中文后台）
-    - 支持多种认证方式
-    - 与Next.js无缝集成
-    
-表单验证: Zod
-  原因:
-    - TypeScript原生支持
-    - 强大的schema验证
-    - 与React Hook Form完美配合
-
-可视化: Chart.js
-  原因:
-    - 轻量级（~60KB）
-    - 丰富的图表类型
-    - 响应式和动画支持
-
-国际化: next-intl (可选未来扩展)
-  当前: 前台纯英文，后台纯中文
-  未来: 支持多语言扩展
-```
-
-### 性能目标
-```yaml
-Core Web Vitals:
-  FCP (First Contentful Paint): < 1.5秒
-  LCP (Largest Contentful Paint): < 2.5秒
-  CLS (Cumulative Layout Shift): < 0.1
-  FID (First Input Delay): < 100ms
-
-其他指标:
-  Lighthouse评分: > 90分
-  页面大小: < 500KB（首屏）
-  API响应时间: < 500ms
-  图片格式: WebP/AVIF优先
-```
+**批次 1（P0 - 核心转化与用户体验）** — 立即执行
+**批次 2（P1 - 内容深化与信任建设）** — 第二周
+**批次 3（P2 - 运营效率与后台增强）** — 第三周
+**批次 4（P3 - 长期优化与合规）** — 第四周
 
 ---
 
-## 📋 详细任务清单
+## 批次 1: 核心转化与用户体验 (P0)
 
-### 🎯 阶段1: 项目基础搭建（周1-2）
+### 1.1 FAQ 常见问题页面
 
-#### 任务1.1: 项目初始化与架构搭建
-**复杂度**: 3/10 | **预计时间**: 4-6小时
+**路径**: `/faq`
 
-**详细步骤**:
-1. 创建Next.js 14项目
-```bash
-npx create-next-app@latest lasercalcpro --typescript --tailwind --app
-cd lasercalcpro
+**业务目标**:
+- 降低新用户上手门槛，减少咨询成本
+- 提升 SEO（FAQ 结构化数据）
+- 增加用户信任与停留时间
+
+**用户故事**:
+> "作为首次访问者，我想快速了解这些计算器是否适合我的需求，以及如何使用它们。"
+
+**信息架构**:
+```
+FAQ 页面结构
+├── 页面标题: "Frequently Asked Questions - LaserCalc Pro"
+├── 搜索框（可选，第一版可省略）
+└── 分类手风琴布局
+    ├── 关于平台 (5 问)
+    │   ├── Q1: 什么是 LaserCalc Pro？
+    │   ├── Q2: 计算器是否免费使用？
+    │   ├── Q3: 计算结果的准确性如何保证？
+    │   ├── Q4: 我需要注册账户吗？
+    │   └── Q5: 你们如何保护我的数据？
+    ├── 使用指南 (7 问)
+    │   ├── Q1: 如何使用激光切割成本计算器？
+    │   ├── Q2: 我应该选择哪个计算器？
+    │   ├── Q3: 如何导出计算结果？
+    │   ├── Q4: 如何保存我的计算历史？
+    │   ├── Q5: 计算器支持哪些材料类型？
+    │   ├── Q6: 如何理解成本分项？
+    │   └── Q7: 移动端体验如何？
+    ├── 技术问题 (5 问)
+    │   ├── Q1: 为什么计算结果与实际有偏差？
+    │   ├── Q2: 计算公式的依据是什么？
+    │   ├── Q3: 如何调整默认参数？
+    │   ├── Q4: 页面加载缓慢怎么办？
+    │   └── Q5: 浏览器兼容性如何？
+    └── 业务合作 (3 问)
+        ├── Q1: 我可以在我的网站嵌入你们的工具吗？
+        ├── Q2: 提供 API 接口吗？
+        └── Q3: 如何联系商务合作？
 ```
 
-2. 项目结构规划
-```
-lasercalcpro/
-├── app/
-│   ├── (frontend)/           # 前台页面组（纯英文）
-│   │   ├── page.tsx          # 首页 - English
-│   │   ├── about/
-│   │   ├── contact/
-│   │   ├── blog/
-│   │   ├── privacy/
-│   │   ├── terms/
-│   │   └── disclaimer/
-│   ├── calculators/          # 计算器页面（英文）
-│   │   ├── laser-cutting/
-│   │   ├── cnc-machining/
-│   │   ├── roi/
-│   │   ├── energy/
-│   │   └── material-utilization/
-│   ├── admin/                # 后台管理（纯中文）
-│   │   ├── layout.tsx        # 中文布局
-│   │   ├── page.tsx          # 仪表板
-│   │   ├── login/            # 登录页
-│   │   ├── content/          # 内容管理
-│   │   ├── analytics/        # 数据分析
-│   │   ├── subscribers/      # 订阅管理
-│   │   └── settings/         # 系统设置
-│   ├── api/                  # API路由
-│   │   ├── auth/             # 认证相关
-│   │   ├── calculate/        # 计算接口
-│   │   ├── subscribe/        # 订阅接口
-│   │   ├── admin/            # 管理接口
-│   │   └── analytics/        # 分析接口
-│   ├── layout.tsx            # 根布局
-│   └── not-found.tsx
-├── components/
-│   ├── ui/                   # 通用UI组件
-│   ├── calculators/          # 计算器组件（英文）
-│   ├── layout/               # 布局组件
-│   ├── admin/                # 后台组件（中文）
-│   └── marketing/            # 营销组件（英文）
-├── lib/
-│   ├── calculators/          # 计算引擎
-│   ├── db/                   # 数据库操作
-│   ├── auth/                 # 认证逻辑
-│   ├── utils/                # 工具函数
-│   ├── i18n/                 # 语言文本
-│   │   ├── en.ts             # 前台英文
-│   │   └── zh.ts             # 后台中文
-│   └── validations/          # Zod schemas
-├── public/
-│   ├── images/
-│   ├── fonts/
-│   └── locales/
-└── styles/
-```
+**内容要求**:
+- 每个问题：简洁标题 + 150-250 字详细回答
+- 在回答中嵌入内部链接（指向相关工具/文章）
+- 至少 20 个问答对
+- 使用 Schema.org FAQPage 结构化数据
 
-3. 配置文件设置
-```typescript
-// tsconfig.json
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["ES2020", "DOM"],
-    "jsx": "preserve",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "strict": true,
-    "paths": {
-      "@/*": ["./*"],
-      "@/components/*": ["./components/*"],
-      "@/lib/*": ["./lib/*"]
-    }
-  }
-}
+**技术要求**:
+- 手风琴组件（点击展开/折叠）
+- 锚点链接（每个问题有独立 URL，如 `/faq#q-how-to-use`）
+- 快速跳转目录（移动端固定顶部）
+- 响应式设计（移动端优先）
 
-// next.config.js
-module.exports = {
-  reactStrictMode: true,
-  images: {
-    formats: ['image/webp', 'image/avif'],
-    deviceSizes: [640, 750, 828, 1080, 1200],
-  },
-  experimental: {
-    optimizeCss: true,
-  }
-}
-```
+**SEO 要求**:
+- Title: "FAQ - Laser Cutting & CNC Cost Calculator | LaserCalc Pro"
+- Meta Description: "Find answers to common questions about laser cutting cost calculators, CNC machining estimators, and manufacturing cost analysis tools."
+- H1: "Frequently Asked Questions"
+- 结构化数据: FAQPage Schema
 
-4. 环境变量配置
-```env
-# .env.local
-DATABASE_URL=your_d1_database_url
-NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
-ADSENSE_CLIENT_ID=ca-pub-xxxxxxxxxx
-SITE_URL=https://lasercalcpro.com
-```
-
-5. Git初始化
-```bash
-git init
-git add .
-git commit -m "Initial commit: Project setup with Next.js 14"
-```
+**UI/UX 设计**:
+- 设计风格：清爽、易读
+- 颜色：使用品牌色系
+- 图标：每个分类有代表性图标（FontAwesome/Heroicons）
+- 交互：平滑展开动画（300ms）
 
 **验收标准**:
-- ✅ 项目能成功启动 (`npm run dev`)
-- ✅ TypeScript编译无错误
-- ✅ Tailwind CSS正常工作
-- ✅ 路径别名配置有效
+- [ ] 所有 20+ 问答对完整呈现
+- [ ] 手风琴交互流畅
+- [ ] 结构化数据通过 Google Rich Results Test
+- [ ] 移动端体验良好（无横向滚动）
+- [ ] 页面加载时间 < 2 秒
 
 ---
 
-#### 任务1.2: 响应式导航和首页布局
-**复杂度**: 4/10 | **预计时间**: 8-10小时
+### 1.2 计算器对比/推荐页面
 
-**详细步骤**:
+**路径**: `/calculators/compare`
 
-1. 创建导航栏组件
-```typescript
-// components/layout/Navigation.tsx
-'use client';
+**业务目标**:
+- 帮助用户快速选择合适的工具
+- 增加页面互动与停留时间
+- 提升工具使用率
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { Menu, X } from 'lucide-react';
+**用户故事**:
+> "作为用户，我不确定应该使用激光切割计算器还是 CNC 加工计算器，我需要一个对比页面帮我决策。"
 
-export function Navigation() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const tools = [
-    { name: 'Laser Cutting Calculator', href: '/calculators/laser-cutting' },
-    { name: 'CNC Machining Estimator', href: '/calculators/cnc-machining' },
-    { name: 'ROI Calculator', href: '/calculators/roi' },
-    { name: 'Energy Cost Calculator', href: '/calculators/energy' },
-    { name: 'Material Utilization', href: '/calculators/material-utilization' },
-  ];
-
-  return (
-    <nav className="sticky top-0 z-50 bg-white shadow-md dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex justify-between items-center">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <svg className="w-8 h-8 text-blue-600" viewBox="0 0 24 24">
-              {/* Logo SVG */}
-            </svg>
-            <span className="text-xl font-bold">LaserCalc Pro</span>
-          </Link>
-
-          {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-6">
-            <div className="relative group">
-              <button className="hover:text-blue-600">Calculators</button>
-              <div className="absolute hidden group-hover:block bg-white shadow-lg rounded mt-2 py-2 w-64">
-                {tools.map(tool => (
-                  <Link key={tool.href} href={tool.href} className="block px-4 py-2 hover:bg-gray-100">
-                    {tool.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-            <Link href="/blog" className="hover:text-blue-600">Blog</Link>
-            <Link href="/about" className="hover:text-blue-600">About</Link>
-            <Link href="/contact" className="hover:text-blue-600">Contact</Link>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <X /> : <Menu />}
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        {isOpen && (
-          <div className="md:hidden mt-4 pb-4">
-            {/* Mobile menu items */}
-          </div>
-        )}
-      </div>
-    </nav>
-  );
-}
+**信息架构**:
+```
+对比页面结构
+├── 页面标题: "Calculator Comparison & Recommendation"
+├── 场景化推荐模块
+│   ├── 场景 1: 金属薄板切割 → 推荐激光切割计算器
+│   ├── 场景 2: 厚板加工 → 推荐 CNC 加工计算器
+│   ├── 场景 3: 复杂零件加工 → 推荐 CNC + ROI 计算器组合
+│   └── 场景 4: 设备采购决策 → 推荐 ROI 计算器
+├── 工具对比表格
+│   └── 对比维度：适用场景、输入参数、输出结果、精度、适用行业
+└── 推荐流程（交互式问卷）
+    ├── 问题 1: 你的主要需求是什么？（成本估算/设备采购/能耗分析）
+    ├── 问题 2: 加工类型？（激光切割/CNC加工/焊接/打标）
+    └── 推荐结果 → 跳转对应工具
 ```
 
-2. 首页Hero Section
-```typescript
-// app/page.tsx
-export default function HomePage() {
-  return (
-    <main>
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold mb-6">
-            Professional Manufacturing Cost Calculators
-          </h1>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Free, accurate cost estimation tools for laser cutting, CNC machining, 
-            and manufacturing equipment investment analysis.
-          </p>
-          <div className="flex justify-center space-x-4">
-            <Link href="/calculators/laser-cutting" 
-                  className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100">
-              Start Calculating
-            </Link>
-            <Link href="/blog" 
-                  className="border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600">
-              Learn More
-            </Link>
-          </div>
-        </div>
-      </section>
+**内容要求**:
+- 4-6 个典型场景描述（每个 200-300 字）
+- 对比表格：至少 5 个核心工具对比
+- 交互式问卷：3-5 个选择题
 
-      {/* Tools Grid */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Our Calculators</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Tool cards */}
-          </div>
-        </div>
-      </section>
-    </main>
-  );
-}
-```
+**技术要求**:
+- 响应式表格（移动端卡片式布局）
+- 交互式问卷（使用 React 状态管理）
+- 推荐算法：基于用户选择匹配工具
+- CTA 按钮：直接跳转到推荐工具
+
+**SEO 要求**:
+- Title: "Calculator Comparison - Choose the Right Cost Estimator | LaserCalc Pro"
+- Meta Description: "Compare laser cutting, CNC machining, and ROI calculators. Find the best tool for your manufacturing cost analysis needs."
+- H1: "Calculator Comparison & Recommendation"
+
+**UI/UX 设计**:
+- 对比表格：高亮推荐项
+- 推荐流程：进度条显示（第 1/3 步）
+- 结果页面：大按钮引导至工具
 
 **验收标准**:
-- ✅ 导航栏在移动端和桌面端都正常工作
-- ✅ 下拉菜单交互流畅
-- ✅ 响应式设计在所有设备上显示正常
-- ✅ 暗色模式切换功能正常
+- [ ] 对比表格完整且易读
+- [ ] 推荐问卷逻辑准确
+- [ ] 移动端体验良好
+- [ ] CTA 点击率 > 15%
 
 ---
 
-### 🎯 阶段2: 核心计算器开发（周3-4）
+### 1.3 计算结果分享/导出功能增强
 
-#### 任务2.1: 激光切割成本计算器
-**复杂度**: 7/10 | **预计时间**: 12-16小时
+**路径**: 在现有计算器页面增加功能（`/calculators/*`）
 
-**计算公式**:
-```typescript
-// lib/calculators/laserCutting.ts
-import { z } from 'zod';
+**业务目标**:
+- 增加用户粘性与二次传播
+- 提升工具价值感知
+- 收集用户数据（邮箱订阅）
 
-// Zod validation schema
-export const LaserCuttingSchema = z.object({
-  materialType: z.enum(['stainless_steel', 'aluminum', 'copper', 'mild_steel']),
-  thickness: z.number().min(0.5).max(50), // mm
-  cuttingLength: z.number().min(1).max(10000), // mm
-  laserPower: z.number().min(1).max(30), // kW
-  electricityRate: z.number().min(0).max(1), // $/kWh
-  laborRate: z.number().min(0).max(200), // $/hour
-  materialPricePerKg: z.number().min(0),
-  gasConsumption: z.number().min(0), // m³/hour
-  gasPrice: z.number().min(0), // $/m³
-});
+**用户故事**:
+> "作为报价员，我需要将计算结果导出为 PDF 报告，发送给客户和上级审批。"
 
-export type LaserCuttingParams = z.infer<typeof LaserCuttingSchema>;
-
-// Material density (kg/dm³)
-const MATERIAL_DENSITY = {
-  stainless_steel: 7.93,
-  aluminum: 2.70,
-  copper: 8.96,
-  mild_steel: 7.85,
-};
-
-// Cutting speed estimation (mm/min) - simplified
-function estimateCuttingSpeed(power: number, thickness: number, material: string): number {
-  const baseSpeed = power * 100;
-  const thicknessFactor = Math.max(0.1, 1 - (thickness / 50));
-  return baseSpeed * thicknessFactor;
-}
-
-export function calculateLaserCuttingCost(params: LaserCuttingParams) {
-  // 1. Calculate cutting time
-  const cuttingSpeed = estimateCuttingSpeed(
-    params.laserPower, 
-    params.thickness, 
-    params.materialType
-  );
-  const cuttingTimeMinutes = params.cuttingLength / cuttingSpeed;
-  const cuttingTimeHours = cuttingTimeMinutes / 60;
-
-  // 2. Material cost
-  const density = MATERIAL_DENSITY[params.materialType];
-  const volume = params.cuttingLength * params.thickness * 0.003; // dm³ (assuming 3mm kerf width)
-  const weight = volume * density;
-  const materialCost = weight * params.materialPricePerKg;
-
-  // 3. Power cost
-  const powerConsumption = params.laserPower * cuttingTimeHours; // kWh
-  const powerCost = powerConsumption * params.electricityRate;
-
-  // 4. Labor cost
-  const laborCost = cuttingTimeHours * params.laborRate;
-
-  // 5. Gas cost (assist gas)
-  const gasCost = params.gasConsumption * cuttingTimeHours * params.gasPrice;
-
-  // 6. Equipment depreciation (simplified: $200k machine, 10-year life, 2000 hours/year)
-  const depreciationPerHour = 200000 / (10 * 2000);
-  const depreciation = depreciationPerHour * cuttingTimeHours;
-
-  // 7. Total cost
-  const totalCost = materialCost + powerCost + laborCost + gasCost + depreciation;
-
-  // 8. Suggested retail price (with 40% markup)
-  const suggestedPrice = totalCost * 1.4;
-
-  return {
-    breakdown: {
-      materialCost: Math.round(materialCost * 100) / 100,
-      powerCost: Math.round(powerCost * 100) / 100,
-      laborCost: Math.round(laborCost * 100) / 100,
-      gasCost: Math.round(gasCost * 100) / 100,
-      depreciation: Math.round(depreciation * 100) / 100,
-    },
-    totalCost: Math.round(totalCost * 100) / 100,
-    suggestedPrice: Math.round(suggestedPrice * 100) / 100,
-    profitMargin: Math.round((suggestedPrice - totalCost) * 100) / 100,
-    cuttingTime: {
-      hours: Math.floor(cuttingTimeHours),
-      minutes: Math.round((cuttingTimeHours % 1) * 60),
-    },
-    efficiency: {
-      costPerMeter: Math.round((totalCost / (params.cuttingLength / 1000)) * 100) / 100,
-      costPerMinute: Math.round((totalCost / cuttingTimeMinutes) * 100) / 100,
-    }
-  };
-}
+**功能要求**:
+```
+导出功能模块
+├── PDF 导出
+│   ├── 包含内容：公司 Logo、计算参数、分项成本、总计、免责声明
+│   ├── 格式：A4 尺寸、专业排版
+│   └── 下载文件名：LaserCalc_[ToolName]_[Date].pdf
+├── 链接分享
+│   ├── 生成唯一短链（如 lasercalc.pro/s/abc123）
+│   ├── 链接有效期：30 天
+│   └── 分享页面：显示完整计算结果（只读）
+├── 邮件发送（需订阅）
+│   ├── 发送到用户邮箱
+│   ├── 邮件内容：计算结果摘要 + PDF 附件
+│   └── 引导订阅：未订阅用户提示"订阅后解锁邮件发送"
+└── 社交分享（可选）
+    ├── LinkedIn 分享（B2B 用户）
+    └── Twitter/X 分享
 ```
 
-**UI组件**:
-```typescript
-// app/calculators/laser-cutting/page.tsx
-'use client';
+**技术要求**:
+- PDF 生成：使用 `jsPDF` 或 `react-pdf`
+- 短链生成：Cloudflare Workers KV 存储
+- 邮件发送：Resend API 或 Cloudflare Email Workers
+- 数据持久化：D1 数据库存储分享记录
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { LaserCuttingSchema, calculateLaserCuttingCost } from '@/lib/calculators/laserCutting';
-
-export default function LaserCuttingCalculator() {
-  const [result, setResult] = useState(null);
-  
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: zodResolver(LaserCuttingSchema),
-  });
-
-  const onSubmit = (data) => {
-    const calculation = calculateLaserCuttingCost(data);
-    setResult(calculation);
-    
-    // Save to database (analytics)
-    fetch('/api/calculate', {
-      method: 'POST',
-      body: JSON.stringify({
-        toolType: 'laser-cutting',
-        params: data,
-        result: calculation,
-      }),
-    });
-  };
-
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8">Laser Cutting Cost Calculator</h1>
-      
-      <div className="grid md:grid-cols-2 gap-8">
-        {/* Input Form */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Form fields */}
-            <div>
-              <label className="block text-sm font-medium mb-2">Material Type</label>
-              <select {...register('materialType')} className="w-full border rounded px-3 py-2">
-                <option value="stainless_steel">Stainless Steel</option>
-                <option value="aluminum">Aluminum</option>
-                <option value="copper">Copper</option>
-                <option value="mild_steel">Mild Steel</option>
-              </select>
-              {errors.materialType && <p className="text-red-500 text-sm">{errors.materialType.message}</p>}
-            </div>
-
-            {/* More fields... */}
-
-            <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
-              Calculate Cost
-            </button>
-          </form>
-        </div>
-
-        {/* Results Display */}
-        {result && (
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold mb-4">Cost Breakdown</h2>
-            {/* Display results */}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-```
+**UI/UX 设计**:
+- 导出按钮位置：计算结果下方，醒目但不干扰
+- 分享弹窗：简洁的模态框，展示短链和复制按钮
+- 成功提示：Toast 通知（"PDF 已下载" / "链接已复制"）
 
 **验收标准**:
-- ✅ 所有表单字段有正确的验证
-- ✅ 计算结果准确无误
-- ✅ 实时计算响应时间<500ms
-- ✅ 结果显示清晰易懂
-- ✅ 错误处理完善
+- [ ] PDF 生成准确、排版专业
+- [ ] 短链生成成功率 100%
+- [ ] 邮件发送成功率 > 95%
+- [ ] 分享功能使用率 > 10%
 
 ---
 
-#### 任务2.2-2.3: 其他核心计算器
-*（CNC成本估算器、ROI计算器的详细实现类似，此处省略详细代码）*
+### 1.4 订阅偏好管理与取消订阅页面
+
+**路径**: `/subscribe/preferences` 和 `/subscribe/unsubscribe`
+
+**业务目标**:
+- 合规要求（GDPR/CAN-SPAM）
+- 减少垃圾邮件投诉
+- 提升用户满意度
+
+**用户故事**:
+> "作为订阅用户，我希望能够选择接收哪些类型的邮件，或者随时取消订阅。"
+
+**信息架构**:
+
+```
+订阅偏好页面 (/subscribe/preferences)
+├── 页面标题: "Email Preferences"
+├── 用户邮箱显示（只读）
+├── 邮件类型选择
+│   ├── [ ] 每周工具更新（新计算器功能）
+│   ├── [ ] 教程与指南（行业知识文章）
+│   ├── [ ] 产品新闻与公告
+│   └── [ ] 合作伙伴推广（可选退出）
+├── 频率设置
+│   ├── ( ) 实时（有更新即发送）
+│   ├── ( ) 每周摘要（推荐）
+│   └── ( ) 每月摘要
+├── 保存按钮
+└── 取消所有订阅链接（红色警告）
+
+取消订阅页面 (/subscribe/unsubscribe)
+├── 页面标题: "We're Sorry to See You Go"
+├── 取消原因（可选反馈）
+│   ├── ( ) 邮件太频繁
+│   ├── ( ) 内容不相关
+│   ├── ( ) 不再需要这些工具
+│   └── ( ) 其他（文本框）
+├── 确认取消按钮（大按钮）
+├── 或者调整偏好链接（次级 CTA）
+└── 取消成功确认页面
+    ├── "You've been unsubscribed"
+    ├── 感谢使用的话语
+    └── 返回首页链接
+```
+
+**技术要求**:
+- 偏好页面：需要 token 验证（邮件中的加密链接）
+- 取消订阅：一键取消（无需登录）
+- 数据库更新：实时更新 `subscribers` 表
+- 安全性：防止 CSRF 攻击
+
+**内容要求**:
+- 语气：友好、尊重用户选择
+- 取消订阅页面：挽留但不强迫（可提供"暂停 30 天"选项）
+
+**SEO 要求**:
+- 这些页面设置 `noindex, nofollow`（不需要 SEO）
+
+**验收标准**:
+- [ ] 偏好保存成功率 100%
+- [ ] 取消订阅立即生效
+- [ ] 邮件中的链接正确跳转
+- [ ] 无安全漏洞（token 验证有效）
 
 ---
 
-### 🎯 阶段3: 高级功能开发（周5-6）
+## 批次 2: 内容深化与信任建设 (P1)
 
-#### 任务3.1: Cloudflare D1数据库集成
-**复杂度**: 5/10 | **预计时间**: 6-8小时
+### 2.1 Blog 分类/标签系统
 
-**数据库Schema**:
+**路径**: `/blog/category/[slug]` 和 `/blog/tag/[slug]`
+
+**业务目标**:
+- 改善内容可发现性
+- 提升 SEO（聚合页面）
+- 增加页面停留时间
+
+**用户故事**:
+> "作为读者，我想浏览所有关于'激光切割'的文章，而不是在博客列表中逐个翻找。"
+
+**信息架构**:
+```
+分类页面 (/blog/category/[slug])
+├── 分类标题（如 "Laser Cutting Articles"）
+├── 分类描述（150-200 字，SEO 优化）
+├── 文章列表（分页，每页 12 篇）
+├── 侧边栏
+│   ├── 热门标签云
+│   ├── 相关分类
+│   └── 订阅 CTA
+└── 分页导航
+
+标签页面 (/blog/tag/[slug])
+├── 标签标题（如 "Articles Tagged: CNC Machining"）
+├── 标签描述（100 字）
+├── 文章列表
+└── 相关标签
+
+分类/标签数据结构建议
+├── 核心分类（5-7 个）
+│   ├── Laser Cutting（激光切割）
+│   ├── CNC Machining（CNC 加工）
+│   ├── Cost Analysis（成本分析）
+│   ├── Equipment ROI（设备投资）
+│   ├── Manufacturing Guides（制造指南）
+│   └── Industry News（行业新闻）
+└── 标签（15-20 个）
+    ├── Stainless Steel, Aluminum, Copper（材料）
+    ├── Energy Efficiency, Cost Optimization（优化）
+    ├── Small Business, Enterprise（规模）
+    └── ...
+```
+
+**技术要求**:
+- 动态路由：`[slug].tsx`
+- 数据库扩展：文章表增加 `category` 和 `tags` 字段（JSON 或多对多关联表）
+- 聚合查询：高效的标签筛选查询
+- 分页：每页 12 篇，使用 URL 参数（`?page=2`）
+
+**SEO 要求**:
+- 分类页 Title: "[Category Name] Articles - LaserCalc Pro Blog"
+- Meta Description: 动态生成（包含分类描述）
+- Canonical URL: 确保分页页面指向首页
+- 内部链接：分类页之间互链
+
+**验收标准**:
+- [ ] 分类页面正确显示对应文章
+- [ ] 标签筛选准确无误
+- [ ] 分页功能正常
+- [ ] SEO 优化到位
+
+---
+
+### 2.2 作者页面
+
+**路径**: `/blog/author/[slug]`
+
+**业务目标**:
+- 建立专家权威感
+- 提升内容可信度
+- 人性化品牌形象
+
+**用户故事**:
+> "作为读者，我想了解文章作者的背景，以判断内容是否值得信赖。"
+
+**信息架构**:
+```
+作者页面
+├── 作者头像（150×150px）
+├── 作者名称
+├── 职位/头衔（如 "Senior Manufacturing Engineer"）
+├── 个人简介（250-400 字）
+│   ├── 专业背景
+│   ├── 行业经验
+│   └── 专长领域
+├── 社交媒体链接
+│   ├── LinkedIn
+│   ├── Twitter/X
+│   └── GitHub（如有）
+├── 统计数据
+│   ├── 发表文章数
+│   ├── 总阅读量（可选）
+│   └── 加入日期
+└── 文章列表（该作者的所有文章）
+```
+
+**内容要求**:
+- 初期 2-3 个作者资料（可虚拟但真实）
+- 每个作者至少 5 篇文章
+- 头像使用专业照片（或高质量插画）
+
+**技术要求**:
+- 数据库：`authors` 表（id, name, slug, bio, avatar_url, social_links）
+- 关联：文章表增加 `author_id` 外键
+- 动态路由：`/blog/author/[slug]`
+
+**SEO 要求**:
+- Title: "[Author Name] - Articles & Guides | LaserCalc Pro"
+- Meta Description: 作者简介前 150 字
+- 结构化数据：Person Schema
+
+**验收标准**:
+- [ ] 作者页面完整展示信息
+- [ ] 文章列表正确关联
+- [ ] 头像和社交链接正常
+- [ ] 结构化数据通过验证
+
+---
+
+### 2.3 案例研究页面
+
+**路径**: `/case-studies` 和 `/case-studies/[slug]`
+
+**业务目标**:
+- 展示工具实际应用价值
+- 增强潜在客户信心
+- 提供行业用例参考
+
+**用户故事**:
+> "作为决策者，我想看到真实的案例，了解这些工具如何帮助其他企业。"
+
+**信息架构**:
+```
+案例研究列表页 (/case-studies)
+├── 页面标题: "Case Studies - Real Manufacturing Cost Success Stories"
+├── 筛选器
+│   ├── 行业（汽车/航空/建筑/通用）
+│   ├── 工具类型（激光切割/CNC/ROI）
+│   └── 企业规模（小型/中型/大型）
+├── 案例卡片网格（3 列）
+│   ├── 案例标题
+│   ├── 行业标签
+│   ├── 关键结果（如 "节省 30% 成本"）
+│   ├── 缩略图
+│   └── 阅读更多按钮
+└── 分页
+
+案例详情页 (/case-studies/[slug])
+├── 案例标题（如 "How Company X Reduced Laser Cutting Costs by 30%"）
+├── 元信息（发布日期、行业、工具）
+├── 客户背景（匿名化）
+│   ├── 行业
+│   ├── 企业规模
+│   └── 挑战描述（200-300 字）
+├── 解决方案
+│   ├── 使用的工具
+│   ├── 实施过程（300-400 字）
+│   └── 关键步骤
+├── 成果与数据
+│   ├── 量化结果（成本节省、效率提升）
+│   ├── 对比图表（前后对比）
+│   └── 客户评价（引用）
+├── 关键要点（3-5 条）
+├── CTA: "使用同样的工具" → 跳转计算器
+└── 相关案例推荐（2-3 个）
+```
+
+**内容要求**:
+- 初期 5 个案例（可基于虚拟但合理的场景）
+- 每个案例 1,500-2,000 字
+- 必须有量化数据（成本节省百分比、时间节省等）
+- 配图：流程图、对比图表、工具截图
+
+**技术要求**:
+- 数据库：`case_studies` 表
+- Markdown 支持（用于案例内容）
+- 图表渲染：使用 Chart.js 或 Recharts
+- 筛选功能：客户端或服务端筛选
+
+**SEO 要求**:
+- 列表页 Title: "Manufacturing Cost Reduction Case Studies | LaserCalc Pro"
+- 详情页 Title: "[Case Title] - Case Study | LaserCalc Pro"
+- 结构化数据：Article Schema
+
+**验收标准**:
+- [ ] 至少 5 个高质量案例
+- [ ] 筛选功能正常
+- [ ] 图表显示正确
+- [ ] CTA 跳转准确
+
+---
+
+### 2.4 方法学/假设说明文档页面
+
+**路径**: `/methodology` 或每个计算器下的 `/calculators/[tool]/methodology`
+
+**业务目标**:
+- 建立计算结果可信度
+- 展示专业性与透明度
+- 提供学术/行业参考
+
+**用户故事**:
+> "作为工程师，我需要了解计算公式的来源和假设，以验证结果是否适用于我的场景。"
+
+**信息架构**:
+```
+方法学页面 (统一页面或每个工具独立)
+├── 页面标题: "Calculation Methodology & Assumptions"
+├── 总览（300 字）
+│   ├── 我们的方法学原则
+│   ├── 数据来源
+│   └── 更新频率
+└── 各工具方法学详解
+    ├── 激光切割成本计算器
+    │   ├── 计算公式（LaTeX 或清晰的数学表达式）
+    │   ├── 变量定义
+    │   ├── 关键假设（如 "假设设备满负荷运行"）
+    │   ├── 数据来源（行业标准、文献引用）
+    │   ├── 误差范围（±10-15%）
+    │   └── 适用场景与限制
+    ├── CNC 加工成本估算器
+    │   └── （同上结构）
+    └── ...（其他工具）
+```
+
+**内容要求**:
+- 每个工具：600-800 字方法学说明
+- 引用至少 3-5 个权威来源（行业报告、学术论文、制造标准）
+- 使用 LaTeX 或清晰的数学符号展示公式
+- 诚实说明局限性（如 "不包括物流成本"）
+
+**技术要求**:
+- 公式渲染：使用 KaTeX 或 MathJax
+- 可折叠章节（手风琴式，避免页面过长）
+- 内部锚点链接（快速跳转到具体工具）
+
+**SEO 要求**:
+- Title: "Calculation Methodology & Data Sources | LaserCalc Pro"
+- Meta Description: "Learn about the formulas, assumptions, and data sources behind our laser cutting and CNC cost calculators."
+- 结构化数据：HowTo Schema（可选）
+
+**验收标准**:
+- [ ] 所有核心工具方法学完整
+- [ ] 公式正确渲染
+- [ ] 至少 3 个权威引用
+- [ ] 用户反馈认可可信度
+
+---
+
+## 批次 3: 运营效率与后台增强 (P2)
+
+### 3.1 后台：角色与权限管理（RBAC）
+
+**路径**: `/admin/roles` 和 `/admin/permissions`
+
+**业务目标**:
+- 支持多用户后台管理
+- 降低误操作风险
+- 提升数据安全性
+
+**用户故事**:
+> "作为管理员，我需要为不同的团队成员分配不同的权限（如内容编辑、数据分析师），而不是所有人都是超级管理员。"
+
+**功能要求**:
+```
+角色管理
+├── 预设角色
+│   ├── Super Admin（超级管理员）- 所有权限
+│   ├── Content Editor（内容编辑）- 文章、指南编辑
+│   ├── Data Analyst（数据分析师）- 查看 Analytics、Calculations
+│   └── Customer Support（客服）- 查看订阅者、回复咨询
+├── 自定义角色创建
+├── 权限矩阵（细粒度控制）
+│   ├── 文章管理（查看/创建/编辑/删除/发布）
+│   ├── 用户管理（查看/编辑/删除）
+│   ├── 订阅者管理（查看/导出/删除）
+│   ├── 系统设置（查看/修改）
+│   └── 计算记录（查看/导出）
+└── 角色分配
+    └── 用户列表 → 分配角色 → 保存
+```
+
+**技术要求**:
+- 数据库扩展：
+  - `roles` 表（id, name, permissions_json）
+  - `users` 表增加 `role_id` 外键
+- 中间件：验证用户权限（API 路由保护）
+- UI 组件：权限矩阵 Checkbox Grid
+
+**UI/UX 设计**:
+- 角色管理页面：表格展示角色列表
+- 权限编辑：模态框或独立页面（Matrix 布局）
+- 用户分配：下拉选择角色
+
+**验收标准**:
+- [ ] 角色创建/编辑/删除功能正常
+- [ ] 权限验证准确（无权限用户被拒绝）
+- [ ] UI 清晰易懂
+- [ ] 无安全漏洞
+
+---
+
+### 3.2 后台：审计日志
+
+**路径**: `/admin/audit-logs`
+
+**业务目标**:
+- 合规要求（SOC 2、GDPR）
+- 追踪操作历史
+- 问题排查与安全监控
+
+**用户故事**:
+> "作为系统管理员,我需要查看谁在什么时候修改了系统设置，以便追踪问题根源。"
+
+**功能要求**:
+```
+审计日志页面
+├── 筛选器
+│   ├── 日期范围（默认最近 7 天）
+│   ├── 用户（下拉选择）
+│   ├── 操作类型（创建/编辑/删除/登录/导出）
+│   └── 模块（文章/用户/设置/订阅者）
+├── 日志列表（表格）
+│   ├── 时间戳（精确到秒）
+│   ├── 用户（姓名 + 邮箱）
+│   ├── 操作类型（图标 + 文字）
+│   ├── 模块（如 "文章管理"）
+│   ├── 详细描述（如 "编辑文章: 'How to Calculate Laser Cutting Cost'"）
+│   ├── IP 地址
+│   └── 详情按钮（查看完整 payload）
+├── 导出功能（CSV 格式）
+└── 分页（每页 50 条）
+```
+
+**记录的操作类型**:
+- 用户管理：登录、登出、创建用户、删除用户
+- 内容管理：创建文章、编辑文章、删除文章、发布文章
+- 数据操作：导出订阅者、删除计算记录
+- 系统设置：修改配置、更新 SEO 设置
+
+**技术要求**:
+- 数据库：`audit_logs` 表
+  - `id`, `user_id`, `action`, `module`, `description`, `ip_address`, `payload_json`, `created_at`
+- 自动记录：中间件或服务层拦截器
+- 查询优化：索引 `created_at` 和 `user_id`
+
+**UI/UX 设计**:
+- 表格：密集布局（信息量大）
+- 颜色编码：创建（绿）、编辑（蓝）、删除（红）
+- 详情弹窗：JSON Viewer 展示完整 payload
+
+**验收标准**:
+- [ ] 所有关键操作被记录
+- [ ] 筛选功能准确
+- [ ] 导出 CSV 格式正确
+- [ ] 性能良好（100k+ 日志时查询 < 2 秒）
+
+---
+
+### 3.3 后台：订阅统计与漏斗分析
+
+**路径**: `/admin/analytics/subscriptions`
+
+**业务目标**:
+- 优化订阅转化率
+- 识别流失节点
+- 数据驱动决策
+
+**用户故事**:
+> "作为增长负责人，我需要了解订阅用户的来源、留存率和流失原因，以优化订阅策略。"
+
+**功能要求**:
+```
+订阅统计页面
+├── 关键指标卡片（大数字展示）
+│   ├── 总订阅数
+│   ├── 本月新增订阅
+│   ├── 取消订阅数
+│   ├── 净增长率（本月）
+│   └── 平均留存天数
+├── 订阅来源分析
+│   ├── 饼图：来源工具分布（激光切割计算器 35%、博客 25%...）
+│   ├── 表格：各来源订阅数、转化率
+│   └── 趋势图：每周新增订阅（按来源堆叠）
+├── 转化漏斗
+│   ├── 步骤 1: 页面访问 → 10,000
+│   ├── 步骤 2: 订阅框显示 → 3,000 (30%)
+│   ├── 步骤 3: 提交邮箱 → 500 (16.7%)
+│   ├── 步骤 4: 确认邮箱 → 400 (80%)
+│   └── 最终转化率: 4%
+├── 留存分析
+│   ├── 月度留存曲线（Cohort Analysis）
+│   └── 流失原因分析（基于取消订阅反馈）
+└── 导出功能（详细报表）
+```
+
+**技术要求**:
+- 数据查询：从 `subscribers` 表和 `audit_logs` 聚合
+- 图表库：Recharts 或 Chart.js
+- 计算逻辑：
+  - 转化率 = (订阅数 / 页面访问数) × 100%
+  - 留存率 = (仍活跃用户 / 初始订阅用户) × 100%
+
+**UI/UX 设计**:
+- 仪表盘风格：多图表并列
+- 颜色：统一配色方案
+- 交互：点击图表可下钻（如点击"博客"来源查看具体文章）
+
+**验收标准**:
+- [ ] 所有指标计算准确
+- [ ] 图表清晰易读
+- [ ] 漏斗分析识别关键流失点
+- [ ] 导出报表格式专业
+
+---
+
+### 3.4 后台：文章状态与草稿工作流
+
+**路径**: `/admin/articles`（现有页面增强）
+
+**业务目标**:
+- 支持内容协作流程
+- 避免误发布未完成内容
+- 提升内容质量管控
+
+**用户故事**:
+> "作为内容编辑，我需要将文章保存为草稿，让审核人员审阅后再发布。"
+
+**功能要求**:
+```
+文章状态系统
+├── 状态类型
+│   ├── Draft（草稿）- 仅编辑者可见
+│   ├── In Review（审核中）- 通知审核者
+│   ├── Scheduled（定时发布）- 设置发布时间
+│   ├── Published（已发布）- 公开可见
+│   └── Archived（已归档）- 不再显示但保留
+├── 状态流转
+│   ├── Draft → In Review（提交审核按钮）
+│   ├── In Review → Published（批准按钮）
+│   ├── In Review → Draft（退回修改按钮，含备注）
+│   └── Published → Archived（归档按钮）
+├── 定时发布
+│   ├── 发布时间选择器（日期 + 时间）
+│   ├── Cron 任务或 Workers Scheduled 触发
+│   └── 发布前预览功能
+└── 版本历史（可选，高级功能）
+    └── 查看文章历史版本，支持回滚
+```
+
+**技术要求**:
+- 数据库扩展：`articles` 表增加字段
+  - `status` (ENUM: draft, in_review, scheduled, published, archived)
+  - `scheduled_at` (TIMESTAMP)
+  - `reviewer_notes` (TEXT)
+- 定时发布：Cloudflare Workers Cron 或 Next.js API Cron
+- 权限控制：仅管理员可批准，编辑者可提交审核
+
+**UI/UX 设计**:
+- 文章列表：状态徽章（草稿-灰色、审核中-黄色、已发布-绿色）
+- 编辑页面：状态切换按钮（大按钮，明确操作）
+- 预览功能：独立窗口或模态框，显示发布后效果
+
+**验收标准**:
+- [ ] 状态流转逻辑正确
+- [ ] 定时发布准确（误差 < 1 分钟）
+- [ ] 权限验证无漏洞
+- [ ] 审核备注功能可用
+
+---
+
+## 批次 4: 长期优化与合规 (P3)
+
+### 4.1 Cookie Policy 与偏好设置
+
+**路径**: `/cookie-policy` 和页面底部 Cookie Banner
+
+**业务目标**:
+- 合规要求（GDPR、ePrivacy Directive）
+- 避免法律风险
+- 提升用户信任
+
+**用户故事**:
+> "作为欧盟用户，我需要明确知道网站使用了哪些 Cookie，并能够选择退出非必要 Cookie。"
+
+**功能要求**:
+```
+Cookie Policy 页面
+├── 页面标题: "Cookie Policy"
+├── 总览（300 字）
+│   ├── 什么是 Cookie
+│   ├── 我们为什么使用 Cookie
+│   └── 如何管理 Cookie
+├── Cookie 类型详解
+│   ├── 必要 Cookie（Strictly Necessary）
+│   │   ├── 用途：网站基本功能（如登录状态）
+│   │   ├── 示例：session_id
+│   │   └── 可否退出：否
+│   ├── 功能 Cookie（Functional）
+│   │   ├── 用途：记住用户偏好（如语言、主题）
+│   │   ├── 示例：user_preferences
+│   │   └── 可否退出：是
+│   ├── 分析 Cookie（Analytics）
+│   │   ├── 用途：Google Analytics、热图
+│   │   ├── 示例：_ga, _gid
+│   │   └── 可否退出：是
+│   └── 广告 Cookie（Advertising）
+│       ├── 用途：Google AdSense
+│       ├── 示例：_gcl_au, IDE
+│       └── 可否退出：是（但影响广告相关性）
+├── 第三方 Cookie
+│   ├── Google Analytics
+│   ├── Google AdSense
+│   └── Cloudflare（性能优化）
+├── 如何管理 Cookie
+│   ├── 浏览器设置指南
+│   └── 我们的 Cookie 偏好中心链接
+└── 联系方式（Cookie 相关问题）
+
+Cookie Banner（首次访问弹出）
+├── 标题: "We Value Your Privacy"
+├── 简短说明（100 字）
+├── 按钮
+│   ├── [接受所有 Cookie]（主按钮）
+│   ├── [仅必要 Cookie]（次级按钮）
+│   └── [自定义偏好]（打开详细设置）
+└── 详细设置模态框
+    ├── 必要 Cookie（开关禁用，始终开启）
+    ├── 功能 Cookie（开关）
+    ├── 分析 Cookie（开关）
+    ├── 广告 Cookie（开关）
+    └── [保存偏好] 按钮
+```
+
+**技术要求**:
+- Cookie Banner 组件：使用 `react-cookie-consent` 或自定义
+- 偏好存储：LocalStorage 或 Cookie（ironically）
+- 条件加载：根据用户偏好动态加载 Google Analytics/AdSense 脚本
+- 延迟加载：用户同意前不加载非必要脚本
+
+**合规要求**:
+- GDPR 合规：默认不加载非必要 Cookie（Opt-in，而非 Opt-out）
+- 明确告知：列出所有使用的 Cookie 名称和用途
+- 易于撤回：提供 Cookie 偏好中心链接（页脚）
+
+**UI/UX 设计**:
+- Banner 位置：底部固定（不遮挡主要内容）
+- 设计：简洁、不侵入
+- 移动端：响应式，按钮易点击
+
+**验收标准**:
+- [ ] Cookie Policy 完整且准确
+- [ ] Banner 首次访问显示
+- [ ] 用户偏好正确保存和应用
+- [ ] 脚本条件加载正确（用户拒绝 Analytics 则不加载 GA）
+- [ ] 通过 GDPR 合规检查工具验证
+
+---
+
+### 4.2 无障碍访问（Accessibility）说明页面
+
+**路径**: `/accessibility`
+
+**业务目标**:
+- 合规要求（ADA、WCAG 2.1 AA）
+- 扩大用户群体（包括残障用户）
+- 展示社会责任
+
+**用户故事**:
+> "作为使用屏幕阅读器的用户，我需要了解网站是否支持无障碍访问，以及如何获得帮助。"
+
+**信息架构**:
+```
+无障碍访问页面
+├── 页面标题: "Accessibility Statement"
+├── 承诺声明（200 字）
+│   ├── 我们的无障碍目标
+│   └── 遵循的标准（WCAG 2.1 AA）
+├── 已实施的无障碍功能
+│   ├── 键盘导航支持（Tab、Enter、Esc）
+│   ├── 屏幕阅读器优化（ARIA 标签）
+│   ├── 高对比度模式
+│   ├── 文字缩放支持（至少 200%）
+│   ├── 替代文本（所有图片）
+│   └── 表单标签清晰
+├── 已知限制（诚实说明）
+│   ├── 部分第三方嵌入内容（如 YouTube）可能不完全无障碍
+│   └── 正在改进的功能列表
+├── 反馈机制
+│   ├── 如发现无障碍问题，请联系我们
+│   ├── 承诺响应时间（48 小时）
+│   └── 联系表单链接
+├── 第三方工具
+│   ├── 推荐的辅助技术（如 NVDA、JAWS）
+│   └── 浏览器无障碍设置指南
+└── 最后更新日期
+```
+
+**技术要求**:
+- 页面本身必须完全无障碍（使用 axe DevTools 验证）
+- 所有交互元素可键盘访问
+- 合理的 ARIA 标签和 Landmark
+
+**合规要求**:
+- 符合 WCAG 2.1 AA 标准
+- ADA Title III 合规（如适用于美国业务）
+
+**验收标准**:
+- [ ] 页面通过 axe DevTools 0 错误
+- [ ] 屏幕阅读器测试通过（NVDA/VoiceOver）
+- [ ] 键盘导航流畅
+- [ ] 反馈机制可用
+
+---
+
+### 4.3 归档页面（按年月）
+
+**路径**: `/blog/archive/[year]/[month]` 或 `/blog/archive`
+
+**业务目标**:
+- 改善旧内容可发现性
+- 提升 SEO（聚合页面）
+- 完善博客导航结构
+
+**用户故事**:
+> "作为读者，我想浏览 2025 年 3 月的所有文章，回顾那段时间的行业动态。"
+
+**信息架构**:
+```
+归档主页 (/blog/archive)
+├── 页面标题: "Blog Archive"
+├── 年份列表（手风琴）
+│   ├── 2026
+│   │   ├── January (12 篇文章)
+│   │   ├── February (10 篇文章)
+│   │   └── ...
+│   ├── 2025
+│   │   ├── December (8 篇文章)
+│   │   └── ...
+│   └── ...
+└── 日历视图（可选，视觉化展示）
+
+归档详情页 (/blog/archive/2025/12)
+├── 页面标题: "Articles from December 2025"
+├── 面包屑导航: Home > Blog > Archive > 2025 > December
+├── 文章列表（按发布日期倒序）
+│   ├── 文章标题
+│   ├── 发布日期
+│   ├── 分类标签
+│   └── 摘要
+└── 导航（上一月 / 下一月）
+```
+
+**技术要求**:
+- 动态路由：`/blog/archive/[year]/[month]`
+- 数据库查询：按月份聚合文章
+- 生成静态页面（ISR，按需生成）
+
+**SEO 要求**:
+- Title: "Articles from [Month Year] - LaserCalc Pro Blog"
+- Meta Description: 动态生成（如 "Browse all laser cutting and CNC articles published in December 2025"）
+- Canonical URL: 确保唯一性
+
+**验收标准**:
+- [ ] 归档页面正确显示文章
+- [ ] 导航流畅（年/月切换）
+- [ ] 移动端体验良好
+- [ ] SEO 优化到位
+
+---
+
+### 4.4 合作伙伴/集成页面
+
+**路径**: `/partnerships` 或 `/integrations`
+
+**业务目标**:
+- 展示生态系统
+- 吸引 B2B 合作伙伴
+- 增强工具价值感知
+
+**用户故事**:
+> "作为 ERP 软件用户，我想知道 LaserCalc Pro 是否可以与我的系统集成，以自动化成本估算流程。"
+
+**信息架构**:
+```
+合作伙伴/集成页面
+├── 页面标题: "Partnerships & Integrations"
+├── 总览（300 字）
+│   ├── 我们的合作理念
+│   └── 集成的价值
+├── 现有集成（如有）
+│   ├── ERP 系统（如 SAP、Oracle）
+│   ├── CAD/CAM 软件（如 AutoCAD、SolidWorks）
+│   └── 会计软件（如 QuickBooks）
+├── 即将推出的集成（Roadmap）
+├── API 文档链接（如提供）
+├── 合作伙伴展示
+│   ├── Logo 墙（合作企业 Logo）
+│   └── 简短描述
+├── 成为合作伙伴
+│   ├── 合作模式（技术集成、内容合作、联合营销）
+│   ├── 申请表单
+│   └── 联系方式
+└── 案例研究（集成后的成功故事）
+```
+
+**内容要求**:
+- 初期可能没有实际集成，可描述"计划中"或"概念验证"
+- 至少 3-5 个潜在合作伙伴 Logo（已获授权）
+- 技术文档草稿（如 API 文档）
+
+**技术要求**:
+- 静态页面（Markdown 或 CMS）
+- 表单：合作申请表（发送到指定邮箱）
+
+**SEO 要求**:
+- Title: "Partnerships & Integrations - LaserCalc Pro"
+- Meta Description: "Integrate LaserCalc Pro with your ERP, CAD/CAM, or accounting software. Explore partnership opportunities."
+
+**验收标准**:
+- [ ] 页面内容完整且专业
+- [ ] 合作申请表单正常
+- [ ] Logo 展示清晰
+- [ ] 吸引至少 1 个合作咨询
+
+---
+
+## 批次 5: 增强功能（可选，未来迭代）
+
+以下功能不在当前批次范围内，但列出供未来参考：
+
+### 5.1 多语言支持
+- 中文版本（中国市场）
+- 德语版本（德国工业强国）
+
+### 5.2 高级功能（付费订阅）
+- 无限计算历史保存
+- 团队协作功能（多用户共享项目）
+- 白标定制（为企业客户）
+
+### 5.3 移动 App
+- iOS/Android 原生应用
+- 离线计算功能
+
+### 5.4 AI 辅助
+- 基于历史数据的成本预测
+- 智能推荐最优加工方案
+
+---
+
+## 实施优先级矩阵
+
+| 功能 | 优先级 | 影响 | 工作量 | ROI | 批次 |
+|------|--------|------|--------|-----|------|
+| FAQ 页面 | P0 | 高 | 中 | 高 | 批次 1 |
+| 计算器对比页面 | P0 | 高 | 中 | 高 | 批次 1 |
+| 导出/分享功能 | P0 | 高 | 高 | 高 | 批次 1 |
+| 订阅偏好管理 | P0 | 高 | 中 | 高 | 批次 1 |
+| Blog 分类/标签 | P1 | 中 | 中 | 中 | 批次 2 |
+| 作者页面 | P1 | 中 | 低 | 中 | 批次 2 |
+| 案例研究 | P1 | 高 | 高 | 高 | 批次 2 |
+| 方法学文档 | P1 | 高 | 中 | 高 | 批次 2 |
+| RBAC 权限管理 | P2 | 中 | 高 | 中 | 批次 3 |
+| 审计日志 | P2 | 中 | 中 | 中 | 批次 3 |
+| 订阅统计分析 | P2 | 中 | 中 | 中 | 批次 3 |
+| 文章草稿工作流 | P2 | 中 | 中 | 中 | 批次 3 |
+| Cookie Policy | P3 | 高 | 低 | 中 | 批次 4 |
+| 无障碍说明页 | P3 | 中 | 低 | 低 | 批次 4 |
+| 归档页面 | P3 | 低 | 低 | 低 | 批次 4 |
+| 合作伙伴页面 | P3 | 中 | 低 | 中 | 批次 4 |
+
+---
+
+## 数据库扩展需求
+
+### 新增表
+
 ```sql
--- schema.sql
-
--- 计算历史表
-CREATE TABLE calculations (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  tool_type TEXT NOT NULL,
-  input_params TEXT NOT NULL,  -- JSON格式
-  result TEXT NOT NULL,         -- JSON格式
-  user_ip TEXT,
-  user_agent TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  INDEX idx_tool_type (tool_type),
-  INDEX idx_created_at (created_at)
+-- 作者表
+CREATE TABLE authors (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  bio TEXT,
+  avatar_url TEXT,
+  social_links JSON, -- {"linkedin": "url", "twitter": "url"}
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 邮件订阅表
-CREATE TABLE subscribers (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT UNIQUE NOT NULL,
-  source_tool TEXT,
-  is_confirmed BOOLEAN DEFAULT FALSE,
-  confirmation_token TEXT,
-  subscribed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  confirmed_at DATETIME,
-  INDEX idx_email (email)
+-- 分类表
+CREATE TABLE categories (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  description TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 使用统计表（用于分析）
-CREATE TABLE usage_stats (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  date DATE NOT NULL,
-  tool_type TEXT NOT NULL,
-  calculation_count INTEGER DEFAULT 0,
-  unique_users INTEGER DEFAULT 0,
-  INDEX idx_date_tool (date, tool_type)
+-- 标签表
+CREATE TABLE tags (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 文章-标签关联表
+CREATE TABLE article_tags (
+  article_id INTEGER,
+  tag_id INTEGER,
+  PRIMARY KEY (article_id, tag_id)
+);
+
+-- 案例研究表
+CREATE TABLE case_studies (
+  id INTEGER PRIMARY KEY,
+  title TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  industry TEXT,
+  company_size TEXT, -- small, medium, large
+  tools_used JSON, -- ["laser-cutting", "roi"]
+  challenge TEXT,
+  solution TEXT,
+  results TEXT,
+  key_metrics JSON, -- {"cost_savings": "30%", "time_saved": "20 hours"}
+  published_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 角色表
+CREATE TABLE roles (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  permissions JSON, -- {"articles": ["view", "create", "edit"], "users": ["view"]}
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 审计日志表
+CREATE TABLE audit_logs (
+  id INTEGER PRIMARY KEY,
+  user_id INTEGER,
+  action TEXT, -- create, edit, delete, login, export
+  module TEXT, -- articles, users, settings
+  description TEXT,
+  ip_address TEXT,
+  payload JSON,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 分享链接表（用于计算结果分享）
+CREATE TABLE shared_calculations (
+  id INTEGER PRIMARY KEY,
+  short_code TEXT UNIQUE NOT NULL, -- 短链代码（如 "abc123"）
+  tool_type TEXT,
+  calculation_data JSON,
+  expires_at TIMESTAMP,
+  views INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
-**D1配置**:
-```typescript
-// lib/db/client.ts
-import { D1Database } from '@cloudflare/workers-types';
+### 现有表扩展
 
-let db: D1Database;
+```sql
+-- articles 表增加字段
+ALTER TABLE articles ADD COLUMN author_id INTEGER;
+ALTER TABLE articles ADD COLUMN category_id INTEGER;
+ALTER TABLE articles ADD COLUMN status TEXT DEFAULT 'draft'; -- draft, in_review, scheduled, published, archived
+ALTER TABLE articles ADD COLUMN scheduled_at TIMESTAMP;
+ALTER TABLE articles ADD COLUMN reviewer_notes TEXT;
 
-export function getDB(): D1Database {
-  if (!db && process.env.DATABASE_URL) {
-    // Cloudflare Workers环境
-    db = process.env.DB as D1Database;
-  }
-  return db;
-}
+-- users 表增加字段
+ALTER TABLE users ADD COLUMN role_id INTEGER DEFAULT 1; -- 默认为普通用户
 
-// lib/db/calculations.ts
-export async function saveCalculation(data: {
-  toolType: string;
-  inputParams: object;
-  result: object;
-  userIp?: string;
-  userAgent?: string;
-}) {
-  const db = getDB();
-  
-  const stmt = db.prepare(`
-    INSERT INTO calculations (tool_type, input_params, result, user_ip, user_agent)
-    VALUES (?, ?, ?, ?, ?)
-  `);
-  
-  await stmt.bind(
-    data.toolType,
-    JSON.stringify(data.inputParams),
-    JSON.stringify(data.result),
-    data.userIp || null,
-    data.userAgent || null
-  ).run();
-}
-
-export async function getCalculationHistory(toolType?: string, limit = 10) {
-  const db = getDB();
-  
-  const query = toolType
-    ? `SELECT * FROM calculations WHERE tool_type = ? ORDER BY created_at DESC LIMIT ?`
-    : `SELECT * FROM calculations ORDER BY created_at DESC LIMIT ?`;
-    
-  const stmt = toolType 
-    ? db.prepare(query).bind(toolType, limit)
-    : db.prepare(query).bind(limit);
-    
-  const { results } = await stmt.all();
-  return results;
-}
+-- subscribers 表增加字段
+ALTER TABLE subscribers ADD COLUMN preferences JSON; -- {"weekly_updates": true, "tutorials": true, "promotions": false}
+ALTER TABLE subscribers ADD COLUMN frequency TEXT DEFAULT 'weekly'; -- realtime, weekly, monthly
+ALTER TABLE subscribers ADD COLUMN unsubscribed_at TIMESTAMP;
+ALTER TABLE subscribers ADD COLUMN unsubscribe_reason TEXT;
 ```
 
-**API路由**:
-```typescript
-// app/api/calculate/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { saveCalculation } from '@/lib/db/calculations';
+---
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { toolType, params, result } = body;
-    
-    // 获取用户IP
-    const userIp = request.headers.get('x-forwarded-for') || 
-                   request.headers.get('x-real-ip');
-    const userAgent = request.headers.get('user-agent');
-    
-    // 保存到数据库
-    await saveCalculation({
-      toolType,
-      inputParams: params,
-      result,
-      userIp,
-      userAgent,
-    });
-    
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Failed to save calculation:', error);
-    return NextResponse.json(
-      { error: 'Failed to save calculation' },
-      { status: 500 }
-    );
+## 技术栈补充
+
+### 新增依赖包
+
+```json
+{
+  "dependencies": {
+    "jspdf": "^2.5.1", // PDF 生成
+    "jspdf-autotable": "^3.8.0", // PDF 表格
+    "nanoid": "^5.0.0", // 短链生成
+    "katex": "^0.16.0", // 数学公式渲染
+    "react-katex": "^3.0.0",
+    "recharts": "^2.10.0", // 图表库（如已有可忽略）
+    "react-cookie-consent": "^9.0.0", // Cookie Banner
+    "zod": "^3.22.0" // 表单验证（如已有可忽略）
   }
 }
 ```
 
 ---
 
-#### 任务3.2: PDF报告导出功能
-**复杂度**: 6/10 | **预计时间**: 8-10小时
+## 内容创作清单
 
-```typescript
-// lib/pdf/generator.ts
-import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
+### 需要撰写的内容
 
-export function generateLaserCuttingReport(
-  params: LaserCuttingParams, 
-  result: CalculationResult
-) {
-  const doc = new jsPDF();
-  
-  // Header
-  doc.setFontSize(20);
-  doc.setTextColor(37, 99, 235); // Blue
-  doc.text('LaserCalc Pro', 20, 20);
-  
-  doc.setFontSize(16);
-  doc.setTextColor(0, 0, 0);
-  doc.text('Laser Cutting Cost Report', 20, 30);
-  
-  // Date and calculation ID
-  doc.setFontSize(10);
-  doc.setTextColor(100, 100, 100);
-  doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 40);
-  
-  // Input Parameters Section
-  doc.setFontSize(14);
-  doc.setTextColor(0, 0, 0);
-  doc.text('Input Parameters', 20, 55);
-  
-  autoTable(doc, {
-    startY: 60,
-    head: [['Parameter', 'Value']],
-    body: [
-      ['Material Type', params.materialType.replace('_', ' ')],
-      ['Thickness', `${params.thickness} mm`],
-      ['Cutting Length', `${params.cuttingLength} mm`],
-      ['Laser Power', `${params.laserPower} kW`],
-      ['Electricity Rate', `$${params.electricityRate}/kWh`],
-      ['Labor Rate', `$${params.laborRate}/hour`],
-    ],
-  });
-  
-  // Cost Breakdown Section
-  const finalY = (doc as any).lastAutoTable.finalY + 15;
-  doc.setFontSize(14);
-  doc.text('Cost Breakdown', 20, finalY);
-  
-  autoTable(doc, {
-    startY: finalY + 5,
-    head: [['Cost Item', 'Amount (USD)']],
-    body: [
-      ['Material Cost', `$${result.breakdown.materialCost.toFixed(2)}`],
-      ['Power Cost', `$${result.breakdown.powerCost.toFixed(2)}`],
-      ['Labor Cost', `$${result.breakdown.laborCost.toFixed(2)}`],
-      ['Gas Cost', `$${result.breakdown.gasCost.toFixed(2)}`],
-      ['Equipment Depreciation', `$${result.breakdown.depreciation.toFixed(2)}`],
-      ['Total Cost', `$${result.totalCost.toFixed(2)}`],
-    ],
-    foot: [['Suggested Retail Price', `$${result.suggestedPrice.toFixed(2)}`]],
-  });
-  
-  // Footer disclaimer
-  const pageHeight = doc.internal.pageSize.height;
-  doc.setFontSize(8);
-  doc.setTextColor(150, 150, 150);
-  doc.text(
-    'Disclaimer: This calculation is an estimate. Actual costs may vary.',
-    20,
-    pageHeight - 20
-  );
-  doc.text(
-    'Generated by LaserCalc Pro - https://lasercalcpro.com',
-    20,
-    pageHeight - 15
-  );
-  
-  return doc;
-}
-
-// 导出为Blob供下载
-export function downloadPDF(doc: jsPDF, filename: string) {
-  doc.save(filename);
-}
-
-// 生成PDF预览URL
-export function getPDFPreviewURL(doc: jsPDF): string {
-  const blob = doc.output('blob');
-  return URL.createObjectURL(blob);
-}
-```
+| 页面 | 字数 | 优先级 | 负责人 | 截止日期 |
+|------|------|--------|--------|----------|
+| FAQ（20 问） | 4,000 | P0 | 内容团队 | 周 1 |
+| 计算器对比页 | 1,500 | P0 | 产品团队 | 周 1 |
+| 案例研究（5 篇） | 10,000 | P1 | 内容团队 | 周 2-3 |
+| 方法学文档 | 5,000 | P1 | 技术团队 | 周 2 |
+| Cookie Policy | 2,000 | P3 | 法务/内容 | 周 4 |
+| 无障碍声明 | 1,000 | P3 | 技术/内容 | 周 4 |
+| 合作伙伴页 | 1,500 | P3 | 商务团队 | 周 4 |
 
 ---
 
-### 🎯 阶段4: SEO与内容（周7-8）
+## 质量保证检查清单
 
-#### 任务4.1: SEO技术优化
+### 每个页面发布前必须通过
 
-**动态Meta标签**:
-```typescript
-// app/calculators/laser-cutting/page.tsx
-export const metadata = {
-  title: 'Laser Cutting Cost Calculator - Free & Accurate | LaserCalc Pro',
-  description: 'Calculate laser cutting costs instantly. Free tool for estimating material, labor, energy, and equipment costs for metal cutting projects.',
-  keywords: 'laser cutting cost calculator, metal cutting price estimator, laser cost calculation',
-  openGraph: {
-    title: 'Laser Cutting Cost Calculator | LaserCalc Pro',
-    description: 'Professional laser cutting cost estimation tool',
-    url: 'https://lasercalcpro.com/calculators/laser-cutting',
-    siteName: 'LaserCalc Pro',
-    images: [
-      {
-        url: 'https://lasercalcpro.com/og-laser-cutting.jpg',
-        width: 1200,
-        height: 630,
-      },
-    ],
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Laser Cutting Cost Calculator',
-    description: 'Free professional laser cutting cost estimation',
-    images: ['https://lasercalcpro.com/twitter-laser-cutting.jpg'],
-  },
-};
-```
-
-**结构化数据**:
-```typescript
-// components/seo/StructuredData.tsx
-export function HowToSchema({ tool }: { tool: string }) {
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    "name": `How to Calculate ${tool} Cost`,
-    "description": `Step-by-step guide to calculating ${tool} costs`,
-    "step": [
-      {
-        "@type": "HowToStep",
-        "name": "Enter Material Parameters",
-        "text": "Input your material type, thickness, and dimensions"
-      },
-      {
-        "@type": "HowToStep",
-        "name": "Set Machine Parameters",
-        "text": "Enter your machine specifications and power consumption"
-      },
-      {
-        "@type": "HowToStep",
-        "name": "Input Cost Factors",
-        "text": "Add electricity rates, labor costs, and material prices"
-      },
-      {
-        "@type": "HowToStep",
-        "name": "Calculate & Review",
-        "text": "Click calculate to see detailed cost breakdown"
-      }
-    ]
-  };
-  
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-    />
-  );
-}
-
-export function FAQSchema({ faqs }: { faqs: Array<{question: string, answer: string}> }) {
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": faqs.map(faq => ({
-      "@type": "Question",
-      "name": faq.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": faq.answer
-      }
-    }))
-  };
-  
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-    />
-  );
-}
-```
-
-**Sitemap生成**:
-```typescript
-// app/sitemap.ts
-import { MetadataRoute } from 'next';
-
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://lasercalcpro.com';
-  
-  const calculators = [
-    'laser-cutting',
-    'cnc-machining',
-    'roi',
-    'energy',
-    'material-utilization',
-  ];
-  
-  const blogPosts = [
-    // 从数据库或CMS获取博客文章
-  ];
-  
-  return [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 1,
-    },
-    ...calculators.map(calc => ({
-      url: `${baseUrl}/calculators/${calc}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.9,
-    })),
-    ...blogPosts.map(post => ({
-      url: `${baseUrl}/blog/${post.slug}`,
-      lastModified: new Date(post.updatedAt),
-      changeFrequency: 'monthly' as const,
-      priority: 0.7,
-    })),
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.5,
-    },
-  ];
-}
-```
+- [ ] **功能测试**：所有交互正常（表单提交、按钮点击、导航）
+- [ ] **响应式测试**：移动端（375px）、平板（768px）、桌面（1440px）
+- [ ] **浏览器兼容**：Chrome、Safari、Firefox、Edge 最新版本
+- [ ] **SEO 检查**：Title、Meta、H1、结构化数据、Canonical
+- [ ] **性能测试**：Lighthouse 评分 > 90（Performance、Accessibility、Best Practices、SEO）
+- [ ] **无障碍测试**：axe DevTools 0 错误、键盘导航、屏幕阅读器
+- [ ] **内容审核**：无拼写错误、语法正确、内部链接有效、图片 Alt 文本
+- [ ] **安全检查**：无 XSS/SQL 注入风险、表单验证、HTTPS
+- [ ] **数据库测试**：CRUD 操作正确、索引优化、查询性能
+- [ ] **日志记录**：关键操作被记录到审计日志
 
 ---
 
-#### 任务4.2: 内容创作指南
+## 风险与依赖
 
-**工具教程文章结构模板**:
+### 关键风险
 
-```markdown
-# [标题]: 激光切割成本计算完整指南：影响价格的7个关键因素
+| 风险 | 影响 | 概率 | 缓解措施 |
+|------|------|------|----------|
+| PDF 生成性能问题 | 高 | 中 | 使用 Web Worker 后台生成，或服务端生成 |
+| 短链碰撞（nanoid） | 中 | 低 | 使用更长的 ID（8 位），数据库唯一约束 |
+| GDPR 合规复杂性 | 高 | 高 | 咨询法律顾问，使用成熟的 Cookie 管理库 |
+| 内容创作延迟 | 中 | 中 | 提前开始内容创作，使用 AI 辅助（ChatGPT 生成初稿） |
+| 后台权限系统复杂 | 高 | 中 | 分阶段实施（先 3 个固定角色，再扩展自定义） |
 
-## 目录
-1. 为什么需要准确的成本计算
-2. 影响激光切割成本的7大因素
-3. 如何使用成本计算器
-4. 实际案例分析
-5. 成本优化建议
-6. 常见问题解答
+### 外部依赖
 
-## 1. 为什么需要准确的成本计算
-
-在激光切割行业，准确的成本计算对于以下方面至关重要：
-
-- **项目报价**: 确保报价既有竞争力又能保证利润
-- **预算规划**: 帮助企业制定合理的生产预算
-- **投资决策**: 评估是否需要购买或升级设备
-
-[内部链接到ROI计算器]
-
-## 2. 影响激光切割成本的7大因素
-
-### 2.1 材料成本
-
-材料成本通常占总成本的40-60%。主要考虑因素包括：
-
-- **材料类型**: 不锈钢、铝、铜等不同材料价格差异大
-- **材料厚度**: 厚度越大，材料用量越多
-- **材料利用率**: 排版优化可显著降低废料
-
-**示例计算**:
-```
-不锈钢304 (3mm厚)
-价格: $8/kg
-密度: 7.93 kg/dm³
-切割面积: 1m² = 23.79 kg
-材料成本: $190.32
-```
-
-[内部链接到材料利用率计算器]
-
-### 2.2 能源成本
-
-激光切割机功耗大，能源成本不容忽视...
-
-[继续详细展开其他5个因素]
-
-## 3. 如何使用成本计算器
-
-我们的[激光切割成本计算器](/calculators/laser-cutting)让成本估算变得简单：
-
-**步骤1**: 选择材料类型
-- 从下拉菜单选择：不锈钢、铝、铜等
-
-**步骤2**: 输入尺寸参数
-- 输入材料厚度（mm）
-- 输入切割长度（mm）
-
-[配图: 计算器界面截图]
-
-**步骤3**: 设置机器参数
-- 激光功率（通常在1-30kW之间）
-- 辅助气体类型和消耗量
-
-**步骤4**: 输入成本因素
-- 当地电价（$/kWh）
-- 人工时薪（$/小时）
-- 材料单价（$/kg）
-
-**步骤5**: 查看结果
-计算器会即时显示：
-- 详细成本分解
-- 总成本
-- 建议零售价
-- 利润率分析
-
-## 4. 实际案例分析
-
-### 案例1: 不锈钢钣金切割项目
-
-**项目背景**:
-- 客户: 中型制造企业
-- 需求: 100件不锈钢零件
-- 材料: 304不锈钢，3mm厚
-
-**输入参数**:
-- 材料类型: 不锈钢304
-- 厚度: 3mm
-- 单件切割长度: 2,500mm
-- 总切割长度: 250,000mm
-- 激光功率: 6kW
-- 电价: $0.12/kWh
-- 人工成本: $25/小时
-- 材料价格: $8/kg
-
-**计算结果**:
-- 材料成本: $1,903
-- 能源成本: $45
-- 人工成本: $125
-- 设备折旧: $50
-- 气体成本: $30
-- **总成本: $2,153**
-- **建议报价: $3,014** (40%利润率)
-- **单件成本: $21.53**
-
-[CTA按钮: 使用计算器复现此案例]
-
-### 案例2: 铝材批量生产
-
-[详细案例分析...]
-
-## 5. 成本优化建议
-
-基于多年行业经验，以下是降低激光切割成本的5个有效策略：
-
-### 5.1 优化材料排版
-
-通过智能排版软件，可以将材料利用率从70%提升到85%以上，节省15-20%的材料成本。
-
-**工具推荐**: [材料利用率计算器](/calculators/material-utilization)
-
-### 5.2 选择合适的激光功率
-
-不是功率越大越好。根据材料厚度选择合适功率：
-- 1-3mm: 1-2kW光纤激光
-- 3-10mm: 3-6kW光纤激光
-- 10mm+: 8-12kW光纤激光
-
-### 5.3 批量生产降低单件成本
-
-批量越大，设置成本分摊越低：
-- 10件: 单件成本$25
-- 100件: 单件成本$18
-- 1000件: 单件成本$15
-
-[更多优化策略...]
-
-## 6. 常见问题解答
-
-### Q1: 计算器的结果准确吗？
-
-A: 我们的计算器基于行业标准公式和实际生产数据开发，准确率达90%以上。但实际成本可能因设备状况、操作熟练度等因素有所不同。
-
-### Q2: 不同激光类型（CO2 vs 光纤）成本差异大吗？
-
-A: 是的。光纤激光的能效比CO2激光高3-5倍，长期运营成本更低。详见我们的[激光类型对比文章](/blog/co2-vs-fiber-laser)。
-
-### Q3: 如何计算设备投资回报？
-
-A: 使用我们的[ROI计算器](/calculators/roi)，输入设备价格、预期产量等参数，即可得出投资回收期。
-
-[更多常见问题...]
-
-## 总结
-
-准确的成本计算是激光切割业务成功的关键。通过考虑材料、能源、人工等7大因素，并使用专业计算工具，您可以：
-
-✅ 提供更有竞争力的报价
-✅ 提高利润率
-✅ 做出更明智的投资决策
-
-**立即行动**: [开始使用免费计算器](/calculators/laser-cutting)
-
-## 相关资源
-
-- [CNC加工成本计算指南](/blog/cnc-machining-cost-guide)
-- [设备投资ROI分析](/blog/equipment-roi-analysis)
-- [材料利用率优化技巧](/blog/material-utilization-tips)
+- **内容团队**：案例研究、FAQ、方法学文档需要专业内容
+- **法务团队**：Cookie Policy、隐私政策更新需要法律审核
+- **设计团队**：新页面 UI/UX 设计（如有专职设计师）
+- **第三方服务**：Resend（邮件）、Cloudflare（Workers/KV）
 
 ---
 
-**关键词密度检查**:
-- 主关键词"激光切割成本": 15次 ✅
-- 次要关键词"成本计算": 12次 ✅
-- 长尾关键词"材料成本"、"能源成本": 各6次 ✅
+## 成功指标（KPIs）
 
-**SEO清单**:
-- ✅ H1标签包含主关键词
-- ✅ Meta描述<160字符
-- ✅ 内部链接到相关工具和文章
-- ✅ 图片包含alt标签
-- ✅ 使用结构化数据(FAQ Schema)
-- ✅ 字数>1500字
-- ✅ 包含CTA按钮
-- ✅ 移动端友好格式
-```
+### 批次 1 完成后（核心转化）
+- FAQ 页面月访问量 > 500
+- 计算器对比页转化率 > 15%（访问者点击工具）
+- PDF 导出使用率 > 10%（计算器用户）
+- 订阅取消率 < 5%（有偏好管理后）
 
----
+### 批次 2 完成后（内容深化）
+- 案例研究页面平均停留时间 > 3 分钟
+- Blog 分类页 SEO 流量增长 > 20%
+- 方法学页面外链引用 > 3 个
 
-### 🎯 阶段5-7: 优化、测试与上线（周9-12）
+### 批次 3 完成后（运营效率）
+- 后台用户操作错误率 < 1%（权限清晰）
+- 审计日志覆盖 100% 关键操作
+- 内容发布流程时间缩短 50%（草稿工作流）
 
-*（详细内容包括性能优化、用户测试、部署配置等，此处省略）*
-
----
-
-## 📈 关键成功因素
-
-### 1. 计算公式准确性
-- ✅ 基于行业标准和实际生产数据
-- ✅ 提供公式来源和参考文献
-- ✅ 添加清晰的免责声明
-- ✅ 定期根据市场变化更新参数
-
-### 2. 用户体验优化
-- ✅ 直观的界面设计
-- ✅ 实时计算反馈
-- ✅ 清晰的成本分解展示
-- ✅ 移动端友好
-- ✅ 快速加载速度
-
-### 3. SEO执行策略
-- ✅ 每周发布2篇高质量内容
-- ✅ 建立内部链接网络
-- ✅ 优化技术SEO（Core Web Vitals）
-- ✅ 获取高质量外链
-- ✅ 监控和优化关键词排名
-
-### 4. 内容质量标准
-- ✅ 每篇文章1200+字
-- ✅ 包含实际数据和案例
-- ✅ 原创性>95%
-- ✅ 提供实用价值
-- ✅ 定期更新保持时效性
+### 批次 4 完成后（合规优化）
+- Cookie Banner 接受率 > 70%
+- 无障碍问题投诉 = 0
+- GDPR 合规审核通过
 
 ---
 
-## 🎯 里程碑与时间线
+## 下一步行动
 
-| 周次 | 里程碑 | 交付物 | 验收标准 |
-|-----|--------|--------|---------|
-| 1-2 | 项目基础完成 | 项目架构、导航、首页 | 能正常运行，响应式设计完成 |
-| 3-4 | 核心计算器完成 | 3个核心计算器上线 | 计算准确，性能达标 |
-| 5-6 | 高级功能完成 | 数据库、PDF导出、订阅 | 所有功能正常工作 |
-| 7-8 | 内容与SEO | 15篇文章发布，SEO优化完成 | Google索引50+页面 |
-| 9 | 性能优化完成 | Lighthouse评分>90 | 所有性能指标达标 |
-| 10-11 | 测试与上线 | Beta测试，正式发布 | 无重大bug，用户反馈良好 |
-| 12+ | 持续运营 | 每周2篇新内容 | 流量持续增长 |
+1. **批次 1 启动**：立即开始 FAQ 页面和计算器对比页面的内容创作
+2. **技术准备**：安装新依赖包（jsPDF、nanoid 等）
+3. **数据库迁移**：执行 SQL 脚本创建新表和扩展字段
+4. **设计资源**：为新页面准备 UI 设计稿（如需要）
+5. **内容日历**：排期案例研究和方法学文档的创作计划
 
 ---
 
-## 🚀 启动清单
+## 附录：参考资料
 
-### 立即开始（今天）
-- [ ] 购买域名 lasercalcpro.com
-- [ ] 注册Cloudflare账户
-- [ ] 创建GitHub仓库
-- [ ] 初始化Next.js项目
-
-### 本周完成
-- [ ] 完成项目基础架构
-- [ ] 设计Logo和品牌视觉
-- [ ] 开始第一个计算器开发
-- [ ] 准备AdSense申请材料
-
-### 本月完成
-- [ ] 3个核心计算器上线
-- [ ] 发布前10篇文章
-- [ ] 完成所有合规页面
-- [ ] 提交到Google Search Console
+- [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
+- [GDPR Cookie Compliance](https://gdpr.eu/cookies/)
+- [Google Rich Results Test](https://search.google.com/test/rich-results)
+- [Next.js Dynamic Routes](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes)
+- [Cloudflare Workers KV](https://developers.cloudflare.com/workers/runtime-apis/kv/)
 
 ---
 
-## 📞 技术支持与资源
-
-### 开发文档
-- Next.js官方文档: https://nextjs.org/docs
-- Cloudflare Pages文档: https://developers.cloudflare.com/pages
-- Tailwind CSS文档: https://tailwindcss.com/docs
-
-### 推荐工具
-- 设计: Figma (原型设计)
-- 图标: Lucide Icons
-- 图表: Chart.js
-- PDF: jsPDF
-- 表单: React Hook Form + Zod
-- SEO: Google Search Console, Ahrefs
-
-### 社区资源
-- Next.js Discord: 技术问题支持
-- Cloudflare社区: 部署相关问题
-- r/webdev: 通用Web开发讨论
-
----
-
-## ✅ 质量保证清单
-
-### 代码质量
-- [ ] TypeScript严格模式启用
-- [ ] ESLint配置并无错误
-- [ ] 所有组件有PropTypes/类型定义
-- [ ] 关键函数有单元测试
-- [ ] 代码注释完整
-
-### 性能标准
-- [ ] Lighthouse性能评分>90
-- [ ] 首屏加载<2秒
-- [ ] 图片使用WebP格式
-- [ ] 启用代码分割
-- [ ] 配置CDN加速
-
-### SEO检查
-- [ ] 所有页面有unique title和description
-- [ ] 实施结构化数据
-- [ ] Sitemap自动生成
-- [ ] Robots.txt正确配置
-- [ ] 移动端友好
-
-### 安全合规
-- [ ] HTTPS强制启用
-- [ ] GDPR合规（Privacy Policy）
-- [ ] Cookie同意横幅
-- [ ] XSS防护
-- [ ] CSRF保护
-
----
-
-## 📊 成功指标追踪
-
-### 每周监控指标
-- 新增访问用户(UV)
-- 页面浏览量(PV)
-- 平均停留时间
-- 跳出率
-- 计算器使用次数
-
-### 每月评审指标
-- Google索引页面数
-- 关键词排名变化
-- 自然外链增长
-- AdSense收入（获批后）
-- 邮件订阅用户数
-
-### 季度战略指标
-- 域名权威度(DR)
-- 月度总访问量
-- 收入增长率
-- 内容发布质量
-- 用户满意度(NPS)
-
----
-
-**文档版本**: v1.0  
-**最后更新**: 2025年10月30日  
-**维护者**: LaserCalc Pro开发团队
-
----
-
-🎉 **准备就绪！让我们开始构建LaserCalc Pro吧！**
-
+**文档结束** 🎯

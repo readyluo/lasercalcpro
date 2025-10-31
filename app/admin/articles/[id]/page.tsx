@@ -44,6 +44,7 @@ export default function ArticleEditPage({ params }: { params: { id: string } }) 
     meta_description: '',
     meta_keywords: '',
   });
+  const [publishedAt, setPublishedAt] = useState<string>('');
 
   useEffect(() => {
     if (!isNew && articleId) {
@@ -72,6 +73,7 @@ export default function ArticleEditPage({ params }: { params: { id: string } }) 
           meta_description: article.meta_description || '',
           meta_keywords: article.meta_keywords || '',
         });
+        setPublishedAt(article.published_at ? new Date(article.published_at).toISOString().slice(0,16) : '');
       } else {
         setError('文章加载失败');
       }
@@ -154,6 +156,7 @@ export default function ArticleEditPage({ params }: { params: { id: string } }) 
       const dataToSave = {
         ...formData,
         status: publishNow ? 'published' : formData.status,
+        published_at: publishedAt ? new Date(publishedAt).toISOString() : undefined,
       };
 
       const url = isNew 
@@ -384,6 +387,20 @@ export default function ArticleEditPage({ params }: { params: { id: string } }) 
                 </select>
               </div>
 
+              {/* Schedule */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  计划发布时间 (可选)
+                </label>
+                <input
+                  type="datetime-local"
+                  value={publishedAt}
+                  onChange={(e) => setPublishedAt(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                />
+                <p className="mt-1 text-xs text-gray-500">保存后将按计划时间自动发布（需触发“发布到期文章”任务）</p>
+              </div>
+
               {/* Actions */}
               <div className="pt-4 border-t border-gray-200 space-y-2">
                 <button
@@ -413,6 +430,19 @@ export default function ArticleEditPage({ params }: { params: { id: string } }) 
                     发布
                   </button>
                 )}
+
+                <button
+                  onClick={() => handleSave(false)}
+                  disabled={saving}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-primary-300 text-primary-700 rounded-lg hover:bg-primary-50 transition-colors disabled:opacity-50"
+                >
+                  {saving ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="h-4 w-4" />
+                  )}
+                  保存计划发布
+                </button>
               </div>
             </div>
           </div>
@@ -516,6 +546,11 @@ export default function ArticleEditPage({ params }: { params: { id: string } }) 
     </div>
   );
 }
+
+
+
+
+
 
 
 
