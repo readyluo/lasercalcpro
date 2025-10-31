@@ -298,7 +298,7 @@ const levelColors = {
 
 export default function TutorialsLibraryPage() {
   return (
-    <>
+    <div>
       <Navigation />
       <main className="bg-gradient-to-b from-gray-50 to-white">
         {/* Header */}
@@ -556,6 +556,6 @@ export default function TutorialsLibraryPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

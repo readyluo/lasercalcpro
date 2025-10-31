@@ -1798,7 +1798,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
       {
         heading: '1) Choose gas by material, thickness, and outcome',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">Match gas to material to achieve the required edge quality at the lowest total cost.</p>
             <div className="mb-4 overflow-x-auto">
               <table className="w-full text-sm border border-gray-200">
@@ -1841,9 +1841,9 @@ const TUTORIALS: Record<string, TutorialConfig> = {
             <ul className="ml-5 list-disc space-y-1 text-gray-700 text-sm">
               <li><strong>Finish requirement:</strong> Paint-ready or food-grade edges → prefer N₂ even on mild steel.</li>
               <li><strong>Throughput focus:</strong> General fabrication with deburr step → O₂ on mild steel for speed.</li>
-              <li><strong>Cost control:</strong> Thin (<2 mm) aluminum or mild steel → consider Air; validate edge quality first.</li>
+              <li><strong>Cost control:</strong> Thin (&lt;2 mm) aluminum or mild steel → consider Air; validate edge quality first.</li>
             </ul>
-          </>
+          </div>
         ),
       },
       {
@@ -1983,7 +1983,7 @@ export default function TutorialPage({ params }: { params: { slug: string } }) {
   const howTo = generateHowToSchema({ name: tutorial.title, description: tutorial.description, steps: tutorial.steps });
 
   return (
-    <>
+    <div>
       <Navigation />
       <main className="bg-gray-50 py-16">
         <SchemaMarkup schema={howTo} />
@@ -2036,7 +2036,7 @@ export default function TutorialPage({ params }: { params: { slug: string } }) {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
 
