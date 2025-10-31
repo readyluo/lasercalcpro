@@ -21,21 +21,21 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
         <div className="relative">
           {leftIcon && (
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
               {leftIcon}
             </div>
           )}
 
           <input
             ref={ref}
-            className={`input ${leftIcon ? 'pl-10' : ''} ${rightIcon ? 'pr-10' : ''} ${
+            className={`input ${leftIcon ? '!pl-10' : ''} ${rightIcon ? '!pr-10' : ''} ${
               error ? 'border-destructive focus-visible:ring-destructive' : ''
             } ${className}`}
             {...props}
           />
 
           {rightIcon && (
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400">
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500">
               {rightIcon}
             </div>
           )}

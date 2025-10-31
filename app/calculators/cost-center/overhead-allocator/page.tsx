@@ -4,20 +4,75 @@ import React from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { ExportButton } from '@/components/calculators/ExportButton';
-import { DollarSign, Calculator as CalculatorIcon, RotateCcw } from 'lucide-react';
+import { DollarSign, Calculator as CalculatorIcon, RotateCcw, HelpCircle, TrendingUp, AlertTriangle } from 'lucide-react';
 import { overheadAllocatorSchema, overheadAllocatorDefaults, type OverheadAllocatorInput } from '@/lib/validations/cost-center';
 import { allocateOverhead, calculateOverheadRate, compareAllocationMethods } from '@/lib/calculators/cost-center/overhead';
 import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 
+// Allocation method options with detailed descriptions
+const allocationMethodOptions = [
+  { 
+    value: 'machineHours', 
+    label: 'Machine Hours - Best for capital-intensive operations with heavy machinery usage' 
+  },
+  { 
+    value: 'laborHours', 
+    label: 'Labor Hours - Ideal for labor-intensive operations with varying workforce' 
+  },
+  { 
+    value: 'materialCost', 
+    label: 'Material Cost - Suitable when overhead correlates with material handling/storage' 
+  },
+  { 
+    value: 'floorSpace', 
+    label: 'Floor Space - Best for facility-driven overhead costs (rent, utilities)' 
+  },
+  { 
+    value: 'equalSplit', 
+    label: 'Equal Split - Simple method for uniform job distribution' 
+  },
+];
+
+// Method descriptions for guidance
+const methodDescriptions: Record<string, { description: string; bestFor: string; caution: string }> = {
+  machineHours: {
+    description: 'Allocates overhead based on the proportion of machine hours used by each job.',
+    bestFor: 'Capital-intensive manufacturing with automated equipment',
+    caution: 'Ensure accurate machine hour tracking for all jobs'
+  },
+  laborHours: {
+    description: 'Distributes overhead based on direct labor hours consumed by each job.',
+    bestFor: 'Labor-intensive operations with skilled workforce',
+    caution: 'Track both productive and non-productive labor time'
+  },
+  materialCost: {
+    description: 'Allocates overhead proportional to material costs incurred by each job.',
+    bestFor: 'Operations with material handling and storage overhead',
+    caution: 'May not reflect actual overhead drivers accurately'
+  },
+  floorSpace: {
+    description: 'Distributes overhead based on the floor space occupied by each job.',
+    bestFor: 'Facility costs like rent, utilities, and property taxes',
+    caution: 'Measure actual space usage, not just theoretical allocation'
+  },
+  equalSplit: {
+    description: 'Divides overhead equally among all jobs regardless of size or complexity.',
+    bestFor: 'Simple operations with similar job characteristics',
+    caution: 'May not accurately reflect cost drivers for diverse jobs'
+  },
+};
+
 export default function OverheadAllocatorPage() {
   const [isCalculating, setIsCalculating] = React.useState(false);
   const [result, setResult] = React.useState<ReturnType<typeof allocateOverhead> | null>(null);
+  const [showMethodInfo, setShowMethodInfo] = React.useState(false);
 
   const howToSchema = generateCalculatorHowToSchema(
     'Overhead Allocator',
@@ -33,11 +88,27 @@ export default function OverheadAllocatorPage() {
   const faqSchema = generateFAQSchema([
     {
       question: 'Which allocation method should I use?',
-      answer: 'Use machine hours for capital-intensive shops, labor hours for labor-driven work, material cost when overhead correlates with material handling/storage, or floor space for facility-driven overheads.'
+      answer: 'Choose based on your primary cost drivers: Machine Hours for capital-intensive operations with heavy equipment usage; Labor Hours for labor-intensive operations where workforce varies significantly; Material Cost when overhead correlates with material handling, storage, and procurement; Floor Space for facility-driven costs like rent, utilities, and property taxes; Equal Split for simple operations with similar job characteristics. The best method reflects how your overhead costs are actually incurred.'
     },
     {
-      question: 'Can I mix methods? ',
-      answer: 'For simplicity and consistency, use one method per period and review annually. Mixing can be done offline but reduces comparability.'
+      question: 'What is overhead allocation and why is it important?',
+      answer: 'Overhead allocation is the process of distributing indirect costs (rent, utilities, insurance, administrative expenses) across products or jobs. It\'s crucial for accurate product costing, pricing decisions, profitability analysis, and cost control. Without proper allocation, you may underprice some products and overprice others, leading to poor business decisions.'
+    },
+    {
+      question: 'How do I calculate my total overhead costs?',
+      answer: 'Total overhead includes all indirect costs: facility costs (rent, utilities, property taxes), equipment depreciation, insurance, maintenance, administrative salaries, office supplies, and other shared expenses. Exclude direct materials and direct labor. Add up all these costs for your chosen period (monthly, quarterly, or annually).'
+    },
+    {
+      question: 'Can I mix different allocation methods?',
+      answer: 'For consistency and comparability, use one method per accounting period and review annually. While you can use different methods for different cost pools (e.g., facility costs by floor space, equipment costs by machine hours), this requires more complex accounting. Start with a single method that best represents your overall cost structure.'
+    },
+    {
+      question: 'What if my overhead rate is very high?',
+      answer: 'A high overhead rate (>60-100%) suggests significant indirect costs relative to direct costs. This may indicate: opportunities for cost reduction, need to review allocation method accuracy, potential for automation to reduce labor, or need to increase production volume to spread fixed costs. Review your cost structure and consider process improvements.'
+    },
+    {
+      question: 'How often should I review my overhead allocation?',
+      answer: 'Review your allocation method at least annually, or when there are significant changes in operations, equipment, facility size, or business model. Update your actual overhead costs monthly or quarterly to ensure accurate product costing and pricing decisions.'
     }
   ]);
 
@@ -47,6 +118,9 @@ export default function OverheadAllocatorPage() {
   });
 
   const jobsArray = useFieldArray({ control, name: 'jobs' });
+  
+  const selectedMethod = watch('allocationMethod');
+  const methodInfo = methodDescriptions[selectedMethod];
 
   const onSubmit = (data: OverheadAllocatorInput) => {
     setIsCalculating(true);
@@ -89,8 +163,37 @@ export default function OverheadAllocatorPage() {
 
           {/* Header */}
           <div className="mb-8">
-            <h1 className="mb-2 text-4xl font-bold text-gray-900 md:text-5xl">Overhead Allocator</h1>
-            <p className="text-gray-600">Distribute overhead fairly across jobs using a consistent, transparent method.</p>
+            <h1 className="mb-2 text-4xl font-bold text-gray-900 md:text-5xl">Overhead Allocator Calculator</h1>
+            <p className="mb-4 text-lg text-gray-600">
+              Distribute overhead costs fairly across jobs using industry-standard allocation methods. 
+              Make informed decisions with accurate cost allocation analysis.
+            </p>
+            
+            {/* Quick Guide */}
+            <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
+              <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-blue-900">
+                <HelpCircle className="h-5 w-5" />
+                How to Use This Calculator
+              </h2>
+              <ol className="space-y-2 text-sm text-blue-800">
+                <li className="flex gap-2">
+                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">1</span>
+                  <span><strong>Enter Total Overhead:</strong> Input the total overhead costs you need to allocate (e.g., rent, utilities, insurance, administrative costs)</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">2</span>
+                  <span><strong>Select Allocation Method:</strong> Choose the method that best reflects your actual cost drivers and business operations</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">3</span>
+                  <span><strong>Add Your Jobs:</strong> Input data for each job including machine hours, labor hours, material costs, and floor space</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">4</span>
+                  <span><strong>Calculate & Analyze:</strong> Review the allocation results, method comparison, and recommendations to optimize your costing strategy</span>
+                </li>
+              </ol>
+            </div>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-2">
@@ -104,30 +207,141 @@ export default function OverheadAllocatorPage() {
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid gap-4 md:grid-cols-2">
-                    <Input {...register('totalOverhead', { valueAsNumber: true })} type="number" step="100" label="Total Overhead (USD)" error={errors.totalOverhead?.message} leftIcon={<DollarSign className="h-4 w-4" />} required />
-                    <Input {...register('allocationMethod')} label="Allocation Method (machineHours/laborHours/materialCost/floorSpace/equalSplit)" error={errors.allocationMethod?.message} required />
+                    <Input 
+                      {...register('totalOverhead', { valueAsNumber: true })} 
+                      type="number" 
+                      step="100" 
+                      label="Total Overhead (USD)" 
+                      error={errors.totalOverhead?.message} 
+                      leftIcon={<DollarSign className="h-4 w-4" />} 
+                      helperText="Total overhead costs to be allocated across all jobs"
+                      required 
+                    />
+                    <Select 
+                      {...register('allocationMethod')} 
+                      label="Allocation Method" 
+                      options={allocationMethodOptions}
+                      error={errors.allocationMethod?.message} 
+                      helperText="Choose the method that best reflects your cost drivers"
+                      required 
+                    />
                   </div>
-
-                  <div>
-                    <h3 className="mb-3 text-lg font-semibold text-gray-900">Jobs</h3>
-                    <div className="space-y-4">
-                      {jobsArray.fields.map((field, index) => (
-                        <div key={field.id} className="rounded-lg border p-4">
-                          <div className="mb-3 grid gap-3 md:grid-cols-3">
-                            <Input {...register(`jobs.${index}.jobName` as const)} label="Job Name" error={errors.jobs?.[index]?.jobName?.message} required />
-                            <Input {...register(`jobs.${index}.machineHours` as const, { valueAsNumber: true })} type="number" step="1" label="Machine Hours" error={errors.jobs?.[index]?.machineHours?.message} />
-                            <Input {...register(`jobs.${index}.laborHours` as const, { valueAsNumber: true })} type="number" step="1" label="Labor Hours" error={errors.jobs?.[index]?.laborHours?.message} />
-                          </div>
-                          <div className="grid gap-3 md:grid-cols-3">
-                            <Input {...register(`jobs.${index}.materialCost` as const, { valueAsNumber: true })} type="number" step="10" label="Material Cost (USD)" leftIcon={<DollarSign className="h-4 w-4" />} error={errors.jobs?.[index]?.materialCost?.message} />
-                            <Input {...register(`jobs.${index}.floorSpace` as const, { valueAsNumber: true })} type="number" step="10" label="Floor Space (ft²)" error={errors.jobs?.[index]?.floorSpace?.message} />
-                            <div className="flex items-end justify-end gap-3">
-                              <Button type="button" variant="outline" onClick={() => jobsArray.remove(index)}>Remove</Button>
+                  
+                  {/* Method Information Card */}
+                  {methodInfo && (
+                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                      <div className="flex items-start gap-3">
+                        <HelpCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
+                        <div className="space-y-2">
+                          <h4 className="font-semibold text-blue-900">About {allocationMethodOptions.find(m => m.value === selectedMethod)?.label.split(' - ')[0]}</h4>
+                          <p className="text-sm text-blue-800">{methodInfo.description}</p>
+                          <div className="grid gap-2 sm:grid-cols-2">
+                            <div className="flex items-start gap-2">
+                              <TrendingUp className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
+                              <div>
+                                <p className="text-xs font-medium text-green-700">Best For:</p>
+                                <p className="text-xs text-green-600">{methodInfo.bestFor}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-orange-600" />
+                              <div>
+                                <p className="text-xs font-medium text-orange-700">Caution:</p>
+                                <p className="text-xs text-orange-600">{methodInfo.caution}</p>
+                              </div>
                             </div>
                           </div>
                         </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div>
+                    <div className="mb-3 flex items-center justify-between">
+                      <h3 className="text-lg font-semibold text-gray-900">Jobs to Allocate</h3>
+                      <span className="text-sm text-gray-500">{jobsArray.fields.length} job(s)</span>
+                    </div>
+                    <div className="space-y-4">
+                      {jobsArray.fields.map((field, index) => (
+                        <div key={field.id} className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
+                          <div className="mb-3 flex items-center justify-between">
+                            <h4 className="font-medium text-gray-700">Job #{index + 1}</h4>
+                            {jobsArray.fields.length > 1 && (
+                              <Button 
+                                type="button" 
+                                variant="ghost" 
+                                size="sm"
+                                onClick={() => jobsArray.remove(index)}
+                                className="text-red-600 hover:bg-red-50"
+                              >
+                                Remove
+                              </Button>
+                            )}
+                          </div>
+                          <div className="mb-3 grid gap-3 md:grid-cols-3">
+                            <Input 
+                              {...register(`jobs.${index}.jobName` as const)} 
+                              label="Job Name" 
+                              placeholder="e.g., Product A" 
+                              error={errors.jobs?.[index]?.jobName?.message} 
+                              required 
+                            />
+                            <Input 
+                              {...register(`jobs.${index}.machineHours` as const, { valueAsNumber: true })} 
+                              type="number" 
+                              step="0.5" 
+                              label="Machine Hours" 
+                              placeholder="0.0"
+                              helperText="Total machine time"
+                              error={errors.jobs?.[index]?.machineHours?.message} 
+                            />
+                            <Input 
+                              {...register(`jobs.${index}.laborHours` as const, { valueAsNumber: true })} 
+                              type="number" 
+                              step="0.5" 
+                              label="Labor Hours" 
+                              placeholder="0.0"
+                              helperText="Total labor time"
+                              error={errors.jobs?.[index]?.laborHours?.message} 
+                            />
+                          </div>
+                          <div className="grid gap-3 md:grid-cols-2">
+                            <Input 
+                              {...register(`jobs.${index}.materialCost` as const, { valueAsNumber: true })} 
+                              type="number" 
+                              step="10" 
+                              label="Material Cost (USD)" 
+                              placeholder="0.00"
+                              leftIcon={<DollarSign className="h-4 w-4" />} 
+                              helperText="Direct material costs"
+                              error={errors.jobs?.[index]?.materialCost?.message} 
+                            />
+                            <Input 
+                              {...register(`jobs.${index}.floorSpace` as const, { valueAsNumber: true })} 
+                              type="number" 
+                              step="10" 
+                              label="Floor Space (ft²)" 
+                              placeholder="0"
+                              helperText="Space occupied"
+                              error={errors.jobs?.[index]?.floorSpace?.message} 
+                            />
+                          </div>
+                        </div>
                       ))}
-                      <Button type="button" variant="secondary" onClick={() => jobsArray.append({ jobName: `Job ${jobsArray.fields.length + 1}`, machineHours: 0, laborHours: 0, materialCost: 0, floorSpace: 0 })}>Add Job</Button>
+                      <Button 
+                        type="button" 
+                        variant="secondary" 
+                        onClick={() => jobsArray.append({ 
+                          jobName: `Job ${jobsArray.fields.length + 1}`, 
+                          machineHours: 0, 
+                          laborHours: 0, 
+                          materialCost: 0, 
+                          floorSpace: 0 
+                        })}
+                        className="w-full"
+                      >
+                        + Add Another Job
+                      </Button>
                     </div>
                   </div>
 
@@ -143,75 +357,246 @@ export default function OverheadAllocatorPage() {
                   {/* Summary */}
                   <div className="card bg-gradient-to-br from-primary-600 to-primary-800 text-white">
                     <h2 className="mb-6 text-3xl font-bold">Allocation Summary</h2>
-                    <div className="grid gap-4 md:grid-cols-3">
+                    <div className="grid gap-4 md:grid-cols-4">
                       <div>
                         <p className="mb-1 text-sm text-blue-100">Total Overhead</p>
-                        <p className="text-3xl font-bold">${result.totalAllocated.toFixed(2)}</p>
+                        <p className="text-3xl font-bold">${result.totalAllocated.toLocaleString()}</p>
                       </div>
                       <div>
                         <p className="mb-1 text-sm text-blue-100">Method</p>
                         <p className="text-xl font-semibold">{result.allocationMethod}</p>
                       </div>
+                      <div>
+                        <p className="mb-1 text-sm text-blue-100">Average per Job</p>
+                        <p className="text-2xl font-semibold">${result.summary.averageOverheadPerJob.toLocaleString()}</p>
+                      </div>
                       {overheadRate && (
                         <div>
                           <p className="mb-1 text-sm text-blue-100">Overhead Rate</p>
                           <p className="text-2xl font-semibold">{overheadRate.overheadRate}%</p>
+                          <p className="mt-1 text-xs text-blue-200">{overheadRate.description}</p>
                         </div>
                       )}
+                    </div>
+                  </div>
+                  
+                  {/* Key Insights */}
+                  <div className="card bg-gradient-to-br from-green-50 to-blue-50">
+                    <h3 className="mb-4 text-xl font-bold text-gray-900">Key Insights</h3>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="rounded-lg bg-white p-4 shadow-sm">
+                        <div className="mb-2 flex items-center gap-2">
+                          <TrendingUp className="h-5 w-5 text-green-600" />
+                          <h4 className="font-semibold text-green-900">Highest Overhead</h4>
+                        </div>
+                        <p className="text-2xl font-bold text-green-700">{result.summary.highestOverhead.jobName}</p>
+                        <p className="text-sm text-gray-600">Allocated: ${result.summary.highestOverhead.amount.toLocaleString()}</p>
+                      </div>
+                      <div className="rounded-lg bg-white p-4 shadow-sm">
+                        <div className="mb-2 flex items-center gap-2">
+                          <TrendingUp className="h-5 w-5 rotate-180 text-blue-600" />
+                          <h4 className="font-semibold text-blue-900">Lowest Overhead</h4>
+                        </div>
+                        <p className="text-2xl font-bold text-blue-700">{result.summary.lowestOverhead.jobName}</p>
+                        <p className="text-sm text-gray-600">Allocated: ${result.summary.lowestOverhead.amount.toLocaleString()}</p>
+                      </div>
                     </div>
                   </div>
 
                   {/* Job Allocation Table */}
                   <div className="card">
-                    <h3 className="mb-4 text-xl font-bold">Job Allocations</h3>
+                    <div className="mb-4 flex items-center justify-between">
+                      <h3 className="text-xl font-bold">Detailed Job Allocations</h3>
+                      <span className="text-sm text-gray-500">{result.jobs.length} jobs</span>
+                    </div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="border-b">
-                            <th className="pb-2 text-left">Job</th>
-                            <th className="pb-2 text-right">Allocated Overhead</th>
-                            <th className="pb-2 text-right">Overhead %</th>
-                            <th className="pb-2 text-right">Total Cost with Overhead</th>
+                          <tr className="border-b-2 border-gray-300 bg-gray-50">
+                            <th className="p-3 text-left font-semibold text-gray-700">Job Name</th>
+                            <th className="p-3 text-right font-semibold text-gray-700">Allocated Overhead</th>
+                            <th className="p-3 text-right font-semibold text-gray-700">Overhead %</th>
+                            <th className="p-3 text-right font-semibold text-gray-700">Total Cost</th>
+                            <th className="p-3 text-center font-semibold text-gray-700">Distribution</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {result.jobs.map(job => (
-                            <tr key={job.jobName} className="border-b">
-                              <td className="py-2">{job.jobName}</td>
-                              <td className="py-2 text-right">${job.allocatedOverhead.toFixed(2)}</td>
-                              <td className="py-2 text-right">{job.overheadPercent.toFixed(1)}%</td>
-                              <td className="py-2 text-right">${job.totalCostWithOverhead.toFixed(2)}</td>
-                            </tr>
-                          ))}
+                          {result.jobs.map((job, idx) => {
+                            const percentOfTotal = (job.allocatedOverhead / result.totalAllocated) * 100;
+                            const isHighest = job.jobName === result.summary.highestOverhead.jobName;
+                            const isLowest = job.jobName === result.summary.lowestOverhead.jobName;
+                            
+                            return (
+                              <tr 
+                                key={job.jobName} 
+                                className={`border-b transition-colors hover:bg-gray-50 ${
+                                  isHighest ? 'bg-green-50' : isLowest ? 'bg-blue-50' : ''
+                                }`}
+                              >
+                                <td className="p-3 font-medium text-gray-900">
+                                  <div className="flex items-center gap-2">
+                                    {job.jobName}
+                                    {isHighest && <span className="rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">Highest</span>}
+                                    {isLowest && <span className="rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">Lowest</span>}
+                                  </div>
+                                </td>
+                                <td className="p-3 text-right font-semibold text-gray-900">
+                                  ${job.allocatedOverhead.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </td>
+                                <td className="p-3 text-right">
+                                  <span className={`font-medium ${
+                                    job.overheadPercent > 50 ? 'text-red-600' : 
+                                    job.overheadPercent > 30 ? 'text-orange-600' : 
+                                    'text-green-600'
+                                  }`}>
+                                    {job.overheadPercent.toFixed(1)}%
+                                  </span>
+                                </td>
+                                <td className="p-3 text-right font-semibold text-gray-900">
+                                  ${job.totalCostWithOverhead.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </td>
+                                <td className="p-3">
+                                  <div className="flex items-center gap-2">
+                                    <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
+                                      <div 
+                                        className={`h-full ${
+                                          isHighest ? 'bg-green-600' : 
+                                          isLowest ? 'bg-blue-600' : 
+                                          'bg-primary-600'
+                                        }`}
+                                        style={{ width: `${percentOfTotal}%` }}
+                                      />
+                                    </div>
+                                    <span className="text-xs text-gray-600">{percentOfTotal.toFixed(1)}%</span>
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
                         </tbody>
+                        <tfoot>
+                          <tr className="border-t-2 border-gray-300 bg-gray-50 font-bold">
+                            <td className="p-3 text-gray-900">Total</td>
+                            <td className="p-3 text-right text-gray-900">
+                              ${result.totalAllocated.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </td>
+                            <td className="p-3 text-right text-gray-600">-</td>
+                            <td className="p-3 text-right text-gray-900">
+                              ${result.jobs.reduce((sum, j) => sum + j.totalCostWithOverhead, 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </td>
+                            <td className="p-3 text-center text-gray-600">100%</td>
+                          </tr>
+                        </tfoot>
                       </table>
                     </div>
                   </div>
 
                   {/* Method Comparison (first job) */}
-                  {firstJob && (
-                    <div className="card">
-                      <h3 className="mb-4 text-xl font-bold">Method Comparison (Example: {firstJob.jobName})</h3>
-                      <div className="overflow-x-auto">
+                  {firstJob && comparison.length > 0 && (
+                    <div className="card border-2 border-purple-200 bg-purple-50">
+                      <div className="mb-4 flex items-start gap-3">
+                        <div className="rounded-full bg-purple-600 p-2">
+                          <HelpCircle className="h-5 w-5 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold text-purple-900">Method Impact Analysis</h3>
+                          <p className="text-sm text-purple-700">Comparing allocation methods for: <span className="font-semibold">{firstJob.jobName}</span></p>
+                        </div>
+                      </div>
+                      <div className="overflow-x-auto rounded-lg bg-white p-4">
                         <table className="w-full text-sm">
                           <thead>
-                            <tr className="border-b">
-                              <th className="pb-2 text-left">Method</th>
-                              <th className="pb-2 text-right">Allocated</th>
-                              <th className="pb-2 text-right">Diff vs Avg</th>
+                            <tr className="border-b-2 border-gray-300">
+                              <th className="pb-3 text-left font-semibold text-gray-700">Allocation Method</th>
+                              <th className="pb-3 text-right font-semibold text-gray-700">Allocated Amount</th>
+                              <th className="pb-3 text-right font-semibold text-gray-700">Variance from Average</th>
+                              <th className="pb-3 text-center font-semibold text-gray-700">Visual</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {comparison.map(row => (
-                              <tr key={row.method} className="border-b">
-                                <td className="py-2">{row.method}</td>
-                                <td className="py-2 text-right">${row.allocatedAmount.toFixed(2)}</td>
-                                <td className="py-2 text-right">{row.difference.toFixed(1)}%</td>
-                              </tr>
-                            ))}
+                            {comparison.map((row, idx) => {
+                              const isSelected = row.method === result.allocationMethod;
+                              return (
+                                <tr 
+                                  key={row.method} 
+                                  className={`border-b transition-colors ${
+                                    isSelected ? 'bg-purple-100 font-semibold' : 'hover:bg-gray-50'
+                                  }`}
+                                >
+                                  <td className="py-3">
+                                    <div className="flex items-center gap-2">
+                                      {row.method}
+                                      {isSelected && (
+                                        <span className="rounded bg-purple-600 px-2 py-0.5 text-xs font-medium text-white">
+                                          Selected
+                                        </span>
+                                      )}
+                                    </div>
+                                  </td>
+                                  <td className="py-3 text-right font-semibold text-gray-900">
+                                    ${row.allocatedAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  </td>
+                                  <td className="py-3 text-right">
+                                    <span className={`font-medium ${
+                                      row.difference > 20 ? 'text-red-600' :
+                                      row.difference > 0 ? 'text-orange-600' :
+                                      row.difference < -20 ? 'text-blue-600' :
+                                      'text-green-600'
+                                    }`}>
+                                      {row.difference > 0 ? '+' : ''}{row.difference.toFixed(1)}%
+                                    </span>
+                                  </td>
+                                  <td className="py-3">
+                                    <div className="flex items-center justify-center">
+                                      <div className="h-2 w-32 overflow-hidden rounded-full bg-gray-200">
+                                        <div 
+                                          className={`h-full ${
+                                            isSelected ? 'bg-purple-600' :
+                                            row.difference > 0 ? 'bg-orange-500' : 'bg-blue-500'
+                                          }`}
+                                          style={{ 
+                                            width: `${Math.min(100, Math.abs(row.difference) * 2 + 30)}%`,
+                                            marginLeft: row.difference < 0 ? 'auto' : '0'
+                                          }}
+                                        />
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              );
+                            })}
                           </tbody>
                         </table>
+                        <p className="mt-3 text-xs text-gray-600">
+                          💡 Tip: Large variances indicate that method selection significantly impacts cost allocation. Choose the method that best reflects your actual cost drivers.
+                        </p>
                       </div>
+                    </div>
+                  )}
+                  
+                  {/* Recommendations */}
+                  {result.recommendations.length > 0 && (
+                    <div className="card border-2 border-amber-200 bg-amber-50">
+                      <div className="mb-4 flex items-start gap-3">
+                        <AlertTriangle className="h-6 w-6 flex-shrink-0 text-amber-600" />
+                        <div>
+                          <h3 className="text-xl font-bold text-amber-900">Recommendations & Insights</h3>
+                          <p className="text-sm text-amber-700">Best practices and optimization suggestions</p>
+                        </div>
+                      </div>
+                      <ul className="space-y-3">
+                        {result.recommendations.map((rec, idx) => (
+                          <li 
+                            key={idx}
+                            className="flex gap-3 rounded-lg bg-white p-4 shadow-sm"
+                          >
+                            <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-amber-100 text-sm font-bold text-amber-800">
+                              {idx + 1}
+                            </span>
+                            <p className="text-sm text-gray-800">{rec}</p>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   )}
 
