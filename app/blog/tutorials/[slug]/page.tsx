@@ -1974,6 +1974,460 @@ const TUTORIALS: Record<string, TutorialConfig> = {
       { label: 'Parameter Checklist (Markdown)', href: '/downloads/tutorials/assist-gas-parameter-checklist.md' },
     ],
   },
+  'overhead-allocation': {
+    title: 'Overhead allocation strategies for accurate job costing',
+    description:
+      'Master overhead allocation methods to ensure every quote captures your true costs including rent, utilities, insurance, and indirect labor.',
+    duration: '28 min',
+    level: 'Advanced',
+    sections: [
+      {
+        heading: '1) Calculate total overhead burden',
+        content: (
+          <div>
+            <p className="mb-3 text-gray-700">Identify and quantify all indirect costs that must be recovered through pricing.</p>
+            <div className="mb-4 overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Overhead Category</th>
+                    <th className="px-3 py-2 text-left border">Examples</th>
+                    <th className="px-3 py-2 text-right border">Typical % of Revenue</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">Facilities</td>
+                    <td className="px-3 py-2 border text-sm">Rent, utilities, property tax, insurance, maintenance</td>
+                    <td className="px-3 py-2 text-right border">8-15%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">Equipment</td>
+                    <td className="px-3 py-2 border text-sm">Depreciation, lease payments, repairs, calibration</td>
+                    <td className="px-3 py-2 text-right border">10-20%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">Indirect labor</td>
+                    <td className="px-3 py-2 border text-sm">Supervision, QC, scheduling, shipping, admin</td>
+                    <td className="px-3 py-2 text-right border">12-25%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">Support functions</td>
+                    <td className="px-3 py-2 border text-sm">IT, HR, accounting, sales, engineering</td>
+                    <td className="px-3 py-2 text-right border">5-12%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <ul className="ml-5 list-disc space-y-1 text-gray-700 text-sm">
+              <li><strong>Annual calculation:</strong> Sum all overhead expenses from P&L; exclude direct material and direct labor.</li>
+              <li><strong>Fixed vs variable:</strong> Separate fixed (rent, salaries) from variable (utilities, consumables) for better utilization modeling.</li>
+              <li><strong>Benchmark:</strong> Total overhead typically 35-60% of revenue for job shops; higher for capital-intensive operations.</li>
+            </ul>
+          </div>
+        ),
+      },
+      {
+        heading: '2) Choose allocation method by shop type',
+        content: (
+          <div>
+            <div className="space-y-3 mb-4">
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">Machine Hour Rate (capital-intensive)</h5>
+                <p className="text-sm text-gray-700"><strong>Formula:</strong> Overhead ÷ Total machine hours available</p>
+                <p className="text-sm text-gray-600"><strong>Best for:</strong> Laser cutting, CNC machining, high equipment depreciation</p>
+                <p className="text-sm text-green-700"><strong>Example:</strong> $500K overhead ÷ 4,000 hrs = $125/machine-hr</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">Direct Labor % (traditional job shops)</h5>
+                <p className="text-sm text-gray-700"><strong>Formula:</strong> Overhead ÷ Direct labor cost × 100%</p>
+                <p className="text-sm text-gray-600"><strong>Best for:</strong> Labor-intensive operations, manual assembly</p>
+                <p className="text-sm text-green-700"><strong>Example:</strong> $400K overhead ÷ $600K labor = 67% markup</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">Activity-Based Costing (complex multi-process)</h5>
+                <p className="text-sm text-gray-700"><strong>Formula:</strong> Assign costs to activities, then allocate based on activity drivers</p>
+                <p className="text-sm text-gray-600"><strong>Best for:</strong> Mixed operations with multiple cost pools</p>
+                <p className="text-sm text-green-700"><strong>Example:</strong> Setup cost pool allocated by # setups; QC pool by inspection time</p>
+              </div>
+            </div>
+          </div>
+        ),
+      },
+      {
+        heading: '3) Adjust for utilization and capacity',
+        content: (
+          <div>
+            <div className="rounded-lg bg-yellow-50 p-4 mb-4">
+              <h4 className="mb-2 font-semibold text-yellow-900">Utilization Impact on Rates</h4>
+              <div className="space-y-1 text-sm text-yellow-800">
+                <div><strong>Low utilization (50-60%):</strong> Fixed costs spread over fewer hours → higher rates required</div>
+                <div><strong>Target utilization (70-80%):</strong> Standard rate; sustainable for long-term planning</div>
+                <div><strong>High utilization (85-95%):</strong> Lower rates possible; watch for capacity constraints and overtime</div>
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Utilization</th>
+                    <th className="px-3 py-2 text-right border">Available Hours</th>
+                    <th className="px-3 py-2 text-right border">Billable Hours</th>
+                    <th className="px-3 py-2 text-right border">Overhead/Hr</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border">50% (low)</td>
+                    <td className="px-3 py-2 text-right border">4,000</td>
+                    <td className="px-3 py-2 text-right border">2,000</td>
+                    <td className="px-3 py-2 text-right border text-red-700">$250/hr</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">75% (target)</td>
+                    <td className="px-3 py-2 text-right border">4,000</td>
+                    <td className="px-3 py-2 text-right border">3,000</td>
+                    <td className="px-3 py-2 text-right border text-green-700">$167/hr</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">90% (high)</td>
+                    <td className="px-3 py-2 text-right border">4,000</td>
+                    <td className="px-3 py-2 text-right border">3,600</td>
+                    <td className="px-3 py-2 text-right border text-blue-700">$139/hr</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ),
+      },
+      {
+        heading: '4) Department-specific overhead pools',
+        content: (
+          <div>
+            <p className="mb-3 text-gray-700">Different departments have different cost structures; separate pools improve accuracy.</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Department</th>
+                    <th className="px-3 py-2 text-left border">Primary Driver</th>
+                    <th className="px-3 py-2 text-left border">Cost Profile</th>
+                    <th className="px-3 py-2 text-right border">Typical OH Rate</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border">Laser cutting</td>
+                    <td className="px-3 py-2 border text-sm">Machine hours</td>
+                    <td className="px-3 py-2 border text-sm">High equipment depreciation, low labor</td>
+                    <td className="px-3 py-2 text-right border">$120-180/hr</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Bending/forming</td>
+                    <td className="px-3 py-2 border text-sm">Machine hours</td>
+                    <td className="px-3 py-2 border text-sm">Medium equipment, medium labor</td>
+                    <td className="px-3 py-2 text-right border">$80-120/hr</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Welding/assembly</td>
+                    <td className="px-3 py-2 border text-sm">Labor hours</td>
+                    <td className="px-3 py-2 border text-sm">Low equipment, high skilled labor</td>
+                    <td className="px-3 py-2 text-right border">50-80% of DL</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Finishing/coating</td>
+                    <td className="px-3 py-2 border text-sm">Square footage</td>
+                    <td className="px-3 py-2 border text-sm">High facility cost, environmental compliance</td>
+                    <td className="px-3 py-2 text-right border">$60-100/hr</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ),
+      },
+      {
+        heading: '5) Quarterly review and rate reconciliation',
+        content: (
+          <div>
+            <p className="mb-3 text-gray-700">Prevent over/under-absorption by reviewing actual vs budgeted overhead quarterly.</p>
+            <ul className="ml-5 list-disc space-y-1 text-gray-700 text-sm">
+              <li><strong>Compare actual overhead:</strong> Review P&L; identify variances (utilities spike, unplanned repairs, etc.).</li>
+              <li><strong>Compare actual hours:</strong> Did utilization match plan? If lower, rates need adjustment for Q next.</li>
+              <li><strong>True-up mechanism:</strong> If overhead under-absorbed (rates too low), adjust next quarter rates +10-15% to recover.</li>
+              <li><strong>Document assumptions:</strong> Record utilization target, major cost changes, and rate effective dates.</li>
+              <li><strong>Communicate to sales:</strong> Share rate changes with lead time; avoid mid-quote surprises.</li>
+            </ul>
+          </div>
+        ),
+      },
+    ],
+    steps: [
+      { name: 'Sum overhead', text: 'Total all indirect costs from P&L; separate fixed vs variable.' },
+      { name: 'Choose method', text: 'Select machine hour, labor %, or ABC based on shop profile.' },
+      { name: 'Set utilization', text: 'Target 70-80% utilization for sustainable rate calculation.' },
+      { name: 'Create pools', text: 'Separate rates by department if cost profiles differ significantly.' },
+      { name: 'Review quarterly', text: 'Compare actual to budget; adjust rates to prevent under-absorption.' },
+    ],
+    downloads: [
+      { label: 'Overhead Allocation Calculator (CSV)', href: '/downloads/tutorials/overhead-allocation-calculator.csv' },
+      { label: 'Department Rate Worksheet (CSV)', href: '/downloads/tutorials/department-overhead-rates.csv' },
+    ],
+  },
+  'competitive-benchmarking': {
+    title: 'Competitive pricing analysis and market positioning',
+    description:
+      'Use market data and competitor analysis to position your pricing strategically while maintaining profitability.',
+    duration: '21 min',
+    level: 'Strategic',
+    sections: [
+      {
+        heading: '1) Conduct competitor pricing research',
+        content: (
+          <div>
+            <p className="mb-3 text-gray-700">Gather intelligence on competitor pricing through multiple channels to establish market baseline.</p>
+            <div className="space-y-3">
+              <div className="rounded-lg border-l-4 border-blue-500 bg-gray-50 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">Method 1: RFQ sampling</h5>
+                <p className="text-sm text-gray-700">Submit test RFQs to 3-5 competitors quarterly. Track prices by part type, material, and quantity.</p>
+                <p className="text-sm text-green-700"><strong>Best for:</strong> Direct price comparison on similar parts</p>
+              </div>
+              <div className="rounded-lg border-l-4 border-green-500 bg-gray-50 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">Method 2: Online pricing tools</h5>
+                <p className="text-sm text-gray-700">Use instant-quote platforms (Xometry, Protolabs, etc.) to benchmark pricing models and lead times.</p>
+                <p className="text-sm text-green-700"><strong>Best for:</strong> Understanding automated pricing algorithms</p>
+              </div>
+              <div className="rounded-lg border-l-4 border-yellow-500 bg-gray-50 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">Method 3: Customer feedback</h5>
+                <p className="text-sm text-gray-700">Ask sales team to gather competitive quotes from prospects; note win/loss price gaps.</p>
+                <p className="text-sm text-green-700"><strong>Best for:</strong> Real-world pricing in your target segment</p>
+              </div>
+              <div className="rounded-lg border-l-4 border-purple-500 bg-gray-50 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">Method 4: Industry surveys</h5>
+                <p className="text-sm text-gray-700">Reference SME, NTMA, or regional fab association pricing surveys for hourly rates by region.</p>
+                <p className="text-sm text-green-700"><strong>Best for:</strong> Regional rate benchmarks and market trends</p>
+              </div>
+            </div>
+          </div>
+        ),
+      },
+      {
+        heading: '2) Map capabilities and differentiation factors',
+        content: (
+          <div>
+            <p className="mb-3 text-gray-700">Identify what justifies premium pricing or where you should compete on value.</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Capability</th>
+                    <th className="px-3 py-2 text-left border">Your Position</th>
+                    <th className="px-3 py-2 text-left border">Competitor Avg</th>
+                    <th className="px-3 py-2 text-left border">Pricing Impact</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border">Lead time</td>
+                    <td className="px-3 py-2 border text-sm">3-5 days</td>
+                    <td className="px-3 py-2 border text-sm">7-10 days</td>
+                    <td className="px-3 py-2 border text-sm text-green-700">Premium +10-15%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Quality certifications</td>
+                    <td className="px-3 py-2 border text-sm">ISO 9001, AS9100</td>
+                    <td className="px-3 py-2 border text-sm">ISO 9001 only</td>
+                    <td className="px-3 py-2 border text-sm text-green-700">Premium +5-10% (aerospace)</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Max thickness</td>
+                    <td className="px-3 py-2 border text-sm">25mm mild steel</td>
+                    <td className="px-3 py-2 border text-sm">12-15mm typical</td>
+                    <td className="px-3 py-2 border text-sm text-green-700">Niche advantage</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Secondary services</td>
+                    <td className="px-3 py-2 border text-sm">Bending, welding, coating</td>
+                    <td className="px-3 py-2 border text-sm">Cutting only</td>
+                    <td className="px-3 py-2 border text-sm text-green-700">Bundle value +20-30%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Capacity/volume</td>
+                    <td className="px-3 py-2 border text-sm">Medium (2 machines)</td>
+                    <td className="px-3 py-2 border text-sm">High (5+ machines)</td>
+                    <td className="px-3 py-2 border text-sm text-red-700">Value position required</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ),
+      },
+      {
+        heading: '3) Calculate price elasticity by segment',
+        content: (
+          <div>
+            <p className="mb-3 text-gray-700">Different customer segments have different price sensitivity; tailor your approach.</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Customer Segment</th>
+                    <th className="px-3 py-2 text-left border">Price Sensitivity</th>
+                    <th className="px-3 py-2 text-left border">Decision Drivers</th>
+                    <th className="px-3 py-2 text-left border">Pricing Strategy</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">Prototype/R&D</td>
+                    <td className="px-3 py-2 border text-sm">Low</td>
+                    <td className="px-3 py-2 border text-sm">Speed, flexibility, iteration support</td>
+                    <td className="px-3 py-2 border text-sm text-green-700">Premium +20-30%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">Small batch (1-50)</td>
+                    <td className="px-3 py-2 border text-sm">Medium</td>
+                    <td className="px-3 py-2 border text-sm">Quality, lead time, service</td>
+                    <td className="px-3 py-2 border text-sm text-blue-700">Standard +10-15%</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">Production (100+)</td>
+                    <td className="px-3 py-2 border text-sm">High</td>
+                    <td className="px-3 py-2 border text-sm">Price, consistency, capacity</td>
+                    <td className="px-3 py-2 border text-sm text-orange-700">Competitive, volume tiers</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">OEM partnerships</td>
+                    <td className="px-3 py-2 border text-sm">Very high</td>
+                    <td className="px-3 py-2 border text-sm">Lowest total cost, reliability, terms</td>
+                    <td className="px-3 py-2 border text-sm text-red-700">Tight margins, long-term value</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <ul className="ml-5 list-disc space-y-1 text-gray-700 text-sm mt-4">
+              <li><strong>Test pricing:</strong> Vary quotes by ±10% across similar opportunities; track conversion rates to find sweet spot.</li>
+              <li><strong>Bundle services:</strong> Prototype customers value one-stop-shop; bundle cutting + finishing at 25% premium vs à la carte.</li>
+              <li><strong>Volume incentives:</strong> Production customers respond to tiered pricing; show 15-25% savings at higher quantities.</li>
+            </ul>
+          </div>
+        ),
+      },
+      {
+        heading: '4) Develop value-based pricing tiers',
+        content: (
+          <div>
+            <p className="mb-3 text-gray-700">Package your services into tiered offerings that communicate value beyond price.</p>
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="rounded-lg border-2 border-gray-300 p-4">
+                <h5 className="mb-2 font-semibold text-gray-900">Economy</h5>
+                <p className="text-sm text-gray-600 mb-3">Best for: Simple parts, flexible lead time</p>
+                <ul className="space-y-1 text-xs text-gray-700">
+                  <li>✓ 7-10 day lead time</li>
+                  <li>✓ Standard tolerances</li>
+                  <li>✓ Cutting only</li>
+                  <li>✗ No expediting</li>
+                  <li>✗ Limited materials</li>
+                </ul>
+                <p className="mt-3 text-sm font-semibold text-gray-900">Price: Market −10%</p>
+              </div>
+              <div className="rounded-lg border-2 border-blue-500 p-4 bg-blue-50">
+                <h5 className="mb-2 font-semibold text-blue-900">Standard</h5>
+                <p className="text-sm text-blue-700 mb-3">Best for: Most projects</p>
+                <ul className="space-y-1 text-xs text-blue-800">
+                  <li>✓ 3-5 day lead time</li>
+                  <li>✓ Tight tolerances (±0.1mm)</li>
+                  <li>✓ Bending, deburring available</li>
+                  <li>✓ All standard materials</li>
+                  <li>✓ Dedicated support</li>
+                </ul>
+                <p className="mt-3 text-sm font-semibold text-blue-900">Price: Market rate</p>
+              </div>
+              <div className="rounded-lg border-2 border-green-500 p-4 bg-green-50">
+                <h5 className="mb-2 font-semibold text-green-900">Premium</h5>
+                <p className="text-sm text-green-700 mb-3">Best for: Urgent, complex, certified</p>
+                <ul className="space-y-1 text-xs text-green-800">
+                  <li>✓ 24-48 hr rush available</li>
+                  <li>✓ Precision ±0.05mm</li>
+                  <li>✓ Full finishing, assembly</li>
+                  <li>✓ Exotic materials, certs</li>
+                  <li>✓ Engineering review included</li>
+                </ul>
+                <p className="mt-3 text-sm font-semibold text-green-900">Price: Market +20-30%</p>
+              </div>
+            </div>
+          </div>
+        ),
+      },
+      {
+        heading: '5) Monitor win/loss patterns and adjust',
+        content: (
+          <div>
+            <p className="mb-3 text-gray-700">Track quote outcomes systematically to identify pricing sweet spots and blind spots.</p>
+            <div className="rounded-lg bg-purple-50 p-4 mb-4">
+              <h4 className="mb-2 font-semibold text-purple-900">Win/Loss Analysis Framework</h4>
+              <ul className="ml-5 list-disc space-y-1 text-sm text-purple-800">
+                <li><strong>Win rate by price point:</strong> If win rate &lt;30% when within 10% of market, you may be overpriced.</li>
+                <li><strong>Loss reason codes:</strong> Track: price too high, lead time, quality concerns, no response. Focus on price losses.</li>
+                <li><strong>Competitive intel:</strong> When lost on price, ask customer for winner's price (±10% range). Build database.</li>
+                <li><strong>Quarterly review:</strong> Plot win rate vs price premium. Adjust pricing to target 40-60% win rate on qualified leads.</li>
+              </ul>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Price Position</th>
+                    <th className="px-3 py-2 text-right border">Quotes</th>
+                    <th className="px-3 py-2 text-right border">Wins</th>
+                    <th className="px-3 py-2 text-right border">Win Rate</th>
+                    <th className="px-3 py-2 text-left border">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border">−10% below market</td>
+                    <td className="px-3 py-2 text-right border">50</td>
+                    <td className="px-3 py-2 text-right border">42</td>
+                    <td className="px-3 py-2 text-right border text-green-700">84%</td>
+                    <td className="px-3 py-2 border text-sm text-red-700">Too low; leaving money on table</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">At market (±5%)</td>
+                    <td className="px-3 py-2 text-right border">100</td>
+                    <td className="px-3 py-2 text-right border">55</td>
+                    <td className="px-3 py-2 text-right border text-green-700">55%</td>
+                    <td className="px-3 py-2 border text-sm text-green-700">Optimal; competitive and profitable</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">+15% above market</td>
+                    <td className="px-3 py-2 text-right border">60</td>
+                    <td className="px-3 py-2 text-right border">12</td>
+                    <td className="px-3 py-2 text-right border text-red-700">20%</td>
+                    <td className="px-3 py-2 border text-sm text-red-700">Too high unless differentiation clear</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ),
+      },
+    ],
+    steps: [
+      { name: 'Research competitors', text: 'Submit test RFQs, use online tools, gather customer feedback, review industry surveys.' },
+      { name: 'Map differentiation', text: 'Identify your lead time, quality, capacity, service advantages vs competitors.' },
+      { name: 'Segment customers', text: 'Classify by price sensitivity: prototype (low), small batch (medium), production (high).' },
+      { name: 'Create tiers', text: 'Package Economy/Standard/Premium offerings with clear value differences.' },
+      { name: 'Track win/loss', text: 'Monitor win rate by price point; adjust quarterly to maintain 40-60% win rate.' },
+    ],
+    downloads: [
+      { label: 'Competitive Analysis Template (CSV)', href: '/downloads/tutorials/competitive-analysis-template.csv' },
+      { label: 'Win/Loss Tracker (CSV)', href: '/downloads/tutorials/win-loss-tracker.csv' },
+      { label: 'Pricing Tier Worksheet (Markdown)', href: '/downloads/tutorials/pricing-tiers-worksheet.md' },
+    ],
+  },
 };
 
 export default function TutorialPage({ params }: { params: { slug: string } }) {
