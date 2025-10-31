@@ -1,5 +1,5 @@
 import { D1Database } from '@cloudflare/workers-types';
-import { executeQuery, executeWrite } from './base';
+import { executeQuery, executeWrite } from './client';
 
 export interface Article {
   id: number;

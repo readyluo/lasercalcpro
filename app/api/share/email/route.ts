@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendCalculationEmail } from '@/lib/email/send-calculation';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs'; // Changed from 'edge' - nodemailer requires Node.js runtime
 
 export async function POST(request: NextRequest) {
   try {

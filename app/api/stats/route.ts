@@ -3,7 +3,7 @@ import { getCalculationStats } from '@/lib/db/calculations';
 import { getSubscriberStats } from '@/lib/db/subscribers';
 import { getArticleStats } from '@/lib/db/articles';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs'; // Changed from 'edge' - requires D1 database access
 
 /**
  * GET /api/stats - Get general statistics (public)
