@@ -43,6 +43,13 @@ const partSizeOptions = [
   { value: 'xlarge', label: 'X-Large - > 1200mm, requires assistance' },
 ];
 
+const cutQualityOptions = [
+  { value: 'excellentCut', label: 'Excellent - Clean nitrogen cut, minimal dross' },
+  { value: 'goodCut', label: 'Good - Standard cut quality, light dross' },
+  { value: 'fairCut', label: 'Fair - Some dross/spatter, needs work' },
+  { value: 'poorCut', label: 'Poor - Heavy dross, significant finishing needed' },
+];
+
 export default function FinishingGuidePage() {
   const [isCalculating, setIsCalculating] = React.useState(false);
   const [result, setResult] = React.useState<ReturnType<typeof calculateFinishingGuide> | null>(null);
@@ -177,6 +184,14 @@ export default function FinishingGuidePage() {
                       error={errors.partSize?.message} 
                       required 
                     />
+                    <Select 
+                      {...register('cutQuality')} 
+                      label="Cut Quality" 
+                      options={cutQualityOptions}
+                      helperText="Laser cut edge quality affects finishing"
+                      error={errors.cutQuality?.message} 
+                      required 
+                    />
                     <Input 
                       {...register('laborRate', { valueAsNumber: true })} 
                       type="number" 
@@ -187,7 +202,6 @@ export default function FinishingGuidePage() {
                       leftIcon={<DollarSign className="h-4 w-4" />}
                       error={errors.laborRate?.message} 
                       required 
-                      className="md:col-span-2"
                     />
                   </div>
 
