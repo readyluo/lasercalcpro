@@ -27,7 +27,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
       {
         heading: '1) CAD File Preparation & Validation',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">Proper file preparation is critical for accurate quotes and successful production.</p>
             <div className="mb-4 rounded-lg bg-blue-50 p-4">
               <h4 className="mb-2 font-semibold text-blue-900">File Format Requirements</h4>
@@ -45,13 +45,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               <li><strong>Measure total length:</strong> Use CAD measurement tools to sum outer contour + all internal holes. Record this value.</li>
               <li><strong>Count pierces:</strong> Each closed contour requires one pierce. Include outer edge + all holes.</li>
             </ul>
-          </>
+          </div>
         ),
       },
       {
         heading: '2) Material Selection & Specifications',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">Material choice directly impacts cutting speed, quality, and total cost.</p>
             <div className="mb-4 overflow-x-auto">
               <table className="w-full text-sm">
@@ -96,13 +96,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               <li><strong>Surface finish:</strong> Hot-rolled (HR) has scale, cold-rolled (CR) is smooth. Affects edge quality.</li>
               <li><strong>Sheet size:</strong> Standard 4'×8' (1220×2440mm) or 5'×10' (1525×3050mm). Confirm availability.</li>
             </ul>
-          </>
+          </div>
         ),
       },
       {
         heading: '3) Cost Calculation & Parameters',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">Accurate cost estimation requires understanding all cost components.</p>
             <div className="mb-4 rounded-lg bg-green-50 p-4">
               <h4 className="mb-2 font-semibold text-green-900">Cost Breakdown Formula</h4>
@@ -122,13 +122,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               <li><strong>Material utilization:</strong> Target 70-85% for standard jobs, 85-92% for optimized nesting.</li>
               <li><strong>Batch considerations:</strong> Setup cost amortized across quantity. Offer volume discounts for 50+ pieces.</li>
           </ul>
-          </>
+          </div>
         ),
       },
       {
         heading: '4) Quality Control & Tolerances',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">Define quality requirements upfront to avoid rework and disputes.</p>
             <div className="mb-4 rounded-lg bg-yellow-50 p-4">
               <h4 className="mb-2 font-semibold text-yellow-900">Standard Tolerances</h4>
@@ -146,13 +146,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               <li><strong>Corner sharpness:</strong> Inside corners have radius equal to kerf width (~0.1-0.2mm).</li>
               <li><strong>Documentation:</strong> Include tolerance callouts on quote. Default to ISO 2768-m if not specified.</li>
           </ul>
-          </>
+          </div>
         ),
       },
       {
         heading: '5) Quote Generation & Customer Communication',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">Professional quotes build trust and streamline the approval process.</p>
           <ul className="ml-5 list-disc space-y-2 text-gray-700">
               <li><strong>Cost transparency:</strong> Break down material, labor, machine time, and overhead separately. Builds credibility.</li>
@@ -175,13 +175,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 <li>✓ Company contact info and quote number</li>
           </ul>
             </div>
-          </>
+          </div>
         ),
       },
       {
         heading: '6) Common Issues & Solutions',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">Anticipate and resolve common problems before they impact production.</p>
             <div className="space-y-3">
               <div className="rounded-lg border border-gray-200 p-3">
@@ -210,13 +210,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 <p className="text-sm text-green-700"><strong>Solution:</strong> Explain cost breakdown, offer volume discounts, suggest design changes to reduce cost (fewer pierces, simpler shapes).</p>
               </div>
             </div>
-          </>
+          </div>
         ),
       },
       {
         heading: '7) Real-World Case Studies',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">Learn from actual projects across different complexity levels.</p>
             <div className="space-y-4">
               <div className="rounded-lg border-l-4 border-green-500 bg-gray-50 p-4">
@@ -280,7 +280,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 <p className="mt-2 text-sm text-gray-600"><strong>Key insight:</strong> Low quantity means setup cost ($75) heavily impacts per-part price. Tight tolerances (±0.05mm) require first-piece inspection and slower speeds. High margin accounts for risk and low volume.</p>
               </div>
             </div>
-          </>
+          </div>
         ),
       },
     ],
@@ -309,7 +309,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
       {
         heading: '1) Understanding Fixed vs Variable Costs',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">
               Accurate CNC pricing requires distinguishing between fixed costs (amortized across batch size) and variable costs (incurred per part).
             </p>
@@ -343,13 +343,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 <div><strong>Quote Price</strong> = Total Unit Cost × (1 + Target Margin%)</div>
               </div>
             </div>
-          </>
+          </div>
         ),
       },
       {
         heading: '2) Setup Cost Amortization Across Batch Sizes',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">
               The dramatic cost reduction from batch manufacturing comes from spreading fixed setup costs across more units.
             </p>
@@ -419,13 +419,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 <li><strong>Break-even analysis:</strong> At $300 setup + $15 variable, profitable pricing requires minimum 10-20 pieces for most shops</li>
               </ul>
             </div>
-          </>
+          </div>
         ),
       },
       {
         heading: '3) Tooling Life Cycle & Wear Cost Calculation',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">
               Tooling costs vary dramatically by material hardness, cutting parameters, and tool quality. Accurate tooling cost per part is critical for sustainable pricing.
             </p>
@@ -493,13 +493,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               <li><strong>Insert vs solid tools:</strong> Indexable inserts have lower per-edge cost but higher initial investment. Analyze based on production volume.</li>
               <li><strong>Track tool life:</strong> Use CNC control software to log tool usage and predict replacement timing to avoid scrapped parts from worn tools.</li>
             </ul>
-          </>
+          </div>
         ),
       },
       {
         heading: '4) Machine Utilization & Hourly Rate Optimization',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">
               Machine hourly rate must cover equipment depreciation, maintenance, energy, and overhead while achieving target utilization rates.
             </p>
@@ -559,13 +559,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               <li><strong>Machine capability premium:</strong> 5-axis or high-speed machining centers can command 20-40% higher rates due to capability advantage.</li>
               <li><strong>Benchmark rates:</strong> Industry standard CNC hourly rates range $45-$95/hr depending on region, machine type, and shop specialization.</li>
             </ul>
-          </>
+          </div>
         ),
       },
       {
         heading: '5) Detailed Case Studies by Complexity',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">
               Real-world examples showing cost breakdown and pricing strategy across different part complexities.
             </p>
@@ -675,13 +675,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 <p className="mt-2 text-sm text-gray-600"><strong>Key insight:</strong> Low volume (10 pcs) means setup is 17% of total cost. Tight tolerances require precision grinding. 55% margin justified by complexity, risk, and small batch. At 100+ pieces, cost drops to $102/part.</p>
               </div>
             </div>
-          </>
+          </div>
         ),
       },
       {
         heading: '6) Volume Pricing Strategy & Tier Structure',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">
               Structure tiered pricing to incentivize larger orders while maintaining profitability at all volume levels.
             </p>
@@ -751,13 +751,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               <li><strong>Rush pricing:</strong> Add 25-40% premium for 24-48 hour turnaround. Add 15% for 1-week rush on standard 2-3 week lead time.</li>
               <li><strong>Minimum order value:</strong> Consider $500-$1,000 minimum to avoid unprofitable small orders consuming setup capacity.</li>
             </ul>
-          </>
+          </div>
         ),
       },
       {
         heading: '7) Design for Manufacturability (DFM) Cost Optimization',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">
               Smart design choices can reduce CNC costs by 30-60% without compromising functionality. Collaborate with customers early in design phase.
             </p>
@@ -820,13 +820,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 </div>
               </div>
             </div>
-          </>
+          </div>
         ),
       },
       {
         heading: '8) Publishing Multi-Tier Quotes',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">
               Professional tiered quotes increase average order value by making volume discounts transparent and encouraging larger commitments.
             </p>
@@ -886,7 +886,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               </table>
               <p className="mt-3 text-xs text-gray-600"><strong>Note:</strong> Prices include setup, material, machining, and standard deburring. Anodizing or special finishes quoted separately. Quote valid 45 days. Payment terms: 50% deposit, balance Net 30.</p>
             </div>
-          </>
+          </div>
         ),
       },
     ],
@@ -914,7 +914,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
       {
         heading: '1) Finance metrics: definitions & formulas',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">Use consistent definitions and cash flow conventions. All cash flows are after-tax and nominal unless stated otherwise.</p>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="rounded-lg bg-blue-50 p-4">
@@ -950,13 +950,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 </ul>
               </div>
             </div>
-          </>
+          </div>
         ),
       },
       {
         heading: '2) Step-by-step example workflow (inputs → cash flows → metrics)',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">Document inputs, build annual cash flows, then compute Payback, NPV, and IRR. Replace placeholders with your firm's rates and quotes.</p>
             <div className="rounded-lg border border-gray-200 bg-white p-4">
               <h4 className="mb-2 font-semibold text-gray-900">Required Inputs</h4>
@@ -1007,13 +1007,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 </tbody>
               </table>
             </div>
-          </>
+          </div>
         ),
       },
       {
         heading: '3) Scenario planning (Conservative / Target / Optimistic)',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">Frame outcomes as utilization and pricing vary. Keep assumptions explicit and consistent across scenarios.</p>
             <div className="overflow-x-auto">
               <table className="w-full text-sm border border-gray-200">
@@ -1059,13 +1059,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 </tbody>
               </table>
             </div>
-          </>
+          </div>
         ),
       },
       {
         heading: '4) Sensitivity analysis (what moves ROI most?)',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">Stress-test key levers individually to show which variables dominate value creation.</p>
             <div className="overflow-x-auto">
               <table className="w-full text-sm border border-gray-200">
@@ -1088,13 +1088,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 </tbody>
               </table>
             </div>
-          </>
+          </div>
         ),
       },
       {
         heading: '5) Risk register & mitigations (for credit committees)',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">Show you have identified and actively managed key risks across demand, execution, and finance.</p>
             <div className="space-y-3">
               <div className="rounded-lg border border-gray-200 p-3">
@@ -1119,13 +1119,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 <p className="text-sm text-green-700"><strong>Mitigation:</strong> Fixed-rate financing, interest rate caps, forward cover, matched-currency cash flows.</p>
               </div>
             </div>
-          </>
+          </div>
         ),
       },
       {
         heading: '6) Executive narrative & slide outline',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">Communicate value in finance language with a clear storyline and verifiable assumptions.</p>
             <ul className="ml-5 list-disc space-y-2 text-gray-700">
               <li><strong>Slide 1 – Investment summary:</strong> What, why now, total outlay, timing, decision required.</li>
@@ -1135,13 +1135,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               <li><strong>Slide 5 – Risks & mitigations:</strong> Controls, contracts, service SLAs, contingency.</li>
               <li><strong>Slide 6 – Recommendation:</strong> Ask, conditions precedent, success metrics, next steps.</li>
             </ul>
-          </>
+          </div>
         ),
       },
       {
         heading: '7) Stakeholder FAQs & objection handling',
         content: (
-          <>
+          <div>
             <div className="space-y-3">
               <div className="rounded-lg border border-gray-200 p-3">
                 <h5 className="mb-1 font-semibold text-gray-900">"What happens if utilization is 20% lower?"</h5>
@@ -1156,7 +1156,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 <p className="text-sm text-gray-700">Confirm after-tax basis, tax shield treatment, and data sources (quotes, utility tariffs, wage tables, historical OEE).</p>
               </div>
             </div>
-          </>
+          </div>
         ),
       },
     ],
@@ -1183,7 +1183,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
       {
         heading: '1) Baseline Utilization Measurement & Analysis',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">
               Establish your current material efficiency to quantify improvement opportunities and track progress.
             </p>
@@ -1240,7 +1240,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               <li><strong>Benchmark targets:</strong> Standard job shop: 70-75%, optimized shop: 78-85%, production with CAM software: 85-90%.</li>
               <li><strong>Documentation:</strong> Create utilization log with job number, material, sheet size, parts nested, utilization %, and notes on constraints (grain direction, finish side, etc.).</li>
             </ul>
-          </>
+          </div>
         ),
       },
       {
@@ -1316,7 +1316,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
       {
         heading: '3) Kerf Compensation & Offset Management',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">
               Proper kerf compensation ensures parts fit together while maximizing material usage. Incorrect offsets waste material or cause scrap.
             </p>
@@ -1375,13 +1375,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 <li><strong>Software settings:</strong> Most CAM software has kerf compensation built-in. Set "tool diameter" or "kerf width" parameter correctly.</li>
               </ul>
             </div>
-          </>
+          </div>
         ),
       },
       {
         heading: '4) Lead-In/Lead-Out Optimization',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">
               Lead-ins and lead-outs affect cut quality, dross formation, and nesting efficiency. Optimize for both quality and material usage.
             </p>
@@ -1421,13 +1421,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               <li><strong>Dross management:</strong> Lead-out length affects dross buildup. Extend lead-out 1-2mm beyond part to allow dross to fall into scrap area.</li>
               <li><strong>Thermal distortion:</strong> On thin materials (&lt;1.5mm), use shorter lead-ins (0.5mm) to minimize heat input and warping.</li>
             </ul>
-          </>
+          </div>
         ),
       },
       {
         heading: '5) Software vs Manual Nesting Trade-Offs',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">
               Evaluate when to invest in nesting software versus manual optimization based on volume, complexity, and material costs.
             </p>
@@ -1478,13 +1478,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 <div className="pt-2 mt-2 border-t border-blue-300"><strong>Decision:</strong> Invest if material spend >$30K/year or >150 jobs/year</div>
               </div>
             </div>
-          </>
+          </div>
         ),
       },
       {
         heading: '6) Before/After Case Studies',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">
               Real-world examples showing utilization improvements and cost savings through optimized nesting strategies.
             </p>
@@ -1570,13 +1570,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 <p className="mt-2 text-sm text-gray-600"><strong>Key insight:</strong> Mixed-size nesting is most effective when you have variety. Combining jobs can dramatically improve utilization.</p>
               </div>
             </div>
-          </>
+          </div>
         ),
       },
       {
         heading: '7) Common Nesting Mistakes & Troubleshooting',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">
               Avoid these common errors that waste material, cause quality issues, or damage equipment.
             </p>
@@ -1612,13 +1612,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 <p className="text-sm text-green-700"><strong>Solution:</strong> Place lead-ins in scrap areas, corners, or non-visible edges. Use arc lead-ins for critical edges.</p>
               </div>
             </div>
-          </>
+          </div>
         ),
       },
       {
         heading: '8) Material Cost Impact Calculator',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">
               Quantify the financial impact of utilization improvements to justify process changes or software investment.
             </p>
@@ -1668,7 +1668,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               <li><strong>Hidden benefits:</strong> Beyond material savings, improved nesting reduces cutting time (fewer pierces, shorter travel), lowers gas consumption, and increases throughput.</li>
               <li><strong>Competitive advantage:</strong> 15% lower material costs allow 10-12% price reduction while maintaining margins, winning more bids.</li>
             </ul>
-          </>
+          </div>
         ),
       },
     ],
