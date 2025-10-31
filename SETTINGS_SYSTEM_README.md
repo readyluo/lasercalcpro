@@ -2,7 +2,7 @@
 
 ## 🎯 Overview
 
-Complete implementation of the site settings system with database persistence for GA4, GSC, AdSense, and other configuration options.
+Complete implementation of the site settings system with Turso database persistence for GA4, GSC, AdSense, and other configuration options.
 
 ## 📁 Architecture
 
@@ -96,13 +96,13 @@ GoogleAnalytics Component mounts
 
 ## 🚀 Deployment Steps
 
-### 1. Run Database Migration (Cloudflare D1)
+### 1. Run Database Migration (Turso)
 
 ```bash
-# If using wrangler CLI
-wrangler d1 execute lasercalcpro --file=./lib/db/schema.sql
+# Using Turso CLI
+turso db shell lasercalcpro < ./lib/db/schema.sql
 
-# OR manually add these settings in D1 dashboard:
+# OR manually add these settings in Turso dashboard:
 INSERT OR IGNORE INTO settings (setting_key, setting_value, description, is_public) VALUES
 ('ga4_measurement_id', '', 'Google Analytics 4 Measurement ID', 0),
 ('gsc_property_url', '', 'Google Search Console Property URL', 0),
@@ -189,7 +189,7 @@ curl https://yourdomain.com/api/settings/public
    - Response: `{"success":true,"message":"Settings saved successfully"}`
 
 3. **Check Database Write Permissions**:
-   Verify D1 database has write access in Cloudflare dashboard.
+   Verify Turso database has write access and proper authentication.
 
 4. **Check Audit Logs**:
    ```sql
@@ -214,7 +214,7 @@ curl https://yourdomain.com/api/settings/public
 ## 🎉 Result
 
 ✅ Admin can now save GA4/GSC/AdSense settings in UI
-✅ Settings are persisted in Cloudflare D1 database
+✅ Settings are persisted in Turso database
 ✅ Frontend dynamically loads tracking IDs from database
 ✅ No more hardcoded environment variables needed
 ✅ Settings can be changed without redeployment

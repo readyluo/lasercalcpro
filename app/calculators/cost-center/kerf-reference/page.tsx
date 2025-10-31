@@ -75,7 +75,7 @@ export default function KerfReferencePage() {
             <div>
               <div className="card sticky top-24">
                 <div className="mb-6 flex items-center justify-between">
-                  <h2 className="text-2xl font-bold">Lookup</h2>
+                  <h2 className="text-3xl font-bold">Lookup</h2>
                   <Button type="button" variant="ghost" size="sm" onClick={handleReset} leftIcon={<RotateCcw className="h-4 w-4" />}>Reset</Button>
                 </div>
 

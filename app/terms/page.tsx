@@ -46,7 +46,7 @@ export default function TermsPage() {
 
           {/* Main Content */}
           <div className="card prose prose-lg max-w-none">
-            <h2 className="text-2xl font-bold text-gray-900">1. Use of Service</h2>
+            <h2 className="text-3xl font-bold text-gray-900">1. Use of Service</h2>
             
             <h3>1.1 Eligibility</h3>
             <p>
@@ -108,7 +108,7 @@ export default function TermsPage() {
             <h2>3. Calculation Accuracy and Disclaimers</h2>
 
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 not-prose">
-              <h3 className="font-semibold text-gray-900 mb-2">⚠️ Important Notice</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">⚠️ Important Notice</h3>
               <p className="text-gray-700">
                 While we strive for accuracy, our calculators provide estimates only. Results should be verified by 
                 qualified professionals before making business decisions. See our <a href="/disclaimer" className="text-primary-600 hover:underline">Disclaimer</a> for full details.

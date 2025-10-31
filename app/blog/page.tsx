@@ -168,7 +168,7 @@ export default async function BlogPage() {
 
           {/* CTA Section */}
           <div className="mt-16 card bg-gradient-to-br from-primary-50 to-blue-50 text-center">
-            <h2 className="mb-4 text-2xl font-bold text-gray-900">
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">
               Try Our Free Calculators
             </h2>
             <p className="mb-6 text-gray-700">

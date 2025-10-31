@@ -146,7 +146,7 @@ export default function MaterialUtilizationPage() {
             <div>
               <div className="card sticky top-24">
                 <div className="mb-6 flex items-center justify-between">
-                  <h2 className="text-2xl font-bold">Nesting Parameters</h2>
+                  <h2 className="text-3xl font-bold">Nesting Parameters</h2>
                   <Button
                     type="button"
                     variant="ghost"
@@ -333,7 +333,7 @@ export default function MaterialUtilizationPage() {
                     result.utilizationRate >= 70 ? 'bg-gradient-to-br from-yellow-600 to-yellow-800' :
                     'bg-gradient-to-br from-red-600 to-red-800'
                   } text-white`}>
-                    <h2 className="mb-6 text-2xl font-bold">Utilization Summary</h2>
+                    <h2 className="mb-6 text-3xl font-bold">Utilization Summary</h2>
 
                     <div className="grid gap-4 md:grid-cols-2">
                       <div>

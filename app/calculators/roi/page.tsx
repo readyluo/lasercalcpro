@@ -128,7 +128,7 @@ export default function ROICalculatorPage() {
             <div>
               <div className="card sticky top-24">
                 <div className="mb-6 flex items-center justify-between">
-                  <h2 className="text-2xl font-bold">Investment Parameters</h2>
+                  <h2 className="text-3xl font-bold">Investment Parameters</h2>
                   <Button
                     type="button"
                     variant="ghost"
@@ -287,7 +287,7 @@ export default function ROICalculatorPage() {
                 <div id="results" className="space-y-6">
                   {/* Key Metrics */}
                   <div className="card bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-                    <h2 className="mb-6 text-2xl font-bold">Investment Summary</h2>
+                    <h2 className="mb-6 text-3xl font-bold">Investment Summary</h2>
 
                     <div className="grid gap-4 md:grid-cols-2">
                       <div>
@@ -453,7 +453,7 @@ export default function ROICalculatorPage() {
           {/* Investment Decision Framework */}
           <div className="mt-12">
             <div className="card">
-              <h2 className="mb-6 text-2xl font-bold text-gray-900">Investment Decision Framework</h2>
+              <h2 className="mb-6 text-3xl font-bold text-gray-900">Investment Decision Framework</h2>
               <p className="mb-6 text-gray-700">
                 Making the right equipment investment decision requires analyzing multiple financial metrics. 
                 Here's how to evaluate your investment systematically.
@@ -510,7 +510,7 @@ export default function ROICalculatorPage() {
           {/* Real-World Case Studies */}
           <div className="mt-12">
             <div className="card bg-gradient-to-br from-green-50 to-emerald-50">
-              <h2 className="mb-6 text-2xl font-bold text-gray-900">Real-World ROI Case Studies</h2>
+              <h2 className="mb-6 text-3xl font-bold text-gray-900">Real-World ROI Case Studies</h2>
               
               <div className="space-y-6">
                 <div className="rounded-lg bg-white p-6 shadow-sm">
@@ -627,7 +627,7 @@ export default function ROICalculatorPage() {
           {/* Risk Factors & Mitigation */}
           <div className="mt-12">
             <div className="card">
-              <h2 className="mb-6 text-2xl font-bold text-gray-900">Risk Factors & Mitigation Strategies</h2>
+              <h2 className="mb-6 text-3xl font-bold text-gray-900">Risk Factors & Mitigation Strategies</h2>
               
               <div className="space-y-6">
                 <div>
@@ -731,11 +731,11 @@ export default function ROICalculatorPage() {
           {/* Financial Metrics Explained */}
           <div className="mt-12">
             <div className="card bg-gradient-to-br from-purple-50 to-blue-50">
-              <h2 className="mb-6 text-2xl font-bold text-gray-900">Key Financial Metrics Explained</h2>
+              <h2 className="mb-6 text-3xl font-bold text-gray-900">Key Financial Metrics Explained</h2>
               
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="rounded-lg bg-white p-4 shadow-sm">
-                  <h3 className="mb-3 font-semibold text-gray-900">Break-Even Analysis</h3>
+                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Break-Even Analysis</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Formula:</strong> Fixed Costs / (Revenue per Hour - Variable Costs per Hour)</p>
                     <p><strong>Example:</strong> $150k machine / ($100/hr revenue - $40/hr costs) = 2,500 hours to break even</p>
@@ -746,7 +746,7 @@ export default function ROICalculatorPage() {
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
-                  <h3 className="mb-3 font-semibold text-gray-900">Machine Hour Rate Calculation</h3>
+                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Machine Hour Rate Calculation</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Components:</strong></p>
                     <p>• Depreciation: $150k / 10 years / 2000 hrs = $7.50/hr</p>
@@ -760,7 +760,7 @@ export default function ROICalculatorPage() {
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
-                  <h3 className="mb-3 font-semibold text-gray-900">Utilization Rate Impact</h3>
+                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Utilization Rate Impact</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>At 40% utilization:</strong> 800 hrs/year = $64k revenue</p>
                     <p>Annual profit: $64k - $40k costs = $24k (16% ROI on $150k)</p>
@@ -773,7 +773,7 @@ export default function ROICalculatorPage() {
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
-                  <h3 className="mb-3 font-semibold text-gray-900">Financing vs. Cash Purchase</h3>
+                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Financing vs. Cash Purchase</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Cash purchase $150k:</strong></p>
                     <p>• No interest expense</p>
@@ -794,7 +794,7 @@ export default function ROICalculatorPage() {
           {/* FAQ for ROI */}
           <div className="mt-12">
             <div className="card">
-              <h2 className="mb-6 text-2xl font-bold text-gray-900">Frequently Asked Questions</h2>
+              <h2 className="mb-6 text-3xl font-bold text-gray-900">Frequently Asked Questions</h2>
               <div className="space-y-4">
                 <FAQItem
                   question="What's a realistic ROI target for manufacturing equipment?"
@@ -830,7 +830,7 @@ export default function ROICalculatorPage() {
 
           {/* Related Calculators */}
           <div className="mt-12">
-            <h2 className="mb-6 text-2xl font-bold text-gray-900">Related Calculators</h2>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">Related Calculators</h2>
             <div className="grid gap-6 md:grid-cols-3">
               <Link
                 href="/calculators/laser-cutting"
@@ -886,7 +886,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
         onClick={() => setIsOpen(!isOpen)}
         className="flex w-full items-center justify-between p-4 text-left"
       >
-        <h3 className="font-semibold text-gray-900">{question}</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{question}</h3>
         <svg
           className={`h-5 w-5 flex-shrink-0 text-primary-600 transition-transform ${
             isOpen ? 'rotate-180' : ''

@@ -12,7 +12,7 @@
 
 ### Step 1: 运行数据库迁移
 
-Vercel 部署完成后，在 Cloudflare D1 控制台运行：
+Vercel 部署完成后，在 Turso 控制台或 CLI 运行：
 
 ```sql
 -- 添加新的设置项
@@ -35,7 +35,7 @@ INSERT OR IGNORE INTO settings (setting_key, setting_value, description, is_publ
 
 ### Step 3: 验证数据库已保存
 
-在 Cloudflare D1 控制台查询：
+在 Turso 控制台或 CLI 查询：
 
 ```sql
 SELECT setting_key, setting_value FROM settings 
@@ -100,12 +100,12 @@ https://www.lasercalcpro.com/api/settings/public
 
 ### 问题3: 403/401 错误
 
-**原因**: Cloudflare D1 绑定问题
+**原因**: Turso 数据库连接问题
 
 **解决**:
-1. 检查 `wrangler.toml` 中的 D1 绑定
+1. 检查环境变量中的 TURSO_DATABASE_URL 和 TURSO_AUTH_TOKEN
 2. 重新部署 Vercel 项目
-3. 确认 Cloudflare Pages 的 D1 绑定
+3. 确认 Turso 数据库在线且可访问
 
 ## 📊 完整数据流
 
@@ -118,7 +118,7 @@ POST /api/admin/settings
       ↓
 验证格式 (^G-[A-Z0-9]+$)
       ↓
-写入 Cloudflare D1 数据库
+写入 Turso 数据库
 settings.ga4_measurement_id = 'G-ABC123XYZ'
       ↓
 返回成功响应

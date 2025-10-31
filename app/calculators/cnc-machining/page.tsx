@@ -137,7 +137,7 @@ export default function CNCMachiningCalculatorPage() {
             <div>
               <div className="card sticky top-24">
                 <div className="mb-6 flex items-center justify-between">
-                  <h2 className="text-2xl font-bold">Input Parameters</h2>
+                  <h2 className="text-3xl font-bold">Input Parameters</h2>
                   <Button
                     type="button"
                     variant="ghost"
@@ -321,7 +321,7 @@ export default function CNCMachiningCalculatorPage() {
                 <div id="results" className="space-y-6">
                   {/* Summary */}
                   <div className="card bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-                    <h2 className="mb-6 text-2xl font-bold">Cost Summary</h2>
+                    <h2 className="mb-6 text-3xl font-bold">Cost Summary</h2>
 
                     <div className="grid gap-4 md:grid-cols-2">
                       <div>
@@ -464,7 +464,7 @@ export default function CNCMachiningCalculatorPage() {
           {/* CNC Machining Process Guide */}
           <div className="mt-12">
             <div className="card">
-              <h2 className="mb-6 text-2xl font-bold text-gray-900">CNC Machining Operations Guide</h2>
+              <h2 className="mb-6 text-3xl font-bold text-gray-900">CNC Machining Operations Guide</h2>
               <p className="mb-6 text-gray-700">
                 Understanding different machining operations and their cost implications is crucial for accurate estimating.
               </p>
@@ -520,7 +520,7 @@ export default function CNCMachiningCalculatorPage() {
           {/* Material Selection for CNC */}
           <div className="mt-12">
             <div className="card">
-              <h2 className="mb-6 text-2xl font-bold text-gray-900">Material Selection & Machinability</h2>
+              <h2 className="mb-6 text-3xl font-bold text-gray-900">Material Selection & Machinability</h2>
               <p className="mb-6 text-gray-700">
                 Material choice significantly impacts machining time, tool life, and overall cost. Machinability rating 
                 indicates how easy a material is to machine (higher = easier).
@@ -613,7 +613,7 @@ export default function CNCMachiningCalculatorPage() {
           {/* Cost Optimization for CNC */}
           <div className="mt-12">
             <div className="card">
-              <h2 className="mb-6 text-2xl font-bold text-gray-900">Cost Optimization Strategies</h2>
+              <h2 className="mb-6 text-3xl font-bold text-gray-900">Cost Optimization Strategies</h2>
               
               <div className="space-y-6">
                 <div>
@@ -687,11 +687,11 @@ export default function CNCMachiningCalculatorPage() {
           {/* Industry Benchmarks for CNC */}
           <div className="mt-12">
             <div className="card bg-gradient-to-br from-purple-50 to-indigo-50">
-              <h2 className="mb-6 text-2xl font-bold text-gray-900">Industry Benchmarks & Performance</h2>
+              <h2 className="mb-6 text-3xl font-bold text-gray-900">Industry Benchmarks & Performance</h2>
               
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="rounded-lg bg-white p-4 shadow-sm">
-                  <h3 className="mb-3 font-semibold text-gray-900">Machine Hour Rates (2024)</h3>
+                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Machine Hour Rates (2024)</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <div className="flex justify-between border-b pb-2">
                       <span>3-axis VMC (small):</span>
@@ -722,7 +722,7 @@ export default function CNCMachiningCalculatorPage() {
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
-                  <h3 className="mb-3 font-semibold text-gray-900">Typical Project Breakdown</h3>
+                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Typical Project Breakdown</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <div className="flex justify-between">
                       <span>Programming & CAM:</span>
@@ -749,7 +749,7 @@ export default function CNCMachiningCalculatorPage() {
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
-                  <h3 className="mb-3 font-semibold text-gray-900">Tool Life Expectations</h3>
+                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Tool Life Expectations</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Carbide end mills (steel):</strong> 2-4 hours cutting time</p>
                     <p><strong>Carbide end mills (aluminum):</strong> 6-12 hours</p>
@@ -762,7 +762,7 @@ export default function CNCMachiningCalculatorPage() {
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
-                  <h3 className="mb-3 font-semibold text-gray-900">Quality & Tolerance Standards</h3>
+                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Quality & Tolerance Standards</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Standard tolerance:</strong> ±0.005" (±0.13mm)</p>
                     <p><strong>Precision tolerance:</strong> ±0.001" (±0.025mm)</p>
@@ -779,7 +779,7 @@ export default function CNCMachiningCalculatorPage() {
           {/* Advanced FAQ for CNC */}
           <div className="mt-12">
             <div className="card">
-              <h2 className="mb-6 text-2xl font-bold text-gray-900">Frequently Asked Questions</h2>
+              <h2 className="mb-6 text-3xl font-bold text-gray-900">Frequently Asked Questions</h2>
               <div className="space-y-4">
                 <FAQItem
                   question="How accurate is this CNC cost calculator?"
@@ -815,7 +815,7 @@ export default function CNCMachiningCalculatorPage() {
 
           {/* Related Calculators */}
           <div className="mt-12">
-            <h2 className="mb-6 text-2xl font-bold text-gray-900">Related Calculators</h2>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">Related Calculators</h2>
             <div className="grid gap-6 md:grid-cols-3">
               <Link
                 href="/calculators/laser-cutting"
@@ -871,7 +871,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
         onClick={() => setIsOpen(!isOpen)}
         className="flex w-full items-center justify-between p-4 text-left"
       >
-        <h3 className="font-semibold text-gray-900">{question}</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{question}</h3>
         <svg
           className={`h-5 w-5 flex-shrink-0 text-primary-600 transition-transform ${
             isOpen ? 'rotate-180' : ''

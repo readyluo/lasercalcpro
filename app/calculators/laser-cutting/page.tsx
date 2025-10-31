@@ -124,7 +124,7 @@ export default function LaserCuttingCalculatorPage() {
             <div>
               <div className="card sticky top-24">
                 <div className="mb-6 flex items-center justify-between">
-                  <h2 className="text-2xl font-bold">Input Parameters</h2>
+                  <h2 className="text-3xl font-bold">Input Parameters</h2>
                   <Button
                     type="button"
                     variant="ghost"
@@ -259,7 +259,7 @@ export default function LaserCuttingCalculatorPage() {
                 <div id="results" className="space-y-6">
                   {/* Summary Card */}
                   <div className="card bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-                    <h2 className="mb-6 text-2xl font-bold">Cost Summary</h2>
+                    <h2 className="mb-6 text-3xl font-bold">Cost Summary</h2>
 
                     <div className="grid gap-4 md:grid-cols-2">
                       <div>
@@ -408,7 +408,7 @@ export default function LaserCuttingCalculatorPage() {
                   <Info className="h-6 w-6 text-primary-600" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">How to Use This Calculator</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">How to Use This Calculator</h2>
                   <p className="mt-2 text-gray-600">
                     Follow these steps to get accurate cost estimates for your laser cutting projects
                   </p>
@@ -417,7 +417,7 @@ export default function LaserCuttingCalculatorPage() {
 
               <div className="space-y-6">
                 <div className="border-l-4 border-primary-600 pl-4">
-                  <h3 className="mb-2 font-semibold text-gray-900">Step 1: Material Selection</h3>
+                  <h3 className="mb-2 text-lg font-semibold text-gray-900">Step 1: Material Selection</h3>
                   <p className="text-gray-600">
                     Choose your material type and enter the thickness. Different materials have different cutting speeds 
                     and power requirements. Our calculator accounts for material density, reflectivity, and cutting characteristics.
@@ -425,7 +425,7 @@ export default function LaserCuttingCalculatorPage() {
                 </div>
 
                 <div className="border-l-4 border-primary-600 pl-4">
-                  <h3 className="mb-2 font-semibold text-gray-900">Step 2: Cutting Parameters</h3>
+                  <h3 className="mb-2 text-lg font-semibold text-gray-900">Step 2: Cutting Parameters</h3>
                   <p className="text-gray-600">
                     Enter the total cutting length and your laser power. The cutting length should include all cuts, holes, 
                     and contours. Higher power lasers cut faster but consume more energy.
@@ -433,7 +433,7 @@ export default function LaserCuttingCalculatorPage() {
                 </div>
 
                 <div className="border-l-4 border-primary-600 pl-4">
-                  <h3 className="mb-2 font-semibold text-gray-900">Step 3: Cost Factors</h3>
+                  <h3 className="mb-2 text-lg font-semibold text-gray-900">Step 3: Cost Factors</h3>
                   <p className="text-gray-600">
                     Input your local electricity rate, labor cost, material price, and assist gas consumption. These values 
                     directly affect your total cost. Use current market rates for the most accurate results.
@@ -441,7 +441,7 @@ export default function LaserCuttingCalculatorPage() {
                 </div>
 
                 <div className="border-l-4 border-primary-600 pl-4">
-                  <h3 className="mb-2 font-semibold text-gray-900">Step 4: Review Results</h3>
+                  <h3 className="mb-2 text-lg font-semibold text-gray-900">Step 4: Review Results</h3>
                   <p className="text-gray-600">
                     Get detailed cost breakdown including material, energy, labor, and equipment costs. Use the suggested 
                     retail price as a starting point for your quotations. Export PDF report for professional presentations.
@@ -454,7 +454,7 @@ export default function LaserCuttingCalculatorPage() {
           {/* FAQ Section */}
           <div className="mt-12">
             <div className="card">
-              <h2 className="mb-6 text-2xl font-bold text-gray-900">Frequently Asked Questions</h2>
+              <h2 className="mb-6 text-3xl font-bold text-gray-900">Frequently Asked Questions</h2>
               <div className="space-y-4">
                 <FAQItem
                   question="How accurate is this calculator?"
@@ -483,7 +483,7 @@ export default function LaserCuttingCalculatorPage() {
           {/* Material Selection Guide */}
           <div className="mt-12">
             <div className="card">
-              <h2 className="mb-6 text-2xl font-bold text-gray-900">Material Selection Guide</h2>
+              <h2 className="mb-6 text-3xl font-bold text-gray-900">Material Selection Guide</h2>
               <p className="mb-6 text-gray-700">
                 Different materials require different cutting parameters and affect overall costs significantly. 
                 Here's what you need to know about common materials. For current material pricing, see our{' '}
@@ -543,7 +543,7 @@ export default function LaserCuttingCalculatorPage() {
           {/* Cost Optimization Strategies */}
           <div className="mt-12">
             <div className="card">
-              <h2 className="mb-6 text-2xl font-bold text-gray-900">Cost Optimization Strategies</h2>
+              <h2 className="mb-6 text-3xl font-bold text-gray-900">Cost Optimization Strategies</h2>
               
               <div className="space-y-6">
                 <div>
@@ -612,11 +612,11 @@ export default function LaserCuttingCalculatorPage() {
           {/* Industry Benchmarks */}
           <div className="mt-12">
             <div className="card bg-gradient-to-br from-blue-50 to-indigo-50">
-              <h2 className="mb-6 text-2xl font-bold text-gray-900">Industry Benchmarks & Standards</h2>
+              <h2 className="mb-6 text-3xl font-bold text-gray-900">Industry Benchmarks & Standards</h2>
               
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="rounded-lg bg-white p-4 shadow-sm">
-                  <h3 className="mb-3 font-semibold text-gray-900">Cutting Speed Benchmarks (Fiber Laser)</h3>
+                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Cutting Speed Benchmarks (Fiber Laser)</h3>
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b">
@@ -656,7 +656,7 @@ export default function LaserCuttingCalculatorPage() {
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
-                  <h3 className="mb-3 font-semibold text-gray-900">Typical Cost Breakdown</h3>
+                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Typical Cost Breakdown</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <div className="flex justify-between">
                       <span>Material costs:</span>
@@ -697,7 +697,7 @@ export default function LaserCuttingCalculatorPage() {
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
-                  <h3 className="mb-3 font-semibold text-gray-900">Machine Utilization Targets</h3>
+                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Machine Utilization Targets</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Cutting time:</strong> 60-70% of total time</p>
                     <p><strong>Setup/loading:</strong> 15-20% of total time</p>
@@ -709,7 +709,7 @@ export default function LaserCuttingCalculatorPage() {
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
-                  <h3 className="mb-3 font-semibold text-gray-900">Quality Standards</h3>
+                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Quality Standards</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Edge roughness (Ra):</strong> 6.3-12.5 μm (typical)</p>
                     <p><strong>Kerf width:</strong> 0.1-0.5mm depending on thickness</p>
@@ -725,7 +725,7 @@ export default function LaserCuttingCalculatorPage() {
           {/* Advanced FAQ */}
           <div className="mt-12">
             <div className="card">
-              <h2 className="mb-6 text-2xl font-bold text-gray-900">Advanced Questions</h2>
+              <h2 className="mb-6 text-3xl font-bold text-gray-900">Advanced Questions</h2>
               <div className="space-y-4">
                 <FAQItem
                   question="How does laser power affect cutting speed and cost?"
@@ -757,7 +757,7 @@ export default function LaserCuttingCalculatorPage() {
 
           {/* Related Calculators */}
           <div className="mt-12">
-            <h2 className="mb-6 text-2xl font-bold text-gray-900">Related Calculators</h2>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">Related Calculators</h2>
             <div className="grid gap-6 md:grid-cols-3">
               <Link
                 href="/calculators/material-utilization"
@@ -852,7 +852,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
         onClick={() => setIsOpen(!isOpen)}
         className="flex w-full items-center justify-between p-4 text-left"
       >
-        <h3 className="font-semibold text-gray-900">{question}</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{question}</h3>
         <svg
           className={`h-5 w-5 flex-shrink-0 text-primary-600 transition-transform ${
             isOpen ? 'rotate-180' : ''

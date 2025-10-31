@@ -365,7 +365,7 @@ export default function TutorialsLibraryPage() {
                         <span className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${tutorial.categoryColor} mb-3`}>
                           {tutorial.category}
                         </span>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                        <h2 className="text-3xl font-bold text-gray-900 mb-2">
                           <Link href={tutorial.href} className="hover:text-primary-600 transition-colors">
                             {tutorial.title}
                           </Link>

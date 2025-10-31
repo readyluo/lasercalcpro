@@ -32,7 +32,7 @@ export default function PrivacyPage() {
 
           {/* Quick Overview */}
           <div className="mb-12 card bg-primary-50">
-            <h2 className="mb-4 text-2xl font-bold text-gray-900">Our Commitment to Privacy</h2>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">Our Commitment to Privacy</h2>
             <p className="text-gray-700 leading-relaxed">
               At LaserCalc Pro, we take your privacy seriously. This Privacy Policy explains how we collect, 
               use, disclose, and safeguard your information when you visit our website. We are committed to 

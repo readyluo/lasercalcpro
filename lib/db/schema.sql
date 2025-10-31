@@ -1,5 +1,5 @@
 -- LaserCalc Pro Database Schema
--- Cloudflare D1 (SQLite)
+-- Turso (LibSQL/SQLite)
 -- Domain: lasercalcpro.com
 
 -- ============================================

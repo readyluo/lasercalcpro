@@ -110,7 +110,7 @@ export default function HourlyRateCalculatorPage() {
             <div>
               <div className="card sticky top-24">
                 <div className="mb-6 flex items-center justify-between">
-                  <h2 className="text-2xl font-bold">Input Parameters</h2>
+                  <h2 className="text-3xl font-bold">Input Parameters</h2>
                   <Button type="button" variant="ghost" size="sm" onClick={handleReset} leftIcon={<RotateCcw className="h-4 w-4" />}>Reset</Button>
                 </div>
 
@@ -177,7 +177,7 @@ export default function HourlyRateCalculatorPage() {
                 <div id="results" className="space-y-6">
                   {/* Summary */}
                   <div className="card bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-                    <h2 className="mb-4 text-2xl font-bold">Hourly Rate Summary</h2>
+                    <h2 className="mb-6 text-3xl font-bold">Hourly Rate Summary</h2>
                     <div className="grid gap-4 md:grid-cols-2">
                       <div>
                         <p className="mb-1 text-sm text-blue-100">Total Hourly Cost</p>

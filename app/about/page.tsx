@@ -30,7 +30,7 @@ export default function AboutPage() {
 
           {/* Mission Section */}
           <div className="card mb-12">
-            <h2 className="mb-6 text-2xl font-bold text-gray-900">Our Mission</h2>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">Our Mission</h2>
             <p className="mb-4 text-lg leading-relaxed text-gray-700">
               LaserCalc Pro was created to bridge the gap between complex manufacturing calculations and 
               practical business decisions. We provide free, accurate, and easy-to-use tools that help 
@@ -93,7 +93,7 @@ export default function AboutPage() {
 
           {/* Features Section */}
           <div className="card mb-12">
-            <h2 className="mb-6 text-2xl font-bold text-gray-900">Why Choose LaserCalc Pro?</h2>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">Why Choose LaserCalc Pro?</h2>
             <div className="grid gap-6 md:grid-cols-2">
               <div>
                 <h3 className="mb-2 text-lg font-semibold text-gray-900">
@@ -153,38 +153,38 @@ export default function AboutPage() {
 
           {/* Who We Serve */}
           <div className="card mb-12">
-            <h2 className="mb-6 text-2xl font-bold text-gray-900">Who We Serve</h2>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">Who We Serve</h2>
             <div className="space-y-4">
               <div>
-                <h3 className="mb-2 font-semibold text-gray-900">Manufacturing Companies</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Manufacturing Companies</h3>
                 <p className="text-gray-700">
                   Estimate job costs, optimize pricing strategies, and improve profitability.
                 </p>
               </div>
 
               <div>
-                <h3 className="mb-2 font-semibold text-gray-900">Engineers & Designers</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Engineers & Designers</h3>
                 <p className="text-gray-700">
                   Quickly evaluate manufacturing costs during the design phase to optimize for cost efficiency.
                 </p>
               </div>
 
               <div>
-                <h3 className="mb-2 font-semibold text-gray-900">Procurement Professionals</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Procurement Professionals</h3>
                 <p className="text-gray-700">
                   Validate supplier quotes and negotiate better pricing with data-driven insights.
                 </p>
               </div>
 
               <div>
-                <h3 className="mb-2 font-semibold text-gray-900">Business Owners</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Business Owners</h3>
                 <p className="text-gray-700">
                   Make informed equipment investment decisions with accurate ROI calculations.
                 </p>
               </div>
 
               <div>
-                <h3 className="mb-2 font-semibold text-gray-900">Students & Educators</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Students & Educators</h3>
                 <p className="text-gray-700">
                   Learn manufacturing cost principles with practical, real-world calculation tools.
                 </p>
@@ -194,7 +194,7 @@ export default function AboutPage() {
 
           {/* Contact CTA */}
           <div className="card bg-primary-50 text-center">
-            <h2 className="mb-4 text-2xl font-bold text-gray-900">
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">
               Have Questions or Feedback?
             </h2>
             <p className="mb-6 text-gray-700">

@@ -121,7 +121,7 @@ export default function EnergyCalculatorPage() {
             <div>
               <div className="card sticky top-24">
                 <div className="mb-6 flex items-center justify-between">
-                  <h2 className="text-2xl font-bold">Equipment Parameters</h2>
+                  <h2 className="text-3xl font-bold">Equipment Parameters</h2>
                   <Button
                     type="button"
                     variant="ghost"
@@ -283,7 +283,7 @@ export default function EnergyCalculatorPage() {
                 <div id="results" className="space-y-6">
                   {/* Summary */}
                   <div className="card bg-gradient-to-br from-green-600 to-green-800 text-white">
-                    <h2 className="mb-6 text-2xl font-bold">Energy Cost Summary</h2>
+                    <h2 className="mb-6 text-3xl font-bold">Energy Cost Summary</h2>
 
                     <div className="grid gap-4 md:grid-cols-2">
                       <div>

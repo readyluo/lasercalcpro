@@ -272,7 +272,7 @@ export default function MarkingCalculatorPage() {
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Input Form */}
             <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+              <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center">
                 <Calculator className="w-6 h-6 mr-2 text-purple-600" />
                 Job Parameters
               </h2>
@@ -340,7 +340,7 @@ export default function MarkingCalculatorPage() {
 
                 {/* Job Specifications */}
                 <div className="border-t pt-4">
-                  <h3 className="font-semibold text-gray-900 mb-3">Job Specifications</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Job Specifications</h3>
                   <div className="grid md:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -394,7 +394,7 @@ export default function MarkingCalculatorPage() {
 
                 {/* Quality Settings */}
                 <div className="border-t pt-4">
-                  <h3 className="font-semibold text-gray-900 mb-3">Quality Settings</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Quality Settings</h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -433,7 +433,7 @@ export default function MarkingCalculatorPage() {
 
                 {/* Equipment */}
                 <div className="border-t pt-4">
-                  <h3 className="font-semibold text-gray-900 mb-3">Equipment</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Equipment</h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -499,7 +499,7 @@ export default function MarkingCalculatorPage() {
 
                 {/* Operating Costs */}
                 <div className="border-t pt-4">
-                  <h3 className="font-semibold text-gray-900 mb-3">Operating Costs</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Operating Costs</h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -604,7 +604,7 @@ export default function MarkingCalculatorPage() {
                 <>
                   {/* Time Analysis */}
                   <div className="bg-white rounded-2xl shadow-xl p-6">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center">
                       <Clock className="w-6 h-6 mr-2 text-purple-600" />
                       Time Analysis
                     </h2>
@@ -638,7 +638,7 @@ export default function MarkingCalculatorPage() {
 
                   {/* Cost Breakdown */}
                   <div className="bg-white rounded-2xl shadow-xl p-6">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center">
                       <DollarSign className="w-6 h-6 mr-2 text-green-600" />
                       Cost Breakdown
                     </h2>
@@ -668,7 +668,7 @@ export default function MarkingCalculatorPage() {
 
                   {/* Pricing Recommendation */}
                   <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl shadow-xl p-6 border-2 border-green-200">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center">
                       <TrendingUp className="w-6 h-6 mr-2 text-green-600" />
                       Pricing Recommendation
                     </h2>
@@ -692,7 +692,7 @@ export default function MarkingCalculatorPage() {
 
                   {/* Efficiency Metrics */}
                   <div className="bg-white rounded-2xl shadow-xl p-6">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center">
                       <Zap className="w-6 h-6 mr-2 text-yellow-600" />
                       Efficiency Metrics
                     </h2>
@@ -728,13 +728,13 @@ export default function MarkingCalculatorPage() {
 
           {/* Optimization Tips */}
           <div className="mt-12 bg-white rounded-2xl shadow-xl p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center">
               <Info className="w-6 h-6 mr-2 text-blue-600" />
               Optimization Tips
             </h2>
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-blue-50 rounded-lg p-4">
-                <h3 className="font-semibold text-blue-900 mb-2 flex items-center">
+                <h3 className="text-lg font-semibold text-blue-900 mb-2 flex items-center">
                   <CheckCircle className="w-5 h-5 mr-2" />
                   Speed Optimization
                 </h3>
@@ -746,7 +746,7 @@ export default function MarkingCalculatorPage() {
                 </ul>
               </div>
               <div className="bg-green-50 rounded-lg p-4">
-                <h3 className="font-semibold text-green-900 mb-2 flex items-center">
+                <h3 className="text-lg font-semibold text-green-900 mb-2 flex items-center">
                   <CheckCircle className="w-5 h-5 mr-2" />
                   Cost Reduction
                 </h3>
@@ -758,7 +758,7 @@ export default function MarkingCalculatorPage() {
                 </ul>
               </div>
               <div className="bg-purple-50 rounded-lg p-4">
-                <h3 className="font-semibold text-purple-900 mb-2 flex items-center">
+                <h3 className="text-lg font-semibold text-purple-900 mb-2 flex items-center">
                   <CheckCircle className="w-5 h-5 mr-2" />
                   Quality Balance
                 </h3>
@@ -770,7 +770,7 @@ export default function MarkingCalculatorPage() {
                 </ul>
               </div>
               <div className="bg-orange-50 rounded-lg p-4">
-                <h3 className="font-semibold text-orange-900 mb-2 flex items-center">
+                <h3 className="text-lg font-semibold text-orange-900 mb-2 flex items-center">
                   <CheckCircle className="w-5 h-5 mr-2" />
                   Pricing Strategy
                 </h3>

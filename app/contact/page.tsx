@@ -48,7 +48,7 @@ export default function ContactPage() {
             {/* Contact Information */}
             <div className="space-y-6">
               <div className="card">
-                <h2 className="mb-6 text-2xl font-bold text-gray-900">Contact Information</h2>
+                <h2 className="mb-6 text-3xl font-bold text-gray-900">Contact Information</h2>
                 
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
@@ -86,7 +86,7 @@ export default function ContactPage() {
               </div>
 
               <div className="card bg-primary-50">
-                <h3 className="mb-3 font-semibold text-gray-900">Business Hours</h3>
+                <h3 className="mb-3 text-lg font-semibold text-gray-900">Business Hours</h3>
                 <div className="space-y-2 text-sm text-gray-700">
                   <div className="flex justify-between">
                     <span>Monday - Friday:</span>
@@ -107,7 +107,7 @@ export default function ContactPage() {
             {/* Contact Form */}
             <div className="lg:col-span-2">
               <div className="card">
-                <h2 className="mb-6 text-2xl font-bold text-gray-900">Send Us a Message</h2>
+                <h2 className="mb-6 text-3xl font-bold text-gray-900">Send Us a Message</h2>
                 
                 {status === 'success' && (
                   <div className="mb-6 rounded-lg bg-green-50 border border-green-200 p-4 flex items-start gap-3">
