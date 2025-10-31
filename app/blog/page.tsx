@@ -87,7 +87,15 @@ export default async function BlogPage() {
           ) : (
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {articles.map((article) => {
-                const tags = article.tags ? JSON.parse(article.tags) : [];
+                let tags: string[] = [];
+                try {
+                  if (article.tags) {
+                    tags = typeof article.tags === 'string' ? JSON.parse(article.tags) : article.tags;
+                  }
+                } catch (e) {
+                  console.error('Failed to parse tags:', e);
+                  tags = [];
+                }
                 
                 return (
                   <Link
