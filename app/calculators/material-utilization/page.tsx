@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
+import Link from 'next/link';
 
 export default function MaterialUtilizationPage() {
   const t = useEnglish();
@@ -132,7 +133,11 @@ export default function MaterialUtilizationPage() {
               Material Utilization Calculator
             </h1>
             <p className="text-xl text-gray-600">
-              Optimize sheet material usage and minimize waste with nesting analysis
+              Optimize sheet material usage and minimize waste with nesting analysis. Check{' '}
+              <Link href="/calculators/quick-reference/material-costs" className="text-primary-600 hover:underline font-semibold">
+                Material Costs Reference
+              </Link>
+              {' '}for current pricing.
             </p>
           </div>
 

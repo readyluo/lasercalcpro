@@ -486,7 +486,10 @@ export default function LaserCuttingCalculatorPage() {
               <h2 className="mb-6 text-2xl font-bold text-gray-900">Material Selection Guide</h2>
               <p className="mb-6 text-gray-700">
                 Different materials require different cutting parameters and affect overall costs significantly. 
-                Here's what you need to know about common materials:
+                Here's what you need to know about common materials. For current material pricing, see our{' '}
+                <Link href="/calculators/quick-reference/material-costs" className="text-primary-600 hover:underline font-semibold">
+                  Material Costs Reference
+                </Link>.
               </p>
               
               <div className="space-y-6">
@@ -644,7 +647,12 @@ export default function LaserCuttingCalculatorPage() {
                       </tr>
                     </tbody>
                   </table>
-                  <p className="mt-3 text-xs text-gray-600">Based on 6kW fiber laser with optimized parameters</p>
+                  <p className="mt-3 text-xs text-gray-600">
+                    Based on 6kW fiber laser with optimized parameters.{' '}
+                    <Link href="/calculators/quick-reference/cutting-speeds" className="text-primary-600 hover:underline font-semibold">
+                      View complete cutting speeds reference →
+                    </Link>
+                  </p>
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
@@ -675,7 +683,17 @@ export default function LaserCuttingCalculatorPage() {
                       <span className="font-semibold">10-15%</span>
                     </div>
                   </div>
-                  <p className="mt-3 text-xs text-gray-600">Percentages vary based on material type and thickness</p>
+                  <p className="mt-3 text-xs text-gray-600">
+                    Percentages vary based on material type and thickness. See{' '}
+                    <Link href="/calculators/quick-reference/assist-gas" className="text-primary-600 hover:underline font-semibold">
+                      Assist Gas Costs
+                    </Link>
+                    {' '}and{' '}
+                    <Link href="/calculators/quick-reference/power-consumption" className="text-primary-600 hover:underline font-semibold">
+                      Power Consumption
+                    </Link>
+                    {' '}references for detailed breakdowns.
+                  </p>
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
@@ -774,6 +792,45 @@ export default function LaserCuttingCalculatorPage() {
                 </h3>
                 <p className="text-sm text-gray-600">
                   Evaluate if purchasing laser cutting equipment is financially viable for your business
+                </p>
+              </Link>
+            </div>
+
+            <h3 className="mb-4 mt-8 text-xl font-bold text-gray-900">Quick Reference Guides</h3>
+            <div className="grid gap-6 md:grid-cols-3">
+              <Link
+                href="/calculators/quick-reference/cutting-speeds"
+                className="card-hover group border-l-4 border-yellow-600"
+              >
+                <h3 className="mb-2 text-lg font-semibold text-gray-900 group-hover:text-primary-600">
+                  Cutting Speeds Reference
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Benchmark speeds for all materials and thicknesses
+                </p>
+              </Link>
+
+              <Link
+                href="/calculators/quick-reference/material-costs"
+                className="card-hover group border-l-4 border-blue-600"
+              >
+                <h3 className="mb-2 text-lg font-semibold text-gray-900 group-hover:text-primary-600">
+                  Material Costs Reference
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Current pricing for steel, stainless, aluminum and more
+                </p>
+              </Link>
+
+              <Link
+                href="/calculators/quick-reference/assist-gas"
+                className="card-hover group border-l-4 border-green-600"
+              >
+                <h3 className="mb-2 text-lg font-semibold text-gray-900 group-hover:text-primary-600">
+                  Assist Gas Guide
+                </h3>
+                <p className="text-sm text-gray-600">
+                  O₂ vs N₂ selection and cost optimization
                 </p>
               </Link>
             </div>

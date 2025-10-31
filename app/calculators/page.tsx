@@ -13,11 +13,119 @@ import {
   TrendingUp, 
   Scissors,
   DollarSign,
+  Timer,
+  Settings,
+  Pen,
+  Flame,
   ArrowRight 
 } from 'lucide-react';
 
 export default function CalculatorsPage() {
   const calculators = [
+    {
+      id: 'quick-price-per-meter',
+      title: 'Price per Meter (Mini)',
+      description: 'Ultra-fast estimate of operating price per meter by material and thickness.',
+      icon: Scissors,
+      color: 'blue',
+      href: '/calculators/quick/price-per-meter',
+      features: [
+        'Material & thickness based speed',
+        'Electricity + labor only',
+        'Instant estimate'
+      ]
+    },
+    {
+      id: 'quick-hourly-rate',
+      title: 'Laser Hourly Rate (Mini)',
+      description: 'Compute true hourly cost including depreciation, power, labor, and overhead.',
+      icon: DollarSign,
+      color: 'indigo',
+      href: '/calculators/quick/hourly-rate',
+      features: [
+        'Depreciation per hour',
+        'Electricity cost per hour',
+        'All-in hourly rate'
+      ]
+    },
+    {
+      id: 'quick-pierce-time',
+      title: 'Pierce Time Estimator (Mini)',
+      description: 'Calculate laser piercing time for accurate job costing and efficiency analysis.',
+      icon: Timer,
+      color: 'orange',
+      href: '/calculators/quick/pierce-time',
+      features: [
+        'Material & thickness-based pierce time',
+        'Total job pierce time calculation',
+        'Cost impact analysis'
+      ]
+    },
+    {
+      id: 'qr-cutting-speeds',
+      title: 'Cutting Speeds (Quick Ref)',
+      description: 'Benchmark speeds for common materials and thicknesses (fiber laser).',
+      icon: Zap,
+      color: 'yellow',
+      href: '/calculators/quick-reference/cutting-speeds',
+      features: [
+        'Steel, stainless, aluminum',
+        'By thickness range',
+        'Production planning'
+      ]
+    },
+    {
+      id: 'qr-assist-gas',
+      title: 'Assist Gas Costs (Quick Ref)',
+      description: 'Typical costs and use cases for oxygen, nitrogen, and air.',
+      icon: DollarSign,
+      color: 'green',
+      href: '/calculators/quick-reference/assist-gas',
+      features: [
+        'Use case guidance',
+        'Approximate costs',
+        'Optimization tips'
+      ]
+    },
+    {
+      id: 'qr-material-costs',
+      title: 'Material Costs (Quick Ref)',
+      description: 'Current metal material prices and cost calculation guide.',
+      icon: Package,
+      color: 'blue',
+      href: '/calculators/quick-reference/material-costs',
+      features: [
+        'Steel, stainless, aluminum prices',
+        'Cost calculation examples',
+        'Material selection tips'
+      ]
+    },
+    {
+      id: 'qr-power-consumption',
+      title: 'Power Consumption (Quick Ref)',
+      description: 'Equipment power usage and electricity cost reference.',
+      icon: Zap,
+      color: 'yellow',
+      href: '/calculators/quick-reference/power-consumption',
+      features: [
+        'Fiber vs CO2 laser comparison',
+        'Annual cost estimates',
+        'Energy efficiency tips'
+      ]
+    },
+    {
+      id: 'qr-processing-parameters',
+      title: 'Processing Parameters (Quick Ref)',
+      description: 'Comprehensive parameter tables for fiber laser cutting across materials.',
+      icon: Settings,
+      color: 'purple',
+      href: '/calculators/quick-reference/processing-parameters',
+      features: [
+        'Power, speed, focus settings',
+        'Gas pressure & nozzle size',
+        'Troubleshooting guide'
+      ]
+    },
     {
       id: 'laser-cutting',
       title: 'Laser Cutting Calculator',
@@ -30,6 +138,34 @@ export default function CalculatorsPage() {
         'Energy consumption',
         'Labor cost estimation',
         'Gas consumption tracking'
+      ]
+    },
+    {
+      id: 'marking',
+      title: 'Laser Marking & Engraving Calculator',
+      description: 'Calculate precise costs for laser marking, engraving, and etching across all materials with time and profitability analysis.',
+      icon: Pen,
+      color: 'purple',
+      href: '/calculators/marking',
+      features: [
+        'Annealing, engraving, etching',
+        'Time & cost per piece',
+        'Pricing recommendations',
+        'Efficiency metrics'
+      ]
+    },
+    {
+      id: 'welding',
+      title: 'Laser Welding Calculator',
+      description: 'Professional laser welding cost calculator for all processes. Calculate accurate costs with gas, power, and labor analysis.',
+      icon: Flame,
+      color: 'orange',
+      href: '/calculators/welding',
+      features: [
+        'Conduction, keyhole, seam, spot',
+        'Shielding gas cost analysis',
+        'Quality & batch optimization',
+        'Comprehensive pricing guide'
       ]
     },
     {
@@ -96,6 +232,7 @@ export default function CalculatorsPage() {
     green: 'border-green-500 bg-green-50 text-green-600',
     yellow: 'border-yellow-500 bg-yellow-50 text-yellow-600',
     indigo: 'border-indigo-500 bg-indigo-50 text-indigo-600',
+    orange: 'border-orange-500 bg-orange-50 text-orange-600',
   };
 
   const borderClasses = {
@@ -104,6 +241,7 @@ export default function CalculatorsPage() {
     green: 'border-green-500',
     yellow: 'border-yellow-500',
     indigo: 'border-indigo-500',
+    orange: 'border-orange-500',
   } as const;
 
   return (

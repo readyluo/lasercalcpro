@@ -15,6 +15,7 @@ import { calculateEnergy, type EnergyResult, calculateTotalPotentialSavings } fr
 import { Calculator, Download, RotateCcw, Zap, Leaf, AlertCircle, TrendingUp, DollarSign } from 'lucide-react';
 import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
+import Link from 'next/link';
 
 export default function EnergyCalculatorPage() {
   const t = useEnglish();
@@ -107,7 +108,11 @@ export default function EnergyCalculatorPage() {
               Energy Cost Calculator
             </h1>
             <p className="text-xl text-gray-600">
-              Calculate power consumption, energy costs, and carbon footprint
+              Calculate power consumption, energy costs, and carbon footprint. See our{' '}
+              <Link href="/calculators/quick-reference/power-consumption" className="text-primary-600 hover:underline font-semibold">
+                Power Consumption Reference
+              </Link>
+              {' '}for equipment benchmarks.
             </p>
           </div>
 

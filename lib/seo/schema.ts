@@ -136,6 +136,25 @@ export function generateCalculatorHowToSchema(
   };
 }
 
+// Simpler version with just the required fields
+export function generateHowToSchema(params: {
+  name: string;
+  description: string;
+  steps: Array<{ name: string; text: string }>;
+}): HowTo {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: params.name,
+    description: params.description,
+    step: params.steps.map(step => ({
+      '@type': 'HowToStep',
+      name: step.name,
+      text: step.text,
+    })),
+  };
+}
+
 export function generateFAQSchema(
   faqs: Array<{ question: string; answer: string }>
 ): FAQPage {
