@@ -1,0 +1,117 @@
+# LaserCalc Pro - Laser Cutting Cost Calculator Template
+# Instructions: Replace sample values with your actual data
+
+## PROJECT INFORMATION
+Project Name,Sample Laser Cutting Job
+Customer,Customer Name
+Quote Number,QT-2025-001
+Date,2025-01-15
+Quoted By,Your Name
+
+## MATERIAL SPECIFICATIONS
+Material Type,Mild Steel
+Material Grade,A36
+Thickness (mm),3
+Sheet Size (mm),1500x3000
+Material Cost per Sheet,$125.00
+Sheets Required,1.5
+Material Cost Total,$187.50
+
+## CUTTING PARAMETERS
+Total Cutting Length (m),25.5
+Average Cutting Speed (mm/min),3000
+Cutting Time (minutes),8.5
+Pierce Count,45
+Pierce Time per Hole (seconds),0.8
+Total Pierce Time (minutes),0.6
+Total Machine Time (minutes),9.1
+
+## GAS & CONSUMABLES
+Gas Type,Nitrogen
+Gas Flow Rate (m³/hr),1.2
+Gas Cost per m³,$2.50
+Gas Consumption (m³),0.18
+Gas Cost,$0.45
+Nozzle/Lens Wear,$2.00
+Power Consumption (kWh),1.5
+Power Cost per kWh,$0.12
+Power Cost,$0.18
+Total Consumables,$2.63
+
+## LABOR COSTS
+Setup Time (minutes),15
+Operator Hourly Rate,$25.00
+Setup Labor Cost,$6.25
+Cutting Labor Cost,$3.79
+Finishing/QC Time (minutes),10
+Finishing Labor Cost,$4.17
+Total Labor Cost,$14.21
+
+## OVERHEAD & MARGIN
+Direct Costs Subtotal,$204.34
+Overhead Rate (%),30%
+Overhead Amount,$61.30
+Total Cost,$265.64
+Target Margin (%),35%
+Margin Amount,$143.02
+QUOTED PRICE,$408.66
+
+## VOLUME PRICING TIERS
+Quantity 1-10,$408.66
+Quantity 11-50,$367.79
+Quantity 51-100,$326.93
+Quantity 100+,$285.06
+
+## NOTES & ASSUMPTIONS
+Note 1,Material utilization assumed at 75%
+Note 2,Standard lead time: 5-7 business days
+Note 3,Rush orders available with 25% surcharge
+Note 4,Quote valid for 30 days
+
+## CUSTOMIZATION INSTRUCTIONS
+"1. Replace all ""Sample"" values with actual project data"
+"2. Adjust material costs based on your supplier pricing"
+"3. Update hourly rates to match your shop rates"
+"4. Modify overhead % based on your actual burden rate"
+"5. Set target margin based on job complexity and competition"
+"6. Calculate volume pricing by applying discount tiers (10%, 20%, 30%)"
+"7. Save as new filename with project number"
+
+## FORMULAS (For Excel Version)
+"Cutting Time (min) = Total Length (m) / Speed (mm/min) * 1000"
+"Pierce Time (min) = Pierce Count * Pierce Time (sec) / 60"
+"Total Machine Time = Cutting Time + Pierce Time"
+"Gas Cost = Machine Time (hr) * Flow Rate * Gas Price"
+"Setup Labor = Setup Time / 60 * Hourly Rate"
+"Overhead = Direct Costs * Overhead %"
+"Quoted Price = Total Cost / (1 - Margin %)"
+
+## BREAK-EVEN ANALYSIS
+Break-Even Price (0% margin),$265.64
+10% Margin Price,$295.16
+20% Margin Price,$332.05
+30% Margin Price,$379.49
+40% Margin Price,$442.73
+50% Margin Price,$531.28
+
+## COMPETITIVE ANALYSIS
+Your Quote,$408.66
+Competitor A (estimated),$425.00
+Competitor B (estimated),$390.00
+Market Average (estimated),$405.00
+Your Position,Competitive
+
+## RISK FACTORS
+Material Price Volatility,Medium
+Lead Time Risk,Low
+Quality Requirements,Standard
+Customer Payment Terms,Net 30
+Overall Risk Level,Medium
+
+## NEXT STEPS
+"1. Review quote with production manager"
+"2. Verify material availability"
+"3. Confirm lead time with customer"
+"4. Send quote via email with terms"
+"5. Follow up in 3-5 business days"
+

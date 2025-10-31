@@ -1,0 +1,208 @@
+# Overhead Allocation Calculator - LaserCalc Pro
+# Accurate Job Costing and Burden Rate Calculation
+
+## COMPANY INFORMATION
+Company Name,Your Manufacturing Company
+Fiscal Year,2025
+Calculation Period,Annual
+Last Updated,2025-01-15
+
+## FACILITY COSTS (Annual)
+Rent/Mortgage,$120000
+Property Taxes,$15000
+Building Insurance,$8000
+Utilities - Electric,$36000
+Utilities - Gas,$6000
+Utilities - Water,$3000
+Building Maintenance,$12000
+Security Systems,$2400
+Waste Disposal,$4800
+Facility Subtotal,$207200
+
+## EQUIPMENT COSTS (Annual)
+Equipment Depreciation,$85000
+Equipment Insurance,$12000
+Preventive Maintenance,$18000
+Repair and Parts,$8000
+Calibration Services,$3000
+Software Licenses,$6000
+Equipment Subtotal,$132000
+
+## INDIRECT LABOR (Annual)
+Production Manager,$85000
+Quality Control Manager,$72000
+Maintenance Technician,$58000
+Purchasing/Inventory,$52000
+Shipping/Receiving,$48000
+Safety Officer (part-time),$35000
+Administrative Support,$45000
+Indirect Labor Subtotal,$395000
+
+## GENERAL & ADMINISTRATIVE
+Office Supplies,$4800
+Professional Services (Legal/Accounting),$12000
+Marketing & Sales,$24000
+IT Support & Infrastructure,$15000
+Telecommunications,$6000
+Employee Benefits (burden),$118500
+Payroll Taxes (burden),$59250
+Worker's Compensation Insurance,$22000
+General Liability Insurance,$9000
+Business Licenses & Permits,$3000
+Bank Fees & Financing Costs,$4500
+Miscellaneous,$6000
+G&A Subtotal,$284050
+
+## TOTAL OVERHEAD SUMMARY
+Facility Costs,$207200
+Equipment Costs,$132000
+Indirect Labor,$395000
+General & Administrative,$284050
+TOTAL ANNUAL OVERHEAD,$1018250
+
+## DIRECT COSTS (For Allocation Base)
+Total Direct Labor Hours (Annual),20800
+Average Direct Labor Hourly Rate,$28.50
+Total Direct Labor Cost,$592800
+Total Direct Material Cost,$850000
+Total Machine Hours (Annual),8320
+Number of Production Jobs,450
+
+## ALLOCATION METHOD 1: Machine Hour Rate
+Total Overhead,$1018250
+Total Machine Hours,8320
+Overhead Rate per Machine Hour,$122.40 /hr
+Usage: Multiply actual machine hours × $122.40
+
+## ALLOCATION METHOD 2: Direct Labor Percentage
+Total Overhead,$1018250
+Total Direct Labor Cost,$592800
+Overhead as % of Labor,171.8%
+Usage: Direct labor cost × 171.8%
+
+## ALLOCATION METHOD 3: Direct Material Percentage
+Total Overhead,$1018250
+Total Direct Material Cost,$850000
+Overhead as % of Material,119.8%
+Usage: Material cost × 119.8%
+
+## ALLOCATION METHOD 4: Activity-Based Costing
+Cost Pool,Annual Cost,Cost Driver,Activity Volume,Rate
+Setup/Changeover,$125000,Number of Setups,450,$ 277.78 per setup
+Material Handling,$95000,Material Moves,1200,$ 79.17 per move
+Quality Inspection,$72000,Inspection Hours,1440,$ 50.00 per hour
+Machine Operation,$726250,Machine Hours,8320,$ 87.29 per machine hour
+
+## DEPARTMENT-SPECIFIC OVERHEAD RATES
+Department,Direct Labor Hrs,Allocated Overhead,Rate per DL Hour
+Laser Cutting,6240,$400000,$64.10 /hr
+CNC Machining,4160,$280000,$67.31 /hr
+Welding/Fabrication,5200,$200000,$38.46 /hr
+Finishing,3120,$100000,$32.05 /hr
+Quality Control,2080,$38250,$18.39 /hr
+
+## CAPACITY UTILIZATION ADJUSTMENT
+Practical Capacity (Machine Hours),10400
+Actual Utilization (Machine Hours),8320
+Utilization Rate (%),80.0%
+Fixed Overhead,$600000
+Variable Overhead,$418250
+Overhead Rate at 80% Utilization,$122.40 /hr
+Overhead Rate at 100% Utilization,$97.92 /hr
+
+## JOB COSTING EXAMPLE
+Job Number,JOB-2025-123
+Customer,Sample Customer Inc.
+Direct Material Cost,$500
+Direct Labor Hours,8
+Direct Labor Cost,$228
+Machine Hours,3.5
+
+## Apply Overhead - Method 1 (Machine Hour Rate)
+Machine Hours,3.5
+Rate per Machine Hour,$122.40
+Allocated Overhead,$428.40
+Total Job Cost,$1156.40
+
+## Apply Overhead - Method 2 (Labor %)
+Direct Labor Cost,$228
+Overhead % of Labor,171.8%
+Allocated Overhead,$391.70
+Total Job Cost,$1119.70
+
+## Apply Overhead - Method 3 (Material %)
+Direct Material Cost,$500
+Overhead % of Material,119.8%
+Allocated Overhead,$599.00
+Total Job Cost,$1327.00
+
+## Apply Overhead - Method 4 (Activity-Based)
+Setups,1,$277.78
+Material Moves,2,$158.34
+Inspection Hours,0.5,$25.00
+Machine Hours,3.5,$305.52
+Total ABC Overhead,$766.64
+Total Job Cost,$1494.64
+
+## RECOMMENDED METHOD BY JOB TYPE
+Job Type,Recommended Method,Reason
+Capital-intensive (Laser/CNC),Machine Hour Rate,Equipment depreciation is major cost driver
+Labor-intensive (Welding/Fab),Direct Labor %,Labor is primary cost and overhead driver
+High-material-value,Direct Material %,Material handling and inventory costs significant
+Complex multi-step,Activity-Based Costing,Multiple cost drivers require ABC accuracy
+
+## OVERHEAD VARIANCE ANALYSIS
+Budgeted Overhead (Annual),$1018250
+Actual Overhead Incurred,$1045000
+Overhead Variance,$26750 (Unfavorable)
+Variance %,2.6%
+Primary Causes,Higher utility costs / Unplanned maintenance
+
+## OVERHEAD RATE ADJUSTMENT SCHEDULE
+Current Period,Q1 2025
+Last Rate Review,Q4 2024
+Next Review Due,Q2 2025
+Rate Adjustment Frequency,Quarterly
+Year-End True-Up,Yes
+
+## UNDER/OVER-ABSORBED OVERHEAD
+Overhead Applied to Jobs,$995000
+Actual Overhead Incurred,$1045000
+Under-Absorbed Overhead,$50000
+Disposition,Spread across COGS / Close to P&L
+
+## BREAK-EVEN ANALYSIS
+Fixed Overhead,$600000
+Variable Overhead per Machine Hour,$50.27
+Average Revenue per Machine Hour,$185
+Break-Even Machine Hours,6441
+Current Machine Hours (80% utilization),8320
+Margin of Safety,22.6%
+
+## CONTINUOUS IMPROVEMENT METRICS
+Metric,Current,Target,Status
+Overhead as % of Sales,42.5%,38.0%,Needs improvement
+Indirect Labor %,38.8%,35.0%,Needs improvement
+Facility Cost per Sq Ft,$12.40,$11.00,On track
+Overhead per Direct Labor Hour,$48.95,$45.00,Needs improvement
+Equipment Utilization,80.0%,85.0%,Needs improvement
+
+## ACTION ITEMS TO REDUCE OVERHEAD
+Priority,Action Item,Est. Savings,Timeline
+High,Renegotiate rent/lease,$12000/year,Q1
+High,Energy efficiency audit,$8000/year,Q2
+Medium,Optimize indirect staffing,$25000/year,Q3
+Medium,Reduce equipment downtime,$15000/year,Ongoing
+Low,Consolidate insurance policies,$3000/year,Q4
+
+## NOTES & ASSUMPTIONS
+Note 1,Overhead rates reviewed quarterly and adjusted annually
+Note 2,ABC costing used for complex jobs > $5000
+Note 3,Machine hour rate is primary method for laser cutting
+Note 4,Fixed/variable split estimated at 60/40
+Note 5,Capacity utilization target is 85% for financial planning
+
+---
+Generated by LaserCalc Pro Overhead Allocation Tutorial
+Visit www.lasercalcpro.com for Overhead Calculator and more resources
+

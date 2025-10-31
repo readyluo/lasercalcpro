@@ -1,0 +1,174 @@
+# Equipment ROI Analysis Template - LaserCalc Pro
+# For CFOs and Financial Partners
+
+## EQUIPMENT INFORMATION
+Equipment Type,Fiber Laser Cutting Machine
+Manufacturer,Manufacturer Name
+Model Number,Model XYZ-3000
+Power Rating,3000W
+Purchase Price,$250000
+Installation Costs,$15000
+Training Costs,$5000
+Total CAPEX Investment,$270000
+
+## FINANCING OPTIONS
+Cash Purchase,$270000
+Equipment Loan (5 years @ 6%),$5234 per month
+Lease Option (60 months),$4850 per month
+Tax Benefits (Depreciation/Section 179),$54000 (Year 1)
+Selected Financing,Equipment Loan
+
+## CAPACITY ANALYSIS
+Available Hours per Week,168
+Planned Operating Hours per Week,80
+Utilization Target (%),47.6%
+Conservative Scenario (50% of target),40 hrs/week
+Target Scenario (100% of target),80 hrs/week
+Optimistic Scenario (125% of target),100 hrs/week
+
+## REVENUE PROJECTIONS
+Average Revenue per Machine Hour,$125
+Conservative Revenue (40 hrs/week),$5000 per week
+Target Revenue (80 hrs/week),$10000 per week
+Optimistic Revenue (100 hrs/week),$12500 per week
+Annual Revenue (Target Scenario),$520000
+
+## COST ANALYSIS - ANNUAL
+Operator Labor (2080 hrs @ $25/hr),$52000
+Electricity (estimated),$8400
+Assist Gas (N₂),$24000
+Consumables (nozzles/lenses),$6000
+Maintenance Contract,$12000
+Facility Cost Allocation,$15000
+Insurance,$3000
+Total Annual Operating Costs,$120400
+
+## CURRENT STATE (Without New Equipment)
+Current Annual Capacity,$350000
+Current Operating Costs,$95000
+Current Gross Profit,$255000
+Current Gross Margin (%),72.9%
+Current Equipment Limitations,Outdated technology / frequent downtime
+
+## FUTURE STATE (With New Equipment)
+Projected Annual Revenue,$520000
+Projected Operating Costs,$120400
+Projected Gross Profit,$399600
+Projected Gross Margin (%),76.8%
+Incremental Revenue Gain,$170000
+Incremental Cost Increase,$25400
+NET INCREMENTAL BENEFIT,$144600
+
+## ROI CALCULATION
+Total Investment,$270000
+Annual Net Benefit,$144600
+Simple Payback Period (years),1.87
+ROI Year 1 (%),53.6%
+ROI Year 5 (cumulative) (%),268%
+
+## NPV ANALYSIS
+Discount Rate (%),10%
+Year 1 Cash Flow,$144600
+Year 2 Cash Flow,$144600
+Year 3 Cash Flow,$144600
+Year 4 Cash Flow,$144600
+Year 5 Cash Flow,$144600
+NPV at 10% Discount Rate,$278195
+IRR (Internal Rate of Return) (%),51.2%
+
+## SENSITIVITY ANALYSIS - What If Scenarios
+Scenario,Revenue Impact,NPV Result,Payback (years)
+Base Case (80 hrs/week),$520000,$278195,1.87
+Conservative (-20%),$416000,$121095,3.12
+Optimistic (+25%),$650000,$435295,1.49
+Delayed Ramp-Up (Year 1 -30%),Phased,$198145,2.45
+
+## RISK MITIGATION STRATEGIES
+Risk Factor,Probability,Impact,Mitigation
+Low utilization,Medium,High,Pre-sold contracts for 40% capacity
+Technology obsolescence,Low,Medium,5-year warranty / 10-year expected life
+Operator shortage,Medium,Medium,Cross-training plan / backup operators
+Material cost inflation,High,Low,Pass-through pricing clauses
+Economic downturn,Medium,High,Diversified customer base
+
+## COMPETITIVE ADVANTAGE ANALYSIS
+Current Lead Time,10-15 days
+New Lead Time,3-5 days
+Quality Improvement,+15% tighter tolerances
+Speed Increase,3x faster cutting
+Energy Efficiency Gain,40% lower per-part cost
+Customer Satisfaction Impact,Reduced rejections by 60%
+
+## TAX & DEPRECIATION BENEFITS
+MACRS Depreciation Schedule,7-year property
+Year 1 Depreciation,$38571
+Section 179 Deduction (if applicable),$54000
+Bonus Depreciation (if applicable),100% in Year 1
+Tax Savings @ 25% Rate,$67893 (if using Section 179)
+Net After-Tax Investment,$202107
+
+## BREAK-EVEN ANALYSIS
+Fixed Costs (Annual),$120400
+Variable Cost per Hour,$0
+Revenue per Hour Needed for Break-Even,$29 /hr
+Current Revenue per Hour,$125 /hr
+Safety Margin,77%
+
+## FINANCING COMPARISON
+Option,Monthly Payment,Total Interest,Total Cost,5-Year Cash Flow
+Cash Purchase,$0,$0,$270000,Highest NPV
+Equipment Loan (6%),$5234,$44040,$314040,Good balance
+Operating Lease,$4850,$21000,$291000,Lower commitment
+Capital Lease,$5100,$36000,$306000,Tax advantages
+
+## BOARD PRESENTATION KEY METRICS
+Payback Period,1.87 years
+IRR,51.2%
+5-Year NPV,$278195
+Revenue Increase,49%
+Margin Improvement,3.9 percentage points
+Customer Capacity Increase,3x
+Competitive Position,Industry-leading lead times
+
+## ACTION ITEMS & TIMELINE
+Week 1,Board presentation and approval
+Week 2-3,Finalize financing terms
+Week 4,Place equipment order
+Week 8-12,Equipment delivery and installation
+Week 13-14,Operator training
+Week 15,Production ramp-up begins
+Week 20,Target utilization achieved
+
+## APPROVAL TRACKING
+Prepared By,Your Name
+Date Prepared,2025-01-15
+CFO Review,[ ] Approved [ ] Needs Revision
+CEO Approval,[ ] Approved [ ] Pending
+Board Vote Date,Scheduled for: __________
+Financing Application,[ ] Submitted [ ] Approved
+
+## NOTES & ASSUMPTIONS
+Assumption 1,Utilization ramps to 80hrs/week by Week 20
+Assumption 2,No major economic downturn in forecast period
+Assumption 3,Current customer base supports 60% of projected revenue
+Assumption 4,Material costs remain stable (+/- 10%)
+Assumption 5,Qualified operators available for hire
+
+## SUPPORTING DOCUMENTATION CHECKLIST
+- [ ] Equipment specification sheet
+- [ ] Vendor quote with warranty terms
+- [ ] Installation requirements and timeline
+- [ ] Energy consumption analysis
+- [ ] Customer letters of intent / contracts
+- [ ] Competitor analysis report
+- [ ] Market demand forecast
+- [ ] Training plan and costs
+- [ ] Maintenance contract terms
+- [ ] Insurance quote
+- [ ] Floor plan and facility modifications
+- [ ] Environmental/safety permits
+
+---
+Generated by LaserCalc Pro Equipment ROI Tutorial
+Visit www.lasercalcpro.com for ROI Calculator and more resources
+
