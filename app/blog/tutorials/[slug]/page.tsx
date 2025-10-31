@@ -903,45 +903,272 @@ const TUTORIALS: Record<string, TutorialConfig> = {
     ],
   },
   'equipment-roi-narrative': {
-    title: 'Narrating equipment ROI to CFOs and bank partners',
+    title: 'Equipment ROI analysis for CFOs and finance partners',
     description:
-      'Translate calculator outputs into payback & NPV narratives with scenario analysis for executive stakeholders.',
+      'Turn calculator outputs into board-ready Payback, NPV, and IRR with scenarios, sensitivities, risks, and a concise executive narrative.',
     duration: '18 min',
     level: 'Strategic',
     sections: [
       {
-        heading: '1) Build scenarios',
+        heading: '1) Finance metrics: definitions & formulas',
         content: (
-          <ul className="ml-5 list-disc space-y-2 text-gray-700">
-            <li>Create Base, Optimistic (+15% utilization), Downside (−15% utilization) cases.</li>
-            <li>Lock inputs for power, labor, maintenance, and financing terms.</li>
-          </ul>
+          <>
+            <p className="mb-3 text-gray-700">Use consistent definitions and cash flow conventions. All cash flows are after-tax and nominal unless stated otherwise.</p>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="rounded-lg bg-blue-50 p-4">
+                <h4 className="mb-2 font-semibold text-blue-900">Payback Period</h4>
+                <ul className="ml-5 list-disc space-y-1 text-sm text-blue-800">
+                  <li><strong>Definition:</strong> Time required for cumulative net cash flow to recover initial investment.</li>
+                  <li><strong>Formula:</strong> Smallest t s.t. Σ<sub>i=0..t</sub> CF<sub>i</sub> ≥ 0 (with CF<sub>0</sub> negative).</li>
+                  <li><strong>Use:</strong> Simplicity for risk filters; does not measure total value.</li>
+                </ul>
+              </div>
+              <div className="rounded-lg bg-green-50 p-4">
+                <h4 className="mb-2 font-semibold text-green-900">Net Present Value (NPV)</h4>
+                <ul className="ml-5 list-disc space-y-1 text-sm text-green-800">
+                  <li><strong>Definition:</strong> Present value of all cash inflows minus outflows at discount rate r.</li>
+                  <li><strong>Formula:</strong> NPV = Σ CF<sub>t</sub> / (1 + r)<sup>t</sup>, t = 0..T.</li>
+                  <li><strong>Decision rule:</strong> Accept if NPV &gt; 0 at hurdle r (typ. 8–12%).</li>
+                </ul>
+              </div>
+              <div className="rounded-lg bg-purple-50 p-4">
+                <h4 className="mb-2 font-semibold text-purple-900">Internal Rate of Return (IRR)</h4>
+                <ul className="ml-5 list-disc space-y-1 text-sm text-purple-800">
+                  <li><strong>Definition:</strong> Discount rate where NPV = 0.</li>
+                  <li><strong>Interpretation:</strong> Annualized return of the investment's cash flows.</li>
+                  <li><strong>Decision rule:</strong> Accept if IRR &gt; hurdle rate (WACC or policy rate).</li>
+                </ul>
+              </div>
+              <div className="rounded-lg bg-amber-50 p-4">
+                <h4 className="mb-2 font-semibold text-amber-900">Cash Flow Construction</h4>
+                <ul className="ml-5 list-disc space-y-1 text-sm text-amber-800">
+                  <li>CF<sub>0</sub> = −(Purchase price + Installation + Ramp costs − Financing proceeds).</li>
+                  <li>CF<sub>t</sub> = EBITDA gains − ΔOPEX − Maintenance − Financing interest/principal ± Tax effects + Working capital changes + Residual value at T.</li>
+                  <li>Use <strong>after-tax</strong> cash flows for comparability; include depreciation only via tax shield if modeling taxes.</li>
+                </ul>
+              </div>
+            </div>
+          </>
         ),
       },
       {
-        heading: '2) Convert to board-ready slides',
+        heading: '2) Step-by-step example workflow (inputs → cash flows → metrics)',
         content: (
-          <ul className="ml-5 list-disc space-y-2 text-gray-700">
-            <li>Summarize Payback (months), IRR, NPV at discount rate 8–12%.</li>
-            <li>Highlight risk mitigations: service contracts, training, grants.</li>
-          </ul>
+          <>
+            <p className="mb-3 text-gray-700">Document inputs, build annual cash flows, then compute Payback, NPV, and IRR. Replace placeholders with your firm's rates and quotes.</p>
+            <div className="rounded-lg border border-gray-200 bg-white p-4">
+              <h4 className="mb-2 font-semibold text-gray-900">Required Inputs</h4>
+              <div className="grid gap-3 md:grid-cols-2 text-sm text-gray-700">
+                <ul className="ml-5 list-disc space-y-1">
+                  <li>Equipment price, installation, training, tooling starter kit</li>
+                  <li>Financing terms (rate, tenor, down payment) or cash purchase</li>
+                  <li>Utilization plan (hours/year by year), yield/scrap, learning curve</li>
+                  <li>Revenue drivers (throughput/hour, price/hour or per-part margin)</li>
+                </ul>
+                <ul className="ml-5 list-disc space-y-1">
+                  <li>Operating costs: energy, consumables, maintenance contract</li>
+                  <li>Labor: operators per shift, wage/benefits, productivity uplift</li>
+                  <li>Tax rate, depreciation method (for tax shield), salvage value</li>
+                  <li>Discount rate (WACC or policy hurdle), evaluation horizon (e.g., 5–7 years)</li>
+                </ul>
+              </div>
+            </div>
+            <div className="mt-4 rounded-lg bg-blue-50 p-4">
+              <h4 className="mb-2 font-semibold text-blue-900">Computation Steps</h4>
+              <ol className="ml-5 list-decimal space-y-1 text-sm text-blue-800">
+                <li>Build year-0 outflow (purchase + install − financing proceeds).</li>
+                <li>For each year t, compute incremental gross margin = (throughput × price or contribution) − variable costs.</li>
+                <li>Subtract fixed OPEX (labor delta, maintenance, software, insurance).</li>
+                <li>Subtract financing cash flows if debt-funded (interest + principal) or apply WACC in NPV if unlevered modeling.</li>
+                <li>Apply taxes if modeling after-tax cash flows; add back tax shield where applicable.</li>
+                <li>Add terminal cash flow at horizon (salvage value − tax on gain/loss).</li>
+                <li>Compute Payback (cumulative CF), NPV at r, and IRR.</li>
+              </ol>
+            </div>
+            <div className="mt-4 overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Year</th>
+                    <th className="px-3 py-2 text-right border">Utilization (hrs)</th>
+                    <th className="px-3 py-2 text-right border">Net CF</th>
+                    <th className="px-3 py-2 text-right border">Cum. CF</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr><td className="px-3 py-2 border">0</td><td className="px-3 py-2 text-right border">—</td><td className="px-3 py-2 text-right border">− Initial outlay</td><td className="px-3 py-2 text-right border">− Initial outlay</td></tr>
+                  <tr><td className="px-3 py-2 border">1</td><td className="px-3 py-2 text-right border">Plan</td><td className="px-3 py-2 text-right border">CF₁</td><td className="px-3 py-2 text-right border">CF₀+CF₁</td></tr>
+                  <tr><td className="px-3 py-2 border">2</td><td className="px-3 py-2 text-right border">Plan</td><td className="px-3 py-2 text-right border">CF₂</td><td className="px-3 py-2 text-right border">…</td></tr>
+                  <tr><td className="px-3 py-2 border">3</td><td className="px-3 py-2 text-right border">Plan</td><td className="px-3 py-2 text-right border">CF₃</td><td className="px-3 py-2 text-right border">…</td></tr>
+                  <tr><td className="px-3 py-2 border">4</td><td className="px-3 py-2 text-right border">Plan</td><td className="px-3 py-2 text-right border">CF₄</td><td className="px-3 py-2 text-right border">…</td></tr>
+                  <tr><td className="px-3 py-2 border">5</td><td className="px-3 py-2 text-right border">Plan</td><td className="px-3 py-2 text-right border">CF₅ + Terminal</td><td className="px-3 py-2 text-right border">…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </>
         ),
       },
       {
-        heading: '3) Communicate sensitivities',
+        heading: '3) Scenario planning (Conservative / Target / Optimistic)',
         content: (
-          <ul className="ml-5 list-disc space-y-2 text-gray-700">
-            <li>Show spider chart: margin vs utilization, energy price, labor rate.</li>
-            <li>Provide appendix with underlying assumptions and data sources.</li>
-          </ul>
+          <>
+            <p className="mb-3 text-gray-700">Frame outcomes as utilization and pricing vary. Keep assumptions explicit and consistent across scenarios.</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Scenario</th>
+                    <th className="px-3 py-2 text-right border">Utilization</th>
+                    <th className="px-3 py-2 text-right border">Throughput</th>
+                    <th className="px-3 py-2 text-right border">Unit economics</th>
+                    <th className="px-3 py-2 text-right border">NPV @ r</th>
+                    <th className="px-3 py-2 text-right border">IRR</th>
+                    <th className="px-3 py-2 text-right border">Payback</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">Conservative</td>
+                    <td className="px-3 py-2 text-right border">50–60%</td>
+                    <td className="px-3 py-2 text-right border">Lower bound</td>
+                    <td className="px-3 py-2 text-right border">Price −5%, scrap +2%</td>
+                    <td className="px-3 py-2 text-right border">Result</td>
+                    <td className="px-3 py-2 text-right border">Result</td>
+                    <td className="px-3 py-2 text-right border">Result</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">Target</td>
+                    <td className="px-3 py-2 text-right border">65–75%</td>
+                    <td className="px-3 py-2 text-right border">Plan</td>
+                    <td className="px-3 py-2 text-right border">Baseline</td>
+                    <td className="px-3 py-2 text-right border">Result</td>
+                    <td className="px-3 py-2 text-right border">Result</td>
+                    <td className="px-3 py-2 text-right border">Result</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border font-medium">Optimistic</td>
+                    <td className="px-3 py-2 text-right border">80–90%</td>
+                    <td className="px-3 py-2 text-right border">Upper bound</td>
+                    <td className="px-3 py-2 text-right border">Price +3%, scrap −1%</td>
+                    <td className="px-3 py-2 text-right border">Result</td>
+                    <td className="px-3 py-2 text-right border">Result</td>
+                    <td className="px-3 py-2 text-right border">Result</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </>
+        ),
+      },
+      {
+        heading: '4) Sensitivity analysis (what moves ROI most?)',
+        content: (
+          <>
+            <p className="mb-3 text-gray-700">Stress-test key levers individually to show which variables dominate value creation.</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Variable</th>
+                    <th className="px-3 py-2 text-right border">−10%</th>
+                    <th className="px-3 py-2 text-right border">−5%</th>
+                    <th className="px-3 py-2 text-right border">Base</th>
+                    <th className="px-3 py-2 text-right border">+5%</th>
+                    <th className="px-3 py-2 text-right border">+10%</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr><td className="px-3 py-2 border">Average selling price</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td></tr>
+                  <tr><td className="px-3 py-2 border">Utilization (hrs/year)</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td></tr>
+                  <tr><td className="px-3 py-2 border">Labor cost</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td></tr>
+                  <tr><td className="px-3 py-2 border">Energy & consumables</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td></tr>
+                  <tr><td className="px-3 py-2 border">Discount rate (WACC)</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td><td className="px-3 py-2 text-right border">NPV</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </>
+        ),
+      },
+      {
+        heading: '5) Risk register & mitigations (for credit committees)',
+        content: (
+          <>
+            <p className="mb-3 text-gray-700">Show you have identified and actively managed key risks across demand, execution, and finance.</p>
+            <div className="space-y-3">
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">Demand risk</h5>
+                <p className="text-sm text-gray-700"><strong>Risk:</strong> Order intake slower than plan; price pressure.</p>
+                <p className="text-sm text-green-700"><strong>Mitigation:</strong> Signed MOUs, frame agreements, diversified sectors, tiered pricing incentives, marketing pipeline commitments.</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">Ramp risk</h5>
+                <p className="text-sm text-gray-700"><strong>Risk:</strong> Longer learning curve; scrap and rework during ramp-up.</p>
+                <p className="text-sm text-green-700"><strong>Mitigation:</strong> OEM training, on-site apps support, pilot runs, SPC/first-article protocols, preventive maintenance.
+                </p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">Operational risk</h5>
+                <p className="text-sm text-gray-700"><strong>Risk:</strong> Unplanned downtime; consumable cost spikes.</p>
+                <p className="text-sm text-green-700"><strong>Mitigation:</strong> Service contract with uptime SLAs, critical spares kit, dual-source consumables, OEE monitoring.</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">Financial risk</h5>
+                <p className="text-sm text-gray-700"><strong>Risk:</strong> Interest rate increases; FX exposure on imports.</p>
+                <p className="text-sm text-green-700"><strong>Mitigation:</strong> Fixed-rate financing, interest rate caps, forward cover, matched-currency cash flows.</p>
+              </div>
+            </div>
+          </>
+        ),
+      },
+      {
+        heading: '6) Executive narrative & slide outline',
+        content: (
+          <>
+            <p className="mb-3 text-gray-700">Communicate value in finance language with a clear storyline and verifiable assumptions.</p>
+            <ul className="ml-5 list-disc space-y-2 text-gray-700">
+              <li><strong>Slide 1 – Investment summary:</strong> What, why now, total outlay, timing, decision required.</li>
+              <li><strong>Slide 2 – Business case:</strong> Customer demand, throughput gains, cost-out, margin uplift.</li>
+              <li><strong>Slide 3 – Scenarios:</strong> Conservative / Target / Optimistic KPIs (NPV/IRR/Payback).</li>
+              <li><strong>Slide 4 – Sensitivities:</strong> Top 3 value drivers and break-even points.</li>
+              <li><strong>Slide 5 – Risks & mitigations:</strong> Controls, contracts, service SLAs, contingency.</li>
+              <li><strong>Slide 6 – Recommendation:</strong> Ask, conditions precedent, success metrics, next steps.</li>
+            </ul>
+          </>
+        ),
+      },
+      {
+        heading: '7) Stakeholder FAQs & objection handling',
+        content: (
+          <>
+            <div className="space-y-3">
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">"What happens if utilization is 20% lower?"</h5>
+                <p className="text-sm text-gray-700">Show conservative scenario metrics; add mitigation: sales commitments, cross-selling into adjacent SKUs, flexible staffing.</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">"Why is IRR below our hurdle?"</h5>
+                <p className="text-sm text-gray-700">Demonstrate levers to close gap: price uplift via value-add, higher OEE, shift structure, or vendor financing improvements.</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">"Are cash flows after-tax and realistic?"</h5>
+                <p className="text-sm text-gray-700">Confirm after-tax basis, tax shield treatment, and data sources (quotes, utility tariffs, wage tables, historical OEE).</p>
+              </div>
+            </div>
+          </>
         ),
       },
     ],
     steps: [
-      { name: 'Define cases', text: 'Base/Up/Down utilization scenarios.' },
-      { name: 'Compute metrics', text: 'Payback, IRR, NPV with clear rates.' },
-      { name: 'Draft narrative', text: 'Risk, mitigations, and next steps.' },
-      { name: 'Finalize deck', text: 'Appendix with assumptions and sources.' },
+      { name: 'Collect inputs', text: 'Gather equipment, financing, utilization, pricing, OPEX, tax, and discount rate.' },
+      { name: 'Build cash flows', text: 'Construct after-tax annual cash flows including terminal value.' },
+      { name: 'Evaluate metrics', text: 'Compute Payback (months), NPV at hurdle, and IRR.' },
+      { name: 'Run scenarios', text: 'Conservative/Target/Optimistic utilization and pricing.' },
+      { name: 'Test sensitivities', text: 'Vary top levers ±5–10% to locate break-even points.' },
+      { name: 'Package narrative', text: 'Slides with assumptions, risks, mitigations, and clear ask.' },
+    ],
+    downloads: [
+      { label: 'ROI Calculator Template (Excel)', href: '/downloads/tutorials/equipment-roi-analysis-template.csv' },
+      { label: 'Scenario & Sensitivity Worksheet (CSV)', href: '/downloads/tutorials/roi-sensitivity-template.csv' },
     ],
   },
   'complex-nesting-pro': {
