@@ -1172,45 +1172,517 @@ const TUTORIALS: Record<string, TutorialConfig> = {
     ],
   },
   'complex-nesting-pro': {
-    title: 'Complex nesting for 80–90% material utilisation (hands-on)',
+    title: 'Advanced nesting strategies for 80–90% material utilization',
     description:
-      'Use nesting strategies to lift utilisation by 10–20% and directly reduce material cost per part.',
+      'Master professional nesting techniques to achieve 80-90% material utilization through intelligent part placement, rotation optimization, and kerf management.',
     duration: '22 min',
     level: 'Intermediate',
     sections: [
       {
-        heading: '1) Establish baseline utilisation',
+        heading: '1) Baseline Utilization Measurement & Analysis',
         content: (
-          <ul className="ml-5 list-disc space-y-2 text-gray-700">
-            <li>Calculate current utilisation with simple rectangle nesting.</li>
-            <li>Record sheet size, scrap (kerf-adjusted), and part count per sheet.</li>
-          </ul>
+          <>
+            <p className="mb-3 text-gray-700">
+              Establish your current material efficiency to quantify improvement opportunities and track progress.
+            </p>
+            <div className="mb-4 rounded-lg bg-blue-50 p-4">
+              <h4 className="mb-2 font-semibold text-blue-900">Utilization Formula</h4>
+              <div className="space-y-2 text-sm text-blue-800">
+                <div><strong>Material Utilization %</strong> = (Total Part Area ÷ Sheet Area Used) × 100</div>
+                <div><strong>Total Part Area</strong> = Sum of all part footprints (including kerf allowance)</div>
+                <div><strong>Sheet Area Used</strong> = Actual sheet dimensions consumed (not full sheet if partial)</div>
+                <div><strong>Scrap Rate %</strong> = 100 − Utilization %</div>
+              </div>
+            </div>
+            <div className="mb-4 overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Nesting Method</th>
+                    <th className="px-3 py-2 text-right border">Typical Utilization</th>
+                    <th className="px-3 py-2 text-right border">Scrap Rate</th>
+                    <th className="px-3 py-2 text-left border">Characteristics</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border">Manual rectangular layout</td>
+                    <td className="px-3 py-2 text-right border text-red-700">55-65%</td>
+                    <td className="px-3 py-2 text-right border text-red-700">35-45%</td>
+                    <td className="px-3 py-2 border text-sm">Simple grid, no rotation, large gaps</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Basic software nesting</td>
+                    <td className="px-3 py-2 text-right border text-orange-700">70-75%</td>
+                    <td className="px-3 py-2 text-right border text-orange-700">25-30%</td>
+                    <td className="px-3 py-2 border text-sm">Auto-spacing, limited rotation</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Advanced nesting (manual optimized)</td>
+                    <td className="px-3 py-2 text-right border text-yellow-700">78-82%</td>
+                    <td className="px-3 py-2 text-right border text-yellow-700">18-22%</td>
+                    <td className="px-3 py-2 border text-sm">Strategic rotation, tight spacing, part grouping</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Professional CAM software</td>
+                    <td className="px-3 py-2 text-right border text-green-700">85-90%</td>
+                    <td className="px-3 py-2 text-right border text-green-700">10-15%</td>
+                    <td className="px-3 py-2 border text-sm">AI optimization, common line cutting, micro-spacing</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <ul className="ml-5 list-disc space-y-2 text-gray-700">
+              <li><strong>Measurement process:</strong> For current jobs, measure actual part areas (CAD), sheet size used, and calculate utilization. Track over 10-20 jobs for baseline average.</li>
+              <li><strong>Cost impact:</strong> Each 1% utilization improvement saves ~$0.50-$2.00 per sheet depending on material. At 100 sheets/month, 10% improvement = $500-$2,000/month savings.</li>
+              <li><strong>Benchmark targets:</strong> Standard job shop: 70-75%, optimized shop: 78-85%, production with CAM software: 85-90%.</li>
+              <li><strong>Documentation:</strong> Create utilization log with job number, material, sheet size, parts nested, utilization %, and notes on constraints (grain direction, finish side, etc.).</li>
+            </ul>
+          </>
         ),
       },
       {
-        heading: '2) Apply pattern grouping and rotation rules',
+        heading: '2) Strategic Part Grouping & Rotation Optimization',
         content: (
-          <ul className="ml-5 list-disc space-y-2 text-gray-700">
-            <li>Group similar contours to minimise pierces and travel.</li>
-            <li>Allow 90°/180° rotations; respect grain or finish constraints.</li>
-          </ul>
+          <>
+            <p className="mb-3 text-gray-700">
+              Intelligent part arrangement and rotation rules can improve utilization by 8-15% without software investment.
+            </p>
+            <div className="mb-4 rounded-lg bg-green-50 p-4">
+              <h4 className="mb-2 font-semibold text-green-900">Rotation Strategy by Part Type</h4>
+              <ul className="ml-5 list-disc space-y-1 text-sm text-green-800">
+                <li><strong>Symmetric parts:</strong> Allow 90°, 180°, 270° rotation freely. No functional impact.</li>
+                <li><strong>Asymmetric with grain:</strong> Limit to 0° or 180° only if grain direction matters (aluminum extrusions, rolled steel).</li>
+                <li><strong>Finish-critical parts:</strong> Keep same orientation if one side has protective film or better surface finish.</li>
+                <li><strong>Nested shapes:</strong> Try interlocking patterns where concave areas of one part fit convex areas of another.</li>
+                <li><strong>Mixed sizes:</strong> Place large parts first, fill gaps with smaller parts. Avoid all-same-size layouts.</li>
+              </ul>
+            </div>
+            <div className="mb-4 overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Spacing Parameter</th>
+                    <th className="px-3 py-2 text-right border">Minimum Safe</th>
+                    <th className="px-3 py-2 text-right border">Standard</th>
+                    <th className="px-3 py-2 text-right border">Conservative</th>
+                    <th className="px-3 py-2 text-left border">Notes</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border">Part-to-part spacing</td>
+                    <td className="px-3 py-2 text-right border">2-3mm</td>
+                    <td className="px-3 py-2 text-right border">3-5mm</td>
+                    <td className="px-3 py-2 text-right border">5-8mm</td>
+                    <td className="px-3 py-2 border text-sm">Tighter for thin materials, wider for thick</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Edge margin (sheet edge)</td>
+                    <td className="px-3 py-2 text-right border">5mm</td>
+                    <td className="px-3 py-2 text-right border">8-10mm</td>
+                    <td className="px-3 py-2 text-right border">12-15mm</td>
+                    <td className="px-3 py-2 border text-sm">Prevents edge warping and clamp interference</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Common line cutting</td>
+                    <td className="px-3 py-2 text-right border">0mm (shared)</td>
+                    <td className="px-3 py-2 text-right border">N/A</td>
+                    <td className="px-3 py-2 text-right border">N/A</td>
+                    <td className="px-3 py-2 border text-sm">Advanced: one cut serves two parts (CAM software)</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Skeleton bridge width</td>
+                    <td className="px-3 py-2 text-right border">3mm</td>
+                    <td className="px-3 py-2 text-right border">5-8mm</td>
+                    <td className="px-3 py-2 text-right border">10mm</td>
+                    <td className="px-3 py-2 border text-sm">Keeps scrap skeleton stable during cutting</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <ul className="ml-5 list-disc space-y-2 text-gray-700">
+              <li><strong>Grouping by size:</strong> Nest similar-sized parts together. Large parts (>500mm) separate from small parts (<100mm) to avoid wasted space.</li>
+              <li><strong>Grouping by shape:</strong> Rectangular parts nest efficiently together. Complex organic shapes need more trial-and-error or software optimization.</li>
+              <li><strong>Pierce optimization:</strong> Group parts to minimize total pierces. Shared edges or common line cutting can eliminate pierces between adjacent parts.</li>
+              <li><strong>Lead-in placement:</strong> Position lead-ins toward scrap areas, not into adjacent parts. Use tangent or perpendicular lead-ins (0.5-2mm) to minimize dross.</li>
+              <li><strong>Grain direction rules:</strong> For materials with grain (rolled sheet), orient parts along grain for better strength. Mark grain direction on CAD layers.</li>
+            </ul>
+          </>
         ),
       },
       {
-        heading: '3) Validate kerf compensation and lead-ins',
+        heading: '3) Kerf Compensation & Offset Management',
         content: (
-          <ul className="ml-5 list-disc space-y-2 text-gray-700">
-            <li>Apply kerf offsets from Kerf Reference to critical features.</li>
-            <li>Optimise lead-ins to reduce dross and rework.</li>
-          </ul>
+          <>
+            <p className="mb-3 text-gray-700">
+              Proper kerf compensation ensures parts fit together while maximizing material usage. Incorrect offsets waste material or cause scrap.
+            </p>
+            <div className="mb-4 overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Material & Thickness</th>
+                    <th className="px-3 py-2 text-right border">Typical Kerf Width</th>
+                    <th className="px-3 py-2 text-right border">Offset per Side</th>
+                    <th className="px-3 py-2 text-left border">Compensation Strategy</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border">Mild steel 1-3mm</td>
+                    <td className="px-3 py-2 text-right border">0.15-0.25mm</td>
+                    <td className="px-3 py-2 text-right border">0.08-0.13mm</td>
+                    <td className="px-3 py-2 border text-sm">Offset outward for outer contours, inward for holes</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Mild steel 6-12mm</td>
+                    <td className="px-3 py-2 text-right border">0.25-0.40mm</td>
+                    <td className="px-3 py-2 text-right border">0.13-0.20mm</td>
+                    <td className="px-3 py-2 border text-sm">Wider kerf due to slower speeds and higher power</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Stainless 1-3mm</td>
+                    <td className="px-3 py-2 text-right border">0.20-0.30mm</td>
+                    <td className="px-3 py-2 text-right border">0.10-0.15mm</td>
+                    <td className="px-3 py-2 border text-sm">Nitrogen assist gas, cleaner kerf than oxygen</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Aluminum 1-6mm</td>
+                    <td className="px-3 py-2 text-right border">0.15-0.30mm</td>
+                    <td className="px-3 py-2 text-right border">0.08-0.15mm</td>
+                    <td className="px-3 py-2 border text-sm">Reflective material, kerf varies with power/speed</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Acrylic/Plastic 3-10mm</td>
+                    <td className="px-3 py-2 text-right border">0.10-0.20mm</td>
+                    <td className="px-3 py-2 text-right border">0.05-0.10mm</td>
+                    <td className="px-3 py-2 border text-sm">Very clean kerf, minimal taper</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="rounded-lg bg-yellow-50 p-4">
+              <h4 className="mb-2 font-semibold text-yellow-900">Kerf Compensation Best Practices</h4>
+              <ul className="ml-5 list-disc space-y-1 text-sm text-yellow-800">
+                <li><strong>Test cuts first:</strong> Cut test squares (e.g., 100mm × 100mm) and measure actual dimensions to determine real kerf for your machine/material combo.</li>
+                <li><strong>Outer contours:</strong> Offset toolpath outward by half kerf width so finished part matches CAD dimensions.</li>
+                <li><strong>Inner holes:</strong> Offset toolpath inward by half kerf width so hole size matches CAD.</li>
+                <li><strong>Mating parts:</strong> For parts that fit together (slots, tabs), add 0.1-0.2mm clearance beyond kerf compensation to ensure assembly fit.</li>
+                <li><strong>Nesting spacing:</strong> When calculating part-to-part spacing, account for kerf width. Minimum spacing = desired gap + kerf width.</li>
+                <li><strong>Software settings:</strong> Most CAM software has kerf compensation built-in. Set "tool diameter" or "kerf width" parameter correctly.</li>
+              </ul>
+            </div>
+          </>
+        ),
+      },
+      {
+        heading: '4) Lead-In/Lead-Out Optimization',
+        content: (
+          <>
+            <p className="mb-3 text-gray-700">
+              Lead-ins and lead-outs affect cut quality, dross formation, and nesting efficiency. Optimize for both quality and material usage.
+            </p>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">Perpendicular Lead-In</h5>
+                <p className="text-sm text-gray-700"><strong>Length:</strong> 0.5-1.5mm typical</p>
+                <p className="text-sm text-gray-700"><strong>Pros:</strong> Minimal material waste, fast programming</p>
+                <p className="text-sm text-gray-700"><strong>Cons:</strong> Can leave small mark on part edge</p>
+                <p className="text-sm text-green-700"><strong>Best for:</strong> Internal holes, non-critical edges, tight nesting</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">Arc/Loop Lead-In</h5>
+                <p className="text-sm text-gray-700"><strong>Radius:</strong> 1-3mm typical</p>
+                <p className="text-sm text-gray-700"><strong>Pros:</strong> Smooth entry, minimal dross, better edge quality</p>
+                <p className="text-sm text-gray-700"><strong>Cons:</strong> Requires more space (2-6mm), slower programming</p>
+                <p className="text-sm text-green-700"><strong>Best for:</strong> External contours, visible edges, quality parts</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">Tangent Lead-In</h5>
+                <p className="text-sm text-gray-700"><strong>Length:</strong> 1-2mm typical</p>
+                <p className="text-sm text-gray-700"><strong>Pros:</strong> Smooth transition, good for curves</p>
+                <p className="text-sm text-gray-700"><strong>Cons:</strong> Moderate space requirement</p>
+                <p className="text-sm text-green-700"><strong>Best for:</strong> Curved edges, aesthetic parts</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">Common Line (No Lead-In)</h5>
+                <p className="text-sm text-gray-700"><strong>Space:</strong> 0mm (shared cut)</p>
+                <p className="text-sm text-gray-700"><strong>Pros:</strong> Maximum material efficiency, eliminates pierce</p>
+                <p className="text-sm text-gray-700"><strong>Cons:</strong> Requires CAM software, not always possible</p>
+                <p className="text-sm text-green-700"><strong>Best for:</strong> Adjacent rectangular parts, production runs</p>
+              </div>
+            </div>
+            <ul className="ml-5 list-disc space-y-2 text-gray-700 mt-4">
+              <li><strong>Lead-in placement strategy:</strong> Position lead-ins in scrap areas or corners where marks are acceptable. Avoid placing on mating edges or visible surfaces.</li>
+              <li><strong>Pierce point optimization:</strong> Each pierce takes 0.5-2 seconds and creates a defect point. Minimize total pierces by using common line cutting where possible.</li>
+              <li><strong>Dross management:</strong> Lead-out length affects dross buildup. Extend lead-out 1-2mm beyond part to allow dross to fall into scrap area.</li>
+              <li><strong>Thermal distortion:</strong> On thin materials (<1.5mm), use shorter lead-ins (0.5mm) to minimize heat input and warping.</li>
+            </ul>
+          </>
+        ),
+      },
+      {
+        heading: '5) Software vs Manual Nesting Trade-Offs',
+        content: (
+          <>
+            <p className="mb-3 text-gray-700">
+              Evaluate when to invest in nesting software versus manual optimization based on volume, complexity, and material costs.
+            </p>
+            <div className="mb-4 overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Approach</th>
+                    <th className="px-3 py-2 text-right border">Utilization</th>
+                    <th className="px-3 py-2 text-right border">Time per Job</th>
+                    <th className="px-3 py-2 text-right border">Cost</th>
+                    <th className="px-3 py-2 text-left border">Best For</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border">Manual CAD nesting</td>
+                    <td className="px-3 py-2 text-right border">70-78%</td>
+                    <td className="px-3 py-2 text-right border">15-45 min</td>
+                    <td className="px-3 py-2 text-right border">$0 (CAD only)</td>
+                    <td className="px-3 py-2 border text-sm">Low volume, simple shapes, tight budget</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Basic CAM software</td>
+                    <td className="px-3 py-2 text-right border">75-82%</td>
+                    <td className="px-3 py-2 text-right border">5-15 min</td>
+                    <td className="px-3 py-2 text-right border">$2-5K/year</td>
+                    <td className="px-3 py-2 border text-sm">Medium volume, mixed complexity</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Advanced CAM (SigmaNEST, etc.)</td>
+                    <td className="px-3 py-2 text-right border">85-90%</td>
+                    <td className="px-3 py-2 text-right border">2-8 min</td>
+                    <td className="px-3 py-2 text-right border">$8-20K/year</td>
+                    <td className="px-3 py-2 border text-sm">High volume, complex shapes, expensive materials</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="rounded-lg bg-blue-50 p-4">
+              <h4 className="mb-2 font-semibold text-blue-900">ROI Calculation for Nesting Software</h4>
+              <div className="space-y-2 text-sm text-blue-800">
+                <div><strong>Material savings:</strong> 10% utilization improvement on $50K annual material spend = $5,000/year savings</div>
+                <div><strong>Time savings:</strong> 20 min/job × 200 jobs/year × $60/hr labor = $4,000/year savings</div>
+                <div><strong>Total annual benefit:</strong> $9,000/year</div>
+                <div><strong>Software cost:</strong> $10,000/year (advanced CAM)</div>
+                <div><strong>Payback period:</strong> 13 months</div>
+                <div className="pt-2 mt-2 border-t border-blue-300"><strong>Decision:</strong> Invest if material spend >$30K/year or >150 jobs/year</div>
+              </div>
+            </div>
+          </>
+        ),
+      },
+      {
+        heading: '6) Before/After Case Studies',
+        content: (
+          <>
+            <p className="mb-3 text-gray-700">
+              Real-world examples showing utilization improvements and cost savings through optimized nesting strategies.
+            </p>
+            <div className="space-y-4">
+              <div className="rounded-lg border-l-4 border-green-500 bg-gray-50 p-4">
+                <h5 className="mb-2 font-semibold text-gray-900">📊 Case 1: Bracket Production (Simple Shapes)</h5>
+                <div className="grid gap-3 text-sm md:grid-cols-2">
+                  <div>
+                    <p className="font-semibold mb-1">Before Optimization</p>
+                    <ul className="ml-5 list-disc space-y-1 text-gray-700">
+                      <li>Manual rectangular layout</li>
+                      <li>No rotation, 8mm spacing</li>
+                      <li>24 parts per 1220×2440mm sheet</li>
+                      <li>Utilization: 62%</li>
+                      <li>Material cost: $3.85/part</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="font-semibold mb-1">After Optimization</p>
+                    <ul className="ml-5 list-disc space-y-1 text-green-700">
+                      <li>90° rotation enabled</li>
+                      <li>4mm spacing, optimized placement</li>
+                      <li>32 parts per sheet (+33%)</li>
+                      <li>Utilization: 82%</li>
+                      <li>Material cost: $2.89/part (−25%)</li>
+                    </ul>
+                  </div>
+                </div>
+                <p className="mt-2 text-sm text-gray-600"><strong>Annual savings:</strong> 500 parts/month × $0.96 savings/part × 12 months = $5,760/year</p>
+              </div>
+
+              <div className="rounded-lg border-l-4 border-yellow-500 bg-gray-50 p-4">
+                <h5 className="mb-2 font-semibold text-gray-900">📊 Case 2: Decorative Panels (Complex Shapes)</h5>
+                <div className="grid gap-3 text-sm md:grid-cols-2">
+                  <div>
+                    <p className="font-semibold mb-1">Before Optimization</p>
+                    <ul className="ml-5 list-disc space-y-1 text-gray-700">
+                      <li>Basic CAM auto-nesting</li>
+                      <li>6mm spacing, limited rotation</li>
+                      <li>8 panels per 1525×3050mm sheet</li>
+                      <li>Utilization: 71%</li>
+                      <li>Material cost: $42.50/panel</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="font-semibold mb-1">After Optimization</p>
+                    <ul className="ml-5 list-disc space-y-1 text-green-700">
+                      <li>Advanced CAM with interlocking</li>
+                      <li>3mm spacing, full rotation, common lines</li>
+                      <li>11 panels per sheet (+38%)</li>
+                      <li>Utilization: 88%</li>
+                      <li>Material cost: $30.90/panel (−27%)</li>
+                    </ul>
+                  </div>
+                </div>
+                <p className="mt-2 text-sm text-gray-600"><strong>Annual savings:</strong> 200 panels/month × $11.60 savings/panel × 12 months = $27,840/year</p>
+              </div>
+
+              <div className="rounded-lg border-l-4 border-blue-500 bg-gray-50 p-4">
+                <h5 className="mb-2 font-semibold text-gray-900">📊 Case 3: Mixed Part Job (Various Sizes)</h5>
+                <div className="grid gap-3 text-sm md:grid-cols-2">
+                  <div>
+                    <p className="font-semibold mb-1">Before Optimization</p>
+                    <ul className="ml-5 list-disc space-y-1 text-gray-700">
+                      <li>All same-size parts per sheet</li>
+                      <li>Multiple sheets for different sizes</li>
+                      <li>3 sheets required for job</li>
+                      <li>Average utilization: 68%</li>
+                      <li>Total material cost: $285</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="font-semibold mb-1">After Optimization</p>
+                    <ul className="ml-5 list-disc space-y-1 text-green-700">
+                      <li>Mixed sizes on same sheet</li>
+                      <li>Small parts fill gaps around large parts</li>
+                      <li>2 sheets required for job (−33%)</li>
+                      <li>Average utilization: 84%</li>
+                      <li>Total material cost: $190 (−33%)</li>
+                    </ul>
+                  </div>
+                </div>
+                <p className="mt-2 text-sm text-gray-600"><strong>Key insight:</strong> Mixed-size nesting is most effective when you have variety. Combining jobs can dramatically improve utilization.</p>
+              </div>
+            </div>
+          </>
+        ),
+      },
+      {
+        heading: '7) Common Nesting Mistakes & Troubleshooting',
+        content: (
+          <>
+            <p className="mb-3 text-gray-700">
+              Avoid these common errors that waste material, cause quality issues, or damage equipment.
+            </p>
+            <div className="space-y-3">
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">❌ Parts Too Close to Sheet Edge</h5>
+                <p className="text-sm text-gray-700"><strong>Problem:</strong> Edge warping, clamp interference, parts fall off table.</p>
+                <p className="text-sm text-green-700"><strong>Solution:</strong> Maintain 8-12mm minimum edge margin. Increase to 15mm for thick materials (>10mm).</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">❌ Insufficient Part-to-Part Spacing</h5>
+                <p className="text-sm text-gray-700"><strong>Problem:</strong> Heat transfer between parts causes warping, parts stick together, difficult to separate.</p>
+                <p className="text-sm text-green-700"><strong>Solution:</strong> Use minimum 3mm spacing for thin materials, 5mm for thick. Test and adjust based on material behavior.</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">❌ Ignoring Grain Direction</h5>
+                <p className="text-sm text-gray-700"><strong>Problem:</strong> Parts crack along grain under stress, inconsistent bending behavior.</p>
+                <p className="text-sm text-green-700"><strong>Solution:</strong> Mark grain direction on CAD. Orient critical parts along grain. Document grain orientation requirements in job notes.</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">❌ Weak Skeleton Bridges</h5>
+                <p className="text-sm text-gray-700"><strong>Problem:</strong> Scrap skeleton collapses during cutting, parts shift, machine crashes.</p>
+                <p className="text-sm text-green-700"><strong>Solution:</strong> Maintain 5-8mm bridge width between parts. Add support tabs on large scrap areas. Cut perimeter last.</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">❌ Incorrect Kerf Compensation Direction</h5>
+                <p className="text-sm text-gray-700"><strong>Problem:</strong> Parts oversized or undersized, mating parts don't fit, scrap parts.</p>
+                <p className="text-sm text-green-700"><strong>Solution:</strong> Offset outward for outer contours, inward for holes. Test first part before running full batch.</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-3">
+                <h5 className="mb-1 font-semibold text-gray-900">❌ Lead-Ins on Visible Edges</h5>
+                <p className="text-sm text-gray-700"><strong>Problem:</strong> Cosmetic defects, customer rejects, rework costs.</p>
+                <p className="text-sm text-green-700"><strong>Solution:</strong> Place lead-ins in scrap areas, corners, or non-visible edges. Use arc lead-ins for critical edges.</p>
+              </div>
+            </div>
+          </>
+        ),
+      },
+      {
+        heading: '8) Material Cost Impact Calculator',
+        content: (
+          <>
+            <p className="mb-3 text-gray-700">
+              Quantify the financial impact of utilization improvements to justify process changes or software investment.
+            </p>
+            <div className="rounded-lg bg-purple-50 p-4">
+              <h4 className="mb-2 font-semibold text-purple-900">Cost Savings Formula</h4>
+              <div className="space-y-2 text-sm text-purple-800">
+                <div><strong>Annual Material Spend</strong> = Monthly sheet consumption × Sheet cost × 12 months</div>
+                <div><strong>Utilization Improvement Value</strong> = Annual spend × (New util % − Old util %) ÷ Old util %</div>
+                <div><strong>Example:</strong> $60,000 annual spend, 70% → 85% utilization</div>
+                <div className="ml-4">Savings = $60,000 × (85 − 70) ÷ 70 = $12,857/year</div>
+              </div>
+            </div>
+            <div className="mt-4 overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Utilization Improvement</th>
+                    <th className="px-3 py-2 text-right border">$30K/yr spend</th>
+                    <th className="px-3 py-2 text-right border">$60K/yr spend</th>
+                    <th className="px-3 py-2 text-right border">$120K/yr spend</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border">65% → 75% (+10%)</td>
+                    <td className="px-3 py-2 text-right border">$4,615/yr</td>
+                    <td className="px-3 py-2 text-right border">$9,231/yr</td>
+                    <td className="px-3 py-2 text-right border">$18,462/yr</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">70% → 85% (+15%)</td>
+                    <td className="px-3 py-2 text-right border">$6,429/yr</td>
+                    <td className="px-3 py-2 text-right border">$12,857/yr</td>
+                    <td className="px-3 py-2 text-right border">$25,714/yr</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">75% → 88% (+13%)</td>
+                    <td className="px-3 py-2 text-right border">$5,200/yr</td>
+                    <td className="px-3 py-2 text-right border">$10,400/yr</td>
+                    <td className="px-3 py-2 text-right border">$20,800/yr</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <ul className="ml-5 list-disc space-y-2 text-gray-700 mt-4">
+              <li><strong>Break-even analysis:</strong> If nesting software costs $10K/year, you need >$10K annual material savings. At $60K spend, need 10%+ utilization improvement.</li>
+              <li><strong>Hidden benefits:</strong> Beyond material savings, improved nesting reduces cutting time (fewer pierces, shorter travel), lowers gas consumption, and increases throughput.</li>
+              <li><strong>Competitive advantage:</strong> 15% lower material costs allow 10-12% price reduction while maintaining margins, winning more bids.</li>
+            </ul>
+          </>
         ),
       },
     ],
     steps: [
-      { name: 'Measure utilisation', text: 'Compute baseline material utilisation on current layout.' },
-      { name: 'Group parts', text: 'Batch similar shapes, enable rotations per spec.' },
-      { name: 'Set kerf', text: 'Use typical kerf by material/thickness/nozzle.' },
-      { name: 'Recompute', text: 'Compare material cost per part before/after.' },
+      { name: 'Measure baseline', text: 'Calculate current utilization % on 10-20 recent jobs to establish baseline average.' },
+      { name: 'Identify constraints', text: 'Document grain direction, finish requirements, and rotation limitations for each part type.' },
+      { name: 'Optimize spacing', text: 'Reduce part-to-part spacing to 3-5mm while maintaining quality. Test on sample sheet.' },
+      { name: 'Enable rotation', text: 'Allow 90°/180° rotation for symmetric parts. Group similar shapes together.' },
+      { name: 'Set kerf compensation', text: 'Test cut squares, measure actual dimensions, set correct kerf offsets in CAM software.' },
+      { name: 'Optimize lead-ins', text: 'Use arc lead-ins for visible edges, perpendicular for internal holes. Place in scrap areas.' },
+      { name: 'Calculate savings', text: 'Compare new vs old utilization %. Multiply improvement by annual material spend to quantify value.' },
+      { name: 'Document process', text: 'Create nesting standards document with spacing rules, rotation guidelines, and kerf values.' },
+    ],
+    downloads: [
+      { label: 'Nesting Optimization Checklist (Markdown)', href: '/downloads/tutorials/material-nesting-checklist.md' },
+      { label: 'Utilization Calculator (Excel)', href: '/downloads/tutorials/nesting-utilization-calculator.csv' },
     ],
   },
   'quoting-automation-playbook': {
