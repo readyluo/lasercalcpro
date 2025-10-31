@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAdminAuth } from '@/lib/auth/admin';
+import { verifyAdminAuth } from '@/lib/auth/middleware';
 import { createArticle, getArticleBySlug, updateArticle, Article } from '@/lib/db/articles';
 
 export const runtime = 'nodejs';
@@ -41,8 +41,8 @@ interface ImportResponse {
 export async function POST(request: NextRequest) {
   try {
     // Verify admin authentication
-    const authResult = await verifyAdminAuth(request);
-    if (!authResult.authorized || !authResult.user) {
+    const admin = await verifyAdminAuth(request);
+    if (!admin) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
           meta_title: articleData.meta_title,
           meta_description: articleData.meta_description,
           meta_keywords: articleData.meta_keywords,
-          author_id: articleData.author_id || authResult.user.id,
+          author_id: articleData.author_id || admin.id,
           published_at: articleData.published_at || (articleData.status === 'published' ? new Date().toISOString() : undefined)
         };
 
@@ -175,8 +175,8 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     // Verify admin authentication
-    const authResult = await verifyAdminAuth(request);
-    if (!authResult.authorized || !authResult.user) {
+    const admin = await verifyAdminAuth(request);
+    if (!admin) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
