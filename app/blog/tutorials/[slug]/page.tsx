@@ -2430,7 +2430,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
   },
 };
 
-export default function TutorialPage({ params }: { params: { slug: string } }) {
+export default function TutorialPage({ params }: { params: { slug: string } }): JSX.Element {
   const tutorial = TUTORIALS[params.slug];
   if (!tutorial) return notFound();
 

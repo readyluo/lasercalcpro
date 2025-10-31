@@ -297,7 +297,7 @@ const levelColors = {
   'Strategic': 'bg-amber-100 text-amber-800',
 };
 
-export default function TutorialsLibraryPage() {
+export default function TutorialsLibraryPage(): JSX.Element {
   return (
     <div>
       <Navigation />
