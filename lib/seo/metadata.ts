@@ -34,7 +34,7 @@ export function generateMetadata(props: SEOProps = {}): Metadata {
   const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME;
   const canonical = canonicalUrl || SITE_URL;
 
-  const metadata: Metadata = {
+  const baseMetadata: Metadata = {
     title: fullTitle,
     description,
     keywords: [
@@ -106,16 +106,19 @@ export function generateMetadata(props: SEOProps = {}): Metadata {
   };
 
   if (ogType === 'article' && publishedTime) {
-    metadata.openGraph = {
-      ...metadata.openGraph,
-      type: 'article',
-      publishedTime,
-      modifiedTime: modifiedTime || publishedTime,
-      authors,
+    return {
+      ...baseMetadata,
+      openGraph: {
+        ...baseMetadata.openGraph,
+        type: 'article',
+        publishedTime,
+        modifiedTime: modifiedTime || publishedTime,
+        authors,
+      },
     };
   }
 
-  return metadata;
+  return baseMetadata;
 }
 
 export function generateCalculatorMetadata(
