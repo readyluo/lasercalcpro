@@ -135,6 +135,51 @@ const modules = [
       'Aligning energy savings, labour productivity, and finance incentives',
     ],
   },
+  {
+    category: 'Nesting & Utilisation',
+    title: 'Complex nesting for 80–90% material utilisation (hands-on)',
+    description:
+      'Apply grouping/rotation, kerf compensation, and lead-ins to lift utilisation and lower cost per part.',
+    level: 'Intermediate',
+    duration: '22 min',
+    format: 'Hands-on guide + checklist',
+    href: '/blog/tutorials/complex-nesting-pro',
+    takeaways: [
+      'Measure baseline utilisation and cost/part',
+      'Apply rotations and grouping to reduce scrap',
+      'Use kerf offsets and clean lead-ins to reduce rework',
+    ],
+  },
+  {
+    category: 'Quoting Ops',
+    title: 'Quoting automation: from inputs to versioned offers in minutes',
+    description:
+      'Standardise assumptions, generate tiered pricing, export PDFs, and track revisions systematically.',
+    level: 'Intermediate',
+    duration: '24 min',
+    format: 'Playbook + templates',
+    href: '/blog/tutorials/quoting-automation-playbook',
+    takeaways: [
+      'Quarterly lock of cost assumptions和margin bands',
+      '生成多阶梯价格与折扣冲击校验',
+      'PDF导出与版本化归档流程',
+    ],
+  },
+  {
+    category: 'Process Parameters',
+    title: 'Assist gas strategy: cost, quality, and speed trade-offs',
+    description:
+      '选择 O₂/N₂/Air 以平衡边缘质量、切割速度与总成本；避免不必要的气压浪费。',
+    level: 'Fundamental',
+    duration: '16 min',
+    format: 'Reference + calculator links',
+    href: '/blog/tutorials/laser-assist-gas-strategy',
+    takeaways: [
+      '不同材料/厚度的助气选择',
+      '以 m³×单价 量化气体成本并纳入小时费率',
+      '喷嘴与压力优化，降低总成本',
+    ],
+  },
 ];
 
 

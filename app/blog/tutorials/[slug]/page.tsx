@@ -147,6 +147,132 @@ const TUTORIALS: Record<string, TutorialConfig> = {
       { name: 'Finalize deck', text: 'Appendix with assumptions and sources.' },
     ],
   },
+  'complex-nesting-pro': {
+    title: 'Complex nesting for 80–90% material utilisation (hands-on)',
+    description:
+      'Use nesting strategies to lift utilisation by 10–20% and directly reduce material cost per part.',
+    duration: '22 min',
+    level: 'Intermediate',
+    sections: [
+      {
+        heading: '1) Establish baseline utilisation',
+        content: (
+          <ul className="ml-5 list-disc space-y-2 text-gray-700">
+            <li>Calculate current utilisation with simple rectangle nesting.</li>
+            <li>Record sheet size, scrap (kerf-adjusted), and part count per sheet.</li>
+          </ul>
+        ),
+      },
+      {
+        heading: '2) Apply pattern grouping and rotation rules',
+        content: (
+          <ul className="ml-5 list-disc space-y-2 text-gray-700">
+            <li>Group similar contours to minimise pierces and travel.</li>
+            <li>Allow 90°/180° rotations; respect grain or finish constraints.</li>
+          </ul>
+        ),
+      },
+      {
+        heading: '3) Validate kerf compensation and lead-ins',
+        content: (
+          <ul className="ml-5 list-disc space-y-2 text-gray-700">
+            <li>Apply kerf offsets from Kerf Reference to critical features.</li>
+            <li>Optimise lead-ins to reduce dross and rework.</li>
+          </ul>
+        ),
+      },
+    ],
+    steps: [
+      { name: 'Measure utilisation', text: 'Compute baseline material utilisation on current layout.' },
+      { name: 'Group parts', text: 'Batch similar shapes, enable rotations per spec.' },
+      { name: 'Set kerf', text: 'Use typical kerf by material/thickness/nozzle.' },
+      { name: 'Recompute', text: 'Compare material cost per part before/after.' },
+    ],
+  },
+  'quoting-automation-playbook': {
+    title: 'Quoting automation: from inputs to versioned offers in minutes',
+    description:
+      'Build a repeatable workflow for quotes with consistent assumptions, margin targets, and PDF exports.',
+    duration: '24 min',
+    level: 'Intermediate',
+    sections: [
+      {
+        heading: '1) Standardise assumptions',
+        content: (
+          <ul className="ml-5 list-disc space-y-2 text-gray-700">
+            <li>Lock hourly rate, gas prices, and energy tariffs per quarter.</li>
+            <li>Define margin bands by customer tier (new, strategic, OEM).</li>
+          </ul>
+        ),
+      },
+      {
+        heading: '2) Generate multi-tier pricing',
+        content: (
+          <ul className="ml-5 list-disc space-y-2 text-gray-700">
+            <li>Use Quotation Margin Simulator to create tiered pricing and save versions.</li>
+            <li>Assess discount impact to maintain minimum viable margin.</li>
+          </ul>
+        ),
+      },
+      {
+        heading: '3) Export and version control',
+        content: (
+          <ul className="ml-5 list-disc space-y-2 text-gray-700">
+            <li>Export PDF with inputs and breakdown for transparency.</li>
+            <li>Maintain quote IDs and revision history for audits.</li>
+          </ul>
+        ),
+      },
+    ],
+    steps: [
+      { name: 'Set standards', text: 'Quarterly locked rates and margin targets.' },
+      { name: 'Create tiers', text: 'Generate prices per quantity and customer tier.' },
+      { name: 'Validate margin', text: 'Check discount impact and thresholds.' },
+      { name: 'Export & archive', text: 'PDF export and revision logging.' },
+    ],
+  },
+  'laser-assist-gas-strategy': {
+    title: 'Assist gas strategy: cost, quality, and speed trade-offs',
+    description:
+      'Select O₂/N₂/Air by material and thickness to balance edge quality with total job cost and throughput.',
+    duration: '16 min',
+    level: 'Fundamental',
+    sections: [
+      {
+        heading: '1) Choose gas by outcome',
+        content: (
+          <ul className="ml-5 list-disc space-y-2 text-gray-700">
+            <li>O₂: faster on mild steel, oxide layer present.</li>
+            <li>N₂: clean edges on stainless/aluminum, higher cost.</li>
+            <li>Air: cost-effective on thin sheets, watch edge finish.</li>
+          </ul>
+        ),
+      },
+      {
+        heading: '2) Quantify cost impact',
+        content: (
+          <ul className="ml-5 list-disc space-y-2 text-gray-700">
+            <li>Estimate gas consumption (m³/hr) × price to get hourly gas cost.</li>
+            <li>Include in Hourly Rate and per-job Laser Cutting calculator.</li>
+          </ul>
+        ),
+      },
+      {
+        heading: '3) Optimise parameters',
+        content: (
+          <ul className="ml-5 list-disc space-y-2 text-gray-700">
+            <li>Use appropriate nozzle and pressure; avoid overpressure waste.</li>
+            <li>Track edge quality vs rework time to find the optimum.</li>
+          </ul>
+        ),
+      },
+    ],
+    steps: [
+      { name: 'Pick gas', text: 'Select by material, thickness, and quality requirements.' },
+      { name: 'Estimate cost', text: 'Compute m³ × $/m³ and compare to cycle time.' },
+      { name: 'Tune process', text: 'Adjust pressure/nozzle to minimise total cost.' },
+    ],
+  },
 };
 
 export default function TutorialPage({ params }: { params: { slug: string } }) {
