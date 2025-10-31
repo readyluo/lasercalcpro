@@ -1,6 +1,7 @@
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { Button } from '@/components/ui/Button';
 import { generateMetadata } from '@/lib/seo/metadata';
 import { Ruler, Layers, Wind, Target, AlertCircle, Calculator, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -632,18 +633,15 @@ export default function KerfWidthReferencePage() {
               help you optimize quality, cost, and efficiency.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link
-                href="/guides"
-                className="btn-primary bg-primary-600 hover:bg-primary-700"
-              >
-                View All Guides
-                <ArrowRight className="h-5 w-5" />
+              <Link href="/guides">
+                <Button variant="primary" size="lg" rightIcon={<ArrowRight className="h-5 w-5" />}>
+                  View All Guides
+                </Button>
               </Link>
-              <Link
-                href="/calculators/cost-center"
-                className="btn-secondary bg-white text-gray-900 hover:bg-gray-100"
-              >
-                Explore Cost Tools
+              <Link href="/calculators/cost-center">
+                <Button variant="secondary" size="lg">
+                  Explore Cost Tools
+                </Button>
               </Link>
             </div>
           </div>
