@@ -1693,41 +1693,97 @@ const TUTORIALS: Record<string, TutorialConfig> = {
     level: 'Intermediate',
     sections: [
       {
-        heading: '1) Standardise assumptions',
+        heading: '1) Standardize commercial assumptions',
         content: (
-          <ul className="ml-5 list-disc space-y-2 text-gray-700">
-            <li>Lock hourly rate, gas prices, and energy tariffs per quarter.</li>
-            <li>Define margin bands by customer tier (new, strategic, OEM).</li>
-          </ul>
+          <div>
+            <p className="mb-2 text-gray-700">Quoting automation is only reliable when the economic inputs are controlled.</p>
+            <ul className="ml-5 list-disc space-y-1 text-gray-700 text-sm">
+              <li><strong>Rates:</strong> Lock machine hourly rates, setup fees, labor rates, and overhead allocation per quarter.</li>
+              <li><strong>Materials:</strong> Maintain a price list with effective dates, supplier, and MOQ/breaks; expire old prices.</li>
+              <li><strong>Energy & gas:</strong> Capture kWh and gas cost per hour by machine/material stack.</li>
+              <li><strong>Margins:</strong> Define target and floor margins by customer tier (New, Strategic, OEM) and by deal size.</li>
+              <li><strong>Rounding:</strong> Standardize currency rounding (e.g., to $0.10) and freight handling rules.</li>
+            </ul>
+          </div>
         ),
       },
       {
-        heading: '2) Generate multi-tier pricing',
+        heading: '2) Inputs → routings → costs (repeatable extraction)',
         content: (
-          <ul className="ml-5 list-disc space-y-2 text-gray-700">
-            <li>Use Quotation Margin Simulator to create tiered pricing and save versions.</li>
-            <li>Assess discount impact to maintain minimum viable margin.</li>
-          </ul>
+          <div>
+            <ul className="ml-5 list-disc space-y-1 text-gray-700 text-sm">
+              <li><strong>File intake:</strong> Validate CAD (units mm, closed contours, no duplicates). Capture metadata: material, thickness, finish, quantity tiers.</li>
+              <li><strong>Routing build:</strong> Derive operations (program, load, cut, deburr, bend, finish) with standard times and formulas.</li>
+              <li><strong>Cycle time calc:</strong> From geometry: cutting length, number of pierces, rapid moves; apply machine parameters from your cut database.</li>
+              <li><strong>Setup amortization:</strong> Split setup time across quantity tier (1, 10, 50, 100, 250, 500).</li>
+              <li><strong>Material calc:</strong> Use nesting utilization or conservative yield to compute sheet usage and scrap cost.</li>
+            </ul>
+          </div>
         ),
       },
       {
-        heading: '3) Export and version control',
+        heading: '3) Multi-quantity pricing and tier logic',
         content: (
-          <ul className="ml-5 list-disc space-y-2 text-gray-700">
-            <li>Export PDF with inputs and breakdown for transparency.</li>
-            <li>Maintain quote IDs and revision history for audits.</li>
-          </ul>
+          <div>
+            <ul className="ml-5 list-disc space-y-1 text-gray-700 text-sm">
+              <li><strong>Quantity ladder:</strong> Quote at least 5 tiers (1, 10, 50, 100, 250) to capture scale effects.</li>
+              <li><strong>Setup allocation:</strong> Unit setup cost = Setup time × Rate ÷ Qty.</li>
+              <li><strong>Price floors:</strong> Enforce minimum margin per tier; flag any tier below floor for approval.</li>
+              <li><strong>Bundle logic:</strong> Combine SKUs that share setup to improve effective price for customer while protecting margin.</li>
+            </ul>
+          </div>
+        ),
+      },
+      {
+        heading: '4) Margin policy, approvals, and discounts',
+        content: (
+          <div>
+            <ul className="ml-5 list-disc space-y-1 text-gray-700 text-sm">
+              <li><strong>Target vs floor:</strong> Display both; color-code below-floor tiers for manager approval.</li>
+              <li><strong>Discount scenarios:</strong> Simulate % discount effect on gross margin and contribution per hour.</li>
+              <li><strong>Exception logging:</strong> Record reason codes (strategic logo, excess capacity, competitive match).</li>
+            </ul>
+          </div>
+        ),
+      },
+      {
+        heading: '5) Customer-facing output (consistent PDF)',
+        content: (
+          <div>
+            <ul className="ml-5 list-disc space-y-1 text-gray-700 text-sm">
+              <li><strong>Header:</strong> Quote ID, validity, lead time, incoterms, payment terms.</li>
+              <li><strong>Table:</strong> Quantity tiers, unit price, tooling/setup line, notes.</li>
+              <li><strong>Assumptions:</strong> Material grade, finish, tolerances, exclusions, and revision date.</li>
+              <li><strong>Branding:</strong> Use unified template with logo, contact, and CTA.</li>
+            </ul>
+          </div>
+        ),
+      },
+      {
+        heading: '6) Versioning and audit trail',
+        content: (
+          <div>
+            <ul className="ml-5 list-disc space-y-1 text-gray-700 text-sm">
+              <li><strong>Version control:</strong> Increment revision on any commercial change; keep immutable history.</li>
+              <li><strong>Change log:</strong> Who, when, what changed (rates, tiers, discounts, assumptions).</li>
+              <li><strong>Status:</strong> Draft → Sent → Customer discussion → Won/Lost; store acceptance evidence.</li>
+            </ul>
+          </div>
         ),
       },
     ],
     steps: [
-      { name: 'Set standards', text: 'Quarterly locked rates and margin targets.' },
-      { name: 'Create tiers', text: 'Generate prices per quantity and customer tier.' },
-      { name: 'Validate margin', text: 'Check discount impact and thresholds.' },
-      { name: 'Export & archive', text: 'PDF export and revision logging.' },
+      { name: 'Lock inputs', text: 'Freeze quarterly rates, material list, and margin bands.' },
+      { name: 'Build routing', text: 'Extract geometry → cycle time; add setup, secondary ops.' },
+      { name: 'Price tiers', text: 'Apply setup amortization across 1/10/50/100/250 quantities.' },
+      { name: 'Check margin', text: 'Enforce floor; flag exceptions and request approval.' },
+      { name: 'Export PDF', text: 'Generate branded, consistent customer PDF with assumptions.' },
+      { name: 'Archive versions', text: 'Save revisions with change log and status updates.' },
     ],
     downloads: [
       { label: 'Quoting Automation Template (CSV)', href: '/downloads/quoting-automation-template.csv' },
+      { label: 'Quote PDF Template (Markdown)', href: '/downloads/tutorials/quote-pdf-template.md' },
+      { label: 'Margin Policy Checklist (Markdown)', href: '/downloads/tutorials/margin-policy-checklist.md' },
     ],
   },
   'laser-assist-gas-strategy': {
