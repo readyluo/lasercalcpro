@@ -1794,41 +1794,182 @@ const TUTORIALS: Record<string, TutorialConfig> = {
     level: 'Fundamental',
     sections: [
       {
-        heading: '1) Choose gas by outcome',
+        heading: '1) Choose gas by material, thickness, and outcome',
         content: (
-          <ul className="ml-5 list-disc space-y-2 text-gray-700">
-            <li>O₂: faster on mild steel, oxide layer present.</li>
-            <li>N₂: clean edges on stainless/aluminum, higher cost.</li>
-            <li>Air: cost-effective on thin sheets, watch edge finish.</li>
-          </ul>
+          <>
+            <p className="mb-3 text-gray-700">Match gas to material to achieve the required edge quality at the lowest total cost.</p>
+            <div className="mb-4 overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Material</th>
+                    <th className="px-3 py-2 text-left border">Typical Thickness</th>
+                    <th className="px-3 py-2 text-left border">Recommended Gas</th>
+                    <th className="px-3 py-2 text-left border">Outcome</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border">Mild steel</td>
+                    <td className="px-3 py-2 border">1–12 mm</td>
+                    <td className="px-3 py-2 border">O₂ (most), N₂ for paint-ready edges</td>
+                    <td className="px-3 py-2 border text-sm">O₂ fastest; oxide layer present. N₂ is slower but clean edge, no oxide.</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Stainless steel</td>
+                    <td className="px-3 py-2 border">0.8–8 mm</td>
+                    <td className="px-3 py-2 border">N₂</td>
+                    <td className="px-3 py-2 border text-sm">Bright, clean edge. Prevents oxidation and discoloration.</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Aluminum</td>
+                    <td className="px-3 py-2 border">1–6 mm</td>
+                    <td className="px-3 py-2 border">N₂ or Air (thin)</td>
+                    <td className="px-3 py-2 border text-sm">N₂ for best edge. Air acceptable on thin sheet with minor burr risk.</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Galvanized steel</td>
+                    <td className="px-3 py-2 border">1–4 mm</td>
+                    <td className="px-3 py-2 border">N₂</td>
+                    <td className="px-3 py-2 border text-sm">Minimizes coating burn; watch fumes; ensure extraction.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <ul className="ml-5 list-disc space-y-1 text-gray-700 text-sm">
+              <li><strong>Finish requirement:</strong> Paint-ready or food-grade edges → prefer N₂ even on mild steel.</li>
+              <li><strong>Throughput focus:</strong> General fabrication with deburr step → O₂ on mild steel for speed.</li>
+              <li><strong>Cost control:</strong> Thin (<2 mm) aluminum or mild steel → consider Air; validate edge quality first.</li>
+            </ul>
+          </>
         ),
       },
       {
-        heading: '2) Quantify cost impact',
+        heading: '2) Quantify gas cost and total job economics',
         content: (
-          <ul className="ml-5 list-disc space-y-2 text-gray-700">
-            <li>Estimate gas consumption (m³/hr) × price to get hourly gas cost.</li>
-            <li>Include in Hourly Rate and per-job Laser Cutting calculator.</li>
-          </ul>
+          <div>
+            <div className="rounded-lg bg-blue-50 p-4 mb-4">
+              <h4 className="mb-2 font-semibold text-blue-900">Cost Formulas</h4>
+              <div className="space-y-1 text-sm text-blue-800">
+                <div><strong>Gas cost per hour</strong> = Flow (m³/hr) × Price ($/m³)</div>
+                <div><strong>Gas cost per job</strong> = Gas cost/hr × Cut time (hr)</div>
+                <div><strong>Total job cost impact</strong> = (Gas + Energy + Consumables) ÷ Quantity</div>
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-3 py-2 text-left border">Gas</th>
+                    <th className="px-3 py-2 text-right border">Typical Flow</th>
+                    <th className="px-3 py-2 text-right border">Price</th>
+                    <th className="px-3 py-2 text-right border">Cost/hr (example)</th>
+                    <th className="px-3 py-2 text-left border">Notes</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  <tr>
+                    <td className="px-3 py-2 border">O₂</td>
+                    <td className="px-3 py-2 text-right border">6–15 m³/hr</td>
+                    <td className="px-3 py-2 text-right border">$0.50–$1.50/m³</td>
+                    <td className="px-3 py-2 text-right border">$3–$23</td>
+                    <td className="px-3 py-2 border text-sm">Lower flow than N₂; fastest on mild steel.</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">N₂</td>
+                    <td className="px-3 py-2 text-right border">15–35 m³/hr</td>
+                    <td className="px-3 py-2 text-right border">$0.30–$1.20/m³</td>
+                    <td className="px-3 py-2 text-right border">$5–$42</td>
+                    <td className="px-3 py-2 border text-sm">Higher flow; clean edge, no oxide.</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 border">Air</td>
+                    <td className="px-3 py-2 text-right border">10–25 m³/hr</td>
+                    <td className="px-3 py-2 text-right border">Low (compressor)</td>
+                    <td className="px-3 py-2 text-right border">$1–$6 (electricity)</td>
+                    <td className="px-3 py-2 border text-sm">Very low gas cost; validate edge quality.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         ),
       },
       {
-        heading: '3) Optimise parameters',
+        heading: '3) Nozzle, pressure, and parameter guidelines',
         content: (
-          <ul className="ml-5 list-disc space-y-2 text-gray-700">
-            <li>Use appropriate nozzle and pressure; avoid overpressure waste.</li>
-            <li>Track edge quality vs rework time to find the optimum.</li>
-          </ul>
+          <div>
+            <ul className="ml-5 list-disc space-y-1 text-gray-700 text-sm">
+              <li><strong>Nozzle diameter:</strong> 1.0–2.0 mm common; larger for thicker material to maintain flow.</li>
+              <li><strong>Pressure:</strong> O₂: 0.3–1.5 bar; N₂: 8–20 bar; Air: 5–10 bar (typical ranges—tune per machine).</li>
+              <li><strong>Stand-off:</strong> Maintain correct distance to minimize dross and taper; auto height control recommended.</li>
+              <li><strong>Clean supply:</strong> Ensure dry, oil-free Air and N₂; filter to protect optics and improve edge quality.</li>
+            </ul>
+          </div>
+        ),
+      },
+      {
+        heading: '4) Quality vs speed: when to choose O₂ / N₂ / Air',
+        content: (
+          <div>
+            <ul className="ml-5 list-disc space-y-1 text-gray-700 text-sm">
+              <li><strong>O₂ (mild steel):</strong> Best for speed and thick sections; oxide must be removed before painting/welding.</li>
+              <li><strong>N₂ (stainless/aluminum):</strong> Best edge quality; use when cosmetic finish or corrosion resistance matters.</li>
+              <li><strong>Air (thin sheet):</strong> Lowest cost; acceptable for non-cosmetic parts; test for minor burr/discoloration.</li>
+            </ul>
+          </div>
+        ),
+      },
+      {
+        heading: '5) Safety and supply management',
+        content: (
+          <div>
+            <ul className="ml-5 list-disc space-y-1 text-gray-700 text-sm">
+              <li><strong>Ventilation:</strong> Use proper extraction for O₂ on mild steel and galvanized materials (fume control).</li>
+              <li><strong>Cylinders vs bulk:</strong> High N₂ consumption favors bulk tanks or N₂ generators; review ROI on annual usage.</li>
+              <li><strong>Leak checks:</strong> Regularly inspect lines and fittings; leaks raise gas cost and reduce cut quality.</li>
+            </ul>
+          </div>
+        ),
+      },
+      {
+        heading: '6) Case studies: choosing the right gas',
+        content: (
+          <div className="space-y-3">
+            <div className="rounded-lg border-l-4 border-blue-500 bg-gray-50 p-4">
+              <h5 className="mb-1 font-semibold text-gray-900">Mild Steel 6 mm, Painted Parts</h5>
+              <ul className="ml-5 list-disc space-y-1 text-sm text-gray-700">
+                <li><strong>O₂:</strong> Fastest cut, oxide removal adds 30–60 sec/part deburr → total time increases.</li>
+                <li><strong>N₂:</strong> Slightly slower but paint-ready edge → saves rework, better total cost on small/medium batches.</li>
+              </ul>
+            </div>
+            <div className="rounded-lg border-l-4 border-green-500 bg-gray-50 p-4">
+              <h5 className="mb-1 font-semibold text-gray-900">Stainless 3 mm, Visible Panels</h5>
+              <ul className="ml-5 list-disc space-y-1 text-sm text-gray-700">
+                <li>N₂ provides bright edge; avoids discoloration and post-processing → shortest end-to-end lead time.</li>
+              </ul>
+            </div>
+            <div className="rounded-lg border-l-4 border-yellow-500 bg-gray-50 p-4">
+              <h5 className="mb-1 font-semibold text-gray-900">Aluminum 2 mm, Internal Brackets</h5>
+              <ul className="ml-5 list-disc space-y-1 text-sm text-gray-700">
+                <li>Air viable with minor burr; if cosmetic surfaces needed, switch to N₂ to avoid rework.</li>
+              </ul>
+            </div>
+          </div>
         ),
       },
     ],
     steps: [
-      { name: 'Pick gas', text: 'Select by material, thickness, and quality requirements.' },
-      { name: 'Estimate cost', text: 'Compute m³ × $/m³ and compare to cycle time.' },
-      { name: 'Tune process', text: 'Adjust pressure/nozzle to minimise total cost.' },
+      { name: 'Select gas', text: 'Pick O₂/N₂/Air by material, thickness, and cosmetic requirements.' },
+      { name: 'Estimate cost', text: 'Compute gas cost/hr and per job; include energy and consumables.' },
+      { name: 'Set parameters', text: 'Choose nozzle and pressure; validate cut quality on sample.' },
+      { name: 'Verify finish', text: 'Check edge for paint/weld-readiness; adjust gas if rework is high.' },
+      { name: 'Standardize', text: 'Document chosen parameters and update your cut database.' },
     ],
     downloads: [
       { label: 'Assist Gas Reference (CSV)', href: '/downloads/assist-gas-reference.csv' },
+      { label: 'Gas Cost Calculator (CSV)', href: '/downloads/tutorials/gas-cost-calculator.csv' },
+      { label: 'Parameter Checklist (Markdown)', href: '/downloads/tutorials/assist-gas-parameter-checklist.md' },
     ],
   },
 };
