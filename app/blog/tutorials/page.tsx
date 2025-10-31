@@ -35,7 +35,7 @@ const tutorials: Tutorial[] = [
     extendedDescription: 'This comprehensive tutorial walks you through the complete workflow from receiving customer CAD files to delivering professional quotes. Learn industry-standard techniques for file preparation, cost estimation, and quote generation that ensure accuracy while maintaining healthy profit margins.',
     level: 'Intermediate',
     duration: '20 min',
-    format: 'Video + PDF worksheet',
+    format: 'Online guide',
     href: '/blog/tutorials/cad-to-quote',
     takeaways: [
       'Prepare and validate DXF/SVG files for accurate path length detection and cost estimation',
@@ -48,7 +48,7 @@ const tutorials: Tutorial[] = [
       'Basic understanding of laser cutting processes',
       'Familiarity with CAD file formats (DXF, SVG)',
     ],
-    tools: ['LaserCalc Cutting Calculator', 'Material Database', 'PDF Export Tool'],
+    tools: ['LaserCalc Cutting Calculator', 'Material Database'],
     outcomes: [
       'Create accurate quotes in under 10 minutes',
       'Reduce quote errors by 40%+',
@@ -64,7 +64,7 @@ const tutorials: Tutorial[] = [
     extendedDescription: 'Advanced CNC cost modeling that goes beyond simple hourly rates. Learn how to structure tiered pricing that incentivizes larger orders while maintaining profitability at all volume levels. Includes detailed breakdowns of setup amortization, tooling life cycles, and machine utilization optimization.',
     level: 'Advanced',
     duration: '25 min',
-    format: 'Interactive walkthrough + Excel templates',
+    format: 'Interactive guide',
     href: '/blog/tutorials/cnc-volume-pricing',
     takeaways: [
       'Calculate true setup costs and amortize across batch sizes for mill, lathe, and multi-axis operations',
@@ -77,7 +77,7 @@ const tutorials: Tutorial[] = [
       'Experience with CNC machining operations',
       'Understanding of machining parameters and tooling',
     ],
-    tools: ['CNC Machining Calculator', 'Volume Pricing Template', 'Tooling Cost Database'],
+    tools: ['CNC Machining Calculator'],
     outcomes: [
       'Increase average order value by 35%',
       'Optimize tooling budget allocation',
@@ -93,7 +93,7 @@ const tutorials: Tutorial[] = [
     extendedDescription: 'Strategic guide for manufacturing leaders seeking capital equipment approval. Learn how to frame your ROI analysis in financial terms that resonate with CFOs, bank loan officers, and board members. Includes sensitivity analysis templates and risk mitigation frameworks.',
     level: 'Strategic',
     duration: '18 min',
-    format: 'Template + case study + presentation deck',
+    format: 'Detailed guide with case study',
     href: '/blog/tutorials/equipment-roi-narrative',
     takeaways: [
       'Map utilization scenarios: conservative (50%), target (70%), and optimistic (90%) capacity',
@@ -106,7 +106,7 @@ const tutorials: Tutorial[] = [
       'Basic financial literacy (ROI, NPV, IRR concepts)',
       'Understanding of manufacturing capacity planning',
     ],
-    tools: ['ROI Calculator', 'NPV Analysis Template', 'Presentation Template'],
+    tools: ['ROI Calculator'],
     outcomes: [
       'Increase equipment approval rates',
       'Secure better financing terms',
@@ -122,7 +122,7 @@ const tutorials: Tutorial[] = [
     extendedDescription: 'Hands-on practical guide to achieving exceptional material utilization rates through advanced nesting strategies. Learn professional techniques used by high-efficiency job shops to reduce material waste and lower per-part costs.',
     level: 'Intermediate',
     duration: '22 min',
-    format: 'Hands-on guide + video + checklist',
+    format: 'Hands-on practical guide',
     href: '/blog/tutorials/complex-nesting-pro',
     takeaways: [
       'Measure baseline utilization rates and identify improvement opportunities with utilization audit checklist',
@@ -135,7 +135,7 @@ const tutorials: Tutorial[] = [
       'Basic CAD/CAM software skills',
       'Understanding of laser cutting kerf and tolerances',
     ],
-    tools: ['Material Utilization Calculator', 'Nesting Checklist', 'ROI Comparison Template'],
+    tools: ['Material Utilization Calculator'],
     outcomes: [
       'Reduce material costs by 15-25%',
       'Lower cost per part by $0.50-$2.00',
@@ -151,7 +151,7 @@ const tutorials: Tutorial[] = [
     extendedDescription: 'Comprehensive playbook for transforming ad-hoc quoting into a streamlined, professional process. Learn how to create standardized cost assumptions, implement tiered pricing structures, and maintain version control for all customer quotes.',
     level: 'Intermediate',
     duration: '24 min',
-    format: 'Playbook + templates + workflow diagrams',
+    format: 'Comprehensive playbook',
     href: '/blog/tutorials/quoting-automation-playbook',
     takeaways: [
       'Establish quarterly cost assumption reviews: lock material costs, labor rates, overhead percentages, and target margin bands',
@@ -164,7 +164,7 @@ const tutorials: Tutorial[] = [
       'Experience with quote preparation',
       'Basic Excel or spreadsheet skills',
     ],
-    tools: ['Quote Template Library', 'Cost Assumption Workbook', 'Version Control Template'],
+    tools: ['Quotation Margin Calculator'],
     outcomes: [
       'Reduce quote preparation time by 60%',
       'Eliminate pricing errors and inconsistencies',
@@ -180,7 +180,7 @@ const tutorials: Tutorial[] = [
     extendedDescription: 'Technical guide to assist gas selection and optimization for laser cutting operations. Learn when to use oxygen for speed, nitrogen for quality, or compressed air for economy, and how to quantify the cost-quality trade-offs.',
     level: 'Fundamental',
     duration: '16 min',
-    format: 'Reference guide + decision matrix + calculator',
+    format: 'Technical reference guide',
     href: '/blog/tutorials/laser-assist-gas-strategy',
     takeaways: [
       'Select optimal assist gas by material and thickness: oxygen for mild steel 1-20mm (fastest), nitrogen for stainless/aluminum (oxide-free edges), compressed air for thin materials (most economical)',
@@ -193,7 +193,7 @@ const tutorials: Tutorial[] = [
       'Basic knowledge of laser cutting processes',
       'Understanding of material properties',
     ],
-    tools: ['Gas Cost Calculator', 'Gas Selection Matrix', 'Consumption Tracker'],
+    tools: ['Assist Gas Calculator'],
     outcomes: [
       'Reduce gas costs by 15-30%',
       'Improve edge quality consistency',
@@ -209,7 +209,7 @@ const tutorials: Tutorial[] = [
     extendedDescription: 'Detailed guide to manufacturing overhead allocation that ensures accurate job costing and sustainable pricing. Learn multiple allocation methods and when to apply each for different shop configurations and job types.',
     level: 'Advanced',
     duration: '28 min',
-    format: 'Interactive tutorial + Excel templates + case studies',
+    format: 'Interactive tutorial with case studies',
     href: '/blog/tutorials/overhead-allocation',
     takeaways: [
       'Calculate total overhead burden: facilities (rent, utilities, insurance), equipment (maintenance, depreciation), and indirect labor (supervision, quality control, scheduling)',
@@ -222,7 +222,7 @@ const tutorials: Tutorial[] = [
       'Basic cost accounting knowledge',
       'Access to financial statements and cost records',
     ],
-    tools: ['Overhead Rate Calculator', 'Allocation Templates', 'Cost Center Setup Guide'],
+    tools: ['Overhead Allocator Calculator'],
     outcomes: [
       'Eliminate under-costed jobs',
       'Improve gross margin accuracy',
@@ -238,7 +238,7 @@ const tutorials: Tutorial[] = [
     extendedDescription: 'Strategic pricing tutorial that combines cost-based pricing with market intelligence. Learn how to research competitor pricing, identify your competitive advantages, and structure pricing that wins profitable business.',
     level: 'Strategic',
     duration: '21 min',
-    format: 'Framework + research templates + positioning matrix',
+    format: 'Strategic framework guide',
     href: '/blog/tutorials/competitive-benchmarking',
     takeaways: [
       'Conduct competitor pricing research: collect samples quotes, analyze online pricing calculators, and interview sales teams for market intelligence',
@@ -251,7 +251,7 @@ const tutorials: Tutorial[] = [
       'Understanding of market dynamics',
       'Sales and quote tracking data',
     ],
-    tools: ['Competitor Analysis Template', 'Pricing Position Matrix', 'Win/Loss Tracker'],
+    tools: ['Quotation Margin Simulator'],
     outcomes: [
       'Improve quote win rates by 20-35%',
       'Identify underpriced service offerings',
@@ -282,24 +282,24 @@ export default function TutorialsLibraryPage() {
               Manufacturing Cost Mastery Tutorials
             </h1>
             <p className="text-xl text-primary-100 mb-8">
-              Comprehensive, step-by-step guides with real-world examples, downloadable templates, and proven frameworks used by profitable manufacturing businesses.
+              Comprehensive, step-by-step guides with real-world examples and proven frameworks used by profitable manufacturing businesses. Educational content to help you master manufacturing cost calculations.
             </p>
             <div className="flex flex-wrap justify-center gap-6 text-sm">
               <div className="flex items-center gap-2">
-                <Video className="h-5 w-5" />
-                <span>Video Walkthroughs</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                <span>PDF Worksheets</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Download className="h-5 w-5" />
-                <span>Excel Templates</span>
+                <BookOpen className="h-5 w-5" />
+                <span>Detailed Guides</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-5 w-5" />
-                <span>Checklists</span>
+                <span>Step-by-Step Instructions</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Award className="h-5 w-5" />
+                <span>Best Practices</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Calculator className="h-5 w-5" />
+                <span>Free Calculators</span>
               </div>
             </div>
           </div>
@@ -432,13 +432,13 @@ export default function TutorialsLibraryPage() {
                       </div>
                     </div>
 
-                    {/* Tools Included */}
+                    {/* Related Calculators */}
                     <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                      <h5 className="font-semibold text-blue-900 mb-2 text-sm">Tools & Resources</h5>
+                      <h5 className="font-semibold text-blue-900 mb-2 text-sm">Related Calculators</h5>
                       <ul className="space-y-1.5 text-sm text-blue-800">
                         {tutorial.tools.map((tool, idx) => (
                           <li key={idx} className="flex items-start gap-2">
-                            <Download className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+                            <Calculator className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
                             <span>{tool}</span>
                           </li>
                         ))}
