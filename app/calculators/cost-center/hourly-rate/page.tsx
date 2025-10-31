@@ -375,7 +375,7 @@ export default function HourlyRateCalculatorPage() {
                           <p className="mt-1 text-sm text-amber-700">Based on your cost structure and industry benchmarks</p>
                         </div>
                       </div>
-                      {result.alerts.length > 0 && (
+                        {result.alerts.length > 0 && (
                         <div className="mb-4">
                           <h4 className="mb-3 font-semibold text-red-900">⚠️ Action Required</h4>
                           <ul className="space-y-2">
@@ -387,11 +387,11 @@ export default function HourlyRateCalculatorPage() {
                                 <p className="text-sm text-gray-800">{a}</p>
                               </li>
                             ))}
-                          </ul>
-                        </div>
-                      )}
-                      {result.recommendations.length > 0 && (
-                        <div>
+                            </ul>
+                          </div>
+                        )}
+                        {result.recommendations.length > 0 && (
+                          <div>
                           <h4 className="mb-3 font-semibold text-amber-900">💡 Optimization Opportunities</h4>
                           <ul className="space-y-2">
                             {result.recommendations.map((r, idx) => (
@@ -402,9 +402,9 @@ export default function HourlyRateCalculatorPage() {
                                 <p className="text-sm text-gray-800">{r}</p>
                               </li>
                             ))}
-                          </ul>
-                        </div>
-                      )}
+                            </ul>
+                          </div>
+                        )}
                     </div>
                   )}
 

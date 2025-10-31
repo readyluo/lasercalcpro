@@ -470,7 +470,7 @@ export default function OverheadAllocatorPage() {
                                     <span className="text-xs text-gray-600">{percentOfTotal.toFixed(1)}%</span>
                                   </div>
                                 </td>
-                              </tr>
+                            </tr>
                             );
                           })}
                         </tbody>
@@ -562,7 +562,7 @@ export default function OverheadAllocatorPage() {
                                       </div>
                                     </div>
                                   </td>
-                                </tr>
+                              </tr>
                               );
                             })}
                           </tbody>

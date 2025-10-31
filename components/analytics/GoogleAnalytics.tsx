@@ -8,7 +8,10 @@ export function GoogleAnalytics() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    // Fetch GA4 ID from database via public API
+    // Use hardcoded GA4 ID
+    const GA_ID = 'G-Z1Q5K1N1WM';
+    
+    // Fetch GA4 ID from database via public API (optional override)
     const fetchGAId = async () => {
       try {
         const response = await fetch('/api/settings/public');
@@ -16,15 +19,17 @@ export function GoogleAnalytics() {
           const data = await response.json();
           if (data.ga4MeasurementId) {
             setGaId(data.ga4MeasurementId);
+            setLoaded(true);
+            return;
           }
         }
       } catch (error) {
         console.error('Failed to fetch GA4 settings:', error);
-        // Fallback to environment variable
-        setGaId(process.env.NEXT_PUBLIC_GA_ID || null);
-      } finally {
-        setLoaded(true);
       }
+      
+      // Use hardcoded ID as primary fallback
+      setGaId(GA_ID);
+      setLoaded(true);
     };
 
     fetchGAId();

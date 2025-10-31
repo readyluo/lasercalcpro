@@ -4,16 +4,44 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { ExportButton } from '@/components/calculators/ExportButton';
-import { Calculator as CalculatorIcon, RotateCcw } from 'lucide-react';
+import { Calculator as CalculatorIcon, RotateCcw, DollarSign } from 'lucide-react';
 import { finishingGuideSchema, finishingGuideDefaults, type FinishingGuideInput } from '@/lib/validations/cost-center';
 import { calculateFinishingGuide, compareFinishingMethods, calculateFinishingEquipmentROI } from '@/lib/calculators/cost-center/finishing';
 import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
+
+const materialOptions = [
+  { value: 'mild_steel', label: 'Mild Steel - Moderate finishing requirements' },
+  { value: 'stainless_steel', label: 'Stainless Steel - Higher finishing time, harder material' },
+  { value: 'aluminum', label: 'Aluminum - Easier finishing, softer material' },
+];
+
+const methodOptions = [
+  { value: 'manual', label: 'Manual - Files, grinders, hand tools' },
+  { value: 'powered', label: 'Powered - Angle grinders, belt sanders' },
+  { value: 'automated', label: 'Automated - CNC deburring, robotic systems' },
+];
+
+const qualityOptions = [
+  { value: 'ascut', label: 'As-Cut - No finishing, accept laser edge' },
+  { value: 'light', label: 'Light - Remove sharp edges only' },
+  { value: 'medium', label: 'Medium - Smooth edges, no sharp burrs' },
+  { value: 'high', label: 'High - Polished edges, cosmetic quality' },
+  { value: 'mirror', label: 'Mirror - Mirror finish, highest quality' },
+];
+
+const partSizeOptions = [
+  { value: 'small', label: 'Small - < 300mm, easy handling' },
+  { value: 'medium', label: 'Medium - 300-600mm, standard parts' },
+  { value: 'large', label: 'Large - 600-1200mm, heavier handling' },
+  { value: 'xlarge', label: 'X-Large - > 1200mm, requires assistance' },
+];
 
 export default function FinishingGuidePage() {
   const [isCalculating, setIsCalculating] = React.useState(false);
@@ -97,18 +125,75 @@ export default function FinishingGuidePage() {
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid gap-4 md:grid-cols-2">
-                    <Input {...register('edgeLengthMeters', { valueAsNumber: true })} type="number" step="0.1" label="Edge Length (m)" error={errors.edgeLengthMeters?.message} required />
-                    <Input {...register('material')} label="Material (mild_steel/stainless_steel/aluminum)" error={errors.material?.message} required />
-                    <Input {...register('thickness', { valueAsNumber: true })} type="number" step="0.1" label="Thickness (mm)" error={errors.thickness?.message} required />
-                    <Input {...register('method')} label="Method (manual/powered/automated)" error={errors.method?.message} required />
-                    <Input {...register('qualityLevel')} label="Quality (ascut/light/medium/high/mirror)" error={errors.qualityLevel?.message} required />
-                    <Input {...register('partSize')} label="Part Size (small/medium/large/xlarge)" error={errors.partSize?.message} required />
-                    <Input {...register('laborRate', { valueAsNumber: true })} type="number" step="1" label="Labor Rate (USD/hr)" error={errors.laborRate?.message} required />
+                    <Input 
+                      {...register('edgeLengthMeters', { valueAsNumber: true })} 
+                      type="number" 
+                      step="0.1" 
+                      label="Edge Length (m)" 
+                      placeholder="e.g., 1.5"
+                      helperText="Total edge length to finish"
+                      error={errors.edgeLengthMeters?.message} 
+                      required 
+                    />
+                    <Select 
+                      {...register('material')} 
+                      label="Material" 
+                      options={materialOptions}
+                      helperText="Material hardness affects time"
+                      error={errors.material?.message} 
+                      required 
+                    />
+                    <Input 
+                      {...register('thickness', { valueAsNumber: true })} 
+                      type="number" 
+                      step="0.1" 
+                      label="Thickness (mm)" 
+                      placeholder="e.g., 3.0"
+                      helperText="Material thickness"
+                      error={errors.thickness?.message} 
+                      required 
+                    />
+                    <Select 
+                      {...register('method')} 
+                      label="Finishing Method" 
+                      options={methodOptions}
+                      helperText="Tool/equipment type"
+                      error={errors.method?.message} 
+                      required 
+                    />
+                    <Select 
+                      {...register('qualityLevel')} 
+                      label="Quality Level" 
+                      options={qualityOptions}
+                      helperText="Finish quality requirements"
+                      error={errors.qualityLevel?.message} 
+                      required 
+                    />
+                    <Select 
+                      {...register('partSize')} 
+                      label="Part Size" 
+                      options={partSizeOptions}
+                      helperText="Part size affects handling"
+                      error={errors.partSize?.message} 
+                      required 
+                    />
+                    <Input 
+                      {...register('laborRate', { valueAsNumber: true })} 
+                      type="number" 
+                      step="1" 
+                      label="Labor Rate (USD/hr)" 
+                      placeholder="e.g., 25"
+                      helperText="Finishing labor hourly cost"
+                      leftIcon={<DollarSign className="h-4 w-4" />}
+                      error={errors.laborRate?.message} 
+                      required 
+                      className="md:col-span-2"
+                    />
                   </div>
 
                   <Input {...register('additionalOps.0')} className="hidden" />
 
-                  <Button type="submit" variant="primary" size="lg" className="w-full" isLoading={isCalculating} leftIcon={<CalculatorIcon className="h-5 w-5" />}>Estimate Finishing</Button>
+                  <Button type="submit" variant="primary" size="lg" className="w-full" isLoading={isCalculating} leftIcon={<CalculatorIcon className="h-5 w-5" />}>Calculate Finishing Time & Cost</Button>
                 </form>
               </div>
             </div>
@@ -210,5 +295,90 @@ function Stat({ label, value }: { label: string; value: string | number }) {
     </div>
   );
 }
+
+
+                  <div className="card">
+                    <h3 className="mb-4 text-xl font-bold">Method Comparison</h3>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b">
+                            <th className="pb-2 text-left">Method</th>
+                            <th className="pb-2 text-right">Time (min)</th>
+                            <th className="pb-2 text-right">Cost ($)</th>
+                            <th className="pb-2 text-right">Diff vs Cheapest</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {methodsComparison.map(row => (
+                            <tr key={row.method} className="border-b">
+                              <td className="py-2">{row.method}</td>
+                              <td className="py-2 text-right">{row.timeMinutes.toFixed(2)}</td>
+                              <td className="py-2 text-right">{row.cost.toFixed(2)}</td>
+                              <td className="py-2 text-right">{row.costDifference.toFixed(1)}%</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                  </div>
+                  </div>
+
+                  <div className="card">
+                    <h3 className="mb-2 text-xl font-bold">Automation ROI (Example)</h3>
+                    <div className="grid gap-4 md:grid-cols-5">
+                      <Stat label="Current Monthly Cost" value={`$${roi.currentMonthlyCost}`} />
+                      <Stat label="Automated Monthly Cost" value={`$${roi.automatedMonthlyCost}`} />
+                      <Stat label="Monthly Savings" value={`$${roi.monthlySavings}`} />
+                      <Stat label="Payback (months)" value={`${roi.paybackMonths}`} />
+                      <Stat label="ROI (annual)" value={`${roi.roiPercent}%`} />
+                    </div>
+                  </div>
+
+                  {/* Export */}
+                  <div className="flex flex-col gap-4 sm:flex-row">
+                    <div className="flex-1">
+                      <ExportButton
+                        title="Finishing Time & Cost Report"
+                        calculationType="Finishing Guide"
+                        inputData={watch()}
+                        results={{
+                          'Total Time (min)': result.totalTimeMinutes,
+                          'Labor Cost ($)': result.laborCost,
+                          'Equipment Cost ($)': result.equipmentCost,
+                          'Consumables ($)': result.consumablesCost,
+                          'Total Cost ($)': result.totalCost,
+                          'Cost per Meter ($/m)': result.costPerMeter,
+                        }}
+                        recommendations={[...result.recommendations, ...result.costSavingOpportunities]}
+                      />
+                    </div>
+                    <Button variant="outline" size="lg" onClick={handleReset} leftIcon={<RotateCcw className="h-5 w-5" />}>New Estimation</Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="card flex min-h-[300px] flex-col items-center justify-center text-center">
+                  <CalculatorIcon className="mb-4 h-16 w-16 text-gray-300" />
+                  <h3 className="mb-2 text-xl font-semibold text-gray-700">Ready to Estimate</h3>
+                  <p className="text-gray-500">Enter finishing parameters and click Estimate</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="rounded-lg bg-gray-50 p-4">
+      <p className="text-sm text-gray-600">{label}</p>
+      <p className="text-lg font-semibold text-gray-900">{value}</p>
+    </div>
+  );
+}
+
 
 

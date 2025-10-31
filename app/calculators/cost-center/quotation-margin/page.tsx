@@ -4,16 +4,30 @@ import React from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { ExportButton } from '@/components/calculators/ExportButton';
-import { Calculator as CalculatorIcon, RotateCcw } from 'lucide-react';
+import { Calculator as CalculatorIcon, RotateCcw, DollarSign, Percent } from 'lucide-react';
 import { quotationMarginSchema, quotationMarginDefaults, type QuotationMarginInput } from '@/lib/validations/cost-center';
 import { calculateQuotationMargin, calculateMarginAtPrice, calculatePriceForMargin, calculateDiscountImpact } from '@/lib/calculators/cost-center/quotation';
 import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
+
+const paymentTermsOptions = [
+  { value: 'immediate', label: 'Immediate - Full payment upfront, lowest risk' },
+  { value: 'net30', label: 'Net 30 - Payment within 30 days' },
+  { value: 'net60', label: 'Net 60 - Payment within 60 days' },
+  { value: 'net90', label: 'Net 90 - Payment within 90 days, highest risk' },
+];
+
+const riskFactorOptions = [
+  { value: 'low', label: 'Low Risk - Established customer, standard work' },
+  { value: 'medium', label: 'Medium Risk - New customer or moderate complexity' },
+  { value: 'high', label: 'High Risk - Uncertain scope, complex project' },
+];
 
 export default function QuotationMarginPage() {
   const [isCalculating, setIsCalculating] = React.useState(false);
@@ -84,15 +98,97 @@ export default function QuotationMarginPage() {
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <Input {...register('baseCost', { valueAsNumber: true })} type="number" step="1" label="Base Cost (USD)" error={errors.baseCost?.message} required />
-                    <Input {...register('materialCost', { valueAsNumber: true })} type="number" step="1" label="Material Cost (USD)" error={errors.materialCost?.message} required />
-                    <Input {...register('laborCost', { valueAsNumber: true })} type="number" step="1" label="Labor Cost (USD)" error={errors.laborCost?.message} required />
-                    <Input {...register('overheadCost', { valueAsNumber: true })} type="number" step="1" label="Overhead Cost (USD)" error={errors.overheadCost?.message} required />
-                    <Input {...register('targetMarginPercent', { valueAsNumber: true })} type="number" step="1" label="Target Margin (%)" error={errors.targetMarginPercent?.message} required />
-                    <Input {...register('paymentTerms')} label="Payment Terms (immediate/net30/net60/net90)" error={errors.paymentTerms?.message} required />
-                    <Input {...register('riskFactor')} label="Risk (low/medium/high)" error={errors.riskFactor?.message} required />
-                    <Input {...register('competitorPrice', { valueAsNumber: true })} type="number" step="1" label="Competitor Price (USD, optional)" error={errors.competitorPrice?.message} />
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-gray-900">Cost Breakdown</h3>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <Input 
+                        {...register('baseCost', { valueAsNumber: true })} 
+                        type="number" 
+                        step="1" 
+                        label="Base Cost (USD)" 
+                        placeholder="e.g., 1000"
+                        helperText="Total manufacturing cost"
+                        leftIcon={<DollarSign className="h-4 w-4" />}
+                        error={errors.baseCost?.message} 
+                        required 
+                      />
+                      <Input 
+                        {...register('materialCost', { valueAsNumber: true })} 
+                        type="number" 
+                        step="1" 
+                        label="Material Cost (USD)" 
+                        placeholder="e.g., 400"
+                        helperText="Raw material costs"
+                        leftIcon={<DollarSign className="h-4 w-4" />}
+                        error={errors.materialCost?.message} 
+                        required 
+                      />
+                      <Input 
+                        {...register('laborCost', { valueAsNumber: true })} 
+                        type="number" 
+                        step="1" 
+                        label="Labor Cost (USD)" 
+                        placeholder="e.g., 350"
+                        helperText="Direct labor costs"
+                        leftIcon={<DollarSign className="h-4 w-4" />}
+                        error={errors.laborCost?.message} 
+                        required 
+                      />
+                      <Input 
+                        {...register('overheadCost', { valueAsNumber: true })} 
+                        type="number" 
+                        step="1" 
+                        label="Overhead Cost (USD)" 
+                        placeholder="e.g., 250"
+                        helperText="Allocated overhead"
+                        leftIcon={<DollarSign className="h-4 w-4" />}
+                        error={errors.overheadCost?.message} 
+                        required 
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-gray-900">Pricing Strategy</h3>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <Input 
+                        {...register('targetMarginPercent', { valueAsNumber: true })} 
+                        type="number" 
+                        step="1" 
+                        label="Target Margin (%)" 
+                        placeholder="e.g., 30"
+                        helperText="Desired profit margin"
+                        leftIcon={<Percent className="h-4 w-4" />}
+                        error={errors.targetMarginPercent?.message} 
+                        required 
+                      />
+                      <Select 
+                        {...register('paymentTerms')} 
+                        label="Payment Terms" 
+                        options={paymentTermsOptions}
+                        helperText="Affects cash flow risk"
+                        error={errors.paymentTerms?.message} 
+                        required 
+                      />
+                      <Select 
+                        {...register('riskFactor')} 
+                        label="Risk Factor" 
+                        options={riskFactorOptions}
+                        helperText="Project risk level"
+                        error={errors.riskFactor?.message} 
+                        required 
+                      />
+                      <Input 
+                        {...register('competitorPrice', { valueAsNumber: true })} 
+                        type="number" 
+                        step="1" 
+                        label="Competitor Price (USD, optional)" 
+                        placeholder="e.g., 1500"
+                        helperText="For competitive analysis"
+                        leftIcon={<DollarSign className="h-4 w-4" />}
+                        error={errors.competitorPrice?.message} 
+                      />
+                    </div>
                   </div>
 
                   <div>
@@ -109,7 +205,7 @@ export default function QuotationMarginPage() {
                     </div>
                   </div>
 
-                  <Button type="submit" variant="primary" size="lg" className="w-full" isLoading={isCalculating} leftIcon={<CalculatorIcon className="h-5 w-5" />}>Simulate Pricing</Button>
+                  <Button type="submit" variant="primary" size="lg" className="w-full" isLoading={isCalculating} leftIcon={<CalculatorIcon className="h-5 w-5" />}>Calculate Pricing & Margins</Button>
                 </form>
               </div>
             </div>

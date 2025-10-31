@@ -240,7 +240,7 @@ export default function SetupEstimatorPage() {
                   {/* Fixtures & Team Section */}
                   <div>
                     <h3 className="mb-3 text-lg font-semibold text-gray-900">Fixtures & Team</h3>
-                    <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-4 md:grid-cols-2">
                       <Select 
                         {...register('fixtureComplexity')} 
                         label="Fixture Complexity" 
@@ -323,7 +323,7 @@ export default function SetupEstimatorPage() {
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Time Breakdown */}
                   <div className="card">
                     <div className="mb-4 flex items-center gap-2">
