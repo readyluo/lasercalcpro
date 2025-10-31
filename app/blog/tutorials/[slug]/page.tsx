@@ -1244,7 +1244,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
       {
         heading: '2) Strategic Part Grouping & Rotation Optimization',
         content: (
-          <>
+          <div>
             <p className="mb-3 text-gray-700">
               Intelligent part arrangement and rotation rules can improve utilization by 8-15% without software investment.
             </p>
@@ -1308,7 +1308,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               <li><strong>Lead-in placement:</strong> Position lead-ins toward scrap areas, not into adjacent parts. Use tangent or perpendicular lead-ins (0.5-2mm) to minimize dross.</li>
               <li><strong>Grain direction rules:</strong> For materials with grain (rolled sheet), orient parts along grain for better strength. Mark grain direction on CAD layers.</li>
             </ul>
-          </>
+          </div>
         ),
       },
       {
