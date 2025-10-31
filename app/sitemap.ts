@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://lasercalcpro.com';
+  const baseUrl = 'https://www.lasercalcpro.com';
   const lastModified = new Date();
 
   // Static pages
@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: '', priority: 1.0, changeFrequency: 'daily' as const },
     { url: '/about', priority: 0.8, changeFrequency: 'monthly' as const },
     { url: '/contact', priority: 0.8, changeFrequency: 'monthly' as const },
+    { url: '/subscribe', priority: 0.8, changeFrequency: 'weekly' as const },
     { url: '/blog', priority: 0.9, changeFrequency: 'weekly' as const },
     { url: '/privacy', priority: 0.3, changeFrequency: 'yearly' as const },
     { url: '/terms', priority: 0.3, changeFrequency: 'yearly' as const },
@@ -24,9 +25,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const mainCalculators = [
     { url: '/calculators/laser-cutting', priority: 0.95 },
     { url: '/calculators/cnc-machining', priority: 0.95 },
+    { url: '/calculators/marking', priority: 0.92 },
+    { url: '/calculators/welding', priority: 0.92 },
     { url: '/calculators/roi', priority: 0.95 },
     { url: '/calculators/energy', priority: 0.9 },
     { url: '/calculators/material-utilization', priority: 0.9 },
+    { url: '/calculators/compare', priority: 0.85 },
   ].map(route => ({
     url: `${baseUrl}${route.url}`,
     lastModified,
@@ -36,6 +40,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Cost Center Calculators
   const costCenterCalculators = [
+    '/calculators/cost-center',
     '/calculators/cost-center/overhead-allocator',
     '/calculators/cost-center/setup-estimator',
     '/calculators/cost-center/hourly-rate',
@@ -54,6 +59,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const guides = [
     '/guides',
     '/guides/kerf-width-reference',
+    '/guides/hourly-cost-structure',
+    '/guides/piercing-strategy',
+    '/guides/finishing-time-cheatsheet',
   ].map(route => ({
     url: `${baseUrl}${route}`,
     lastModified,
@@ -89,6 +97,33 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.75,
   }));
 
+  // Quick and Quick Reference
+  const quick = [
+    '/calculators/quick',
+    '/calculators/quick/hourly-rate',
+    '/calculators/quick/pierce-time',
+    '/calculators/quick/price-per-meter',
+  ].map(route => ({
+    url: `${baseUrl}${route}`,
+    lastModified,
+    changeFrequency: 'weekly' as const,
+    priority: 0.82,
+  }));
+
+  const quickRef = [
+    '/calculators/quick-reference',
+    '/calculators/quick-reference/assist-gas',
+    '/calculators/quick-reference/cutting-speeds',
+    '/calculators/quick-reference/material-costs',
+    '/calculators/quick-reference/power-consumption',
+    '/calculators/quick-reference/processing-parameters',
+  ].map(route => ({
+    url: `${baseUrl}${route}`,
+    lastModified,
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }));
+
   return [
     ...routes,
     ...mainCalculators,
@@ -96,6 +131,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...guides,
     ...blogCategories,
     ...tutorials,
+    ...quick,
+    ...quickRef,
   ];
 }
 

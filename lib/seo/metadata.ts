@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-const SITE_URL = 'https://lasercalcpro.com';
+const SITE_URL = 'https://www.lasercalcpro.com';
 const SITE_NAME = 'LaserCalc Pro';
 const SITE_DESCRIPTION = 'Free, accurate cost estimation tools for laser cutting, CNC machining, and equipment ROI analysis. Trusted by manufacturers worldwide.';
 
@@ -35,6 +35,7 @@ export function generateMetadata(props: SEOProps = {}): Metadata {
   const canonical = canonicalUrl || SITE_URL;
 
   const baseMetadata: Metadata = {
+    metadataBase: new URL(SITE_URL),
     title: fullTitle,
     description,
     keywords: [

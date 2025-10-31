@@ -7,8 +7,8 @@ export function WebVitals() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Track Core Web Vitals
-    import('web-vitals').then(({ onCLS, onFCP, onFID, onLCP, onTTFB }) => {
+    // Track Core Web Vitals (FID deprecated → use INP)
+    import('web-vitals').then(({ onCLS, onFCP, onINP, onLCP, onTTFB }) => {
       onCLS((metric) => {
         trackPerformance('CLS', metric.value);
       });
@@ -17,8 +17,8 @@ export function WebVitals() {
         trackPerformance('FCP', metric.value);
       });
 
-      onFID((metric) => {
-        trackPerformance('FID', metric.value);
+      onINP((metric) => {
+        trackPerformance('INP', metric.value);
       });
 
       onLCP((metric) => {

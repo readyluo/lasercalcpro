@@ -1,28 +1,45 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // React 严格模式
+  // React strict mode
   reactStrictMode: true,
 
-  // 编译器配置
-  // compiler: {
-  //   // 生产环境移除 console
-  //   removeConsole: process.env.NODE_ENV === 'production' ? {
-  //     exclude: ['error', 'warn'],
-  //   } : false,
-  // },
+  // Compiler configuration
+  compiler: {
+    // Remove console in production (keep error and warn)
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
+  },
 
-  // 不设置 output，保留默认值以支持动态功能
-  // Cloudflare Pages 通过 @cloudflare/next-on-pages 支持 SSR
-  
-  // 图片优化配置
+  // Performance optimization
+  swcMinify: true,
+  poweredByHeader: false,
+  compress: true,
+  productionBrowserSourceMaps: false,
+
+  // Experimental features
+  experimental: {
+    // Optimize package imports
+    optimizePackageImports: ['lucide-react', 'date-fns'],
+  },
+
+  // Image optimization
   images: {
     formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 31536000, // 1 year
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'lasercalcpro.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.lasercalcpro.com',
       },
       {
         protocol: 'https',
@@ -31,14 +48,14 @@ const nextConfig = {
     ],
   },
 
-  // 环境变量（公开）
+  // Public environment variables
   env: {
-    SITE_URL: process.env.SITE_URL || 'https://lasercalcpro.com',
+    SITE_URL: process.env.SITE_URL || 'https://www.lasercalcpro.com',
   },
 
-  // Webpack 配置（高级）
+  // Webpack configuration
   webpack: (config, { isServer }) => {
-    // 解决潜在的模块问题
+    // Resolve module issues
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
@@ -49,22 +66,106 @@ const nextConfig = {
     return config;
   },
 
-  // TypeScript 配置
+  async redirects() {
+    return [
+      // Force www canonical host
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'lasercalcpro.com',
+          },
+        ],
+        destination: 'https://www.lasercalcpro.com/:path*',
+        permanent: true,
+      },
+      // Legacy redirects
+      {
+        source: '/home',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/index.html',
+        destination: '/',
+        permanent: true,
+      },
+    ];
+  },
+
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on',
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()',
+          },
+        ],
+      },
+      {
+        source: '/fonts/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/images/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
+  },
+
+  // TypeScript configuration
   typescript: {
-    // 生产构建时暂时忽略类型错误（部署后可以修复）
+    // Temporarily ignore type errors during build
     ignoreBuildErrors: true,
   },
 
-  // ESLint 配置
+  // ESLint configuration
   eslint: {
-    // 生产构建时暂时忽略 lint 错误（部署后可以修复）
+    // Temporarily ignore lint errors during build
     ignoreDuringBuilds: true,
   },
 
-  // 页面扩展名
+  // Page extensions
   pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
 
-  // 国际化（未来扩展）
+  // Internationalization (future expansion)
   // i18n: {
   //   locales: ['en', 'zh'],
   //   defaultLocale: 'en',

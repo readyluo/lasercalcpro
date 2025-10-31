@@ -2,6 +2,7 @@ import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { generateMetadata } from '@/lib/seo/metadata';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 import { FileText, Clock, Sparkles, Shield, Package, Calculator, ArrowRight, TrendingDown } from 'lucide-react';
 import Link from 'next/link';
 
@@ -11,9 +12,51 @@ export const metadata = generateMetadata({
   keywords: ['deburring time', 'laser cut finishing', 'edge treatment time', 'post-processing time', 'cleaning laser parts', 'finishing labor cost', 'deburring methods comparison'],
 });
 
+// Structured Data - HowTo Schema
+const howToSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to Estimate Finishing Time for Laser Cut Parts',
+  description: 'Step-by-step guide to estimating post-processing and finishing time for accurate job quotes',
+  tool: [
+    {
+      '@type': 'HowToTool',
+      name: 'Deburring Tools (File, Grinder, Tumbler)',
+    },
+  ],
+  step: [
+    {
+      '@type': 'HowToStep',
+      name: 'Assess Edge Quality from Cutting',
+      text: 'Nitrogen cuts on thin material (<3mm) typically have minimal burr. Oxygen cuts on thick steel (>10mm) require significant deburring.',
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Choose Deburring Method',
+      text: 'Hand filing: 3-10 min/meter. Belt sander: 1-3 min/meter. Tumbling: 0.5-2 min/meter (batch). Automated deburring: 0.2-0.5 min/meter.',
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Calculate Total Finishing Time',
+      text: 'Multiply cutting length (meters) by finishing rate (min/meter) based on method and material thickness.',
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Add Cleaning and Treatment Time',
+      text: 'Add cleaning time (1-5 min/part) and optional coating/treatment time based on requirements.',
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Include Setup and Inspection',
+      text: 'Add 5-15% for setup, tool changes, and quality inspection to get total post-processing time.',
+    },
+  ],
+};
+
 export default function FinishingTimeCheatsheetPage() {
   return (
     <>
+      <SchemaMarkup schema={howToSchema} />
       <Navigation />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">

@@ -86,8 +86,8 @@ export function generateOrganizationSchema(): Organization {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'LaserCalc Pro',
-    url: 'https://lasercalcpro.com',
-    logo: 'https://lasercalcpro.com/logo.png',
+    url: 'https://www.lasercalcpro.com',
+    logo: 'https://www.lasercalcpro.com/logo.png',
     description: 'Professional manufacturing cost calculation tools for laser cutting, CNC machining, and equipment ROI analysis.',
     sameAs: [
       'https://twitter.com/lasercalcpro',
@@ -102,11 +102,11 @@ export function generateWebSiteSchema(): WebSite {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'LaserCalc Pro',
-    url: 'https://lasercalcpro.com',
+    url: 'https://www.lasercalcpro.com',
     description: 'Free manufacturing cost calculators and tools',
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://lasercalcpro.com/search?q={search_term_string}',
+      target: 'https://www.lasercalcpro.com/search?q={search_term_string}',
       'query-input': 'required name=search_term_string',
     },
   };

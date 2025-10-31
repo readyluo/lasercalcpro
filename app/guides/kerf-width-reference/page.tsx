@@ -3,6 +3,7 @@ import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { Button } from '@/components/ui/Button';
 import { generateMetadata } from '@/lib/seo/metadata';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 import { Ruler, Layers, Wind, Target, AlertCircle, Calculator, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
@@ -12,9 +13,46 @@ export const metadata = generateMetadata({
   keywords: ['laser kerf width', 'kerf compensation', 'nozzle diameter', 'laser cutting accuracy', 'kerf allowance', 'laser beam width', 'nesting offset'],
 });
 
+// Structured Data - HowTo Schema
+const howToSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to Apply Kerf Compensation in Laser Cutting',
+  description: 'Step-by-step guide to understanding and applying kerf width compensation for accurate laser cutting',
+  tool: [
+    {
+      '@type': 'HowToTool',
+      name: 'CAM Software with Kerf Compensation',
+    },
+  ],
+  step: [
+    {
+      '@type': 'HowToStep',
+      name: 'Measure Actual Kerf Width',
+      text: 'Cut test pieces and measure the actual kerf width with calipers. Typical range: 0.1-0.5mm depending on material, thickness, and nozzle.',
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Understand Kerf Impact on Dimensions',
+      text: 'External features will be oversized by kerf/2 on each side. Internal features (holes) will be undersized by kerf/2 on each side.',
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Apply Compensation in CAM',
+      text: 'Set kerf offset in CAM software. For external cuts, laser path moves inward by kerf/2. For internal cuts, laser path moves outward by kerf/2.',
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Verify with Test Cuts',
+      text: 'Cut test parts and verify dimensions with calipers. Adjust kerf compensation value if needed based on actual results.',
+    },
+  ],
+};
+
 export default function KerfWidthReferencePage() {
   return (
     <>
+      <SchemaMarkup schema={howToSchema} />
       <Navigation />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
