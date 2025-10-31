@@ -36,7 +36,7 @@ export default function KerfWidthReferencePage() {
             <div className="flex items-start gap-4">
               <Ruler className="h-8 w-8 text-primary-600 flex-shrink-0 mt-1" />
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-3">What is Kerf Width?</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-3">What is Kerf Width?</h2>
                 <p className="text-gray-700 mb-3">
                   <strong>Kerf</strong> is the width of material removed during the laser cutting process. 
                   It consists of the actual laser beam spot size plus the molten material expelled by assist gas. 
@@ -57,7 +57,7 @@ export default function KerfWidthReferencePage() {
 
               {/* Factors Affecting Kerf */}
               <section className="card">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Factors Affecting Kerf Width</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Factors Affecting Kerf Width</h2>
                 
                 <div className="space-y-4">
                   <div className="p-4 bg-gray-50 rounded-lg">
@@ -120,7 +120,7 @@ export default function KerfWidthReferencePage() {
 
               {/* Kerf Width Tables - Mild Steel */}
               <section className="card">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Kerf Width Reference Tables</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Kerf Width Reference Tables</h2>
                 
                 <div className="mb-6">
                   <h3 className="text-xl font-semibold text-gray-900 mb-3 flex items-center gap-2">
@@ -346,7 +346,7 @@ export default function KerfWidthReferencePage() {
               <section className="card">
                 <div className="flex items-center gap-3 mb-4">
                   <Calculator className="h-8 w-8 text-primary-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">Applying Kerf Compensation</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">Applying Kerf Compensation</h2>
                 </div>
 
                 <p className="text-gray-700 mb-4">
@@ -407,7 +407,7 @@ export default function KerfWidthReferencePage() {
                 </div>
 
                 <div className="bg-gray-100 p-4 rounded-lg mb-4">
-                  <h3 className="font-semibold text-gray-900 mb-2">Common CAM Software Settings</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Common CAM Software Settings</h3>
                   <ul className="space-y-2 text-sm text-gray-700">
                     <li className="flex items-start gap-2">
                       <span className="font-semibold min-w-[120px]">SigmaNEST:</span>
@@ -446,12 +446,12 @@ export default function KerfWidthReferencePage() {
               <section className="card">
                 <div className="flex items-center gap-3 mb-4">
                   <Target className="h-8 w-8 text-primary-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">Kerf Width & Cut Quality</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">Kerf Width & Cut Quality</h2>
                 </div>
 
                 <div className="space-y-4">
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Dimensional Accuracy</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Dimensional Accuracy</h3>
                     <p className="text-gray-700 mb-2">
                       Proper kerf compensation achieves ±0.05-0.15mm tolerance on thin materials (1-3mm) and 
                       ±0.10-0.25mm on thick materials (>6mm). Without compensation, errors are typically 
@@ -470,7 +470,7 @@ export default function KerfWidthReferencePage() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Small Features & Thin Walls</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Small Features & Thin Walls</h3>
                     <p className="text-gray-700 mb-2">
                       Kerf width limits minimum feature size. A hole smaller than 1.5× the kerf width may not 
                       cut cleanly. Thin walls (bridges) should be at least 2× the kerf width to avoid burn-through.
@@ -488,7 +488,7 @@ export default function KerfWidthReferencePage() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Taper & Edge Quality</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Taper & Edge Quality</h3>
                     <p className="text-gray-700">
                       Kerf width at the top surface is typically 0.02-0.08mm narrower than at the bottom due to 
                       beam divergence. This creates slight taper (1-3° on thick materials). Tighter kerf generally 
@@ -500,7 +500,7 @@ export default function KerfWidthReferencePage() {
 
               {/* Measurement Guide */}
               <section className="card bg-gradient-to-br from-primary-50 to-blue-50">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Measure Kerf Width</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">How to Measure Kerf Width</h2>
                 
                 <ol className="space-y-3 text-gray-700">
                   <li className="flex gap-3">

@@ -57,7 +57,7 @@ export default function FinishingTimeCheatsheetPage() {
               <section className="card">
                 <div className="flex items-center gap-3 mb-4">
                   <Sparkles className="h-8 w-8 text-primary-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">Deburring Methods Comparison</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">Deburring Methods Comparison</h2>
                 </div>
 
                 <p className="text-gray-700 mb-4">
@@ -215,7 +215,7 @@ export default function FinishingTimeCheatsheetPage() {
               <section className="card">
                 <div className="flex items-center gap-3 mb-4">
                   <Clock className="h-8 w-8 text-primary-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">Finishing Time by Cut Quality</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">Finishing Time by Cut Quality</h2>
                 </div>
 
                 <p className="text-gray-700 mb-4">
@@ -367,7 +367,7 @@ export default function FinishingTimeCheatsheetPage() {
               <section className="card">
                 <div className="flex items-center gap-3 mb-4">
                   <Shield className="h-8 w-8 text-primary-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">Additional Finishing Operations</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">Additional Finishing Operations</h2>
                 </div>
 
                 <div className="space-y-4">
@@ -488,7 +488,7 @@ export default function FinishingTimeCheatsheetPage() {
               <section className="card bg-gradient-to-br from-orange-50 to-red-50">
                 <div className="flex items-center gap-3 mb-4">
                   <TrendingDown className="h-8 w-8 text-primary-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">Real-World Cost Impact Example</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">Real-World Cost Impact Example</h2>
                 </div>
 
                 <p className="text-gray-700 mb-4">

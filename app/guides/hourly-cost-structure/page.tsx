@@ -114,7 +114,7 @@ export default function HourlyCostStructurePage() {
               <section id="depreciation" className="card">
                 <div className="flex items-center gap-3 mb-4">
                   <Calculator className="h-8 w-8 text-primary-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">1. Equipment Depreciation</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">1. Equipment Depreciation</h2>
                 </div>
                 
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">What It Includes</h3>
@@ -182,7 +182,7 @@ export default function HourlyCostStructurePage() {
               <section id="labor" className="card">
                 <div className="flex items-center gap-3 mb-4">
                   <Users className="h-8 w-8 text-primary-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">2. Direct Labor Cost</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">2. Direct Labor Cost</h2>
                 </div>
 
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Components</h3>
@@ -228,7 +228,7 @@ export default function HourlyCostStructurePage() {
               <section id="energy" className="card">
                 <div className="flex items-center gap-3 mb-4">
                   <Zap className="h-8 w-8 text-primary-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">3. Energy Cost</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">3. Energy Cost</h2>
                 </div>
 
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Power Consumption Components</h3>
@@ -298,7 +298,7 @@ export default function HourlyCostStructurePage() {
               <section id="maintenance" className="card">
                 <div className="flex items-center gap-3 mb-4">
                   <Wrench className="h-8 w-8 text-primary-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">4. Maintenance & Consumables</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">4. Maintenance & Consumables</h2>
                 </div>
 
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Regular Maintenance Items</h3>
@@ -350,7 +350,7 @@ export default function HourlyCostStructurePage() {
               <section id="overhead" className="card">
                 <div className="flex items-center gap-3 mb-4">
                   <Home className="h-8 w-8 text-primary-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">5. Facility & Overhead Allocation</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">5. Facility & Overhead Allocation</h2>
                 </div>
 
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Overhead Categories</h3>
@@ -405,7 +405,7 @@ export default function HourlyCostStructurePage() {
               <section id="total" className="card bg-gradient-to-br from-primary-50 to-blue-50">
                 <div className="flex items-center gap-3 mb-4">
                   <DollarSign className="h-8 w-8 text-primary-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">6. Total Hourly Shop Rate Example</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">6. Total Hourly Shop Rate Example</h2>
                 </div>
 
                 <p className="text-gray-700 mb-4">
@@ -464,28 +464,28 @@ export default function HourlyCostStructurePage() {
               <section className="card">
                 <div className="flex items-center gap-3 mb-4">
                   <TrendingUp className="h-8 w-8 text-primary-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">Best Practices</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">Best Practices</h2>
                 </div>
 
                 <div className="space-y-4">
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">1. Review Rates Quarterly</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">1. Review Rates Quarterly</h3>
                     <p className="text-gray-700">Energy costs, wages, and material prices fluctuate. Update your rate calculation every 3-6 months to maintain profitability.</p>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">2. Track Actual vs. Estimated</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">2. Track Actual vs. Estimated</h3>
                     <p className="text-gray-700">Monitor real consumable usage, maintenance costs, and actual productive hours. Adjust estimates based on historical data.</p>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">3. Separate Setup from Run Time</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">3. Separate Setup from Run Time</h3>
                     <p className="text-gray-700">Charge setup time separately or amortize over batch quantity. Don't hide setup costs in the hourly rate.</p>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">4. Consider Utilization Rate</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">4. Consider Utilization Rate</h3>
                     <p className="text-gray-700">Fixed costs (depreciation, facility) must be recovered over actual productive hours. A machine running 60% vs 90% capacity has different cost structures.</p>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">5. Benchmark Against Market</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">5. Benchmark Against Market</h3>
                     <p className="text-gray-700">Compare your rates to local competitors and industry surveys. Being too high loses business; too low leaves money on the table.</p>
                   </div>
                 </div>

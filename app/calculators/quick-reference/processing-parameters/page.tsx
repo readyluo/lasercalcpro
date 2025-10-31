@@ -155,7 +155,7 @@ export default function ProcessingParametersPage() {
 
           {/* Material Selector */}
           <div className="card mb-8">
-            <h2 className="mb-4 text-2xl font-bold text-gray-900">Select Material</h2>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">Select Material</h2>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {Object.entries(materialInfo).map(([key, info]) => (
                 <button
@@ -179,7 +179,7 @@ export default function ProcessingParametersPage() {
           {/* Parameters Table */}
           <div className="card mb-8">
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-3xl font-bold text-gray-900">
                 {materialInfo[selectedMaterial].name} - Cutting Parameters
               </h2>
               <Settings className="h-6 w-6 text-gray-400" />
@@ -339,7 +339,7 @@ export default function ProcessingParametersPage() {
             
             <div className="space-y-4">
               <div className="rounded-lg border-l-4 border-red-500 bg-red-50 p-4">
-                <h3 className="mb-2 font-semibold text-gray-900">Issue: Excessive Dross (molten material on bottom edge)</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Issue: Excessive Dross (molten material on bottom edge)</h3>
                 <p className="mb-2 text-sm text-gray-700"><strong>Causes:</strong> Insufficient gas pressure, focus too high, speed too slow, nozzle worn/dirty</p>
                 <p className="text-sm text-gray-700">
                   <strong>Solutions:</strong> Increase gas pressure by 2-4 bar → Lower focal position by 0.5-1mm → 
@@ -348,7 +348,7 @@ export default function ProcessingParametersPage() {
               </div>
 
               <div className="rounded-lg border-l-4 border-orange-500 bg-orange-50 p-4">
-                <h3 className="mb-2 font-semibold text-gray-900">Issue: Rough or Wavy Edge Quality</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Issue: Rough or Wavy Edge Quality</h3>
                 <p className="mb-2 text-sm text-gray-700"><strong>Causes:</strong> Speed too fast, power insufficient, gas pressure too high, poor beam quality</p>
                 <p className="text-sm text-gray-700">
                   <strong>Solutions:</strong> Reduce speed by 15-20% → Increase power by 10-15% → 
@@ -357,7 +357,7 @@ export default function ProcessingParametersPage() {
               </div>
 
               <div className="rounded-lg border-l-4 border-yellow-500 bg-yellow-50 p-4">
-                <h3 className="mb-2 font-semibold text-gray-900">Issue: Incomplete Cuts or Interrupted Cuts</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Issue: Incomplete Cuts or Interrupted Cuts</h3>
                 <p className="mb-2 text-sm text-gray-700"><strong>Causes:</strong> Insufficient power, speed too fast, focal drift, material quality issues</p>
                 <p className="text-sm text-gray-700">
                   <strong>Solutions:</strong> Increase power by 15-20% → Reduce speed by 20-30% → 
@@ -366,7 +366,7 @@ export default function ProcessingParametersPage() {
               </div>
 
               <div className="rounded-lg border-l-4 border-blue-500 bg-blue-50 p-4">
-                <h3 className="mb-2 font-semibold text-gray-900">Issue: Discolored Edges on Stainless Steel</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Issue: Discolored Edges on Stainless Steel</h3>
                 <p className="mb-2 text-sm text-gray-700"><strong>Causes:</strong> Nitrogen pressure too low, oxidation occurring, contaminated gas</p>
                 <p className="text-sm text-gray-700">
                   <strong>Solutions:</strong> Increase nitrogen pressure to 16-20 bar → Verify nitrogen purity (&gt;99.95%) → 
@@ -375,7 +375,7 @@ export default function ProcessingParametersPage() {
               </div>
 
               <div className="rounded-lg border-l-4 border-green-500 bg-green-50 p-4">
-                <h3 className="mb-2 font-semibold text-gray-900">Issue: Burning or Melting on Aluminum</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Issue: Burning or Melting on Aluminum</h3>
                 <p className="mb-2 text-sm text-gray-700"><strong>Causes:</strong> Focus position too negative, speed too slow, power too high</p>
                 <p className="text-sm text-gray-700">
                   <strong>Solutions:</strong> Adjust focus to zero or slightly positive → Increase cutting speed by 15-25% → 

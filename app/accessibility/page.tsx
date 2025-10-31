@@ -33,7 +33,7 @@ export default function AccessibilityPage() {
         {/* Commitment */}
         <section className="mb-12">
           <div className="p-6 bg-primary-50 rounded-lg border border-primary-200">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Our Commitment to Accessibility
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
@@ -47,7 +47,7 @@ export default function AccessibilityPage() {
 
         {/* WCAG Compliance */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
             Conformance Status
           </h2>
           <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
@@ -89,7 +89,7 @@ export default function AccessibilityPage() {
 
         {/* Accessibility Features */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
             Accessibility Features
           </h2>
           <div className="grid gap-6 md:grid-cols-2">
@@ -157,7 +157,7 @@ export default function AccessibilityPage() {
 
         {/* Technical Specifications */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
             Technical Specifications
           </h2>
           <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -190,7 +190,7 @@ export default function AccessibilityPage() {
 
         {/* Limitations */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
             Known Limitations
           </h2>
           <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -222,7 +222,7 @@ export default function AccessibilityPage() {
 
         {/* Assessment */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
             Assessment Approach
           </h2>
           <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -256,7 +256,7 @@ export default function AccessibilityPage() {
             <div className="flex items-start gap-4 mb-4">
               <MessageSquare className="h-8 w-8 text-primary-600 flex-shrink-0" />
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                <h2 className="text-3xl font-bold text-gray-900 mb-3">
                   We Welcome Your Feedback
                 </h2>
                 <p className="text-gray-700 mb-4">
@@ -276,7 +276,7 @@ export default function AccessibilityPage() {
 
         {/* Formal Complaints */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Formal Complaints
           </h2>
           <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -304,7 +304,7 @@ export default function AccessibilityPage() {
 
         {/* Compatibility */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
             Compatibility with Browsers and Assistive Technology
           </h2>
           <div className="bg-white rounded-lg border border-gray-200 p-6">

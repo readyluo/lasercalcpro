@@ -42,7 +42,7 @@ export default async function CaseStudyDetailPage({ params }: PageProps) {
           <article className="mx-auto max-w-4xl">
             {/* Hero */}
             <header className="mb-8 rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
-              <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">{cs.title}</h1>
+              <h1 className="text-4xl font-bold text-gray-900 md:text-4xl">{cs.title}</h1>
               <div className="mt-3 flex flex-wrap gap-4 text-sm text-gray-600">
                 {cs.industry && <span>Industry: <strong>{cs.industry}</strong></span>}
                 {cs.company_size && <span>Company Size: <strong>{cs.company_size}</strong></span>}
@@ -106,7 +106,7 @@ export default async function CaseStudyDetailPage({ params }: PageProps) {
 function Section({ title, body }: { title: string; body: string }) {
   return (
     <section className="mb-8 rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
-      <h2 className="mb-4 text-2xl font-bold text-gray-900">{title}</h2>
+      <h2 className="mb-6 text-3xl font-bold text-gray-900">{title}</h2>
       <div className="prose max-w-none text-gray-700">
         <p>{body}</p>
       </div>

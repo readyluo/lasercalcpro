@@ -52,7 +52,7 @@ export default function CookiePolicyPage() {
 
         {/* What Are Cookies */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center gap-2">
             <FileText className="h-6 w-6 text-primary-600" />
             What Are Cookies?
           </h2>
@@ -68,7 +68,7 @@ export default function CookiePolicyPage() {
 
         {/* Types of Cookies */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
             Types of Cookies We Use
           </h2>
           
@@ -166,7 +166,7 @@ export default function CookiePolicyPage() {
 
         {/* Third-Party Cookies */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Third-Party Cookies
           </h2>
           <div className="prose prose-gray max-w-none">
@@ -205,7 +205,7 @@ export default function CookiePolicyPage() {
 
         {/* Managing Cookies */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
             How to Manage Cookies
           </h2>
           <div className="prose prose-gray max-w-none">
@@ -266,7 +266,7 @@ export default function CookiePolicyPage() {
 
         {/* Your Rights */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Your Rights Under GDPR
           </h2>
           <div className="prose prose-gray max-w-none">
@@ -304,7 +304,7 @@ export default function CookiePolicyPage() {
 
         {/* Contact */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Contact Us
           </h2>
           <div className="p-6 bg-white rounded-lg border border-gray-200">
@@ -320,7 +320,7 @@ export default function CookiePolicyPage() {
 
         {/* Updates */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Changes to This Policy
           </h2>
           <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">

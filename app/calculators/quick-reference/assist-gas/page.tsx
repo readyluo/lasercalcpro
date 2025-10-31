@@ -116,7 +116,7 @@ export default function AssistGasQuickReferencePage() {
 
           {/* Cost Comparison Table */}
           <div className="card mb-8">
-            <h2 className="mb-4 text-2xl font-bold text-gray-900">Cost Comparison by Application</h2>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">Cost Comparison by Application</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -173,7 +173,7 @@ export default function AssistGasQuickReferencePage() {
                 <DollarSign className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">On-Site Nitrogen Generation</h2>
+                <h2 className="text-3xl font-bold text-gray-900">On-Site Nitrogen Generation</h2>
                 <p className="mt-1 text-gray-700">When does it make sense to invest in your own nitrogen generator?</p>
               </div>
             </div>
@@ -239,13 +239,13 @@ export default function AssistGasQuickReferencePage() {
                 <Info className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">Gas Cost Optimization Tips</h2>
+                <h2 className="text-3xl font-bold text-gray-900">Gas Cost Optimization Tips</h2>
               </div>
             </div>
 
             <div className="space-y-4">
               <div className="border-l-4 border-green-600 pl-4">
-                <h3 className="mb-2 font-semibold text-gray-900">1. Choose the Right Gas for Each Job</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">1. Choose the Right Gas for Each Job</h3>
                 <p className="text-gray-700">
                   Don't use expensive nitrogen when oxygen will work. For structural mild steel parts that will be 
                   painted, the oxidized edge gets covered anyway. Save nitrogen for stainless, aluminum, and parts 
@@ -254,7 +254,7 @@ export default function AssistGasQuickReferencePage() {
               </div>
 
               <div className="border-l-4 border-green-600 pl-4">
-                <h3 className="mb-2 font-semibold text-gray-900">2. Optimize Gas Pressure</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">2. Optimize Gas Pressure</h3>
                 <p className="text-gray-700">
                   Excessive pressure wastes gas without improving cut quality. Start at recommended pressure and 
                   reduce incrementally until you see edge quality degradation, then add 1-2 bar back. This can 
@@ -263,7 +263,7 @@ export default function AssistGasQuickReferencePage() {
               </div>
 
               <div className="border-l-4 border-green-600 pl-4">
-                <h3 className="mb-2 font-semibold text-gray-900">3. Fix Leaks Promptly</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">3. Fix Leaks Promptly</h3>
                 <p className="text-gray-700">
                   A small leak in your gas system can waste $500-1000/year. Check all connections regularly with 
                   leak detection spray. Common leak points: quick disconnects, regulators, and nozzle seals.
@@ -271,7 +271,7 @@ export default function AssistGasQuickReferencePage() {
               </div>
 
               <div className="border-l-4 border-green-600 pl-4">
-                <h3 className="mb-2 font-semibold text-gray-900">4. Consider Bulk Gas Delivery</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">4. Consider Bulk Gas Delivery</h3>
                 <p className="text-gray-700">
                   If you use 5+ bottles per week, switch to bulk liquid nitrogen delivery. Cost per m³ drops by 
                   30-50% compared to high-pressure cylinders. Requires on-site bulk tank (often provided by supplier).
@@ -279,7 +279,7 @@ export default function AssistGasQuickReferencePage() {
               </div>
 
               <div className="border-l-4 border-green-600 pl-4">
-                <h3 className="mb-2 font-semibold text-gray-900">5. Use Air for Non-Critical Parts</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">5. Use Air for Non-Critical Parts</h3>
                 <p className="text-gray-700">
                   For thin mild steel prototype parts, test pieces, or internal brackets, compressed air can provide 
                   acceptable quality at minimal cost. Invest in an oil-free compressor with adequate CFM.
@@ -364,7 +364,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
         onClick={() => setIsOpen(!isOpen)}
         className="flex w-full items-center justify-between p-4 text-left"
       >
-        <h3 className="font-semibold text-gray-900">{question}</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{question}</h3>
         <svg
           className={`h-5 w-5 flex-shrink-0 text-primary-600 transition-transform ${
             isOpen ? 'rotate-180' : ''

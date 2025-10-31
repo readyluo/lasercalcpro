@@ -58,7 +58,7 @@ export default function PowerConsumptionReferencePage() {
                 <Zap className="h-8 w-8 text-yellow-600" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Laser Equipment Power Consumption Reference</h1>
+                <h1 className="text-4xl font-bold text-gray-900">text-3xl font-bold text-gray-900">Laser Equipment Power Consumption Reference</h1>
                 <p className="text-gray-600">Complete guide to energy usage and electricity costs</p>
               </div>
             </div>
@@ -66,7 +66,7 @@ export default function PowerConsumptionReferencePage() {
 
           {/* Fiber Laser Power Table */}
           <div className="card mb-8">
-            <h2 className="mb-4 text-2xl font-bold text-gray-900">Fiber Laser Power Consumption</h2>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">Fiber Laser Power Consumption</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -100,7 +100,7 @@ export default function PowerConsumptionReferencePage() {
 
           {/* CO2 Laser Power Table */}
           <div className="card mb-8">
-            <h2 className="mb-4 text-2xl font-bold text-gray-900">CO2 Laser Power Consumption</h2>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">CO2 Laser Power Consumption</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -139,7 +139,7 @@ export default function PowerConsumptionReferencePage() {
                 <DollarSign className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">Operating Cost Comparison</h2>
+                <h2 className="text-3xl font-bold text-gray-900">Operating Cost Comparison</h2>
                 <p className="mt-1 text-gray-700">Annual electricity costs at different usage levels</p>
               </div>
             </div>
@@ -217,13 +217,13 @@ export default function PowerConsumptionReferencePage() {
                 <Info className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">Understanding Power Consumption</h2>
+                <h2 className="text-3xl font-bold text-gray-900">Understanding Power Consumption</h2>
               </div>
             </div>
 
             <div className="space-y-4">
               <div className="border-l-4 border-green-600 pl-4">
-                <h3 className="mb-2 font-semibold text-gray-900">Peak vs. Average Power</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Peak vs. Average Power</h3>
                 <p className="text-gray-700">
                   The power ratings shown are peak consumption during cutting. Actual average power depends on duty cycle:
                 </p>
@@ -235,7 +235,7 @@ export default function PowerConsumptionReferencePage() {
               </div>
 
               <div className="border-l-4 border-green-600 pl-4">
-                <h3 className="mb-2 font-semibold text-gray-900">Electrical Service Requirements</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Electrical Service Requirements</h3>
                 <p className="text-gray-700">
                   Ensure your facility has adequate electrical capacity:
                 </p>
@@ -248,7 +248,7 @@ export default function PowerConsumptionReferencePage() {
               </div>
 
               <div className="border-l-4 border-green-600 pl-4">
-                <h3 className="mb-2 font-semibold text-gray-900">Chiller Power Consumption</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Chiller Power Consumption</h3>
                 <p className="text-gray-700">
                   Chillers are the second-largest power consumer. Factors affecting chiller power:
                 </p>
@@ -260,7 +260,7 @@ export default function PowerConsumptionReferencePage() {
               </div>
 
               <div className="border-l-4 border-green-600 pl-4">
-                <h3 className="mb-2 font-semibold text-gray-900">Standby Power</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Standby Power</h3>
                 <p className="text-gray-700">
                   Lasers consume power even when idle:
                 </p>
@@ -275,11 +275,11 @@ export default function PowerConsumptionReferencePage() {
 
           {/* Energy Efficiency Tips */}
           <div className="card mb-8">
-            <h2 className="mb-4 text-2xl font-bold text-gray-900">Energy Efficiency Optimization</h2>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">Energy Efficiency Optimization</h2>
             
             <div className="space-y-4">
               <div className="rounded-lg bg-green-50 border border-green-200 p-4">
-                <h3 className="mb-2 font-semibold text-gray-900">1. Optimize Cutting Parameters</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">1. Optimize Cutting Parameters</h3>
                 <p className="text-sm text-gray-700">
                   Running at 80-90% of maximum speed often uses 20-30% less power than maximum speed while maintaining 
                   acceptable cut quality. Over-powering (using 6kW when 4kW suffices) wastes energy.
@@ -287,7 +287,7 @@ export default function PowerConsumptionReferencePage() {
               </div>
 
               <div className="rounded-lg bg-green-50 border border-green-200 p-4">
-                <h3 className="mb-2 font-semibold text-gray-900">2. Maintain Chiller Efficiency</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">2. Maintain Chiller Efficiency</h3>
                 <p className="text-sm text-gray-700">
                   Clean condenser coils quarterly, check refrigerant levels annually. A well-maintained chiller uses 
                   15-25% less power. Consider upgrading to variable-speed compressor chillers for 30% energy savings.
@@ -295,7 +295,7 @@ export default function PowerConsumptionReferencePage() {
               </div>
 
               <div className="rounded-lg bg-green-50 border border-green-200 p-4">
-                <h3 className="mb-2 font-semibold text-gray-900">3. Batch Similar Jobs</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">3. Batch Similar Jobs</h3>
                 <p className="text-sm text-gray-700">
                   Minimize start/stop cycles. Each laser startup consumes 2-5 minutes of full power for warmup. 
                   Batching jobs saves 10-15% on energy costs compared to frequent on/off cycling.
@@ -303,7 +303,7 @@ export default function PowerConsumptionReferencePage() {
               </div>
 
               <div className="rounded-lg bg-green-50 border border-green-200 p-4">
-                <h3 className="mb-2 font-semibold text-gray-900">4. Consider Time-of-Use Rates</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">4. Consider Time-of-Use Rates</h3>
                 <p className="text-sm text-gray-700">
                   Many utilities offer lower rates during off-peak hours (nights, weekends). Shifting production to 
                   off-peak can save 30-50% on electricity costs. Check if your utility offers time-of-use pricing.
@@ -311,7 +311,7 @@ export default function PowerConsumptionReferencePage() {
               </div>
 
               <div className="rounded-lg bg-green-50 border border-green-200 p-4">
-                <h3 className="mb-2 font-semibold text-gray-900">5. Monitor Power Factor</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">5. Monitor Power Factor</h3>
                 <p className="text-sm text-gray-700">
                   Poor power factor (&lt;0.85) can result in utility penalties. Install power factor correction capacitors 
                   if needed. Most modern laser systems have good power factor (&gt;0.90), but older CO2 lasers may need correction.
@@ -396,7 +396,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
         onClick={() => setIsOpen(!isOpen)}
         className="flex w-full items-center justify-between p-4 text-left"
       >
-        <h3 className="font-semibold text-gray-900">{question}</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{question}</h3>
         <svg
           className={`h-5 w-5 flex-shrink-0 text-primary-600 transition-transform ${
             isOpen ? 'rotate-180' : ''

@@ -69,7 +69,7 @@ export default function CuttingSpeedsQuickReferencePage() {
                 <Zap className="h-8 w-8 text-yellow-600" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Laser Cutting Speeds Quick Reference</h1>
+                <h1 className="text-4xl font-bold text-gray-900">Laser Cutting Speeds Quick Reference</h1>
                 <p className="text-gray-600">Fiber laser benchmarks with optimized parameters</p>
               </div>
             </div>
@@ -77,7 +77,7 @@ export default function CuttingSpeedsQuickReferencePage() {
 
           {/* Mild Steel Table */}
           <div className="card mb-8">
-            <h2 className="mb-4 text-2xl font-bold text-gray-900">Mild Steel (Carbon Steel)</h2>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">Mild Steel (Carbon Steel)</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -107,7 +107,7 @@ export default function CuttingSpeedsQuickReferencePage() {
 
           {/* Stainless Steel Table */}
           <div className="card mb-8">
-            <h2 className="mb-4 text-2xl font-bold text-gray-900">Stainless Steel 304/316</h2>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">Stainless Steel 304/316</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -137,7 +137,7 @@ export default function CuttingSpeedsQuickReferencePage() {
 
           {/* Aluminum Table */}
           <div className="card mb-8">
-            <h2 className="mb-4 text-2xl font-bold text-gray-900">Aluminum (5052, 6061)</h2>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">Aluminum (5052, 6061)</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -172,13 +172,13 @@ export default function CuttingSpeedsQuickReferencePage() {
                 <Info className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">Important Notes</h2>
+                <h2 className="text-3xl font-bold text-gray-900">Important Notes</h2>
               </div>
             </div>
             
             <div className="space-y-4">
               <div className="border-l-4 border-blue-600 pl-4">
-                <h3 className="mb-2 font-semibold text-gray-900">These are Benchmark Values</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">These are Benchmark Values</h3>
                 <p className="text-gray-700">
                   Actual cutting speeds vary based on equipment brand, beam quality, focus lens, nozzle design, 
                   gas purity and pressure, material quality, and desired edge quality. Use these as starting points 
@@ -187,7 +187,7 @@ export default function CuttingSpeedsQuickReferencePage() {
               </div>
 
               <div className="border-l-4 border-blue-600 pl-4">
-                <h3 className="mb-2 font-semibold text-gray-900">Power Requirements</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Power Requirements</h3>
                 <p className="text-gray-700">
                   Higher power lasers can cut thicker materials and/or cut faster. A 3kW laser is suitable for 
                   up to 6mm mild steel, while 6kW handles up to 12mm, and 12kW+ for 15-25mm thick plates.
@@ -195,7 +195,7 @@ export default function CuttingSpeedsQuickReferencePage() {
               </div>
 
               <div className="border-l-4 border-blue-600 pl-4">
-                <h3 className="mb-2 font-semibold text-gray-900">Edge Quality Trade-offs</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Edge Quality Trade-offs</h3>
                 <p className="text-gray-700">
                   Faster speeds may produce more dross (slag) on the bottom edge. For critical applications, 
                   reduce speed by 10-20% to achieve cleaner cuts. For non-critical parts, maximize speed to 
@@ -207,7 +207,7 @@ export default function CuttingSpeedsQuickReferencePage() {
 
           {/* FAQ */}
           <div className="card mb-8">
-            <h2 className="mb-6 text-2xl font-bold text-gray-900">Frequently Asked Questions</h2>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">Frequently Asked Questions</h2>
             <div className="space-y-4">
               <FAQItem
                 question="What factors affect laser cutting speed?"
@@ -230,7 +230,7 @@ export default function CuttingSpeedsQuickReferencePage() {
 
           {/* Related Tools */}
           <div className="mt-12">
-            <h2 className="mb-6 text-2xl font-bold text-gray-900">Related Tools</h2>
+            <h2 className="mb-6 text-3xl font-bold text-gray-900">Related Tools</h2>
             <div className="grid gap-6 md:grid-cols-3">
               <Link href="/calculators/quick/price-per-meter" className="card-hover group border-l-4 border-blue-600">
                 <h3 className="mb-2 text-lg font-semibold text-gray-900 group-hover:text-primary-600">

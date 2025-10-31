@@ -120,7 +120,7 @@ export default function PiercingStrategyPage() {
 
               {/* Why Piercing Matters */}
               <section className="card">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Why Piercing Strategy Matters</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Piercing Strategy Matters</h2>
                 <p className="text-gray-700 mb-4">
                   Laser piercing is the initial penetration phase before the cutting path begins. 
                   Unlike continuous cutting, piercing creates concentrated heat and violent material 
@@ -146,7 +146,7 @@ export default function PiercingStrategyPage() {
               <section className="card">
                 <div className="flex items-center gap-3 mb-4">
                   <Target className="h-8 w-8 text-primary-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">Piercing Strategy Comparison</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">Piercing Strategy Comparison</h2>
                 </div>
 
                 {/* Standard Pierce */}
@@ -270,7 +270,7 @@ export default function PiercingStrategyPage() {
               <section className="card">
                 <div className="flex items-center gap-3 mb-4">
                   <Clock className="h-8 w-8 text-primary-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">Pierce Time by Material & Thickness</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">Pierce Time by Material & Thickness</h2>
                 </div>
 
                 <p className="text-gray-700 mb-4">
@@ -363,7 +363,7 @@ export default function PiercingStrategyPage() {
               <section className="card">
                 <div className="flex items-center gap-3 mb-4">
                   <TrendingDown className="h-8 w-8 text-primary-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">5 Strategies to Reduce Piercing Costs</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">5 Strategies to Reduce Piercing Costs</h2>
                 </div>
 
                 <div className="space-y-4">
@@ -428,7 +428,7 @@ export default function PiercingStrategyPage() {
               <section className="card">
                 <div className="flex items-center gap-3 mb-4">
                   <AlertTriangle className="h-8 w-8 text-orange-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">Nozzle Life Optimization</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">Nozzle Life Optimization</h2>
                 </div>
 
                 <p className="text-gray-700 mb-4">
@@ -454,7 +454,7 @@ export default function PiercingStrategyPage() {
                   </div>
                 </div>
 
-                <h3 className="font-semibold text-gray-900 mb-2">Cost Calculation Example</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Cost Calculation Example</h3>
                 <div className="bg-gray-100 p-4 rounded-lg text-sm space-y-2">
                   <div className="flex justify-between">
                     <span>Nozzle cost (2.0mm diameter)</span>

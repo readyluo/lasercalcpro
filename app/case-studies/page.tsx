@@ -46,7 +46,7 @@ export default async function CaseStudiesPage({ searchParams }: PageProps) {
           <div className="mx-auto max-w-6xl">
             {/* Header */}
             <div className="mb-8 text-center">
-              <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">
+              <h1 className="text-4xl font-bold text-gray-900 md:text-4xl">
                 Case Studies
               </h1>
               <p className="mt-2 text-gray-600">
