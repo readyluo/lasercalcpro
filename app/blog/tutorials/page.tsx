@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { BookOpen, Clock, Award, Download, Video, FileText, CheckCircle2 } from 'lucide-react';
+import { BookOpen, Clock, Award, Download, Video, FileText, CheckCircle2, Calculator } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Tutorials Library - Manufacturing Cost Calculation Guides | LaserCalc Pro',

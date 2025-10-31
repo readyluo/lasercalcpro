@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { getPublishedArticlesByTag, type PaginatedArticles } from '@/lib/db/articles';
+import { getPublishedArticlesByTag } from '@/lib/db/articles';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 
@@ -23,10 +23,13 @@ export default async function TagPage({ params, searchParams }: PageProps) {
   const page = Math.max(parseInt(searchParams.page || '1', 10) || 1, 1);
   const pageSize = 12;
 
-  const { articles, total, totalPages }: PaginatedArticles = await getPublishedArticlesByTag(
+  const { articles, total } = await getPublishedArticlesByTag(
     params.slug,
-    { page, limit: pageSize, orderBy: 'published_at', orderDir: 'DESC' }
+    page,
+    pageSize
   );
+  
+  const totalPages = Math.ceil(total / pageSize);
 
   return (
     <>

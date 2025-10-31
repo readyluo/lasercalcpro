@@ -1,7 +1,7 @@
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
-import { getPublishedArticles } from '@/lib/db/articles';
+import { getArticles } from '@/lib/db/articles';
 import Link from 'next/link';
 import { Calendar, User, Eye, ArrowRight, Tag } from 'lucide-react';
 import { generateMetadata } from '@/lib/seo/metadata';
@@ -20,12 +20,11 @@ export default async function BlogPage() {
   let total = 0;
   
   try {
-    const result = await getPublishedArticles({ 
-      page: 1, 
-      limit: 20,
-      orderBy: 'published_at',
-      orderDir: 'DESC' 
-    });
+    const result = await getArticles(
+      { status: 'published' },
+      1,
+      20
+    );
     articles = result.articles;
     total = result.total;
   } catch (error) {

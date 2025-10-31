@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { getPublishedArticlesByCategory, type PaginatedArticles } from '@/lib/db/articles';
+import { getPublishedArticlesByCategory } from '@/lib/db/articles';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 
@@ -30,10 +30,13 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
   const page = Math.max(parseInt(searchParams.page || '1', 10) || 1, 1);
   const pageSize = 12;
 
-  const { articles, total, totalPages }: PaginatedArticles = await getPublishedArticlesByCategory(
+  const { articles, total } = await getPublishedArticlesByCategory(
     params.slug,
-    { page, limit: pageSize, orderBy: 'published_at', orderDir: 'DESC' }
+    page,
+    pageSize
   );
+  
+  const totalPages = Math.ceil(total / pageSize);
 
   return (
     <>
