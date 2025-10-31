@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { BookOpen, Clock, Award, Download, Video, FileText, CheckCircle2, Calculator } from 'lucide-react';
+import { Navigation } from '@/components/layout/Navigation';
+import { Footer } from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
   title: 'Tutorials Library - Manufacturing Cost Calculation Guides | LaserCalc Pro',
@@ -296,9 +298,11 @@ const levelColors = {
 
 export default function TutorialsLibraryPage() {
   return (
-    <main className="bg-gradient-to-b from-gray-50 to-white">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white">
+    <>
+      <Navigation />
+      <main className="bg-gradient-to-b from-gray-50 to-white">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white">
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full mb-6">
@@ -550,7 +554,8 @@ export default function TutorialsLibraryPage() {
             </div>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
+      <Footer />
+    </>
   );
 }

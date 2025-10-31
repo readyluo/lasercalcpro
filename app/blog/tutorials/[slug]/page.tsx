@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 import { generateHowToSchema } from '@/lib/seo/schema';
+import { Navigation } from '@/components/layout/Navigation';
+import { Footer } from '@/components/layout/Footer';
 
 interface TutorialConfig {
   title: string;
@@ -1981,9 +1983,11 @@ export default function TutorialPage({ params }: { params: { slug: string } }) {
   const howTo = generateHowToSchema({ name: tutorial.title, description: tutorial.description, steps: tutorial.steps });
 
   return (
-    <main className="bg-gray-50 py-16">
-      <SchemaMarkup schema={howTo} />
-      <div className="container mx-auto px-4">
+    <>
+      <Navigation />
+      <main className="bg-gray-50 py-16">
+        <SchemaMarkup schema={howTo} />
+        <div className="container mx-auto px-4">
         <div className="mx-auto max-w-3xl">
           <Link href="/blog/tutorials" className="text-sm font-semibold text-primary-600">← Back to tutorials</Link>
           <h1 className="mt-3 text-4xl font-bold text-gray-900">{tutorial.title}</h1>
@@ -2030,8 +2034,9 @@ export default function TutorialPage({ params }: { params: { slug: string } }) {
             </ul>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
+      <Footer />
+    </>
   );
 }
 
