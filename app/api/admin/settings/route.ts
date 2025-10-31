@@ -1,23 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getAllSiteSettings, updateSiteSettings } from '@/lib/db/settings';
+import { verifyAdminAuth } from '@/lib/auth/middleware';
+import { recordAuditLog } from '@/lib/db/audit-logs';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs'; // Changed from 'edge' to support D1
 
 // GET settings
 export async function GET(request: NextRequest) {
   try {
-    // In a real application, fetch from database
-    // For now, return environment variables and defaults
-    const settings = {
-      siteName: process.env.SITE_NAME || 'LaserCalc Pro',
-      siteUrl: process.env.SITE_URL || 'https://lasercalcpro.com',
-      contactEmail: process.env.CONTACT_EMAIL || 'contact@lasercalcpro.com',
-      ga4MeasurementId: process.env.NEXT_PUBLIC_GA_ID || '',
-      gscPropertyUrl: process.env.GSC_PROPERTY_URL || '',
-      adsenseClientId: process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || '',
-      adsenseEnabled: process.env.ADSENSE_ENABLED !== 'false',
-      maintenanceMode: process.env.MAINTENANCE_MODE === 'true',
-      allowRegistrations: process.env.ALLOW_REGISTRATIONS !== 'false',
-    };
+    // Verify admin authentication
+    const admin = await verifyAdminAuth(request);
+    if (!admin) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    // Fetch settings from database
+    const settings = await getAllSiteSettings();
 
     return NextResponse.json({ settings }, { status: 200 });
   } catch (error) {
@@ -32,6 +33,15 @@ export async function GET(request: NextRequest) {
 // POST settings (save)
 export async function POST(request: NextRequest) {
   try {
+    // Verify admin authentication
+    const admin = await verifyAdminAuth(request);
+    if (!admin) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const settings = await request.json();
 
     // Validate settings
@@ -76,6 +86,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate GSC URL format (if provided)
+    if (settings.gscPropertyUrl && settings.gscPropertyUrl.trim() !== '') {
+      try {
+        new URL(settings.gscPropertyUrl);
+      } catch {
+        return NextResponse.json(
+          { error: 'Invalid GSC Property URL format' },
+          { status: 400 }
+        );
+      }
+    }
+
     // Validate AdSense ID format (if provided)
     if (settings.adsenseClientId && !settings.adsenseClientId.match(/^ca-pub-\d+$/)) {
       return NextResponse.json(
@@ -84,17 +106,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // In a real application:
-    // 1. Store settings in database
-    // 2. Update environment variables if needed
-    // 3. Trigger cache invalidation
-    // 4. Log the change in audit log
-    
-    console.log('Settings updated:', settings);
+    // Save settings to database
+    const success = await updateSiteSettings(settings);
 
-    // TODO: Implement actual storage
-    // await updateSiteSettings(settings);
-    // await recordAuditLog('settings', 'update', adminId, settings);
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Failed to save settings to database' },
+        { status: 500 }
+      );
+    }
+
+    // Record audit log
+    try {
+      await recordAuditLog(
+        'settings',
+        'update',
+        admin.id,
+        JSON.stringify(settings)
+      );
+    } catch (error) {
+      console.error('Failed to record audit log:', error);
+      // Don't fail the request if audit log fails
+    }
+
+    console.log('Settings updated successfully by admin:', admin.username);
 
     return NextResponse.json(
       { success: true, message: 'Settings saved successfully' },

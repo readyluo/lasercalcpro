@@ -1,11 +1,37 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Script from 'next/script';
 
-const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID;
-
 export function GoogleAnalytics() {
-  if (!GA_TRACKING_ID) {
+  const [gaId, setGaId] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    // Fetch GA4 ID from database via public API
+    const fetchGAId = async () => {
+      try {
+        const response = await fetch('/api/settings/public');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.ga4MeasurementId) {
+            setGaId(data.ga4MeasurementId);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch GA4 settings:', error);
+        // Fallback to environment variable
+        setGaId(process.env.NEXT_PUBLIC_GA_ID || null);
+      } finally {
+        setLoaded(true);
+      }
+    };
+
+    fetchGAId();
+  }, []);
+
+  // Don't render until we've checked for GA ID
+  if (!loaded || !gaId) {
     return null;
   }
 
@@ -50,7 +76,7 @@ export function GoogleAnalytics() {
       
       <Script
         strategy="afterInteractive"
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+        src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
       />
       <Script
         id="google-analytics"
@@ -58,7 +84,7 @@ export function GoogleAnalytics() {
         dangerouslySetInnerHTML={{
           __html: `
             gtag('js', new Date());
-            gtag('config', '${GA_TRACKING_ID}', {
+            gtag('config', '${gaId}', {
               page_path: window.location.pathname,
               anonymize_ip: true,
               cookie_flags: 'SameSite=None;Secure'
@@ -69,12 +95,3 @@ export function GoogleAnalytics() {
     </>
   );
 }
-
-
-
-
-
-
-
-
-
