@@ -37,12 +37,12 @@ export default function RootLayout({
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+      </head>
+      <body className={`${inter.className} antialiased`}>
         <SchemaMarkup schema={organizationSchema} />
         <SchemaMarkup schema={websiteSchema} />
         <GoogleAnalytics />
         <AdSenseScript />
-      </head>
-      <body className={`${inter.className} antialiased`}>
         <PageViewTracker />
         <WebVitals />
         <CookieBanner />

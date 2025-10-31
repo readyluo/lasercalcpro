@@ -112,14 +112,14 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 <div><strong>Total Cost</strong> = Material + Labor + Machine + Overhead</div>
               </div>
             </div>
-            <ul className="ml-5 list-disc space-y-2 text-gray-700">
+          <ul className="ml-5 list-disc space-y-2 text-gray-700">
               <li><strong>Cutting speed:</strong> Varies by material/thickness. 1mm mild steel: 10-15 m/min; 10mm: 0.8-1.2 m/min.</li>
               <li><strong>Pierce time:</strong> 0.5-2 seconds per pierce depending on thickness and gas type.</li>
               <li><strong>Setup time:</strong> Include 5-15 minutes for sheet loading, program verification, first-piece inspection.</li>
               <li><strong>Kerf allowance:</strong> Typical 0.1-0.3mm per side. Use Kerf Reference calculator for exact values.</li>
               <li><strong>Material utilization:</strong> Target 70-85% for standard jobs, 85-92% for optimized nesting.</li>
               <li><strong>Batch considerations:</strong> Setup cost amortized across quantity. Offer volume discounts for 50+ pieces.</li>
-            </ul>
+          </ul>
           </>
         ),
       },
@@ -137,13 +137,13 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 <li><strong>Edge roughness:</strong> Ra 6.3-12.5 μm typical for laser cutting</li>
               </ul>
             </div>
-            <ul className="ml-5 list-disc space-y-2 text-gray-700">
+          <ul className="ml-5 list-disc space-y-2 text-gray-700">
               <li><strong>Dimensional verification:</strong> Measure critical features on first piece before running full batch.</li>
               <li><strong>Edge quality inspection:</strong> Check for dross (bottom edge buildup), burrs, and heat-affected zone (HAZ).</li>
               <li><strong>Flatness check:</strong> Thermal distortion can occur on thin sheets (&lt;1mm) with long cuts.</li>
               <li><strong>Corner sharpness:</strong> Inside corners have radius equal to kerf width (~0.1-0.2mm).</li>
               <li><strong>Documentation:</strong> Include tolerance callouts on quote. Default to ISO 2768-m if not specified.</li>
-            </ul>
+          </ul>
           </>
         ),
       },
@@ -152,7 +152,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
         content: (
           <>
             <p className="mb-3 text-gray-700">Professional quotes build trust and streamline the approval process.</p>
-            <ul className="ml-5 list-disc space-y-2 text-gray-700">
+          <ul className="ml-5 list-disc space-y-2 text-gray-700">
               <li><strong>Cost transparency:</strong> Break down material, labor, machine time, and overhead separately. Builds credibility.</li>
               <li><strong>Pricing strategy:</strong> Use 25-35% markup for standard work, 40-50% for rush jobs or complex parts.</li>
               <li><strong>Volume tiers:</strong> Offer 3-4 quantity breaks (e.g., 1-10, 11-50, 51-100, 100+) with 5-15% discounts.</li>
@@ -171,7 +171,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
                 <li>✓ Payment terms and validity period</li>
                 <li>✓ Tolerance and quality standards</li>
                 <li>✓ Company contact info and quote number</li>
-              </ul>
+          </ul>
             </div>
           </>
         ),

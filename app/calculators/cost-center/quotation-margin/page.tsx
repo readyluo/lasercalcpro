@@ -150,7 +150,7 @@ export default function QuotationMarginPage() {
 
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-900">Pricing Strategy</h3>
-                    <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-4 md:grid-cols-2">
                       <Input 
                         {...register('targetMarginPercent', { valueAsNumber: true })} 
                         type="number" 

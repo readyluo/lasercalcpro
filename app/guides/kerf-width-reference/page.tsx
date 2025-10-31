@@ -635,12 +635,12 @@ export default function KerfWidthReferencePage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/guides">
                 <Button variant="primary" size="lg" rightIcon={<ArrowRight className="h-5 w-5" />}>
-                  View All Guides
+                View All Guides
                 </Button>
               </Link>
               <Link href="/calculators/cost-center">
                 <Button variant="secondary" size="lg">
-                  Explore Cost Tools
+                Explore Cost Tools
                 </Button>
               </Link>
             </div>
