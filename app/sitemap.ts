@@ -20,8 +20,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: route.priority,
   }));
 
-  // Calculator pages (highest priority after home)
-  const calculators = [
+  // Main Calculator pages (highest priority after home)
+  const mainCalculators = [
     { url: '/calculators/laser-cutting', priority: 0.95 },
     { url: '/calculators/cnc-machining', priority: 0.95 },
     { url: '/calculators/roi', priority: 0.95 },
@@ -32,6 +32,33 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified,
     changeFrequency: 'weekly' as const,
     priority: route.priority,
+  }));
+
+  // Cost Center Calculators
+  const costCenterCalculators = [
+    '/calculators/cost-center/overhead-allocator',
+    '/calculators/cost-center/setup-estimator',
+    '/calculators/cost-center/hourly-rate',
+    '/calculators/cost-center/pierce-estimator',
+    '/calculators/cost-center/finishing-guide',
+    '/calculators/cost-center/kerf-reference',
+    '/calculators/cost-center/quotation-margin',
+  ].map(route => ({
+    url: `${baseUrl}${route}`,
+    lastModified,
+    changeFrequency: 'weekly' as const,
+    priority: 0.85,
+  }));
+
+  // Guide pages
+  const guides = [
+    '/guides',
+    '/guides/kerf-width-reference',
+  ].map(route => ({
+    url: `${baseUrl}${route}`,
+    lastModified,
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
   }));
 
   // Blog category pages
@@ -47,15 +74,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  // TODO: Add blog posts dynamically from database
-  // const blogPosts = await getPublishedPosts();
-  // const blogs = blogPosts.map(post => ({
-  //   url: `${baseUrl}/blog/${post.slug}`,
-  //   lastModified: new Date(post.updatedAt),
-  //   changeFrequency: 'monthly' as const,
-  //   priority: 0.7,
-  // }));
+  // Tutorial pages
+  const tutorials = [
+    '/blog/tutorials/cad-to-quote',
+    '/blog/tutorials/cnc-volume-pricing',
+    '/blog/tutorials/equipment-roi-narrative',
+    '/blog/tutorials/complex-nesting-pro',
+    '/blog/tutorials/quoting-automation-playbook',
+    '/blog/tutorials/laser-assist-gas-strategy',
+  ].map(route => ({
+    url: `${baseUrl}${route}`,
+    lastModified,
+    changeFrequency: 'monthly' as const,
+    priority: 0.75,
+  }));
 
-  return [...routes, ...calculators, ...blogCategories];
+  return [
+    ...routes,
+    ...mainCalculators,
+    ...costCenterCalculators,
+    ...guides,
+    ...blogCategories,
+    ...tutorials,
+  ];
 }
 

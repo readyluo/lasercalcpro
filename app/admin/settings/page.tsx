@@ -7,8 +7,6 @@ interface SiteSettings {
   siteName: string;
   siteUrl: string;
   contactEmail: string;
-  ga4MeasurementId: string;
-  gscPropertyUrl: string;
   adsenseClientId: string;
   adsenseEnabled: boolean;
   maintenanceMode: boolean;
@@ -20,8 +18,6 @@ export default function SettingsPage() {
     siteName: 'LaserCalc Pro',
     siteUrl: 'https://lasercalcpro.com',
     contactEmail: 'contact@lasercalcpro.com',
-    ga4MeasurementId: process.env.NEXT_PUBLIC_GA_ID || '',
-    gscPropertyUrl: '',
     adsenseClientId: process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || '',
     adsenseEnabled: true,
     maintenanceMode: false,
@@ -169,42 +165,32 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Analytics & Tracking */}
+        {/* Analytics & Tracking - Hardcoded */}
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Analytics & Tracking</h2>
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Google Analytics 4 Measurement ID
-              </label>
-              <input
-                type="text"
-                name="ga4MeasurementId"
-                value={settings.ga4MeasurementId}
-                onChange={handleChange}
-                placeholder="G-XXXXXXXXXX"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
-              <p className="mt-2 text-sm text-gray-500">
-                Find this in your Google Analytics 4 property settings. Format: G-XXXXXXXXXX
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h3 className="font-semibold text-blue-900 mb-2">Google Analytics 4</h3>
+              <p className="text-sm text-blue-800">
+                <strong>Measurement ID:</strong> G-Z1Q5K1N1WM
+              </p>
+              <p className="text-xs text-blue-600 mt-1">
+                ✓ Configured in GoogleAnalytics component (hardcoded)
               </p>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Google Search Console Property URL
-              </label>
-              <input
-                type="url"
-                name="gscPropertyUrl"
-                value={settings.gscPropertyUrl}
-                onChange={handleChange}
-                placeholder="https://lasercalcpro.com"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
-              <p className="mt-2 text-sm text-gray-500">
-                Your verified property URL in Google Search Console. Used for sitemap and verification.
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <h3 className="font-semibold text-green-900 mb-2">Google Search Console</h3>
+              <p className="text-sm text-green-800">
+                <strong>Verification Code:</strong> aajlPnwI4brA3BjmsQ30KN3gj0wtVarRoJ_7KMPM65s
+              </p>
+              <p className="text-xs text-green-600 mt-1">
+                ✓ Configured in root layout metadata (hardcoded)
               </p>
             </div>
+            <p className="text-sm text-gray-500 italic">
+              Note: Analytics IDs are hardcoded in the application for security and simplicity. 
+              Contact the development team to update these values.
+            </p>
           </div>
         </div>
 
