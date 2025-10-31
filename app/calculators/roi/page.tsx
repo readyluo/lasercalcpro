@@ -12,6 +12,7 @@ import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { ExportButton } from '@/components/calculators/ExportButton';
 import { roiSchema, roiDefaults, type ROIInput } from '@/lib/validations/roi';
 import { calculateROI, type ROIResult, formatCurrency } from '@/lib/calculators/roi';
 import {
@@ -34,6 +35,7 @@ import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 export default function ROICalculatorPage() {
   const t = useEnglish();
   const [result, setResult] = useState<ROIResult | null>(null);
+  const [lastInput, setLastInput] = useState<ROIInput | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
 
   const howToSchema = generateCalculatorHowToSchema(
@@ -78,6 +80,7 @@ export default function ROICalculatorPage() {
     setTimeout(async () => {
       const calculationResult = calculateROI(data);
       setResult(calculationResult);
+      setLastInput(data);
       setIsCalculating(false);
 
       document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
@@ -404,14 +407,25 @@ export default function ROICalculatorPage() {
 
                   {/* Actions */}
                   <div className="flex gap-4">
-                    <Button
-                      variant="primary"
-                      size="lg"
-                      className="flex-1"
-                      leftIcon={<Download className="h-5 w-5" />}
-                    >
-                      Export PDF Report
-                    </Button>
+                    <ExportButton
+                      title="Equipment ROI Report"
+                      calculationType="ROI"
+                      inputData={lastInput || roiDefaults}
+                      results={{
+                        totalInvestment: result.totalInvestment,
+                        paybackPeriodYears: result.paybackPeriodYears,
+                        fiveYearROI: result.totalROI5Year,
+                        annualROI: result.annualROI,
+                        npv: result.npv,
+                        irr: result.irr,
+                        monthlyRevenue: result.monthlyRevenue,
+                        monthlyProfit: result.monthlyProfit,
+                      }}
+                      chartDataUrls={(() => {
+                        const canvases = Array.from(document.querySelectorAll('#results canvas')) as HTMLCanvasElement[];
+                        return canvases.slice(0, 3).map(c => c.toDataURL('image/png'));
+                      })()}
+                    />
                     <Button
                       variant="outline"
                       size="lg"

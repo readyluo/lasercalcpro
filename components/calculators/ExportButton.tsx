@@ -12,6 +12,7 @@ interface ExportButtonProps {
   inputData: Record<string, any>;
   results: Record<string, any>;
   chartDataUrl?: string;
+  chartDataUrls?: string[];
   recommendations?: string[];
 }
 
@@ -21,6 +22,7 @@ export function ExportButton({
   inputData,
   results,
   chartDataUrl,
+  chartDataUrls,
   recommendations,
 }: ExportButtonProps) {
   const [isExporting, setIsExporting] = useState(false);
@@ -36,6 +38,7 @@ export function ExportButton({
         inputData,
         results,
         chartDataUrl,
+        chartDataUrls,
         recommendations,
       });
 

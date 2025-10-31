@@ -6,7 +6,8 @@ interface PDFOptions {
   calculationType: string;
   inputData: Record<string, any>;
   results: Record<string, any>;
-  chartDataUrl?: string;
+  chartDataUrl?: string; // backward compatibility
+  chartDataUrls?: string[]; // preferred: multiple charts
   recommendations?: string[];
 }
 
@@ -36,8 +37,10 @@ export class PDFGenerator {
     this.addInputSection(options.inputData);
     this.addResultsSection(options.results);
     
-    if (options.chartDataUrl) {
-      this.addChartSection(options.chartDataUrl);
+    if (options.chartDataUrls && options.chartDataUrls.length > 0) {
+      this.addChartsSection(options.chartDataUrls);
+    } else if (options.chartDataUrl) {
+      this.addChartsSection([options.chartDataUrl]);
     }
     
     if (options.recommendations && options.recommendations.length > 0) {
@@ -146,18 +149,22 @@ export class PDFGenerator {
   /**
    * Add chart section
    */
-  private addChartSection(chartDataUrl: string) {
+  private addChartsSection(chartDataUrls: string[]) {
     this.checkPageBreak(100);
     this.addSectionTitle('Visual Analysis');
 
-    try {
-      const imgWidth = this.pageWidth - 2 * this.margin;
-      const imgHeight = 80;
-      this.doc.addImage(chartDataUrl, 'PNG', this.margin, this.currentY, imgWidth, imgHeight);
-      this.currentY += imgHeight + 10;
-    } catch (error) {
-      console.error('Error adding chart to PDF:', error);
-    }
+    const imgWidth = this.pageWidth - 2 * this.margin;
+    const imgHeight = 80;
+
+    chartDataUrls.forEach((url, index) => {
+      this.checkPageBreak(imgHeight + 20);
+      try {
+        this.doc.addImage(url, 'PNG', this.margin, this.currentY, imgWidth, imgHeight);
+        this.currentY += imgHeight + 10;
+      } catch (error) {
+        console.error('Error adding chart to PDF:', error);
+      }
+    });
   }
 
   /**
