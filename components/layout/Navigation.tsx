@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEnglish } from '@/lib/i18n';
@@ -11,6 +11,7 @@ export function Navigation() {
   const [isCalculatorsOpen, setIsCalculatorsOpen] = useState(false);
   const pathname = usePathname();
   const t = useEnglish();
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const toolCategories = [
     {
@@ -90,8 +91,33 @@ export function Navigation() {
 
   const isActive = (path: string) => pathname === path;
 
+  // Handle delayed close for better UX
+  const handleMouseEnter = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    setIsCalculatorsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    // Add 150ms delay before closing to allow mouse movement
+    closeTimeoutRef.current = setTimeout(() => {
+      setIsCalculatorsOpen(false);
+    }, 150);
+  };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -116,8 +142,8 @@ export function Navigation() {
             {/* Calculators Mega Menu */}
             <div
               className="relative"
-              onMouseEnter={() => setIsCalculatorsOpen(true)}
-              onMouseLeave={() => setIsCalculatorsOpen(false)}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
             >
               <button
                 className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
@@ -125,65 +151,97 @@ export function Navigation() {
                 }`}
               >
                 {t.nav.calculators}
-                <ChevronDown className={`h-4 w-4 transition-transform ${isCalculatorsOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isCalculatorsOpen ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* Mega Menu */}
-              {isCalculatorsOpen && (
-                <div className="absolute left-0 top-full mt-1 w-[600px] animate-fade-in">
-                  <div className="mt-2 rounded-xl bg-white shadow-xl ring-1 ring-black ring-opacity-5">
-                    <div className="p-4">
-                      <div className="mb-3 flex items-center justify-between">
-                        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Calculators</h3>
-                        <Link 
-                          href="/calculators"
-                          className="text-xs text-primary-600 hover:text-primary-700 font-medium"
-                        >
-                          View All →
-                        </Link>
+              {/* Mega Menu Dropdown */}
+              <div
+                className={`absolute left-0 top-full pt-2 transition-all duration-200 ${
+                  isCalculatorsOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2 pointer-events-none'
+                }`}
+              >
+                <div className="w-[680px] rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 border border-gray-100">
+                  {/* Header */}
+                  <div className="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-primary-50 to-blue-50">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-sm font-bold text-gray-900">Professional Calculators</h3>
+                        <p className="text-xs text-gray-600 mt-0.5">Accurate cost estimation for manufacturing</p>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        {toolCategories.map((category, idx) => (
-                          <div key={idx}>
-                            <h4 className="mb-2 text-xs font-semibold text-gray-700 uppercase tracking-wider">{category.category}</h4>
-                            <div className="space-y-1">
-                              {category.tools.map(tool => (
-                                <Link
-                                  key={tool.href}
-                                  href={tool.href}
-                                  className="group flex items-start gap-2 rounded-lg p-2 transition-colors hover:bg-gray-50"
-                                >
-                                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600 transition-colors group-hover:bg-primary-100">
-                                    {tool.icon}
+                      <Link 
+                        href="/calculators"
+                        className="text-xs text-primary-600 hover:text-primary-700 font-semibold flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-primary-100 transition-colors"
+                      >
+                        View All
+                        <ChevronDown className="h-3 w-3 -rotate-90" />
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6">
+                    <div className="grid grid-cols-2 gap-6">
+                      {toolCategories.map((category, idx) => (
+                        <div key={idx}>
+                          <h4 className="mb-3 text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                            <span className="h-px flex-1 bg-gray-200"></span>
+                            {category.category}
+                            <span className="h-px flex-1 bg-gray-200"></span>
+                          </h4>
+                          <div className="space-y-1">
+                            {category.tools.map(tool => (
+                              <Link
+                                key={tool.href}
+                                href={tool.href}
+                                className="group flex items-start gap-3 rounded-lg p-3 transition-all hover:bg-gradient-to-r hover:from-primary-50 hover:to-blue-50 hover:shadow-sm"
+                              >
+                                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-md transition-transform group-hover:scale-110 group-hover:shadow-lg">
+                                  {tool.icon}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <p className="text-sm font-bold text-gray-900 group-hover:text-primary-700 transition-colors">
+                                      {tool.name}
+                                    </p>
+                                    {tool.popular && (
+                                      <span className="inline-flex items-center rounded-full bg-gradient-to-r from-green-400 to-emerald-500 px-2 py-0.5 text-xs font-bold text-white shadow-sm">
+                                        🔥 Popular
+                                      </span>
+                                    )}
+                                    {tool.badge && (
+                                      <span className="inline-flex items-center rounded-full bg-gradient-to-r from-blue-400 to-blue-500 px-2 py-0.5 text-xs font-bold text-white shadow-sm">
+                                        ✨ {tool.badge}
+                                      </span>
+                                    )}
                                   </div>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-1.5">
-                                      <p className="text-sm font-semibold text-gray-900 group-hover:text-primary-600">
-                                        {tool.name}
-                                      </p>
-                                      {tool.popular && (
-                                        <span className="inline-flex items-center rounded-full bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-800">
-                                          Popular
-                                        </span>
-                                      )}
-                                      {tool.badge && (
-                                        <span className="inline-flex items-center rounded-full bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-800">
-                                          {tool.badge}
-                                        </span>
-                                      )}
-                                    </div>
-                                    <p className="text-xs text-gray-600 mt-0.5">{tool.description}</p>
-                                  </div>
-                                </Link>
-                              ))}
-                            </div>
+                                  <p className="text-xs text-gray-600 leading-relaxed">{tool.description}</p>
+                                </div>
+                              </Link>
+                            ))}
                           </div>
-                        ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Footer CTA */}
+                  <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-xs text-gray-600">
+                        <Calculator className="h-4 w-4 text-primary-600" />
+                        <span>All calculators are <strong className="text-gray-900">free to use</strong></span>
                       </div>
+                      <Link
+                        href="/calculators/compare"
+                        className="text-xs font-semibold text-primary-600 hover:text-primary-700 flex items-center gap-1"
+                      >
+                        Compare Tools
+                        <ChevronDown className="h-3 w-3 -rotate-90" />
+                      </Link>
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
 
             <Link
@@ -224,7 +282,7 @@ export function Navigation() {
 
             <Link
               href="/calculators/laser-cutting"
-              className="ml-4 inline-flex items-center gap-1.5 bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors"
+              className="ml-4 inline-flex items-center gap-1.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:from-primary-700 hover:to-primary-800 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
               <Calculator className="h-4 w-4" />
               Try Free
@@ -234,7 +292,7 @@ export function Navigation() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden"
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="Toggle menu"
           >
             {isOpen ? (
@@ -251,8 +309,8 @@ export function Navigation() {
             <div className="space-y-2">
               <Link
                 href="/"
-                className={`block rounded-lg px-4 py-2 font-medium ${
-                  isActive('/') ? 'bg-primary-50 text-primary-600' : 'text-gray-700'
+                className={`block rounded-lg px-4 py-2 font-medium transition-colors ${
+                  isActive('/') ? 'bg-primary-50 text-primary-600' : 'text-gray-700 hover:bg-gray-50'
                 }`}
                 onClick={() => setIsOpen(false)}
               >
@@ -263,7 +321,7 @@ export function Navigation() {
               <div>
                 <button
                   onClick={() => setIsCalculatorsOpen(!isCalculatorsOpen)}
-                  className="flex w-full items-center justify-between rounded-lg px-4 py-2 font-medium text-gray-700"
+                  className="flex w-full items-center justify-between rounded-lg px-4 py-2 font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   {t.nav.calculators}
                   <ChevronDown
@@ -282,7 +340,7 @@ export function Navigation() {
                             <Link
                               key={tool.href}
                               href={tool.href}
-                              className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-600"
+                              className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-600 transition-colors"
                               onClick={() => setIsOpen(false)}
                             >
                               <span>{tool.name}</span>
@@ -302,8 +360,8 @@ export function Navigation() {
 
               <Link
                 href="/guides"
-                className={`block rounded-lg px-4 py-2 font-medium ${
-                  pathname.startsWith('/guides') ? 'bg-primary-50 text-primary-600' : 'text-gray-700'
+                className={`block rounded-lg px-4 py-2 font-medium transition-colors ${
+                  pathname.startsWith('/guides') ? 'bg-primary-50 text-primary-600' : 'text-gray-700 hover:bg-gray-50'
                 }`}
                 onClick={() => setIsOpen(false)}
               >
@@ -312,8 +370,8 @@ export function Navigation() {
 
               <Link
                 href="/blog"
-                className={`block rounded-lg px-4 py-2 font-medium ${
-                  isActive('/blog') ? 'bg-primary-50 text-primary-600' : 'text-gray-700'
+                className={`block rounded-lg px-4 py-2 font-medium transition-colors ${
+                  isActive('/blog') ? 'bg-primary-50 text-primary-600' : 'text-gray-700 hover:bg-gray-50'
                 }`}
                 onClick={() => setIsOpen(false)}
               >
@@ -322,8 +380,8 @@ export function Navigation() {
 
               <Link
                 href="/about"
-                className={`block rounded-lg px-4 py-2 font-medium ${
-                  isActive('/about') ? 'bg-primary-50 text-primary-600' : 'text-gray-700'
+                className={`block rounded-lg px-4 py-2 font-medium transition-colors ${
+                  isActive('/about') ? 'bg-primary-50 text-primary-600' : 'text-gray-700 hover:bg-gray-50'
                 }`}
                 onClick={() => setIsOpen(false)}
               >
@@ -332,8 +390,8 @@ export function Navigation() {
 
               <Link
                 href="/contact"
-                className={`block rounded-lg px-4 py-2 font-medium ${
-                  isActive('/contact') ? 'bg-primary-50 text-primary-600' : 'text-gray-700'
+                className={`block rounded-lg px-4 py-2 font-medium transition-colors ${
+                  isActive('/contact') ? 'bg-primary-50 text-primary-600' : 'text-gray-700 hover:bg-gray-50'
                 }`}
                 onClick={() => setIsOpen(false)}
               >
@@ -354,12 +412,3 @@ export function Navigation() {
     </nav>
   );
 }
-
-
-
-
-
-
-
-
-
