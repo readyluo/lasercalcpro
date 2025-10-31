@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEnglish } from '@/lib/i18n';
-import { Menu, X, Calculator, ChevronDown, Zap, TrendingUp, BarChart3, Leaf, Package } from 'lucide-react';
+import { Menu, X, Calculator, ChevronDown, Zap, TrendingUp, BarChart3, Leaf, Package, DollarSign, Settings, Clock } from 'lucide-react';
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,38 +12,80 @@ export function Navigation() {
   const pathname = usePathname();
   const t = useEnglish();
 
-  const tools = [
-    { 
-      name: 'Laser Cutting', 
-      href: '/calculators/laser-cutting',
-      description: 'Calculate cutting costs with precision',
-      icon: <Zap className="h-5 w-5" />,
-      popular: true
+  const toolCategories = [
+    {
+      category: 'Core Calculators',
+      tools: [
+        { 
+          name: 'Laser Cutting', 
+          href: '/calculators/laser-cutting',
+          description: 'Complete cutting cost calculation',
+          icon: <Zap className="h-5 w-5" />,
+          popular: true
+        },
+        { 
+          name: 'CNC Machining', 
+          href: '/calculators/cnc-machining',
+          description: 'Machining time and costs',
+          icon: <Package className="h-5 w-5" />
+        },
+        { 
+          name: 'Material Utilization', 
+          href: '/calculators/material-utilization',
+          description: 'Optimize material usage',
+          icon: <BarChart3 className="h-5 w-5" />
+        },
+      ]
     },
-    { 
-      name: 'CNC Machining', 
-      href: '/calculators/cnc-machining',
-      description: 'Estimate machining time and costs',
-      icon: <Package className="h-5 w-5" />
+    {
+      category: 'Cost Center',
+      tools: [
+        { 
+          name: 'Hourly Rate Builder', 
+          href: '/calculators/cost-center/hourly-rate',
+          description: 'Calculate shop hourly rate',
+          icon: <DollarSign className="h-5 w-5" />,
+          badge: 'New'
+        },
+        { 
+          name: 'Overhead Allocator', 
+          href: '/calculators/cost-center/overhead-allocator',
+          description: 'Allocate overhead costs',
+          icon: <TrendingUp className="h-5 w-5" />,
+          badge: 'New'
+        },
+        { 
+          name: 'Setup Estimator', 
+          href: '/calculators/cost-center/setup-estimator',
+          description: 'Estimate setup & changeover',
+          icon: <Clock className="h-5 w-5" />,
+          badge: 'New'
+        },
+        { 
+          name: 'More Tools...', 
+          href: '/calculators/cost-center',
+          description: 'View all cost center tools',
+          icon: <Settings className="h-5 w-5" />
+        },
+      ]
     },
-    { 
-      name: 'Equipment ROI', 
-      href: '/calculators/roi',
-      description: 'Analyze investment returns',
-      icon: <TrendingUp className="h-5 w-5" />
-    },
-    { 
-      name: 'Energy Cost', 
-      href: '/calculators/energy',
-      description: 'Track power consumption',
-      icon: <Leaf className="h-5 w-5" />
-    },
-    { 
-      name: 'Material Utilization', 
-      href: '/calculators/material-utilization',
-      description: 'Optimize material usage',
-      icon: <BarChart3 className="h-5 w-5" />
-    },
+    {
+      category: 'Analysis',
+      tools: [
+        { 
+          name: 'Equipment ROI', 
+          href: '/calculators/roi',
+          description: 'Investment return analysis',
+          icon: <TrendingUp className="h-5 w-5" />
+        },
+        { 
+          name: 'Energy Cost', 
+          href: '/calculators/energy',
+          description: 'Power consumption tracking',
+          icon: <Leaf className="h-5 w-5" />
+        },
+      ]
+    }
   ];
 
   const isActive = (path: string) => pathname === path;
@@ -88,7 +130,7 @@ export function Navigation() {
 
               {/* Mega Menu */}
               {isCalculatorsOpen && (
-                <div className="absolute left-0 top-full mt-1 w-96 animate-fade-in">
+                <div className="absolute left-0 top-full mt-1 w-[600px] animate-fade-in">
                   <div className="mt-2 rounded-xl bg-white shadow-xl ring-1 ring-black ring-opacity-5">
                     <div className="p-4">
                       <div className="mb-3 flex items-center justify-between">
@@ -100,30 +142,42 @@ export function Navigation() {
                           View All →
                         </Link>
                       </div>
-                      <div className="space-y-1">
-                        {tools.map(tool => (
-                          <Link
-                            key={tool.href}
-                            href={tool.href}
-                            className="group flex items-start gap-3 rounded-lg p-3 transition-colors hover:bg-gray-50"
-                          >
-                            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600 transition-colors group-hover:bg-primary-100">
-                              {tool.icon}
+                      <div className="grid grid-cols-2 gap-4">
+                        {toolCategories.map((category, idx) => (
+                          <div key={idx}>
+                            <h4 className="mb-2 text-xs font-semibold text-gray-700 uppercase tracking-wider">{category.category}</h4>
+                            <div className="space-y-1">
+                              {category.tools.map(tool => (
+                                <Link
+                                  key={tool.href}
+                                  href={tool.href}
+                                  className="group flex items-start gap-2 rounded-lg p-2 transition-colors hover:bg-gray-50"
+                                >
+                                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600 transition-colors group-hover:bg-primary-100">
+                                    {tool.icon}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-1.5">
+                                      <p className="text-sm font-semibold text-gray-900 group-hover:text-primary-600">
+                                        {tool.name}
+                                      </p>
+                                      {tool.popular && (
+                                        <span className="inline-flex items-center rounded-full bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-800">
+                                          Popular
+                                        </span>
+                                      )}
+                                      {tool.badge && (
+                                        <span className="inline-flex items-center rounded-full bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-800">
+                                          {tool.badge}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <p className="text-xs text-gray-600 mt-0.5">{tool.description}</p>
+                                  </div>
+                                </Link>
+                              ))}
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <p className="text-sm font-semibold text-gray-900 group-hover:text-primary-600">
-                                  {tool.name}
-                                </p>
-                                {tool.popular && (
-                                  <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-                                    Popular
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-xs text-gray-600 mt-0.5">{tool.description}</p>
-                            </div>
-                          </Link>
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -210,16 +264,28 @@ export function Navigation() {
                   />
                 </button>
                 {isCalculatorsOpen && (
-                  <div className="ml-4 mt-2 space-y-1">
-                    {tools.map(tool => (
-                      <Link
-                        key={tool.href}
-                        href={tool.href}
-                        className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-600"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        {tool.name}
-                      </Link>
+                  <div className="ml-4 mt-2 space-y-3">
+                    {toolCategories.map((category, idx) => (
+                      <div key={idx}>
+                        <h4 className="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">{category.category}</h4>
+                        <div className="space-y-1">
+                          {category.tools.map(tool => (
+                            <Link
+                              key={tool.href}
+                              href={tool.href}
+                              className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-600"
+                              onClick={() => setIsOpen(false)}
+                            >
+                              <span>{tool.name}</span>
+                              {tool.badge && (
+                                <span className="inline-flex items-center rounded-full bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-800">
+                                  {tool.badge}
+                                </span>
+                              )}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
                     ))}
                   </div>
                 )}

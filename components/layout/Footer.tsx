@@ -12,7 +12,7 @@ export function Footer() {
     <footer className="bg-gray-900 text-gray-300">
       {/* Main Footer */}
       <div className="container mx-auto px-4 py-12">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
           {/* Brand Column */}
           <div>
             <Link href="/" className="mb-4 flex items-center space-x-2">
@@ -85,10 +85,65 @@ export function Footer() {
               </li>
               <li>
                 <Link
+                  href="/calculators/material-utilization"
+                  className="transition-colors hover:text-primary-500"
+                >
+                  Material Utilization
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/calculators/roi"
                   className="transition-colors hover:text-primary-500"
                 >
                   {t.footer.links.roiCalculator}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/calculators/energy"
+                  className="transition-colors hover:text-primary-500"
+                >
+                  Energy Cost
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Cost Center Column */}
+          <div>
+            <h3 className="mb-4 text-lg font-semibold text-white">Cost Center</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link
+                  href="/calculators/cost-center/hourly-rate"
+                  className="transition-colors hover:text-primary-500"
+                >
+                  Hourly Rate Builder
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/calculators/cost-center/overhead-allocator"
+                  className="transition-colors hover:text-primary-500"
+                >
+                  Overhead Allocator
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/calculators/cost-center/setup-estimator"
+                  className="transition-colors hover:text-primary-500"
+                >
+                  Setup Estimator
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/calculators/cost-center"
+                  className="transition-colors hover:text-primary-500"
+                >
+                  View All →
                 </Link>
               </li>
             </ul>
