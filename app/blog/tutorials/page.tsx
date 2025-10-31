@@ -12,16 +12,14 @@ export default function TutorialsLibraryPage() {
     <main className="bg-gray-50 py-16">
       <div className="container mx-auto px-4">
         <header className="mx-auto max-w-4xl text-center">
-          <p className="mb-4 inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-sm font-semibold text-amber-700">
-            Tutorials Preview
+          <p className="mb-4 inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-700">
+            Tutorials Library
           </p>
           <h1 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">
             Guided playbooks for quoting and operations
           </h1>
           <p className="text-lg text-gray-600">
-            We are finalizing a structured tutorial series that shows you exactly how to load part
-            data, interpret results, and improve margins with LaserCalc Pro. The curriculum below is
-            in production—subscribe to be notified when new modules launch.
+            Practical, step-by-step guides with real inputs, downloadable worksheets, and exportable checklists.
           </p>
         </header>
 
@@ -33,7 +31,11 @@ export default function TutorialsLibraryPage() {
                   <p className="text-sm font-semibold uppercase tracking-wide text-primary-500">
                     {module.category}
                   </p>
-                  <h2 className="mt-2 text-2xl font-semibold text-gray-900">{module.title}</h2>
+                  <h2 className="mt-2 text-2xl font-semibold text-gray-900">
+                    <Link href={module.href} className="hover:text-primary-600">
+                      {module.title}
+                    </Link>
+                  </h2>
                   <p className="mt-2 text-gray-600">{module.description}</p>
                 </div>
                 <div className="flex flex-col items-start gap-2 text-sm text-gray-500">
@@ -52,6 +54,11 @@ export default function TutorialsLibraryPage() {
                   </li>
                 ))}
               </ul>
+              <div className="mt-6">
+                <Link href={module.href} className="text-sm font-semibold text-primary-600 hover:underline">
+                  Open tutorial →
+                </Link>
+              </div>
             </article>
           ))}
         </section>
@@ -91,6 +98,7 @@ const modules = [
     level: 'Intermediate',
     duration: '20 min',
     format: 'Video + PDF worksheet',
+    href: '/blog/tutorials/cad-to-quote',
     takeaways: [
       'How to prep DXF/SVG files for accurate path length detection',
       'Setting realistic gas, labor, and overhead assumptions',
@@ -105,6 +113,7 @@ const modules = [
     level: 'Advanced',
     duration: '25 min',
     format: 'Interactive walkthrough',
+    href: '/blog/tutorials/cnc-volume-pricing',
     takeaways: [
       'Estimating spindle time and batch sizes for mill vs. lathe jobs',
       'Modelling tooling life and consumable costs in your quote',
@@ -119,6 +128,7 @@ const modules = [
     level: 'Strategic',
     duration: '18 min',
     format: 'Template + case study',
+    href: '/blog/tutorials/equipment-roi-narrative',
     takeaways: [
       'Mapping utilisation scenarios and stress-testing downside cases',
       'Framing CAPEX justification using NPV and IRR snapshots',
