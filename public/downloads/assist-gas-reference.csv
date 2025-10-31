@@ -1,0 +1,7 @@
+Material,Thickness_mm,Recommended_Gas,Typical_Speed_Note,Cost_Note
+Mild_Steel,1-3,O2,Fast cut; oxide layer present,O2 ~$0.10-0.30/m3
+Mild_Steel,3-12,O2,Good throughput; watch edge cleanup,O2 ~$0.10-0.30/m3
+Stainless,0.5-6,N2,Clean edge (no oxide),N2 ~$0.50-2.00/m3
+Aluminum,0.5-6,N2 or Air,Air for thin sheets; N2 for quality,Air is lowest cost
+Copper_Brass,0.5-3,N2,High power required,N2 ~$0.50-2.00/m3
+

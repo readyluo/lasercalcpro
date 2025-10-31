@@ -11,6 +11,7 @@ interface TutorialConfig {
   level: string;
   sections: Array<{ heading: string; content: React.ReactNode }>;
   steps: Array<{ name: string; text: string }>;
+  downloads?: Array<{ label: string; href: string }>;
 }
 
 const TUTORIALS: Record<string, TutorialConfig> = {
@@ -60,6 +61,9 @@ const TUTORIALS: Record<string, TutorialConfig> = {
       { name: 'Enter parameters', text: 'Fill material, thickness, length, power, labor, gas.' },
       { name: 'Verify costs', text: 'Confirm breakdown aligns with shop data.' },
       { name: 'Export quote', text: 'Generate PDF and archive version.' },
+    ],
+    downloads: [
+      { label: 'CAD-to-Quote Worksheet (CSV)', href: '/downloads/cad-to-quote-worksheet.csv' },
     ],
   },
   'cnc-volume-pricing': {
@@ -230,6 +234,9 @@ const TUTORIALS: Record<string, TutorialConfig> = {
       { name: 'Validate margin', text: 'Check discount impact and thresholds.' },
       { name: 'Export & archive', text: 'PDF export and revision logging.' },
     ],
+    downloads: [
+      { label: 'Quoting Automation Template (CSV)', href: '/downloads/quoting-automation-template.csv' },
+    ],
   },
   'laser-assist-gas-strategy': {
     title: 'Assist gas strategy: cost, quality, and speed trade-offs',
@@ -271,6 +278,9 @@ const TUTORIALS: Record<string, TutorialConfig> = {
       { name: 'Pick gas', text: 'Select by material, thickness, and quality requirements.' },
       { name: 'Estimate cost', text: 'Compute m³ × $/m³ and compare to cycle time.' },
       { name: 'Tune process', text: 'Adjust pressure/nozzle to minimise total cost.' },
+    ],
+    downloads: [
+      { label: 'Assist Gas Reference (CSV)', href: '/downloads/assist-gas-reference.csv' },
     ],
   },
 };
@@ -321,6 +331,13 @@ export default function TutorialPage({ params }: { params: { slug: string } }) {
                   Open Quotation Margin Simulator
                 </Link>
               </li>
+              {tutorial.downloads?.map(d => (
+                <li key={d.href}>
+                  <a href={d.href} className="text-primary-600 hover:underline" download>
+                    {d.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

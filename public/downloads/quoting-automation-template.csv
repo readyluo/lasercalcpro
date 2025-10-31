@@ -1,0 +1,6 @@
+Quote_ID,Customer_Tier,Quantity,Base_Cost_USD,Target_Margin_% ,Suggested_Price_USD,Discount_% ,Discounted_Price_USD,Notes
+Q-2025-0001,NEW,1,1000,30,,0,,Initial quote
+Q-2025-0001,NEW,10,920,30,,5,,Tiered pricing
+Q-2025-0001,NEW,50,850,28,,8,,Volume incentive
+Q-2025-0001,OEM,200,780,25,,10,,Strategic tier
+

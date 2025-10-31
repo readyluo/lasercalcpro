@@ -1,0 +1,13 @@
+Field,Example,Notes
+Material,mild_steel,One of: mild_steel|stainless_steel|aluminum
+Thickness_mm,3,Match actual sheet thickness
+Cutting_Length_mm,1250,Total path length incl. holes
+Pierce_Count,12,Include outer contour pierce if needed
+Laser_Power_kW,6,Machine rated power
+Electricity_Rate_USD_per_kWh,0.12,Local tariff
+Labor_Rate_USD_per_hr,25,Operator hourly rate
+Gas_Type,N2,One of: N2|O2|Air
+Gas_Price_USD_per_m3,1.50,Average nitrogen price
+Overhead_USD_per_month,15000,Administrative overhead
+Notes,,Any special requirements
+
