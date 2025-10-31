@@ -1302,7 +1302,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               </table>
             </div>
             <ul className="ml-5 list-disc space-y-2 text-gray-700">
-              <li><strong>Grouping by size:</strong> Nest similar-sized parts together. Large parts (>500mm) separate from small parts (<100mm) to avoid wasted space.</li>
+              <li><strong>Grouping by size:</strong> Nest similar-sized parts together. Large parts (>500mm) separate from small parts (&lt;100mm) to avoid wasted space.</li>
               <li><strong>Grouping by shape:</strong> Rectangular parts nest efficiently together. Complex organic shapes need more trial-and-error or software optimization.</li>
               <li><strong>Pierce optimization:</strong> Group parts to minimize total pierces. Shared edges or common line cutting can eliminate pierces between adjacent parts.</li>
               <li><strong>Lead-in placement:</strong> Position lead-ins toward scrap areas, not into adjacent parts. Use tangent or perpendicular lead-ins (0.5-2mm) to minimize dross.</li>
@@ -1417,7 +1417,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               <li><strong>Lead-in placement strategy:</strong> Position lead-ins in scrap areas or corners where marks are acceptable. Avoid placing on mating edges or visible surfaces.</li>
               <li><strong>Pierce point optimization:</strong> Each pierce takes 0.5-2 seconds and creates a defect point. Minimize total pierces by using common line cutting where possible.</li>
               <li><strong>Dross management:</strong> Lead-out length affects dross buildup. Extend lead-out 1-2mm beyond part to allow dross to fall into scrap area.</li>
-              <li><strong>Thermal distortion:</strong> On thin materials (<1.5mm), use shorter lead-ins (0.5mm) to minimize heat input and warping.</li>
+              <li><strong>Thermal distortion:</strong> On thin materials (&lt;1.5mm), use shorter lead-ins (0.5mm) to minimize heat input and warping.</li>
             </ul>
           </>
         ),
