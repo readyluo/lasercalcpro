@@ -16,6 +16,7 @@ import {
   type MarkingMethod,
 } from '@/lib/validations/marking';
 import { Navigation } from '@/components/layout/Navigation';
+import { Footer } from '@/components/layout/Footer';
 import { Calculator, Zap, DollarSign, Clock, TrendingUp, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 import Link from 'next/link';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
@@ -813,9 +814,12 @@ export default function MarkingCalculatorPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 }
+
+
 
 
 

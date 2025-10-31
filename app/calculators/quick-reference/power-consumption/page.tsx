@@ -58,7 +58,7 @@ export default function PowerConsumptionReferencePage() {
                 <Zap className="h-8 w-8 text-yellow-600" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold text-gray-900">text-3xl font-bold text-gray-900">Laser Equipment Power Consumption Reference</h1>
+                <h1 className="text-4xl font-bold text-gray-900">Laser Equipment Power Consumption Reference</h1>
                 <p className="text-gray-600">Complete guide to energy usage and electricity costs</p>
               </div>
             </div>

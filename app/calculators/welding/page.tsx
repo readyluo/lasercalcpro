@@ -17,6 +17,7 @@ import {
   type WeldingProcessType,
 } from '@/lib/validations/welding';
 import { Navigation } from '@/components/layout/Navigation';
+import { Footer } from '@/components/layout/Footer';
 import { Calculator, Zap, DollarSign, Clock, TrendingUp, CheckCircle, Info, Flame } from 'lucide-react';
 import Link from 'next/link';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
@@ -869,9 +870,12 @@ export default function WeldingCalculatorPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 }
+
+
 
 
 

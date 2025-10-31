@@ -8,7 +8,7 @@ export const runtime = 'nodejs'; // Changed from 'edge' - requires D1 database a
 /**
  * GET /api/stats - Get general statistics (public)
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const [calculationStats, subscriberStats, articleStats] = await Promise.all([
       getCalculationStats(),

@@ -7,7 +7,7 @@ export const runtime = 'nodejs';
  * GET /api/settings/public
  * Returns publicly accessible settings (GA4, AdSense, etc.)
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const ga4Id = await getSetting('ga4_measurement_id');
     const adsenseId = await getSetting('adsense_client_id');

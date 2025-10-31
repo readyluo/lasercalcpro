@@ -1,5 +1,5 @@
 // Admin Articles API Routes
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { requireAuth, AuthenticatedRequest } from '@/lib/auth/middleware';
 import {
   getArticles,
