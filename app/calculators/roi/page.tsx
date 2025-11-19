@@ -116,49 +116,17 @@ export default function ROICalculatorPage() {
       <SchemaMarkup schema={softwareSchema} />
       <Navigation />
       <main className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-6">
           <Breadcrumbs />
 
-          {/* When to use this calculator */}
-          <div className="mb-4 rounded-2xl bg-blue-50 border-l-4 border-blue-500 px-4 py-3">
-            <h2 className="mb-1 text-sm font-semibold text-gray-900">When to use this equipment ROI calculator</h2>
-            <div className="grid gap-3 md:grid-cols-2 text-xs text-gray-700">
-              <div>
-                <p className="font-semibold text-gray-900">✓ Best suited for:</p>
-                <ul className="mt-1 ml-5 list-disc space-y-1">
-                  <li>Evaluating individual equipment purchases with clear revenue or savings assumptions</li>
-                  <li>Comparing financing vs cash purchase scenarios on the same machine</li>
-                  <li>Checking whether a proposed investment roughly meets your payback and ROI targets</li>
-                  <li>Communicating investment logic to partners, managers, or lenders</li>
-                </ul>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">✗ Not ideal for:</p>
-                <ul className="mt-1 ml-5 list-disc space-y-1">
-                  <li>Full company valuations or multi-asset portfolio decisions</li>
-                  <li>Detailed tax planning or GAAP/IFRS-compliant financial statements</li>
-                  <li>Projects with highly uncertain or speculative revenue profiles</li>
-                  <li>Making final investment decisions without review by finance or tax advisors</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
           {/* Header - Compact */}
-          <div className="mb-4">
+          <div className="mb-6">
             <h1 className="mb-2 text-3xl font-bold text-gray-900">
               {t.roi.title}
             </h1>
-            <p className="text-base text-gray-600">{t.roi.description}</p>
-          </div>
-
-          {/* Disclaimer - Simplified */}
-          <div className="mb-4 border-l-4 border-blue-500 bg-blue-50 px-4 py-3">
-            <p className="text-sm text-blue-900">
-              <TrendingUp className="mr-2 inline h-4 w-4" />
-              <strong>Investment analysis (before tax):</strong> This tool models cash flows and financing based on the
-              assumptions you enter. It does not include income tax, depreciation tax shields, or local accounting rules.
-              Treat the outputs as structured what-if scenarios to compare options, not guaranteed returns or financial advice.
+            <p className="text-sm text-gray-600">
+              {t.roi.description}
+              <span className="ml-2 text-xs text-blue-600">⚠️ Before-tax analysis - consult advisors for final decisions</span>
             </p>
           </div>
 
@@ -1024,6 +992,47 @@ export default function ROICalculatorPage() {
                 </p>
               </Link>
             </div>
+          </div>
+
+          {/* When to use this calculator - Moved to bottom */}
+          <div className="mt-12 rounded-2xl bg-blue-50 border-l-4 border-blue-500 px-6 py-4">
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">When to use this equipment ROI calculator</h2>
+            <div className="grid gap-4 md:grid-cols-2 text-sm text-gray-700">
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">✓ Best suited for:</p>
+                <ul className="ml-5 list-disc space-y-1.5">
+                  <li>Evaluating individual equipment purchases with clear revenue or savings assumptions</li>
+                  <li>Comparing financing vs cash purchase scenarios on the same machine</li>
+                  <li>Checking whether a proposed investment roughly meets your payback and ROI targets</li>
+                  <li>Communicating investment logic to partners, managers, or lenders</li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">✗ Not ideal for:</p>
+                <ul className="ml-5 list-disc space-y-1.5">
+                  <li>Full company valuations or multi-asset portfolio decisions</li>
+                  <li>Detailed tax planning or GAAP/IFRS-compliant financial statements</li>
+                  <li>Projects with highly uncertain or speculative revenue profiles</li>
+                  <li>Making final investment decisions without review by finance or tax advisors</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Detailed Disclaimer - Moved to bottom */}
+          <div className="mt-6 border-l-4 border-blue-500 bg-blue-50 px-6 py-4">
+            <h3 className="mb-2 text-base font-semibold text-blue-900">
+              <TrendingUp className="mr-2 inline h-5 w-5" />
+              Important: Investment Analysis (Before Tax)
+            </h3>
+            <p className="text-sm text-blue-900 mb-2">
+              This tool models cash flows and financing based on the
+              assumptions you enter. It does not include income tax, depreciation tax shields, or local accounting rules.
+            </p>
+            <p className="text-sm text-blue-800">
+              Treat the outputs as structured what-if scenarios to compare options, not guaranteed returns or financial advice.
+              Always consult with finance or tax advisors before making final investment decisions.
+            </p>
           </div>
         </div>
       </main>
