@@ -273,61 +273,16 @@ export default function MarkingCalculatorPage() {
       <SchemaMarkup schema={howToSchema} />
       <SchemaMarkup schema={faqSchema} />
       <Navigation />
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          {/* When to use this calculator */}
-          <div className="mb-4 rounded-2xl bg-purple-50 border-l-4 border-purple-500 px-4 py-3">
-            <h2 className="text-sm font-semibold text-gray-900 mb-1">When to use this laser marking calculator</h2>
-            <div className="grid gap-3 md:grid-cols-2 text-xs text-gray-700">
-              <div>
-                <p className="font-semibold text-gray-900">
-                  ✓ Best suited for:
-                </p>
-                <ul className="ml-5 mt-1 list-disc space-y-1">
-                  <li>Metal and coated-metal part marking (text, logos, IDs)</li>
-                  <li>Standard fiber marking jobs with clear areas in mm²</li>
-                  <li>Depths in roughly the 0.05–0.3 mm range</li>
-                  <li>Comparing time and cost between different quality settings</li>
-                </ul>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">
-                  ✗ Not ideal for:
-                </p>
-                <ul className="ml-5 mt-1 list-disc space-y-1">
-                  <li>High-density QR codes or micro text</li>
-                  <li>Photo engraving and grayscale images</li>
-                  <li>Very deep engraving (&gt;0.5 mm) on hard materials</li>
-                  <li>Exotic materials (ceramics, some plastics) without test data</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
           {/* Header - Compact */}
-          <div className="mb-4">
+          <div className="mb-6">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Laser Marking & Engraving Cost Calculator
             </h1>
-            <p className="text-base text-gray-600">
-              Estimate costs for laser marking, engraving, and etching. See{' '}
-              <Link href="/calculators/quick-reference/processing-parameters" className="text-purple-600 hover:underline">
-                processing parameters reference
-              </Link>{' '}for detailed settings.
-            </p>
-          </div>
-
-          {/* Disclaimer - Simplified */}
-          <div className="mb-4 border-l-4 border-amber-500 bg-amber-50 px-4 py-3">
-            <p className="text-sm text-amber-900">
-              <Info className="mr-2 inline h-4 w-4" />
-              <strong>Estimates only:</strong> This calculator uses simplified speed tables for common fiber marking setups.
-              Actual time depends on laser type, power, beam quality, material condition, and detailed artwork. Treat results as
-              a starting point and validate with test runs on your own equipment before final quoting.
-            </p>
-            <p className="mt-1 text-xs text-amber-800">
-              Very low fill densities can produce incomplete marks, and very deep or multi-pass jobs may require more conservative
-              settings than this model assumes.
+            <p className="text-sm text-gray-600">
+              Estimate costs for laser marking, engraving, and etching.
+              <span className="ml-2 text-xs text-amber-600">⚠️ Estimates only - validate with test runs</span>
             </p>
           </div>
 
@@ -959,6 +914,56 @@ export default function MarkingCalculatorPage() {
                 <p className="text-sm text-gray-600">Energy cost reference tables</p>
               </Link>
             </div>
+          </div>
+
+          {/* When to use this calculator - Moved to bottom */}
+          <div className="mt-12 rounded-2xl bg-purple-50 border-l-4 border-purple-500 px-6 py-4">
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">When to use this laser marking calculator</h2>
+            <div className="grid gap-4 md:grid-cols-2 text-sm text-gray-700">
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">
+                  ✓ Best suited for:
+                </p>
+                <ul className="ml-5 list-disc space-y-1.5">
+                  <li>Metal and coated-metal part marking (text, logos, IDs)</li>
+                  <li>Standard fiber marking jobs with clear areas in mm²</li>
+                  <li>Depths in roughly the 0.05–0.3 mm range</li>
+                  <li>Comparing time and cost between different quality settings</li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">
+                  ✗ Not ideal for:
+                </p>
+                <ul className="ml-5 list-disc space-y-1.5">
+                  <li>High-density QR codes or micro text</li>
+                  <li>Photo engraving and grayscale images</li>
+                  <li>Very deep engraving (&gt;0.5 mm) on hard materials</li>
+                  <li>Exotic materials (ceramics, some plastics) without test data</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Detailed Disclaimer - Moved to bottom */}
+          <div className="mt-6 border-l-4 border-amber-500 bg-amber-50 px-6 py-4">
+            <h3 className="mb-2 text-base font-semibold text-amber-900">
+              <Info className="mr-2 inline h-5 w-5" />
+              Important: These are estimates only
+            </h3>
+            <p className="text-sm text-amber-900 mb-2">
+              This calculator uses simplified speed tables for common fiber marking setups.
+              Actual time depends on laser type, power, beam quality, material condition, and detailed artwork. Treat results as
+              a starting point and validate with test runs on your own equipment before final quoting.
+            </p>
+            <p className="text-sm text-amber-800">
+              Very low fill densities can produce incomplete marks, and very deep or multi-pass jobs may require more conservative
+              settings than this model assumes. See{' '}
+              <Link href="/calculators/quick-reference/processing-parameters" className="text-amber-900 underline hover:text-amber-700">
+                processing parameters reference
+              </Link>{' '}
+              for detailed settings guidance.
+            </p>
           </div>
         </div>
       </div>
