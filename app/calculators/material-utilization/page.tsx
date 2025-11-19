@@ -148,65 +148,17 @@ export default function MaterialUtilizationPage() {
       <SchemaMarkup schema={softwareSchema} />
       <Navigation />
       <main className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-6">
           <Breadcrumbs />
 
-          {/* When to use this calculator */}
-          <div className="mb-6 card bg-blue-50 border-l-4 border-blue-500">
-            <div className="flex items-start gap-3">
-              <Info className="h-6 w-6 text-blue-600 flex-shrink-0 mt-1" />
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-2">When to Use This Calculator</h3>
-                <div className="space-y-2 text-sm text-gray-700">
-                  <div>
-                    <p className="font-semibold text-gray-900">✓ Best for:</p>
-                    <ul className="ml-6 mt-1 list-disc space-y-1">
-                      <li>Quick estimates for rectangular or near-rectangular parts</li>
-                      <li>Comparing different sheet sizes before ordering material</li>
-                      <li>Evaluating whether batch sizes justify custom nesting work</li>
-                      <li>Teaching nesting concepts to new estimators or operators</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">✗ Not ideal for:</p>
-                    <ul className="ml-6 mt-1 list-disc space-y-1">
-                      <li>Complex shapes (circles, brackets, irregular contours)</li>
-                      <li>Production optimization with many mixed part numbers</li>
-                      <li>Replacing professional CAM / true-shape nesting software</li>
-                    </ul>
-                  </div>
-                  <p className="pt-2 mt-2 border-t border-blue-200 text-xs text-gray-600">
-                    <strong>Upgrade path:</strong> If you regularly run complex nests or need to push utilization beyond ~80%,
-                    use this tool for rough planning, then rely on professional nesting software (e.g., SigmaNEST, ProNest) for
-                    final layouts.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Header - Compact */}
-          <div className="mb-4">
+          <div className="mb-6">
             <h1 className="mb-2 text-3xl font-bold text-gray-900">
               Material Utilization Calculator
             </h1>
-            <p className="text-base text-gray-600">
+            <p className="text-sm text-gray-600">
               Optimize sheet material usage and minimize waste with nesting analysis.
-            </p>
-          </div>
-
-          {/* Disclaimer - Simplified */}
-          <div className="mb-4 border-l-4 border-amber-500 bg-amber-50 px-4 py-3">
-            <p className="text-sm text-amber-900">
-              <Info className="mr-2 inline h-4 w-4" />
-              <strong>Simplified rectangular nesting:</strong> This calculator treats parts as simple rectangles arranged in a
-              grid. Real utilization depends on true part shapes, advanced nesting algorithms (true-shape, common-line
-              cutting), and programmer skill.
-            </p>
-            <p className="mt-2 text-xs text-amber-800">
-              <strong>Typical gap from reality:</strong> It is common to see this model report 70–75% utilization where a tuned
-              CAM system can reach 80–85% on the same mix of parts. Use this tool for quick comparisons and planning, and rely
-              on your nesting software for final production programs.
+              <span className="ml-2 text-xs text-amber-600">⚠️ Simplified rectangular nesting - verify with CAM</span>
             </p>
           </div>
 
@@ -668,6 +620,58 @@ export default function MaterialUtilizationPage() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* When to Use This Calculator - Moved to bottom */}
+          <div className="mt-12 card bg-blue-50 border-l-4 border-blue-500">
+            <div className="flex items-start gap-3">
+              <Info className="h-6 w-6 text-blue-600 flex-shrink-0 mt-1" />
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900 mb-3">When to Use This Calculator</h3>
+                <div className="space-y-3 text-sm text-gray-700">
+                  <div>
+                    <p className="font-semibold text-gray-900 mb-2">✓ Best for:</p>
+                    <ul className="ml-6 list-disc space-y-1.5">
+                      <li>Quick estimates for rectangular or near-rectangular parts</li>
+                      <li>Comparing different sheet sizes before ordering material</li>
+                      <li>Evaluating whether batch sizes justify custom nesting work</li>
+                      <li>Teaching nesting concepts to new estimators or operators</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900 mb-2">✗ Not ideal for:</p>
+                    <ul className="ml-6 list-disc space-y-1.5">
+                      <li>Complex shapes (circles, brackets, irregular contours)</li>
+                      <li>Production optimization with many mixed part numbers</li>
+                      <li>Replacing professional CAM / true-shape nesting software</li>
+                    </ul>
+                  </div>
+                  <p className="pt-3 mt-3 border-t border-blue-200 text-sm text-gray-600">
+                    <strong>Upgrade path:</strong> If you regularly run complex nests or need to push utilization beyond ~80%,
+                    use this tool for rough planning, then rely on professional nesting software (e.g., SigmaNEST, ProNest) for
+                    final layouts.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Detailed Disclaimer - Moved to bottom */}
+          <div className="mt-6 border-l-4 border-amber-500 bg-amber-50 px-6 py-4">
+            <h3 className="mb-2 text-base font-semibold text-amber-900">
+              <Info className="mr-2 inline h-5 w-5" />
+              Important: Simplified Rectangular Nesting
+            </h3>
+            <p className="text-sm text-amber-900 mb-2">
+              This calculator treats parts as simple rectangles arranged in a
+              grid. Real utilization depends on true part shapes, advanced nesting algorithms (true-shape, common-line
+              cutting), and programmer skill.
+            </p>
+            <p className="text-sm text-amber-800">
+              <strong>Typical gap from reality:</strong> It is common to see this model report 70–75% utilization where a tuned
+              CAM system can reach 80–85% on the same mix of parts. Use this tool for quick comparisons and planning, and rely
+              on your nesting software for final production programs.
+            </p>
           </div>
         </div>
       </main>
