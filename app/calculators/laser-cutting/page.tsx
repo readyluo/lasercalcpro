@@ -114,53 +114,17 @@ export default function LaserCuttingCalculatorPage() {
       <SchemaMarkup schema={softwareSchema} />
       <Navigation />
       <main className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-6">
           <Breadcrumbs />
 
-          {/* When to use this calculator */}
-          <div className="mb-4 rounded-2xl bg-blue-50 border-l-4 border-blue-500 px-4 py-3">
-            <h2 className="mb-1 text-sm font-semibold text-gray-900">When to use this laser cutting calculator</h2>
-            <div className="grid gap-3 md:grid-cols-2 text-xs text-gray-700">
-              <div>
-                <p className="font-semibold text-gray-900">✓ Best suited for:</p>
-                <ul className="mt-1 ml-5 list-disc space-y-1">
-                  <li>Sheet and plate cutting with typical fiber or CO₂ laser systems</li>
-                  <li>Order-of-magnitude cost estimates using your own rates and material prices</li>
-                  <li>Comparing material choices, thicknesses, and utilization scenarios</li>
-                  <li>Explaining cost structure (material vs power vs labor) to internal teams or customers</li>
-                </ul>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">✗ Not ideal for:</p>
-                <ul className="mt-1 ml-5 list-disc space-y-1">
-                  <li>Highly optimized production quoting based on detailed CAM time studies</li>
-                  <li>Jobs dominated by setup, fixturing, or complex secondary operations</li>
-                  <li>Very thick plate or exotic alloys beyond your proven parameter tables</li>
-                  <li>Guaranteeing margins without first validating against your own production data</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          {/* Header - Compact */}
-          <div className="mb-4">
+          {/* Compact Header */}
+          <div className="mb-6">
             <h1 className="mb-2 text-3xl font-bold text-gray-900">
               {t.laserCutting.title}
             </h1>
-            <p className="text-base text-gray-600">{t.laserCutting.description}</p>
-          </div>
-
-          {/* Disclaimer - Simplified */}
-          <div className="mb-4 border-l-4 border-amber-500 bg-amber-50 px-4 py-3">
-            <p className="text-sm text-amber-900">
-              <Info className="mr-2 inline h-4 w-4" />
-              <strong>Estimates only:</strong> This calculator combines your own inputs with simplified empirical models and a
-              few default assumptions (e.g. typical equipment cost, lifespan, auxiliary power). Actual cutting speeds, gas
-              usage, and margins depend strongly on your machine, parameters, nesting strategy, and local rates.
-            </p>
-            <p className="mt-1 text-xs text-amber-800">
-              Use these results as a structured starting point, then compare them against your real jobs and CAM estimates
-              before final quoting—especially for very thick material, unusual alloys, or tight-tolerance parts.
+            <p className="text-sm text-gray-600">
+              {t.laserCutting.description}
+              <span className="ml-2 text-xs text-amber-600">⚠️ Estimates only - verify against your production data</span>
             </p>
           </div>
 
@@ -942,6 +906,48 @@ export default function LaserCuttingCalculatorPage() {
                 </p>
               </Link>
             </div>
+          </div>
+
+          {/* When to use this calculator - Moved to bottom */}
+          <div className="mt-12 rounded-2xl bg-blue-50 border-l-4 border-blue-500 px-6 py-4">
+            <h2 className="mb-3 text-lg font-semibold text-gray-900">When to use this laser cutting calculator</h2>
+            <div className="grid gap-4 md:grid-cols-2 text-sm text-gray-700">
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">✓ Best suited for:</p>
+                <ul className="ml-5 list-disc space-y-1.5">
+                  <li>Sheet and plate cutting with typical fiber or CO₂ laser systems</li>
+                  <li>Order-of-magnitude cost estimates using your own rates and material prices</li>
+                  <li>Comparing material choices, thicknesses, and utilization scenarios</li>
+                  <li>Explaining cost structure (material vs power vs labor) to internal teams or customers</li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">✗ Not ideal for:</p>
+                <ul className="ml-5 list-disc space-y-1.5">
+                  <li>Highly optimized production quoting based on detailed CAM time studies</li>
+                  <li>Jobs dominated by setup, fixturing, or complex secondary operations</li>
+                  <li>Very thick plate or exotic alloys beyond your proven parameter tables</li>
+                  <li>Guaranteeing margins without first validating against your own production data</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Detailed Disclaimer - Moved to bottom */}
+          <div className="mt-6 border-l-4 border-amber-500 bg-amber-50 px-6 py-4">
+            <h3 className="mb-2 text-base font-semibold text-amber-900">
+              <Info className="mr-2 inline h-5 w-5" />
+              Important: These are estimates only
+            </h3>
+            <p className="text-sm text-amber-900 mb-2">
+              This calculator combines your own inputs with simplified empirical models and a
+              few default assumptions (e.g. typical equipment cost, lifespan, auxiliary power). Actual cutting speeds, gas
+              usage, and margins depend strongly on your machine, parameters, nesting strategy, and local rates.
+            </p>
+            <p className="text-sm text-amber-800">
+              Use these results as a structured starting point, then compare them against your real jobs and CAM estimates
+              before final quoting—especially for very thick material, unusual alloys, or tight-tolerance parts.
+            </p>
           </div>
         </div>
       </main>
