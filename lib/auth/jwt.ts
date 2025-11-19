@@ -1,13 +1,20 @@
 // JWT Token Management for Admin Authentication
 import { SignJWT, jwtVerify } from 'jose';
 
-const rawSecret = process.env.JWT_SECRET;
+// Lazy initialization to avoid build-time errors
+let JWT_SECRET: Uint8Array | null = null;
 
-if (!rawSecret) {
-  throw new Error('JWT_SECRET environment variable is required for admin authentication.');
+function getJWTSecret(): Uint8Array {
+  if (JWT_SECRET) return JWT_SECRET;
+  
+  const rawSecret = process.env.JWT_SECRET;
+  if (!rawSecret) {
+    throw new Error('JWT_SECRET environment variable is required for admin authentication.');
+  }
+  
+  JWT_SECRET = new TextEncoder().encode(rawSecret);
+  return JWT_SECRET;
 }
-
-const JWT_SECRET = new TextEncoder().encode(rawSecret);
 
 export interface AdminTokenPayload {
   id: number;
@@ -26,7 +33,7 @@ export async function generateToken(payload: Omit<AdminTokenPayload, 'iat' | 'ex
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('7d') // Token expires in 7 days
-    .sign(JWT_SECRET);
+    .sign(getJWTSecret());
   
   return token;
 }
@@ -36,7 +43,7 @@ export async function generateToken(payload: Omit<AdminTokenPayload, 'iat' | 'ex
  */
 export async function verifyToken(token: string): Promise<AdminTokenPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, getJWTSecret());
     
     // Validate required fields
     if (!payload.id || !payload.username || !payload.email || !payload.role) {
