@@ -123,55 +123,17 @@ export default function CNCMachiningCalculatorPage() {
       <SchemaMarkup schema={softwareSchema} />
       <Navigation />
       <main className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-6">
           <Breadcrumbs />
 
-          {/* When to use this calculator */}
-          <div className="mb-4 rounded-2xl bg-blue-50 border-l-4 border-blue-500 px-4 py-3">
-            <h2 className="mb-1 text-sm font-semibold text-gray-900">When to use this CNC machining calculator</h2>
-            <div className="grid gap-3 md:grid-cols-2 text-xs text-gray-700">
-              <div>
-                <p className="font-semibold text-gray-900">✓ Best suited for:</p>
-                <ul className="mt-1 ml-5 list-disc space-y-1">
-                  <li>Simple prismatic parts with mostly milling, turning, and drilling</li>
-                  <li>Rough cost comparisons between materials and batch sizes</li>
-                  <li>Understanding setup vs. cycle time impact on cost/part</li>
-                  <li>Early-stage quoting where you already know approximate cycle times</li>
-                </ul>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">✗ Not ideal for:</p>
-                <ul className="mt-1 ml-5 list-disc space-y-1">
-                  <li>Highly complex 5-axis surfaces, undercuts, or deep cavities</li>
-                  <li>Jobs dominated by programming, inspection, or fixturing time</li>
-                  <li>Exotic materials (Inconel, hardened steels) without measured cycle data</li>
-                  <li>Fully-optimized production lines with detailed time studies</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
           {/* Header - Compact */}
-          <div className="mb-4">
+          <div className="mb-6">
             <h1 className="mb-2 text-3xl font-bold text-gray-900">
               {t.cncMachining.title}
             </h1>
-            <p className="text-base text-gray-600">{t.cncMachining.description}</p>
-          </div>
-
-          {/* Disclaimer - Simplified */}
-          <div className="mb-4 border-l-4 border-amber-500 bg-amber-50 px-4 py-3">
-            <p className="text-sm text-amber-900">
-              <svg className="mr-2 inline h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <strong>Estimates only:</strong> This tool combines your own time and rate inputs with simplified cost formulas.
-              It does not model detailed toolpaths, fixturing strategies, programming time, inspection, coolant usage, or scrap.
-              Always compare against measured cycle times and historical jobs in your own shop before final quoting.
-            </p>
-            <p className="mt-1 text-xs text-amber-800">
-              Complex 5-axis parts, hard-to-machine alloys, and tight-tolerance features can be significantly slower than
-              simple prismatic examples. Treat these results as planning guidance, not a guaranteed shop rate.
+            <p className="text-sm text-gray-600">
+              {t.cncMachining.description}
+              <span className="ml-2 text-xs text-amber-600">⚠️ Estimates only - verify with shop data</span>
             </p>
           </div>
 
@@ -1006,6 +968,50 @@ export default function CNCMachiningCalculatorPage() {
                 </p>
               </Link>
             </div>
+          </div>
+
+          {/* When to use this calculator - Moved to bottom */}
+          <div className="mt-12 rounded-2xl bg-blue-50 border-l-4 border-blue-500 px-6 py-4">
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">When to use this CNC machining calculator</h2>
+            <div className="grid gap-4 md:grid-cols-2 text-sm text-gray-700">
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">✓ Best suited for:</p>
+                <ul className="ml-5 list-disc space-y-1.5">
+                  <li>Simple prismatic parts with mostly milling, turning, and drilling</li>
+                  <li>Rough cost comparisons between materials and batch sizes</li>
+                  <li>Understanding setup vs. cycle time impact on cost/part</li>
+                  <li>Early-stage quoting where you already know approximate cycle times</li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">✗ Not ideal for:</p>
+                <ul className="ml-5 list-disc space-y-1.5">
+                  <li>Highly complex 5-axis surfaces, undercuts, or deep cavities</li>
+                  <li>Jobs dominated by programming, inspection, or fixturing time</li>
+                  <li>Exotic materials (Inconel, hardened steels) without measured cycle data</li>
+                  <li>Fully-optimized production lines with detailed time studies</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Detailed Disclaimer - Moved to bottom */}
+          <div className="mt-6 border-l-4 border-amber-500 bg-amber-50 px-6 py-4">
+            <h3 className="mb-2 text-base font-semibold text-amber-900">
+              <svg className="mr-2 inline h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Important: Estimates Only
+            </h3>
+            <p className="text-sm text-amber-900 mb-2">
+              This tool combines your own time and rate inputs with simplified cost formulas.
+              It does not model detailed toolpaths, fixturing strategies, programming time, inspection, coolant usage, or scrap.
+            </p>
+            <p className="text-sm text-amber-800">
+              Complex 5-axis parts, hard-to-machine alloys, and tight-tolerance features can be significantly slower than
+              simple prismatic examples. Always compare against measured cycle times and historical jobs in your own shop before final quoting.
+              Treat these results as planning guidance, not a guaranteed shop rate.
+            </p>
           </div>
         </div>
       </main>
