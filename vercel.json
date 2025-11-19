@@ -111,8 +111,6 @@
       "maxDuration": 15
     }
   },
-
-  "regions": ["iad1", "hnd1"],
   
   "env": {
     "NEXT_PUBLIC_SITE_URL": "https://www.lasercalcpro.com",
