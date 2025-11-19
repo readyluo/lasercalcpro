@@ -2,10 +2,11 @@
  * Kerf Width Reference Constants
  * 
  * Kerf width affects dimensional accuracy, material usage, and edge quality.
- * Values for fiber laser systems (CO2 lasers typically have wider kerfs).
+ * Tables below provide example reference values for fiber laser systems (CO2 lasers typically have wider kerfs).
  * 
- * Source: Manufacturing data from laser OEMs and job shop measurements
- * Accuracy: ±0.02mm typical variation due to conditions
+ * Source: selected manufacturing data from laser OEMs and job shop measurements; actual kerf on a given machine
+ * can differ from these references. Use them as starting points for estimating and CAM setup, and confirm critical
+ * dimensions with test cuts on your own equipment.
  */
 
 /**
@@ -162,7 +163,8 @@ export function calculateKerfMaterialLoss(
 }
 
 /**
- * Typical kerf width ranges by laser type
+ * Example kerf width bands by laser type used in this model
+ * (real machines may differ and should be checked with direct measurements).
  */
 export const KERF_BY_LASER_TYPE = {
   fiberLaser: {

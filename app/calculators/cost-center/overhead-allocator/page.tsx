@@ -10,7 +10,7 @@ import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { ExportButton } from '@/components/calculators/ExportButton';
-import { DollarSign, Calculator as CalculatorIcon, RotateCcw, HelpCircle, TrendingUp, AlertTriangle } from 'lucide-react';
+import { DollarSign, Calculator as CalculatorIcon, RotateCcw, HelpCircle, TrendingUp, AlertTriangle, PieChart } from 'lucide-react';
 import { overheadAllocatorSchema, overheadAllocatorDefaults, type OverheadAllocatorInput } from '@/lib/validations/cost-center';
 import { allocateOverhead, calculateOverheadRate, compareAllocationMethods } from '@/lib/calculators/cost-center/overhead';
 import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
@@ -72,9 +72,7 @@ const methodDescriptions: Record<string, { description: string; bestFor: string;
 export default function OverheadAllocatorPage() {
   const [isCalculating, setIsCalculating] = React.useState(false);
   const [result, setResult] = React.useState<ReturnType<typeof allocateOverhead> | null>(null);
-  const [showMethodInfo, setShowMethodInfo] = React.useState(false);
-
-  const howToSchema = generateCalculatorHowToSchema(
+    const howToSchema = generateCalculatorHowToSchema(
     'Overhead Allocator',
     'Allocate overhead across jobs using machine hours, labor hours, material cost, floor space, or equal split.',
     [
@@ -104,7 +102,8 @@ export default function OverheadAllocatorPage() {
     },
     {
       question: 'What if my overhead rate is very high?',
-      answer: 'A high overhead rate (>60-100%) suggests significant indirect costs relative to direct costs. This may indicate: opportunities for cost reduction, need to review allocation method accuracy, potential for automation to reduce labor, or need to increase production volume to spread fixed costs. Review your cost structure and consider process improvements.'
+      answer:
+        'An overhead rate that is high relative to your direct costs means indirect costs are a large share of the modeled total. In this tool, higher percentages are a signal to review your inputs, allocation choices, and overall cost structure. Compare the calculated rate with your historical data and business context before deciding whether to adjust costs, utilization, or pricing.'
     },
     {
       question: 'How often should I review my overhead allocation?',
@@ -161,39 +160,19 @@ export default function OverheadAllocatorPage() {
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
 
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="mb-2 text-4xl font-bold text-gray-900 md:text-5xl">Overhead Allocator Calculator</h1>
-            <p className="mb-4 text-lg text-gray-600">
-              Distribute overhead costs fairly across jobs using industry-standard allocation methods. 
-              Make informed decisions with accurate cost allocation analysis.
+          <div className="mb-4">
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">Overhead Allocator Calculator</h1>
+            <p className="text-base text-gray-600">
+              Distribute overhead costs across jobs using common allocation methods.
             </p>
-            
-            {/* Quick Guide */}
-            <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
-              <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-blue-900">
-                <HelpCircle className="h-5 w-5" />
-                How to Use This Calculator
-              </h2>
-              <ol className="space-y-2 text-sm text-blue-800">
-                <li className="flex gap-2">
-                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">1</span>
-                  <span><strong>Enter Total Overhead:</strong> Input the total overhead costs you need to allocate (e.g., rent, utilities, insurance, administrative costs)</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">2</span>
-                  <span><strong>Select Allocation Method:</strong> Choose the method that best reflects your actual cost drivers and business operations</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">3</span>
-                  <span><strong>Add Your Jobs:</strong> Input data for each job including machine hours, labor hours, material costs, and floor space</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">4</span>
-                  <span><strong>Calculate & Analyze:</strong> Review the allocation results, method comparison, and recommendations to optimize your costing strategy</span>
-                </li>
-              </ol>
-            </div>
+          </div>
+
+          {/* Disclaimer - Simplified */}
+          <div className="mb-4 border-l-4 border-teal-500 bg-teal-50 px-4 py-3">
+            <p className="text-sm text-teal-900">
+              <PieChart className="mr-2 inline h-4 w-4" />
+              <strong>Allocation Tool:</strong> Results depend on method choice. Different methods suit different operations. Review with your accounting standards and cost structure.
+            </p>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-2">
@@ -320,7 +299,7 @@ export default function OverheadAllocatorPage() {
                               {...register(`jobs.${index}.floorSpace` as const, { valueAsNumber: true })} 
                               type="number" 
                               step="10" 
-                              label="Floor Space (ft²)" 
+                              label="Floor Space (ft^2)" 
                               placeholder="0"
                               helperText="Space occupied"
                               error={errors.jobs?.[index]?.floorSpace?.message} 
@@ -421,7 +400,7 @@ export default function OverheadAllocatorPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {result.jobs.map((job, idx) => {
+                          {result.jobs.map((job) => {
                             const percentOfTotal = (job.allocatedOverhead / result.totalAllocated) * 100;
                             const isHighest = job.jobName === result.summary.highestOverhead.jobName;
                             const isLowest = job.jobName === result.summary.lowestOverhead.jobName;
@@ -514,7 +493,7 @@ export default function OverheadAllocatorPage() {
                             </tr>
                           </thead>
                           <tbody>
-                            {comparison.map((row, idx) => {
+                            {comparison.map((row) => {
                               const isSelected = row.method === result.allocationMethod;
                               return (
                                 <tr 
@@ -568,7 +547,7 @@ export default function OverheadAllocatorPage() {
                           </tbody>
                         </table>
                         <p className="mt-3 text-xs text-gray-600">
-                          💡 Tip: Large variances indicate that method selection significantly impacts cost allocation. Choose the method that best reflects your actual cost drivers.
+                          Tip: Large variances indicate that method selection significantly impacts cost allocation. Choose the method that best reflects your actual cost drivers.
                         </p>
                       </div>
                     </div>
@@ -585,13 +564,13 @@ export default function OverheadAllocatorPage() {
                         </div>
                       </div>
                       <ul className="space-y-3">
-                        {result.recommendations.map((rec, idx) => (
+                        {result.recommendations.map((rec, index) => (
                           <li 
-                            key={idx}
+                            key={index}
                             className="flex gap-3 rounded-lg bg-white p-4 shadow-sm"
                           >
                             <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-amber-100 text-sm font-bold text-amber-800">
-                              {idx + 1}
+                              {index + 1}
                             </span>
                             <p className="text-sm text-gray-800">{rec}</p>
                           </li>
@@ -606,7 +585,7 @@ export default function OverheadAllocatorPage() {
                       <ExportButton
                         title="Overhead Allocation Report"
                         calculationType="Overhead Allocation"
-                        inputData={watch() as any}
+                        inputData={watch() as unknown as Record<string, any>}
                         results={{
                           'Total Overhead': watch('totalOverhead'),
                           'Method': watch('allocationMethod'),

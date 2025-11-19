@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { getCaseStudies, type PaginatedCaseStudies } from '@/lib/db/case-studies';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
+import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 
 export const metadata: Metadata = {
   title: 'Case Studies - Real Manufacturing Cost Success Stories | LaserCalc Pro',
@@ -38,13 +40,31 @@ export default async function CaseStudiesPage({ searchParams }: PageProps) {
     { page, limit: pageSize, orderBy: 'published_at', orderDir: 'DESC' }
   );
 
+  const caseStudiesSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'LaserCalc Pro Case Studies',
+    url: 'https://www.lasercalcpro.com/case-studies',
+    description: 'Verified manufacturing case studies showing cost savings and ROI from LaserCalc Pro calculators.',
+    hasPart: items.map((cs) => ({
+      '@type': 'CreativeWork',
+      name: cs.title,
+      url: `https://www.lasercalcpro.com/case-studies/${cs.slug}`,
+      description: cs.results || undefined,
+      datePublished: cs.published_at || undefined,
+      genre: cs.industry || undefined,
+    })),
+  };
+
   return (
     <>
       <Navigation />
+      <SchemaMarkup schema={caseStudiesSchema} />
       <main className="min-h-screen bg-gradient-to-b from-white to-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-6xl">
-            {/* Header */}
+            <Breadcrumbs />
+
             <div className="mb-8 text-center">
               <h1 className="text-4xl font-bold text-gray-900 md:text-4xl">
                 Case Studies
@@ -121,7 +141,7 @@ export default async function CaseStudiesPage({ searchParams }: PageProps) {
                 {Array.from({ length: totalPages }).map((_, i) => {
                   const p = i + 1;
                   const isActive = p === page;
-                  const sp = new URLSearchParams({ ...searchParams, page: String(p) } as any);
+                  const sp = buildQueryObject({ ...searchParams, page: String(p) });
                   return (
                     <Link
                       key={p}
@@ -160,7 +180,7 @@ function FilterLinks({ paramKey, values }: { paramKey: string; values: string[] 
   return (
     <>
       {values.map((val) => {
-        const sp = new URLSearchParams({ [paramKey]: val } as any);
+        const sp = buildQueryObject({ [paramKey]: val });
         return (
           <Link
             key={val}
@@ -173,4 +193,21 @@ function FilterLinks({ paramKey, values }: { paramKey: string; values: string[] 
       })}
     </>
   );
+}
+
+function buildQueryObject(params: Record<string, string | string[] | undefined>) {
+  const search = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (typeof value === 'undefined' || value === null) {
+      return;
+    }
+    if (Array.isArray(value)) {
+      value.forEach((item) => {
+        if (item) search.append(key, item);
+      });
+    } else if (value) {
+      search.set(key, value);
+    }
+  });
+  return search;
 }

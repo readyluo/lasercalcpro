@@ -108,7 +108,8 @@ export async function confirmSubscription(token: string): Promise<boolean> {
     WHERE confirmation_token = ? AND is_confirmed = FALSE
   `;
 
-  return executeWrite(query, [token]);
+  const result = await executeWrite(query, [token]);
+  return result.rowsAffected > 0;
 }
 
 /**
@@ -217,7 +218,8 @@ export async function unsubscribe(email: string): Promise<boolean> {
     WHERE email = ? AND unsubscribed_at IS NULL
   `;
 
-  return executeWrite(query, [email]);
+  const result = await executeWrite(query, [email]);
+  return result.rowsAffected > 0;
 }
 
 /**
@@ -225,7 +227,8 @@ export async function unsubscribe(email: string): Promise<boolean> {
  */
 export async function deleteSubscriber(email: string): Promise<boolean> {
   const query = 'DELETE FROM subscribers WHERE email = ?';
-  return executeWrite(query, [email]);
+  const result = await executeWrite(query, [email]);
+  return result.rowsAffected > 0;
 }
 
 /**
@@ -242,7 +245,8 @@ export async function updateSubscriberPreferences(
     WHERE confirmation_token = ?
   `;
 
-  return executeWrite(query, [JSON.stringify(preferences), frequency, token]);
+  const result = await executeWrite(query, [JSON.stringify(preferences), frequency, token]);
+  return result.rowsAffected > 0;
 }
 
 /**
@@ -255,6 +259,7 @@ export async function unsubscribeUser(token: string, reason: string): Promise<bo
     WHERE confirmation_token = ? AND unsubscribed_at IS NULL
   `;
 
-  return executeWrite(query, [reason, token]);
+  const result = await executeWrite(query, [reason, token]);
+  return result.rowsAffected > 0;
 }
 

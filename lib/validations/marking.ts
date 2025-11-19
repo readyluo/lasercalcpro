@@ -76,6 +76,51 @@ export const markingCalculatorSchema = z.object({
 export type MarkingCalculatorInput = z.infer<typeof markingCalculatorSchema>;
 
 // Speed calculation constants (mm²/sec) based on material and method
+//
+// ⚠️ IMPORTANT DATA SOURCE NOTICE:
+// These speed values are APPROXIMATE ESTIMATES compiled from industry references,
+// equipment specifications, and application notes. They represent simplified averages
+// for typical fiber laser marking systems in the 30-50W power range.
+//
+// ⚠️ These values are NOT:
+// - Guaranteed performance metrics for any specific equipment
+// - Validated through systematic controlled testing
+// - Applicable to all laser types, powers, or quality requirements
+// - Suitable for precision time estimation without validation
+//
+// Actual marking speeds vary significantly based on:
+// - Specific laser power, beam quality (M²), and spot size
+// - Material surface condition, preparation, and cleanliness
+// - Required contrast, depth, and edge quality
+// - Fill pattern, line spacing, and hatch angle
+// - Ambient conditions and material temperature
+// - Equipment condition, calibration, and maintenance state
+//
+// For accurate production time estimates:
+// 1. Perform test marks with your specific equipment and materials
+// 2. Measure actual cycle times for representative jobs
+// 3. Build your own speed table from measured production data
+// 4. Account for setup, loading, and inspection time separately
+//
+// Speed table interpretation:
+// - Values in mm²/second (area coverage rate)
+// - Higher values = faster marking
+// - 'null' = combination not technically feasible or not commonly used
+// - Values assume moderate quality (not ultra-precision or cosmetic-grade)
+//
+// Material-specific notes:
+// - Metals: speeds vary with alloy composition and surface finish
+// - Plastics: vary significantly by polymer type and additives
+// - Organics: highly dependent on moisture content and density
+//
+// Method-specific notes:
+// - Annealing: Heat-based color marking (no material removal)
+// - Engraving: Deep material removal (slowest, most energy intensive)
+// - Etching: Shallow surface texturing
+// - Ablation: Coating/layer removal
+// - Foaming: Plastic surface expansion through heat
+// - Carbonization: Organic material darkening through controlled burning
+//
 export const MARKING_SPEED_TABLE: Record<
   MarkingMaterialType,
   Record<MarkingMethod, number | null>
@@ -187,18 +232,67 @@ export const MARKING_SPEED_TABLE: Record<
 };
 
 // Depth factor: how much speed decreases per mm of depth
-export const DEPTH_SPEED_FACTOR = 0.7; // 30% speed reduction per mm
+//
+// ⚠️ This is a HIGHLY SIMPLIFIED linear model for estimation.
+//
+// Actual depth vs. speed relationship:
+// - Is typically NON-LINEAR (diminishing returns at greater depths)
+// - Varies significantly by material hardness and thermal properties
+// - Depends strongly on required edge quality and contrast
+// - Affected by heat accumulation and dissipation in deep marks
+// - Different for different marking methods (engraving vs. etching)
+//
+// This 0.7 factor means:
+// - 0.1mm depth: 0.97x speed (3% slower than surface marking)
+// - 0.3mm depth: 0.91x speed (9% slower)
+// - 0.5mm depth: 0.87x speed (13% slower)
+// - 1.0mm depth: 0.70x speed (30% slower)
+//
+// For deep engraving (>0.5mm) or precision applications:
+// - Always validate with test marks on actual material
+// - Consider multiple passes instead of single deep pass
+// - Monitor for heat-affected zone (HAZ) quality issues
+//
+export const DEPTH_SPEED_FACTOR = 0.7; // 30% speed reduction per mm (simplified average)
 
-// Power efficiency factor
+// Power efficiency factor for energy cost calculation
+//
+// ⚠️ IMPORTANT: These values represent SIMPLIFIED ESTIMATES of overall
+// laser system efficiency in marking operations.
+//
+// This is NOT electrical-to-optical conversion efficiency.
+// This represents the effective power utilization considering:
+// - Beam quality and M² parameter
+// - Spot size and focus quality
+// - Pulse characteristics and frequency
+// - Material absorption at laser wavelength
+//
+// Interpretation:
+// - Lower power systems (20W): Often use simpler optics and older technology
+//   Effective utilization ~75% due to beam quality and thermal limitations
+//
+// - Mid-range systems (30-50W): Common industrial marking lasers
+//   Effective utilization ~85-90% with good beam quality
+//
+// - High power systems (60-100W): Premium systems with excellent beam quality
+//   Effective utilization ~92-95% due to better optics and thermal management
+//
+// For accurate energy cost calculation:
+// - Measure actual power consumption with a power meter
+// - Compare input power vs. effective marking power
+// - Account for chiller and auxiliary system power separately
+//
 export const POWER_EFFICIENCY_MAP: Record<number, number> = {
-  20: 0.75,
-  30: 0.85,
-  50: 0.90,
-  60: 0.92,
-  100: 0.95,
+  20: 0.75,  // Entry-level systems with basic optics
+  30: 0.85,  // Common mid-range marking lasers
+  50: 0.90,  // Industrial-grade systems
+  60: 0.92,  // High-performance systems
+  100: 0.95, // Premium high-power systems with excellent beam quality
 };
 
 export function getPowerEfficiency(watts: number): number {
+  // Linear interpolation between defined power levels
+  // For powers outside the range, return nearest boundary value
   if (watts <= 20) return 0.75;
   if (watts <= 30) return 0.85;
   if (watts <= 50) return 0.90;

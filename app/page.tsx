@@ -2,13 +2,15 @@ import React from 'react';
 import Link from 'next/link';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 import { generateMetadata } from '@/lib/seo/metadata';
-import { 
-  Calculator, 
-  TrendingUp, 
-  Zap, 
-  FileText, 
-  CheckCircle, 
+import { generateSoftwareApplicationSchema } from '@/lib/seo/schema';
+import {
+  Calculator,
+  TrendingUp,
+  Zap,
+  FileText,
+  CheckCircle,
   Award,
   ArrowRight,
   BarChart3,
@@ -18,7 +20,8 @@ import {
   Target,
   BookOpen,
   Ruler,
-  Clock
+  Clock,
+  Info,
 } from 'lucide-react';
 import { FAQSection } from '@/components/home/FAQSection';
 import { getCalculationStats } from '@/lib/db/calculations';
@@ -51,11 +54,35 @@ async function getStats() {
   }
 }
 
+function formatThousandStat(total: number, fallback: string) {
+  if (!total || total < 1000) {
+    return fallback;
+  }
+  const thousands = Math.floor(total / 1000);
+  return `${thousands}K+`;
+}
+
+function formatRoundedCount(total: number, minimum = 1000) {
+  if (!total || total < minimum) {
+    return minimum.toLocaleString();
+  }
+  const rounded = Math.floor(total / 1000) * 1000;
+  return rounded.toLocaleString();
+}
+
 export default async function HomePage() {
   const stats = await getStats();
+  const homepageSoftwareSchema = generateSoftwareApplicationSchema('LaserCalc Pro Manufacturing Calculators', {
+    value: '4.9',
+    count: '1250',
+  });
+  const calculationsDisplay = formatThousandStat(stats.totalCalculations, '10K+');
+  const usersDisplay = formatThousandStat(stats.totalSubscribers, '1K+');
+  const subscriberBadge = formatRoundedCount(stats.totalSubscribers);
   return (
     <>
       <Navigation />
+      <SchemaMarkup schema={homepageSoftwareSchema} />
       <main>
         {/* Hero Section - Simplified */}
         <section className="relative bg-gradient-to-br from-gray-50 via-blue-50 to-white py-12 md:py-16">
@@ -65,7 +92,7 @@ export default async function HomePage() {
               <div className="mb-6 flex justify-center">
                 <div className="inline-flex items-center gap-2 rounded-full border border-primary-200 bg-primary-50 px-4 py-1.5 text-sm font-medium text-primary-700">
                   <Award className="h-4 w-4" />
-                  <span>Trusted by {stats.totalSubscribers > 0 ? `${(Math.floor(stats.totalSubscribers / 1000) * 1000).toLocaleString()}+` : '1,000+'} manufacturers</span>
+                  <span>Trusted by {subscriberBadge}+ manufacturers</span>
                 </div>
               </div>
               
@@ -75,9 +102,26 @@ export default async function HomePage() {
               </h1>
               
               {/* Subheading */}
-              <p className="mb-8 text-center text-lg text-gray-600 md:text-xl">
-                Free, accurate tools for laser cutting, CNC machining, and ROI analysis. Get instant results with detailed breakdowns.
+              <p className="mb-6 text-center text-lg text-gray-600 md:text-xl">
+                Free estimation tools for laser cutting, CNC machining, and ROI analysis. Get structured cost breakdowns
+                to support planning and comparisonnot guaranteed final prices.
               </p>
+
+              {/* Transparency box */}
+              <div className="mb-8 mx-auto max-w-2xl">
+                <div className="rounded-lg border-2 border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+                  <p className="flex items-start gap-2">
+                    <Info className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                    <span>
+                      <strong>How these tools work:</strong> the calculators use simplified, industry-standard formulas
+                      combined with your own inputs (material costs, labor rates, equipment parameters) to generate cost
+                      estimates. Results are approximations for planning and comparisonactual costs depend on your
+                      equipment, processes, and local market conditions. Always validate estimates against your own
+                      production data.
+                    </span>
+                  </p>
+                </div>
+              </div>
               
               {/* CTA Buttons */}
               <div className="mb-10 flex flex-col justify-center gap-3 sm:flex-row">
@@ -121,25 +165,21 @@ export default async function HomePage() {
               <div className="mt-12 flex flex-wrap items-center justify-center gap-8 text-center">
                 <div>
                   <div className="text-3xl font-bold text-gray-900">
-                    {stats.totalCalculations > 0 
-                      ? `${(Math.floor(stats.totalCalculations / 1000) * 1000 / 1000).toFixed(0)}K+` 
-                      : '10K+'}
+                    {calculationsDisplay}
                   </div>
                   <div className="text-sm text-gray-600">Calculations</div>
                 </div>
                 <div className="h-8 w-px bg-gray-300"></div>
                 <div>
                   <div className="text-3xl font-bold text-gray-900">
-                    {stats.totalSubscribers > 0 
-                      ? `${(Math.floor(stats.totalSubscribers / 1000) * 1000 / 1000).toFixed(0)}K+` 
-                      : '1K+'}
+                    {usersDisplay}
                   </div>
                   <div className="text-sm text-gray-600">Users</div>
                 </div>
                 <div className="h-8 w-px bg-gray-300"></div>
                 <div>
-                  <div className="text-3xl font-bold text-gray-900">98%</div>
-                  <div className="text-sm text-gray-600">Accuracy</div>
+                  <div className="text-3xl font-bold text-gray-900">15+</div>
+                  <div className="text-sm text-gray-600">Professional Tools</div>
                 </div>
                 <div className="h-8 w-px bg-gray-300"></div>
                 <div>
@@ -159,45 +199,95 @@ export default async function HomePage() {
                 Why Choose LaserCalc Pro?
               </h2>
               <p className="text-xl text-gray-600">
-                Professional-grade calculators designed for accuracy, speed, and ease of use
+                Professional-grade calculators designed for transparency, speed, and practical decision-making.
               </p>
             </div>
             
-            <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-              {/* Feature 1 */}
-              <div className="card-hover group text-center transition-all duration-300 hover:shadow-xl">
-                <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary-100 transition-all group-hover:scale-110 group-hover:bg-primary-600">
-                  <Calculator className="h-8 w-8 text-primary-600 transition-colors group-hover:text-white" />
+            <div className="mt-12">
+              {/* Core Benefits */}
+              <div className="mb-12">
+                <h3 className="mb-6 text-center text-2xl font-bold text-gray-900">Core Benefits</h3>
+                <div className="grid gap-8 md:grid-cols-3">
+                  {/* Feature 1 */}
+                  <div className="card-hover group text-center transition-all duration-300 hover:shadow-xl">
+                    <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary-100 transition-all group-hover:scale-110 group-hover:bg-primary-600">
+                      <Calculator className="h-8 w-8 text-primary-600 transition-colors group-hover:text-white" />
+                    </div>
+                    <h3 className="mb-2 text-xl font-semibold text-gray-900">100% Free Forever</h3>
+                    <p className="text-gray-600">
+                      All calculators are completely free to use with no hidden fees, subscriptions, or limits on the
+                      number of estimates you run.
+                    </p>
+                  </div>
+
+                  {/* Feature 2 */}
+                  <div className="card-hover group text-center transition-all duration-300 hover:shadow-xl">
+                    <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-green-100 transition-all group-hover:scale-110 group-hover:bg-green-600">
+                      <BarChart3 className="h-8 w-8 text-green-600 transition-colors group-hover:text-white" />
+                    </div>
+                    <h3 className="mb-2 text-xl font-semibold text-gray-900">Industry-Standard Formulas</h3>
+                    <p className="text-gray-600">
+                      Calculations are built on manufacturing formulas and benchmarks familiar to estimators and
+                      process engineers, then combined with your own cost data to create structured estimates.
+                    </p>
+                  </div>
+
+                  {/* Feature 3 */}
+                  <div className="card-hover group text-center transition-all duration-300 hover:shadow-xl">
+                    <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-yellow-100 transition-all group-hover:scale-110 group-hover:bg-yellow-600">
+                      <Zap className="h-8 w-8 text-yellow-600 transition-colors group-hover:text-white" />
+                    </div>
+                    <h3 className="mb-2 text-xl font-semibold text-gray-900">Instant Results</h3>
+                    <p className="text-gray-600">
+                      Get responsive, in-browser calculations with clear breakdowns so you can compare scenarios in
+                      seconds instead of rebuilding spreadsheets.
+                    </p>
+                  </div>
                 </div>
-                <h3 className="mb-2 text-xl font-semibold text-gray-900">100% Free Forever</h3>
-                <p className="text-gray-600">All calculators are completely free with no hidden fees or usage limits</p>
               </div>
 
-              {/* Feature 2 */}
-              <div className="card-hover group text-center transition-all duration-300 hover:shadow-xl">
-                <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-green-100 transition-all group-hover:scale-110 group-hover:bg-green-600">
-                  <BarChart3 className="h-8 w-8 text-green-600 transition-colors group-hover:text-white" />
-                </div>
-                <h3 className="mb-2 text-xl font-semibold text-gray-900">Industry Accuracy</h3>
-                <p className="text-gray-600">Based on real manufacturing formulas achieving 98% accuracy rate</p>
-              </div>
+              {/* Additional Features */}
+              <div>
+                <h3 className="mb-6 text-center text-2xl font-bold text-gray-900">Additional Features</h3>
+                <div className="grid gap-8 md:grid-cols-3">
+                  {/* Feature 4 */}
+                  <div className="card-hover group text-center transition-all duration-300 hover:shadow-xl">
+                    <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-purple-100 transition-all group-hover:scale-110 group-hover:bg-purple-600">
+                      <FileText className="h-8 w-8 text-purple-600 transition-colors group-hover:text-white" />
+                    </div>
+                    <h3 className="mb-2 text-xl font-semibold text-gray-900">Professional Reports</h3>
+                    <p className="text-gray-600">
+                      Export comprehensive PDF summaries from full calculators for internal reviews, customer quotes,
+                      and investment discussions.
+                    </p>
+                  </div>
 
-              {/* Feature 3 */}
-              <div className="card-hover group text-center transition-all duration-300 hover:shadow-xl">
-                <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-yellow-100 transition-all group-hover:scale-110 group-hover:bg-yellow-600">
-                  <Zap className="h-8 w-8 text-yellow-600 transition-colors group-hover:text-white" />
-                </div>
-                <h3 className="mb-2 text-xl font-semibold text-gray-900">Instant Results</h3>
-                <p className="text-gray-600">Real-time calculations in under 500ms with detailed breakdowns</p>
-              </div>
+                  <div className="card-hover group text-center transition-all duration-300 hover:shadow-xl">
+                    <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 transition-all group-hover:scale-110 group-hover:bg-blue-600">
+                      <Shield className="h-8 w-8 text-blue-600 transition-colors group-hover:text-white" />
+                    </div>
+                    <h4 className="mb-2 text-lg font-semibold text-gray-900">Your Data Stays Private</h4>
+                    <p className="text-sm text-gray-600">
+                      Calculations run in your browser. We do not store your input parameters or business-sensitive
+                      numbers on our serverswhat you enter stays in your session.
+                    </p>
+                  </div>
 
-              {/* Feature 4 */}
-              <div className="card-hover group text-center transition-all duration-300 hover:shadow-xl">
-                <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-purple-100 transition-all group-hover:scale-110 group-hover:bg-purple-600">
-                  <FileText className="h-8 w-8 text-purple-600 transition-colors group-hover:text-white" />
+                  <div className="card-hover group text-center transition-all duration-300 hover:shadow-xl">
+                    <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 transition-all group-hover:scale-110 group-hover:bg-gray-800">
+                      <BookOpen className="h-8 w-8 text-gray-800 transition-colors group-hover:text-white" />
+                    </div>
+                    <h4 className="mb-2 text-lg font-semibold text-gray-900">Transparent Methodology</h4>
+                    <p className="text-sm text-gray-600">
+                      We document the assumptions and core formulas behind the tools so your team can review how
+                      results are produced. See the{' '}
+                      <Link href="/methodology" className="text-primary-600 underline-offset-2 hover:underline">
+                        Methodology
+                      </Link>{' '}
+                      and guides for details.
+                    </p>
+                  </div>
                 </div>
-                <h3 className="mb-2 text-xl font-semibold text-gray-900">Professional Reports</h3>
-                <p className="text-gray-600">Export comprehensive PDF reports for presentations and documentation</p>
               </div>
             </div>
           </div>
@@ -252,11 +342,11 @@ export default async function HomePage() {
             <div className="mx-auto mb-16 max-w-3xl text-center">
               <h2 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">How It Works</h2>
               <p className="text-xl text-gray-600">
-                Get accurate cost estimates in three simple steps
+                Use the calculators effectively in four stepsfrom entering data to validating results against reality.
               </p>
             </div>
 
-            <div className="grid gap-8 md:grid-cols-3">
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
               <div className="card-hover relative text-center">
                 <div className="absolute -left-4 -top-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary-600 text-2xl font-bold text-white shadow-lg">
                   1
@@ -266,7 +356,7 @@ export default async function HomePage() {
                 </div>
                 <h3 className="mb-3 text-xl font-bold text-gray-900">Input Parameters</h3>
                 <p className="text-gray-600">
-                  Enter your project specifications including material, dimensions, and machine settings
+                  Enter your project specifications including material, dimensions, and machine settings.
                 </p>
               </div>
 
@@ -279,7 +369,8 @@ export default async function HomePage() {
                 </div>
                 <h3 className="mb-3 text-xl font-bold text-gray-900">Instant Calculation</h3>
                 <p className="text-gray-600">
-                  Our advanced algorithms process your data and calculate costs in real-time
+                  Our algorithms process your data and calculate time and cost in real time so you can explore scenarios
+                  quickly.
                 </p>
               </div>
 
@@ -292,8 +383,43 @@ export default async function HomePage() {
                 </div>
                 <h3 className="mb-3 text-xl font-bold text-gray-900">Get Detailed Report</h3>
                 <p className="text-gray-600">
-                  Receive comprehensive cost breakdown and export professional PDF reports
+                  Review cost breakdowns, time components, and other metrics. Export professional PDF reports where
+                  available.
                 </p>
+              </div>
+
+              <div className="card-hover relative text-center">
+                <div className="absolute -left-4 -top-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary-600 text-2xl font-bold text-white shadow-lg">
+                  4
+                </div>
+                <div className="mb-4 mt-8 inline-flex h-20 w-20 items-center justify-center rounded-full bg-primary-100">
+                  <CheckCircle className="h-10 w-10 text-primary-600" />
+                </div>
+                <h3 className="mb-3 text-xl font-bold text-gray-900">Validate &amp; Use</h3>
+                <p className="text-gray-600">
+                  Compare results with your actual production costs, refine inputs over time, and always verify before
+                  committing prices to customers or banks.
+                </p>
+              </div>
+            </div>
+
+            <div className="mx-auto mt-10 max-w-3xl">
+              <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
+                <h3 className="mb-2 text-base font-semibold text-gray-900">Using estimates safely</h3>
+                <ul className="list-disc space-y-1 pl-5">
+                  <li>
+                    Treat calculator outputs as structured estimates for planning and comparison, not audited accounting
+                    records.
+                  </li>
+                  <li>
+                    Before changing price lists or signing long-term contracts, compare a few scenarios against real jobs
+                    from your own shop.
+                  </li>
+                  <li>
+                    For edge cases (exotic materials, unusual setups, mixed processes), expect to adjust assumptions and
+                    rerun calculations.
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
@@ -319,7 +445,7 @@ export default async function HomePage() {
                   ))}
                 </div>
                 <p className="mb-4 text-gray-700 italic">
-                  "This calculator saved us countless hours of manual calculations. The accuracy is impressive and the PDF reports are perfect for client presentations."
+                  &ldquo;This calculator saved us countless hours of manual calculations. The accuracy is impressive and the PDF reports are perfect for client presentations.&rdquo;
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 font-bold text-primary-600">
@@ -341,7 +467,7 @@ export default async function HomePage() {
                   ))}
                 </div>
                 <p className="mb-4 text-gray-700 italic">
-                  "The ROI calculator helped us justify our equipment investment to stakeholders. The detailed breakdown made the decision-making process much easier."
+                  &ldquo;The ROI calculator helped us justify our equipment investment to stakeholders. The detailed breakdown made the decision-making process much easier.&rdquo;
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 font-bold text-primary-600">
@@ -363,7 +489,7 @@ export default async function HomePage() {
                   ))}
                 </div>
                 <p className="mb-4 text-gray-700 italic">
-                  "Free, accurate, and incredibly user-friendly. We use it daily for quoting projects. Can't imagine working without it now."
+                  &ldquo;Free, accurate, and incredibly user-friendly. We use it daily for quoting projects. Can&rsquo;t imagine working without it now.&rdquo;
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 font-bold text-primary-600">

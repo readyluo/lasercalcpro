@@ -1,9 +1,13 @@
 // JWT Token Management for Admin Authentication
 import { SignJWT, jwtVerify } from 'jose';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'lasercalc-pro-admin-secret-change-in-production'
-);
+const rawSecret = process.env.JWT_SECRET;
+
+if (!rawSecret) {
+  throw new Error('JWT_SECRET environment variable is required for admin authentication.');
+}
+
+const JWT_SECRET = new TextEncoder().encode(rawSecret);
 
 export interface AdminTokenPayload {
   id: number;
@@ -61,7 +65,6 @@ export async function refreshToken(oldToken: string): Promise<string | null> {
   if (!payload) return null;
   
   // Remove JWT specific fields
-  const { iat, exp, ...tokenData } = payload;
+  const { iat: _iat, exp: _exp, ...tokenData } = payload;
   return generateToken(tokenData);
 }
-

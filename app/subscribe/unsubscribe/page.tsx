@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
+import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 import { UnsubscribeForm } from '@/components/subscribe/UnsubscribeForm';
 import { getSubscriberByToken } from '@/lib/db/subscribers';
 import { Frown, Heart } from 'lucide-react';
@@ -11,6 +13,14 @@ export const metadata: Metadata = {
   title: 'Unsubscribe - LaserCalc Pro',
   description: 'Unsubscribe from LaserCalc Pro emails',
   robots: 'noindex, nofollow',
+};
+
+const unsubscribeSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'LaserCalc Pro Unsubscribe',
+  url: 'https://www.lasercalcpro.com/subscribe/unsubscribe',
+  description: 'Manage LaserCalc Pro email subscription status.',
 };
 
 interface UnsubscribePageProps {
@@ -34,12 +44,14 @@ export default async function UnsubscribePage({ searchParams }: UnsubscribePageP
   }
 
   // If already unsubscribed, show confirmation
-  if (subscriber.unsubscribedAt) {
+  if (subscriber.unsubscribed_at) {
     return (
       <>
         <Navigation />
+        <SchemaMarkup schema={unsubscribeSchema} />
         <main className="min-h-screen bg-gradient-to-b from-white to-gray-50 py-12">
           <div className="container mx-auto px-4">
+            <Breadcrumbs />
             <div className="mx-auto max-w-2xl text-center">
               <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gray-100">
                 <Frown className="h-10 w-10 text-gray-400" />
@@ -48,7 +60,7 @@ export default async function UnsubscribePage({ searchParams }: UnsubscribePageP
                 Already Unsubscribed
               </h1>
               <p className="mb-8 text-lg text-gray-600">
-                You've already unsubscribed from our mailing list.
+                You&apos;ve already unsubscribed from our mailing list.
               </p>
               <Link
                 href="/"
@@ -67,19 +79,21 @@ export default async function UnsubscribePage({ searchParams }: UnsubscribePageP
   return (
     <>
       <Navigation />
+      <SchemaMarkup schema={unsubscribeSchema} />
       <main className="min-h-screen bg-gradient-to-b from-white to-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-2xl">
+            <Breadcrumbs />
             {/* Header */}
             <div className="mb-8 text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100">
                 <Frown className="h-8 w-8 text-orange-600" />
               </div>
               <h1 className="mb-2 text-3xl font-bold text-gray-900 md:text-4xl">
-                We're Sorry to See You Go
+                We&apos;re Sorry to See You Go
               </h1>
               <p className="text-lg text-gray-600">
-                You're about to unsubscribe from LaserCalc Pro emails
+                You&apos;re about to unsubscribe from LaserCalc Pro emails
               </p>
             </div>
 
@@ -126,4 +140,3 @@ export default async function UnsubscribePage({ searchParams }: UnsubscribePageP
     </>
   );
 }
-

@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { BookOpen, Clock, Award, Download, Video, FileText, CheckCircle2, Calculator } from 'lucide-react';
+import { BookOpen, Clock, Award, Download, FileText, CheckCircle2, Calculator } from 'lucide-react';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 

@@ -68,7 +68,6 @@ type Recommendation = {
 function getRecommendations(answers: Record<number, string>): Recommendation[] {
   const goal = answers[1];
   const process = answers[2];
-  const experience = answers[3];
   const speed = answers[4];
 
   const recommendations: Recommendation[] = [];

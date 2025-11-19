@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { MethodologySection } from '@/components/methodology/MethodologySection';
-import { BookOpen, AlertCircle } from 'lucide-react';
+import { BookOpen, AlertCircle, CheckCircle } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Calculation Methodology & Data Sources | LaserCalc Pro',
@@ -92,11 +92,13 @@ const methodologies = [
   {
     id: 'roi',
     title: 'Equipment ROI Calculator',
-    formula: 'Payback Period = Total Investment / (Annual Revenue - Annual Operating Costs)',
+    formula: 'Cash Flow = Revenue - (Operating Costs + Debt Service); Payback occurs when cumulative cash flow ≥ 0',
     variables: [
-      { name: 'Total Investment', definition: 'Equipment cost + Installation + Training + Initial tooling', unit: 'USD' },
+      { name: 'Total Investment', definition: 'Equipment purchase price + installation expenses', unit: 'USD' },
+      { name: 'Financed Amount', definition: 'Total investment - Down payment', unit: 'USD' },
+      { name: 'Debt Service', definition: 'Monthly principal + interest payment over the loan term', unit: 'USD/month' },
       { name: 'Annual Revenue', definition: 'Monthly production × Unit price × 12 months', unit: 'USD/year' },
-      { name: 'Operating Costs', definition: 'Labor + Materials + Energy + Maintenance + Consumables', unit: 'USD/year' },
+      { name: 'Operating Costs', definition: 'User-supplied monthly operating cost (labor, consumables, utilities)', unit: 'USD/month' },
       { name: 'NPV', definition: 'Net Present Value considering discount rate', unit: 'USD' },
       { name: 'IRR', definition: 'Internal Rate of Return (%)', unit: '%' },
     ],
@@ -104,6 +106,7 @@ const methodologies = [
       'Discount rate: 8-12% (typical for manufacturing investments)',
       'Equipment lifetime: 10-15 years',
       'Utilization rate: 60-80% of available hours',
+      'Loan amortized monthly with declining principal balance',
       'Revenue and costs remain relatively stable',
       'No major technology disruptions',
     ],
@@ -123,7 +126,7 @@ const methodologies = [
       'Assumes stable market conditions',
       'Does not account for opportunity costs',
       'Tax implications vary by jurisdiction',
-      'Salvage value is estimated',
+      'Salvage value is estimated and applied at analysis year end',
     ],
   },
   {
@@ -227,11 +230,61 @@ export default function MethodologyPage() {
               </div>
               <ul className="space-y-2 text-sm text-blue-900">
                 <li>✓ <strong>Industry Standards:</strong> Based on ASME, ISO, and industry best practices</li>
-                <li>✓ <strong>Peer-Reviewed:</strong> Formulas validated against academic and industry research</li>
-                <li>✓ <strong>Real-World Calibrated:</strong> Tested against actual manufacturing data</li>
-                <li>✓ <strong>Regularly Updated:</strong> Reviewed quarterly and updated as standards evolve</li>
-                <li>✓ <strong>Transparent:</strong> All assumptions and limitations clearly documented</li>
+                <li>✓ <strong>Peer-Reviewed:</strong> Formulas validated against academic and industry research where possible</li>
+                <li>✓ <strong>Real-World Calibrated:</strong> Intended to be checked and tuned against your own shop data</li>
+                <li>✓ <strong>Regularly Reviewed:</strong> Revisited as equipment, energy, and material benchmarks evolve</li>
+                <li>✓ <strong>Transparent:</strong> All assumptions and limitations clearly documented on this page</li>
               </ul>
+            </div>
+
+            {/* How to validate and calibrate formulas */}
+            <div className="mb-10 rounded-xl border-l-4 border-blue-500 bg-blue-50 p-6">
+              <div className="mb-3 flex items-center gap-2 text-blue-800">
+                <CheckCircle className="h-5 w-5" />
+                <h2 className="text-sm font-semibold">How to validate these formulas with your own data</h2>
+              </div>
+              <div className="space-y-3 text-sm text-blue-900">
+                <div>
+                  <p className="mb-1 font-semibold">Step 1: Collect a small baseline</p>
+                  <ul className="ml-4 list-disc space-y-0.5 text-xs">
+                    <li>Pick 3–10 representative jobs and record actual time, cost, and material usage.</li>
+                    <li>Use machine logs, ERP data, or simple stopwatches and job tickets.</li>
+                    <li>Note any special factors (unusual materials, rework, second operations).</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <p className="mb-1 font-semibold">Step 2: Recreate those jobs in the calculators</p>
+                  <ul className="ml-4 list-disc space-y-0.5 text-xs">
+                    <li>Enter the same dimensions, materials, and batch sizes you used in production.</li>
+                    <li>Use your actual shop rates for labor, machine time, energy, and gas – not generic examples.</li>
+                    <li>Compare the modeled outputs (time and cost) against what you actually measured.</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <p className="mb-1 font-semibold">Step 3: Calibrate the sensitive inputs</p>
+                  <ul className="ml-4 list-disc space-y-0.5 text-xs">
+                    <li>If real jobs are consistently slower than modeled, reduce cutting speeds or increase setup time inputs.</li>
+                    <li>If costs are off, double-check material prices, hourly rates, and overhead assumptions first.</li>
+                    <li>Use your own typical utilization, scrap rate, and auxiliary power instead of leaving defaults unchanged.</li>
+                  </ul>
+                </div>
+
+                <div className="rounded bg-white p-3 text-xs text-gray-800">
+                  <p className="mb-1 font-semibold text-gray-900">What kind of match to expect</p>
+                  <ul className="ml-4 list-disc space-y-0.5">
+                    <li>Roughly ±5–10% difference between modeled and actual results is excellent for planning.</li>
+                    <li>±10–20% is common before detailed calibration and usually fine for early quoting.</li>
+                    <li>If differences are regularly above ~20%, revisit inputs, local rates, and key assumptions before relying on the numbers.</li>
+                  </ul>
+                  <p className="mt-2 text-[11px] text-gray-700">
+                    Most of the remaining error typically comes from shop-specific factors such as exact cutting parameters, operator technique,
+                    material price volatility, and how you allocate overhead. The calculators are designed to make those drivers visible so you
+                    can tune them to match your own reality.
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Calculator Methodologies */}
@@ -268,4 +321,3 @@ export default function MethodologyPage() {
     </>
   );
 }
-

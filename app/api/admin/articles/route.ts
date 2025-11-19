@@ -58,7 +58,7 @@ async function handleGet(request: AuthenticatedRequest) {
     // Get stats flag
     const includeStats = searchParams.get('stats') === 'true';
 
-    const result = await getArticles(filters, pagination);
+    const result = await getArticles(filters, pagination.page, pagination.limit);
 
     const response: any = {
       success: true,
@@ -101,6 +101,7 @@ async function handlePost(request: AuthenticatedRequest) {
     const data: ArticleInput = {
       ...validation.data,
       slug: validation.data.slug || '', // Ensure slug is defined
+      status: validation.data.status || 'draft', // Ensure status is defined
       author_id: request.admin!.id,
     };
 

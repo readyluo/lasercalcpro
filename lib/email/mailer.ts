@@ -35,7 +35,7 @@ async function getTransporter() {
       },
     };
 
-    return nodemailer.default.createTransporter(SMTP_CONFIG);
+    return nodemailer.default.createTransport(SMTP_CONFIG);
   } catch (error) {
     console.warn('Failed to load email service:', error);
     throw new Error('Email service not available');

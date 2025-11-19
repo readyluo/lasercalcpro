@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": ".tests-dist",
+    "noEmit": false,
+    "emitDeclarationOnly": false,
+    "incremental": false,
+    "module": "node16",
+    "moduleResolution": "node16",
+    "noUnusedParameters": false,
+    "noUnusedLocals": false
+  },
+  "include": [
+    "lib/calculators/laser-cutting.ts",
+    "lib/calculators/material-utilization.ts",
+    "lib/calculators/energy.ts",
+    "lib/calculators/roi.ts",
+    "lib/calculators/welding.ts",
+    "lib/validations/**/*.ts",
+    "lib/types/**/*.ts",
+    "tests/**/*.ts"
+  ],
+  "exclude": ["node_modules", ".next", ".tests-dist"]
+}

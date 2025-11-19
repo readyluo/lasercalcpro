@@ -1,9 +1,10 @@
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
-import { getArticles } from '@/lib/db/articles';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
+import { getArticles, type Article } from '@/lib/db/articles';
 import Link from 'next/link';
-import { Calendar, User, Eye, ArrowRight, Tag } from 'lucide-react';
+import { Calendar, Eye, ArrowRight, Tag } from 'lucide-react';
 import { generateMetadata } from '@/lib/seo/metadata';
 
 export const metadata = generateMetadata({
@@ -16,7 +17,7 @@ export const revalidate = 3600; // Revalidate every hour
 
 export default async function BlogPage() {
   // Fallback for missing database configuration
-  let articles = [];
+  let articles: Article[] = [];
   let total = 0;
   
   try {
@@ -34,10 +35,30 @@ export default async function BlogPage() {
 
   const categories = ['tutorials', 'industry', 'case-studies', 'news'];
   const archiveLink = '/blog/archive';
+  const blogSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: 'LaserCalc Pro Manufacturing Blog',
+    url: 'https://www.lasercalcpro.com/blog',
+    description: 'Manufacturing tutorials, ROI explainers, and calculator workflows from LaserCalc Pro.',
+    blogPost: articles.map(article => ({
+      '@type': 'BlogPosting',
+      headline: article.title,
+      datePublished: article.published_at || article.created_at,
+      dateModified: article.updated_at || article.published_at || article.created_at,
+      url: `https://www.lasercalcpro.com/blog/${article.slug}`,
+      description: article.excerpt || undefined,
+      author: {
+        '@type': 'Organization',
+        name: 'LaserCalc Pro',
+      },
+    })),
+  };
 
   return (
     <>
       <Navigation />
+      <SchemaMarkup schema={blogSchema} />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
@@ -106,10 +127,11 @@ export default async function BlogPage() {
                     {/* Featured Image */}
                     {article.featured_image && (
                       <div className="mb-4 -mt-6 -mx-6 overflow-hidden">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={article.featured_image}
                           alt={article.title}
-                          className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+                          className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       </div>
                     )}
@@ -195,6 +217,3 @@ export default async function BlogPage() {
     </>
   );
 }
-
-
-

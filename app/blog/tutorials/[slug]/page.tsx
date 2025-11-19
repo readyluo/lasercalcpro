@@ -1664,7 +1664,7 @@ const TUTORIALS: Record<string, TutorialConfig> = {
               </table>
             </div>
             <ul className="ml-5 list-disc space-y-2 text-gray-700 mt-4">
-              <li><strong>Break-even analysis:</strong> If nesting software costs $10K/year, you need >$10K annual material savings. At $60K spend, need 10%+ utilization improvement.</li>
+              <li><strong>Break-even analysis:</strong> If nesting software costs $10K/year, you need &gt;$10K annual material savings. At $60K spend, need 10%+ utilization improvement.</li>
               <li><strong>Hidden benefits:</strong> Beyond material savings, improved nesting reduces cutting time (fewer pierces, shorter travel), lowers gas consumption, and increases throughput.</li>
               <li><strong>Competitive advantage:</strong> 15% lower material costs allow 10-12% price reduction while maintaining margins, winning more bids.</li>
             </ul>

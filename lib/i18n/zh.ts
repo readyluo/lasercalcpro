@@ -145,7 +145,7 @@ export const zh = {
   analytics: {
     title: '数据分析',
     overview: '概览',
-    traffic: '流量分析',
+    trafficTab: '流量分析',
     tools: '工具使用统计',
     seo: 'SEO数据',
     revenue: '收入统计',

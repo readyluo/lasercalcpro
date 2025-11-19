@@ -165,7 +165,7 @@ async function seed() {
   for (const article of articles) {
     try {
       const now = new Date().toISOString();
-      const result = await client.execute({
+      await client.execute({
         sql: `INSERT INTO articles (
           title, slug, category, excerpt, content, tags, status,
           meta_title, meta_description, meta_keywords, author_id,

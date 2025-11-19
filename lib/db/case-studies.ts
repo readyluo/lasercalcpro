@@ -1,4 +1,4 @@
-import { executeQuery, executeWrite } from './client';
+import { executeQuery } from './client';
 
 export interface CaseStudy {
   id: number;

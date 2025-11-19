@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { getPublishedArticlesByTag } from '@/lib/db/articles';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
+import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 
 interface PageProps {
   params: { slug: string };
@@ -31,15 +33,32 @@ export default async function TagPage({ params, searchParams }: PageProps) {
   
   const totalPages = Math.ceil(total / pageSize);
 
+  const tagLabel = params.slug.replace(/-/g, ' ');
+  const tagSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `Articles tagged ${tagLabel}`,
+    url: `https://www.lasercalcpro.com/blog/tag/${params.slug}`,
+    description: `LaserCalc Pro blog posts tagged ${tagLabel}.`,
+    hasPart: articles.map((article) => ({
+      '@type': 'BlogPosting',
+      headline: article.title,
+      url: `https://www.lasercalcpro.com/blog/${article.slug}`,
+      datePublished: article.published_at || article.created_at,
+    })),
+  };
+
   return (
     <>
       <Navigation />
+      <SchemaMarkup schema={tagSchema} />
       <main className="min-h-screen bg-gradient-to-b from-white to-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-5xl">
+            <Breadcrumbs />
             <header className="mb-8 text-center">
               <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">
-                Articles Tagged: {params.slug}
+                Articles Tagged: {tagLabel}
               </h1>
               <p className="mt-2 text-gray-600">{total} articles</p>
             </header>

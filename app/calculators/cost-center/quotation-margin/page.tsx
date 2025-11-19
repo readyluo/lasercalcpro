@@ -12,7 +12,7 @@ import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { ExportButton } from '@/components/calculators/ExportButton';
 import { Calculator as CalculatorIcon, RotateCcw, DollarSign, Percent } from 'lucide-react';
 import { quotationMarginSchema, quotationMarginDefaults, type QuotationMarginInput } from '@/lib/validations/cost-center';
-import { calculateQuotationMargin, calculateMarginAtPrice, calculatePriceForMargin, calculateDiscountImpact } from '@/lib/calculators/cost-center/quotation';
+import { calculateQuotationMargin, calculateDiscountImpact } from '@/lib/calculators/cost-center/quotation';
 import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 
@@ -35,7 +35,7 @@ export default function QuotationMarginPage() {
 
   const howToSchema = generateCalculatorHowToSchema(
     'Quotation Margin Simulator',
-    'Calculate prices to meet target margins, compare with competitor pricing, and model volume discounts.',
+    'Simulate quotation pricing for a chosen target margin, competitor price, and volume discounts based on your cost inputs.',
     [
       { name: 'Enter Costs', text: 'Provide base, material, labor, and overhead costs.' },
       { name: 'Set Margin & Terms', text: 'Choose target margin, payment terms and risk factor.' },
@@ -46,7 +46,11 @@ export default function QuotationMarginPage() {
 
   const faqSchema = generateFAQSchema([
     { question: 'Margin vs Markup?', answer: 'Margin = Profit / Price. Markup = Profit / Cost. They are different metrics; this tool shows both.' },
-    { question: 'What is minimum viable margin?', answer: 'Varies by business model; many shops target >=10% minimum with typical 25-35% for custom work.' },
+    {
+      question: 'What is minimum viable margin?',
+      answer:
+        'There is no single minimum margin that fits every job or shop. Use this simulator to see how different margin choices affect price and profit, then compare those scenarios with your actual costs, risk, and demand before deciding what is acceptable for your business.',
+    },
   ]);
 
   const { control, register, handleSubmit, formState: { errors }, reset, watch } = useForm<QuotationMarginInput>({
@@ -72,7 +76,6 @@ export default function QuotationMarginPage() {
   };
 
   // Utilities
-  const priceFor20Margin = calculatePriceForMargin(watch('baseCost'), 20);
   const discountImpact = calculateDiscountImpact(result?.finalRecommendedPrice || 0, watch('baseCost'), 5);
 
   return (
@@ -84,9 +87,17 @@ export default function QuotationMarginPage() {
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
 
-          <div className="mb-8">
-            <h1 className="mb-2 text-4xl font-bold text-gray-900 md:text-5xl">Quotation Margin Simulator</h1>
-            <p className="text-gray-600">Set margins confidently, compare to competitors, and model volume discounts.</p>
+          <div className="mb-4">
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">Quotation Margin Simulator</h1>
+            <p className="text-base text-gray-600">Simulate margins, compare to competitor prices, and explore volume discounts.</p>
+          </div>
+
+          {/* Disclaimer - Simplified */}
+          <div className="mb-4 border-l-4 border-pink-500 bg-pink-50 px-4 py-3">
+            <p className="text-sm text-pink-900">
+              <Percent className="mr-2 inline h-4 w-4" />
+              <strong>Strategy Tool:</strong> Results help compare scenarios. Final margins depend on your market position, competition, and risk assessment. Adjust based on your business strategy.
+            </p>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-2">

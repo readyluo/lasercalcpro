@@ -21,7 +21,7 @@ const calculators = [
       charts: true,
       mobile: true
     },
-    accuracy: '95-98%',
+    accuracy: 'Estimates based on your laser cutting parameters and cost inputs; validate against your own jobs.',
     useCases: ['Job shops', 'Fabricators', 'Manufacturers'],
     difficulty: 'Easy'
   },
@@ -42,7 +42,7 @@ const calculators = [
       charts: true,
       mobile: true
     },
-    accuracy: '92-96%',
+    accuracy: 'Estimates depend on your machining times, tooling costs, and rate assumptions; compare with shop data.',
     useCases: ['Machine shops', 'Prototyping', 'Production'],
     difficulty: 'Medium'
   },
@@ -63,7 +63,7 @@ const calculators = [
       charts: true,
       mobile: true
     },
-    accuracy: '90-95%',
+    accuracy: 'Investment projections are driven by your revenue, cost, and financing inputs; treat results as planning scenarios.',
     useCases: ['Management', 'Finance teams', 'Business owners'],
     difficulty: 'Medium'
   },
@@ -84,7 +84,7 @@ const calculators = [
       charts: true,
       mobile: true
     },
-    accuracy: '95-99%',
+    accuracy: 'Energy and carbon estimates use your power, schedule, and tariff assumptions; reconcile with utility bills where possible.',
     useCases: ['Operations', 'Sustainability', 'Cost accounting'],
     difficulty: 'Easy'
   },
@@ -105,7 +105,7 @@ const calculators = [
       charts: false,
       mobile: true
     },
-    accuracy: '92-97%',
+    accuracy: 'Utilization and waste results reflect the nesting model and your sheet/part inputs; confirm against real jobs as needed.',
     useCases: ['Production planning', 'Cost optimization', 'Engineers'],
     difficulty: 'Easy'
   }
@@ -168,7 +168,7 @@ export function ComparisonTable() {
             </div>
 
             <div className="mb-4 flex items-center justify-between text-sm">
-              <span className="text-gray-600">Accuracy:</span>
+              <span className="text-gray-600">Estimation:</span>
               <span className="font-semibold text-gray-900">{calc.accuracy}</span>
             </div>
 
@@ -223,10 +223,10 @@ export function ComparisonTable() {
                 ))}
               </tr>
 
-              {/* Accuracy */}
+              {/* Estimation Notes */}
               <tr className="bg-gray-50">
                 <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                  Accuracy Range
+                  Estimation Notes
                 </td>
                 {calculators.map((calc, idx) => (
                   <td key={idx} className="px-6 py-4 text-center text-sm font-semibold text-gray-900">

@@ -14,6 +14,8 @@ export interface ROIResult {
   paybackPeriodMonths: number;
   paybackPeriodYears: number;
   breakEvenMonth: number;
+  loanTermMonths: number;
+  loanTermYears: number;
 
   // ROI metrics
   simpleROI: number; // percentage
@@ -55,10 +57,22 @@ export function calculateROI(input: ROIInput): ROIResult {
 
   // 2. Calculate monthly cash flows
   const monthlyRevenue = input.monthlyProduction * input.pricePerUnit;
-  const monthlyFinancingCost = input.financingRate > 0
-    ? (financedAmount * (input.financingRate / 100)) / 12
-    : 0;
-  const monthlyTotalCost = input.monthlyOperatingCost + monthlyFinancingCost;
+  const loanTermYears = input.loanTermYears ?? input.analysisYears;
+  const loanTermMonths = Math.max(loanTermYears * 12, 1);
+  const monthlyRate = input.financingRate > 0 ? input.financingRate / 100 / 12 : 0;
+
+  let monthlyDebtPayment = 0;
+  if (financedAmount > 0 && loanTermMonths > 0) {
+    if (monthlyRate === 0) {
+      monthlyDebtPayment = financedAmount / loanTermMonths;
+    } else {
+      const factor = Math.pow(1 + monthlyRate, loanTermMonths);
+      monthlyDebtPayment = financedAmount * ((monthlyRate * factor) / (factor - 1));
+    }
+  }
+
+  const baselineMonthlyCost = input.monthlyOperatingCost;
+  const monthlyTotalCost = baselineMonthlyCost + monthlyDebtPayment;
   const monthlyProfit = monthlyRevenue - monthlyTotalCost;
 
   // 3. Calculate payback period
@@ -67,18 +81,37 @@ export function calculateROI(input: ROIInput): ROIResult {
   const monthlyGrowthRate = Math.pow(1 + input.annualGrowthRate / 100, 1 / 12) - 1;
 
   const monthlyProjections: ROIResult['monthlyProjections'] = [];
+  let remainingPrincipal = financedAmount;
 
   for (let month = 1; month <= input.analysisYears * 12; month++) {
     const growthFactor = Math.pow(1 + monthlyGrowthRate, month - 1);
     const adjustedRevenue = monthlyRevenue * growthFactor;
-    const adjustedProfit = adjustedRevenue - monthlyTotalCost;
+    let debtPayment = 0;
+    let interestPayment = 0;
+    let principalPayment = 0;
+
+    const withinLoan = financedAmount > 0 && month <= loanTermMonths;
+    if (withinLoan && monthlyDebtPayment > 0) {
+      interestPayment = monthlyRate > 0 ? remainingPrincipal * monthlyRate : 0;
+      principalPayment = monthlyDebtPayment - interestPayment;
+
+      if (principalPayment > remainingPrincipal) {
+        principalPayment = remainingPrincipal;
+      }
+
+      debtPayment = interestPayment + principalPayment;
+      remainingPrincipal = Math.max(remainingPrincipal - principalPayment, 0);
+    }
+
+    const monthCosts = baselineMonthlyCost + debtPayment;
+    const adjustedProfit = adjustedRevenue - monthCosts;
 
     cumulativeCashFlow += adjustedProfit;
 
     monthlyProjections.push({
       month,
       revenue: parseFloat(adjustedRevenue.toFixed(2)),
-      costs: parseFloat(monthlyTotalCost.toFixed(2)),
+      costs: parseFloat(monthCosts.toFixed(2)),
       profit: parseFloat(adjustedProfit.toFixed(2)),
       cumulativeCashFlow: parseFloat(cumulativeCashFlow.toFixed(2)),
     });
@@ -96,10 +129,12 @@ export function calculateROI(input: ROIInput): ROIResult {
   let cumulativeProfit = -downPaymentAmount;
 
   for (let year = 1; year <= input.analysisYears; year++) {
-    const growthFactor = Math.pow(1 + input.annualGrowthRate / 100, year - 1);
-    const yearRevenue = monthlyRevenue * 12 * growthFactor;
-    const yearCosts = monthlyTotalCost * 12;
-    const yearProfit = yearRevenue - yearCosts;
+    const months = monthlyProjections.slice((year - 1) * 12, year * 12);
+    if (months.length === 0) break;
+
+    const yearRevenue = months.reduce((sum, m) => sum + m.revenue, 0);
+    const yearCosts = months.reduce((sum, m) => sum + m.costs, 0);
+    const yearProfit = months.reduce((sum, m) => sum + m.profit, 0);
 
     cumulativeProfit += yearProfit;
     const roi = (cumulativeProfit / totalInvestment) * 100;
@@ -147,6 +182,8 @@ export function calculateROI(input: ROIInput): ROIResult {
     paybackPeriodMonths,
     paybackPeriodYears,
     breakEvenMonth: paybackMonth,
+    loanTermMonths,
+    loanTermYears,
 
     // ROI metrics
     simpleROI: parseFloat(simpleROI.toFixed(2)),
@@ -220,8 +257,6 @@ export function formatCurrency(value: number): string {
 export function formatPercentage(value: number): string {
   return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
 }
-
-
 
 
 

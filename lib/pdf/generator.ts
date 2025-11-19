@@ -156,7 +156,7 @@ export class PDFGenerator {
     const imgWidth = this.pageWidth - 2 * this.margin;
     const imgHeight = 80;
 
-    chartDataUrls.forEach((url, index) => {
+    chartDataUrls.forEach((url) => {
       this.checkPageBreak(imgHeight + 20);
       try {
         this.doc.addImage(url, 'PNG', this.margin, this.currentY, imgWidth, imgHeight);

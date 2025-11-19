@@ -1,10 +1,10 @@
 /**
  * Post-Cut Finishing Time & Cost Constants
  * 
- * Edge finishing is often overlooked in cost estimates but can add 20-50% to total job time.
- * Values based on typical job shop operations with standard equipment.
+ * Edge finishing is often overlooked in cost estimates and, in some observed operations, has accounted for a substantial share of total job time.
+ * The values here are illustrative defaults derived from selected time-study data and may not match any specific shop without adjustment.
  * 
- * Source: Manufacturing time studies and industry benchmarks
+ * Source: Manufacturing time studies and reference data
  */
 
 /**
@@ -231,22 +231,22 @@ export const FINISHING_TIME_PERCENTAGES = {
 export const CUT_QUALITY_FINISHING_RELATIONSHIP = {
   excellentCut: {
     description: 'Nitrogen cutting, optimal parameters',
-    finishingReduction: 0.5, // 50% less finishing time needed
+    finishingReduction: 0.5, // Lower multiplier in this model reduces finishing time relative to the baseline
     typicalEdgeRoughness: '3-6 µm Ra',
   },
   goodCut: {
     description: 'Standard parameters, minimal dross',
-    finishingReduction: 1.0, // Baseline
+    finishingReduction: 1.0, // Baseline multiplier in this model
     typicalEdgeRoughness: '6-12 µm Ra',
   },
   fairCut: {
     description: 'Some dross, slight irregularities',
-    finishingReduction: 1.3, // 30% more finishing time
+    finishingReduction: 1.3, // Higher multiplier in this model increases finishing time relative to the baseline
     typicalEdgeRoughness: '12-25 µm Ra',
   },
   poorCut: {
     description: 'Heavy dross, rough edges',
-    finishingReduction: 2.0, // 100% more finishing time
+    finishingReduction: 2.0, // Significantly higher multiplier in this model
     typicalEdgeRoughness: '>25 µm Ra',
   },
 } as const;
@@ -344,14 +344,14 @@ export const FINISHING_OPTIMIZATION = {
     'Use lower power for final pass to improve edge quality',
   ],
   whenToOutsource: [
-    'High-volume production (>1000 parts/month)',
-    'Specialized finishing (mirror polish, electropolishing)',
-    'When finishing time exceeds cutting time by 2x',
+    'High-volume production where in-house finishing becomes a consistent capacity constraint',
+    'Specialized finishing (mirror polish, electropolishing) that requires dedicated expertise or equipment',
+    'Situations where your own data shows finishing time is a large multiple of cutting time and alternative providers are available',
   ],
   whenToInvest: [
-    'Automated deburring: ROI at >500 hours finishing/year',
-    'Ultrasonic cleaner: ROI at >200 parts/month requiring cleaning',
-    'Polishing station: ROI at >100 hours polishing/year',
+    'Automated deburring: worth evaluating when finishing workload is consistently high; use ROI modeling with your own hours and costs',
+    'Ultrasonic cleaner: consider when you regularly process parts that require cleaning and manual steps are a bottleneck',
+    'Polishing station: consider when polishing work is frequent enough that dedicated equipment may reduce touch time and rework',
   ],
 } as const;
 

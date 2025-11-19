@@ -1,145 +1,33 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   weldingCalculatorSchema,
   type WeldingCalculatorInput,
-  WELDING_SPEED_TABLE,
-  SPOT_WELD_TIME_TABLE,
-  getWeldingPowerEfficiency,
   WELDING_MATERIAL_LABELS,
   WELDING_PROCESS_LABELS,
   JOINT_TYPE_LABELS,
   GAS_TYPE_LABELS,
-  type WeldingMaterialType,
-  type WeldingProcessType,
 } from '@/lib/validations/welding';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
-import { Calculator, Zap, DollarSign, Clock, TrendingUp, CheckCircle, Info, Flame } from 'lucide-react';
+import { Calculator, Zap, DollarSign, Clock, TrendingUp, CheckCircle, Info, Flame, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
-import { generateHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
-
-interface WeldingResult {
-  // Time calculations
-  weldSpeedMmPerSec: number;
-  weldTimePerPieceSec: number;
-  setupTimePerPieceMin: number;
-  totalTimePerPieceSec: number;
-  totalBatchTimeSec: number;
-  totalBatchTimeFormatted: string;
-
-  // Cost calculations
-  depreciationPerHour: number;
-  electricityPerHour: number;
-  gasCostPerHour: number;
-  totalHourlyCost: number;
-  costPerPiece: number;
-  totalBatchCost: number;
-
-  // Pricing
-  profitMargin: number;
-  recommendedPrice: number;
-
-  // Efficiency
-  piecesPerHour: number;
-  revenuePerHour: number;
-  utilizationRate: number;
-}
-
-function calculateWelding(input: WeldingCalculatorInput): WeldingResult {
-  // Calculate weld speed
-  let weldSpeed: number;
-  if (input.weldingProcess === 'spot') {
-    // Spot welding uses time per spot
-    const timePerSpot = SPOT_WELD_TIME_TABLE[input.materialType](input.materialThicknessMm);
-    // Convert to effective speed (assuming spots are 5mm apart on average)
-    weldSpeed = 5 / timePerSpot;
-  } else {
-    const speedFunc = WELDING_SPEED_TABLE[input.materialType][input.weldingProcess];
-    weldSpeed = speedFunc(input.materialThicknessMm, input.laserPowerWatts);
-  }
-
-  // Weld time per piece
-  const weldTimePerPiece = (input.weldLengthMm / weldSpeed) * input.numberOfWelds;
-
-  // Setup time per piece (distributed across batch)
-  const setupTimePerPieceMin = input.setupTimePerBatchMin / input.quantityPerBatch;
-
-  // Additional time for special treatments
-  let additionalTimeMin = input.qualityInspectionTimeMin;
-  if (input.requiresPreheat) additionalTimeMin += 5;
-  if (input.requiresPostHeatTreatment) additionalTimeMin += 10;
-
-  const totalTimePerPiece = weldTimePerPiece + (setupTimePerPieceMin + additionalTimeMin) * 60;
-  const totalBatchTime = totalTimePerPiece * input.quantityPerBatch;
-
-  // Format batch time
-  const hours = Math.floor(totalBatchTime / 3600);
-  const minutes = Math.floor((totalBatchTime % 3600) / 60);
-  const seconds = Math.floor(totalBatchTime % 60);
-  const totalBatchTimeFormatted =
-    hours > 0 ? `${hours}h ${minutes}m` : minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
-
-  // Calculate hourly costs
-  const depreciationPerHour =
-    input.equipmentCost / (input.equipmentLifespanYears * input.annualWorkingHours);
-  
-  const powerEfficiency = getWeldingPowerEfficiency(input.laserPowerWatts);
-  const electricityPerHour = (input.laserPowerWatts / 1000) * input.electricityRatePerKwh / powerEfficiency;
-  
-  // Gas cost per hour
-  const gasCostPerHour = input.shieldingGasType === 'none' 
-    ? 0 
-    : (input.gasFlowRateLPerMin * 60 * input.gasCostPerM3) / 1000;
-
-  const totalHourlyCost =
-    depreciationPerHour +
-    electricityPerHour +
-    gasCostPerHour +
-    input.laborRatePerHour +
-    input.overheadRatePerHour +
-    input.maintenanceRatePerHour;
-
-  // Cost per piece
-  const costPerPiece = (totalTimePerPiece / 3600) * totalHourlyCost;
-  const totalBatchCost = costPerPiece * input.quantityPerBatch;
-
-  // Recommended pricing with margin
-  const profitMargin = 0.40; // 40% margin for welding
-  const recommendedPrice = costPerPiece / (1 - profitMargin);
-
-  // Efficiency metrics
-  const piecesPerHour = 3600 / totalTimePerPiece;
-  const revenuePerHour = piecesPerHour * recommendedPrice;
-  const utilizationRate = (weldTimePerPiece / totalTimePerPiece) * 100;
-
-  return {
-    weldSpeedMmPerSec: Number(weldSpeed.toFixed(1)),
-    weldTimePerPieceSec: Number(weldTimePerPiece.toFixed(1)),
-    setupTimePerPieceMin: Number(setupTimePerPieceMin.toFixed(2)),
-    totalTimePerPieceSec: Number(totalTimePerPiece.toFixed(1)),
-    totalBatchTimeSec: Number(totalBatchTime.toFixed(1)),
-    totalBatchTimeFormatted,
-    depreciationPerHour: Number(depreciationPerHour.toFixed(2)),
-    electricityPerHour: Number(electricityPerHour.toFixed(2)),
-    gasCostPerHour: Number(gasCostPerHour.toFixed(2)),
-    totalHourlyCost: Number(totalHourlyCost.toFixed(2)),
-    costPerPiece: Number(costPerPiece.toFixed(2)),
-    totalBatchCost: Number(totalBatchCost.toFixed(2)),
-    profitMargin: Number((profitMargin * 100).toFixed(0)),
-    recommendedPrice: Number(recommendedPrice.toFixed(2)),
-    piecesPerHour: Number(piecesPerHour.toFixed(1)),
-    revenuePerHour: Number(revenuePerHour.toFixed(2)),
-    utilizationRate: Number(utilizationRate.toFixed(1)),
-  };
-}
+import {
+  generateHowToSchema,
+  generateFAQSchema,
+  generateSoftwareApplicationSchema,
+} from '@/lib/seo/schema';
+import { calculateWelding, type WeldingResult } from '@/lib/calculators/welding';
+import { ExportButton } from '@/components/calculators/ExportButton';
+import { saveCalculationToAPI } from '@/lib/utils/api-client';
 
 export default function WeldingCalculatorPage() {
   const [result, setResult] = useState<WeldingResult | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
 
   const {
     register,
@@ -176,9 +64,29 @@ export default function WeldingCalculatorPage() {
     },
   });
 
-  const onSubmit = (data: WeldingCalculatorInput) => {
-    const calcResult = calculateWelding(data);
-    setResult(calcResult);
+  const watchValues = watch();
+
+  const onSubmit = async (data: WeldingCalculatorInput) => {
+    setIsCalculating(true);
+
+    try {
+      const calcResult = calculateWelding(data);
+      setResult(calcResult);
+
+      document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
+
+      const saveResult = await saveCalculationToAPI({
+        tool_type: 'welding',
+        input_params: data,
+        result: calcResult as unknown as Record<string, unknown>,
+      });
+
+      if (!saveResult.success) {
+        console.error('Failed to save calculation:', saveResult.error);
+      }
+    } finally {
+      setIsCalculating(false);
+    }
   };
 
   const handleReset = () => {
@@ -189,7 +97,7 @@ export default function WeldingCalculatorPage() {
   // Schema markup for SEO
   const howToSchema = generateHowToSchema({
     name: 'Calculate Laser Welding Cost',
-    description: 'Step-by-step guide to calculate laser welding costs accurately',
+    description: 'Step-by-step guide to estimate laser welding costs based on your inputs',
     steps: [
       {
         name: 'Select Welding Process and Material',
@@ -227,12 +135,12 @@ export default function WeldingCalculatorPage() {
     {
       question: 'What shielding gas should I use for laser welding?',
       answer:
-        'Argon is most common for stainless steel and aluminum, providing good protection and weld quality. Helium offers deeper penetration for thick materials. Nitrogen is economical for mild steel. Some applications use no shielding gas for thin materials.',
+        'Argon is commonly used for stainless steel and aluminum to provide protection and weld quality. Helium can be chosen for deeper penetration on some thicker materials. Nitrogen may be used for certain mild steel applications depending on your procedure, and some thin-gauge jobs use no shielding gas at all. Always follow your qualified welding procedures and supplier guidance when selecting shielding gas.',
     },
     {
       question: 'How much power do I need for laser welding?',
       answer:
-        '1-2kW fiber lasers handle most thin sheet metal (0.5-3mm). 2-4kW is ideal for general fabrication (2-6mm). 4-10kW+ is needed for thick plate welding and high-speed production. Higher power increases speed but also equipment and operating costs.',
+        'Required laser power depends on material, thickness, weld geometry, and desired speed. Higher power generally allows faster welding or thicker sections, but also increases equipment and operating costs. Follow your equipment supplier’s recommended power levels for your applications and enter the actual power you plan to use into this calculator.',
     },
     {
       question: 'Why does welding cost more than cutting?',
@@ -246,31 +154,65 @@ export default function WeldingCalculatorPage() {
     },
   ]);
 
+  const softwareSchema = generateSoftwareApplicationSchema('Laser Welding Cost Calculator');
+
   return (
     <>
       <SchemaMarkup schema={howToSchema} />
       <SchemaMarkup schema={faqSchema} />
+      <SchemaMarkup schema={softwareSchema} />
       <Navigation />
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center mb-4">
-              <div className="p-3 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl shadow-lg">
-                <Flame className="w-12 h-12 text-white" />
-              </div>
-            </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          {/* Header - Compact */}
+          <div className="mb-4">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Laser Welding Cost Calculator
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Calculate accurate laser welding costs for all processes and materials. 
-              Optimize pricing with comprehensive cost analysis including gas, power, and labor. 
-              See our{' '}
-              <Link href="/calculators/quick-reference/power-consumption" className="text-orange-600 hover:text-orange-700 underline">
-                power consumption reference
-              </Link>{' '}
-              for energy costs.
+            <p className="text-base text-gray-600">
+              Estimate laser welding costs for different processes and materials.
+            </p>
+          </div>
+
+          {/* Disclaimer - Simplified */}
+          <div className="mb-4 border-l-4 border-orange-500 bg-orange-50 px-4 py-3">
+            <p className="text-sm text-orange-900">
+              <Flame className="mr-2 inline h-4 w-4" />
+              <strong>Estimates Only:</strong> Results are based on simplified welding models and assume consistent joint fit-up,
+              stable material properties, and typical shop practices. Actual costs depend on joint quality, material condition,
+              qualified procedures, and inspection level. Always test with your own welding procedures and compare against real
+              job data before committing quotes.
+            </p>
+          </div>
+
+          {/* When to choose laser welding */}
+          <div className="mb-8 card bg-gradient-to-br from-orange-50 to-red-50 border-l-4 border-orange-500">
+            <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <Flame className="h-5 w-5 text-orange-600" />
+              When to Choose Laser Welding
+            </h3>
+            <div className="grid md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="font-semibold text-green-700 mb-2">✓ Best for:</p>
+                <ul className="text-xs text-gray-700 space-y-1 ml-4">
+                  <li>• Thin to medium sections where distortion matters</li>
+                  <li>• High-precision parts and sealed joints</li>
+                  <li>• Dissimilar materials and hard-to-reach joints</li>
+                  <li>• High-volume, repeatable production</li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-amber-700 mb-2">⚠️ Traditional welding may be better when:</p>
+                <ul className="text-xs text-gray-700 space-y-1 ml-4">
+                  <li>• Fit-up gaps are large or inconsistent</li>
+                  <li>• Very thick sections (&gt;20 mm) dominate the job</li>
+                  <li>• Work is mostly field welding or repair</li>
+                  <li>• Lowest equipment cost is more important than speed</li>
+                </ul>
+              </div>
+            </div>
+            <p className="mt-3 pt-3 border-t border-orange-200 text-xs text-gray-600">
+              For capital decisions, combine this calculator with the ROI and Energy calculators to capture the full picture.
             </p>
           </div>
 
@@ -383,6 +325,38 @@ export default function WeldingCalculatorPage() {
                       )}
                     </div>
                   </div>
+                  {watchValues.weldingProcess && (
+                    <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                      <p className="text-sm font-semibold text-blue-900 mb-1">
+                        {WELDING_PROCESS_LABELS[watchValues.weldingProcess]} – typical use
+                      </p>
+                      <p className="text-xs text-blue-800">
+                        Conduction is usually best for thin materials and cosmetic welds; keyhole for deeper penetration on
+                        thicker sections; seam for continuous joints; spot for discrete points. Match your process to material
+                        thickness and joint design.
+                      </p>
+                    </div>
+                  )}
+                  {watchValues.materialThicknessMm > 0 && watchValues.weldingProcess && (() => {
+                    const thickness = watchValues.materialThicknessMm;
+                    const process = watchValues.weldingProcess;
+                    const mismatch =
+                      (process === 'spot' && thickness > 3) ||
+                      (process === 'conduction' && thickness > 2) ||
+                      (process === 'keyhole' && thickness < 3) ||
+                      (process === 'seam' && thickness > 6);
+                    if (!mismatch) return null;
+                    return (
+                      <div className="mt-3 p-3 bg-amber-50 rounded-lg border-l-4 border-amber-500">
+                        <AlertTriangle className="inline h-4 w-4 mr-2 text-amber-700" />
+                        <span className="text-sm font-semibold text-amber-900">Process–thickness mismatch warning</span>
+                        <p className="mt-1 text-xs text-amber-800">
+                          {thickness}mm material with {WELDING_PROCESS_LABELS[process]} welding may not be ideal. Check your
+                          qualified welding procedures or consider an alternative process mode.
+                        </p>
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* Equipment */}
@@ -486,6 +460,51 @@ export default function WeldingCalculatorPage() {
                       </select>
                     </div>
 
+                    {watchValues.shieldingGasType && watchValues.materialType && (
+                      <div className="md:col-span-2 mt-1 p-3 bg-green-50 rounded-lg border border-green-200">
+                        <p className="text-sm font-semibold text-green-900 mb-1">Gas selection check</p>
+                        {(() => {
+                          type MaterialKey = keyof typeof WELDING_MATERIAL_LABELS;
+                          type GasKey = keyof typeof GAS_TYPE_LABELS;
+
+                          const material = watchValues.materialType as MaterialKey;
+                          const gas = watchValues.shieldingGasType as GasKey;
+
+                          const bestCombos: Partial<Record<MaterialKey, GasKey[]>> = {
+                            mild_steel: ['argon', 'nitrogen'],
+                            stainless_steel_304: ['argon'],
+                            stainless_steel_316: ['argon'],
+                            aluminum_5052: ['argon', 'helium'],
+                            aluminum_6061: ['argon', 'helium'],
+                            titanium: ['argon', 'helium'],
+                            copper: ['argon'],
+                            brass: ['argon'],
+                            galvanized_steel: ['argon', 'nitrogen'],
+                          };
+
+                          const best = bestCombos[material] ?? (['argon'] as GasKey[]);
+                          const isOptimal = best.includes(gas);
+
+                          if (isOptimal) {
+                            return (
+                              <p className="text-xs text-green-800">
+                                ✅ <strong>{GAS_TYPE_LABELS[gas]}</strong> is a common choice for {WELDING_MATERIAL_LABELS[material]}.
+                                Still follow your qualified welding procedures.
+                              </p>
+                            );
+                          }
+
+                          return (
+                            <p className="text-xs text-amber-800">
+                              ⚠️ <strong>{GAS_TYPE_LABELS[gas]}</strong> is less typical for {WELDING_MATERIAL_LABELS[material]}.
+                              Check your welding procedure specifications; many shops prefer{' '}
+                              <strong>{best.map((g) => GAS_TYPE_LABELS[g]).join(' or ')}</strong> here.
+                            </p>
+                          );
+                        })()}
+                      </div>
+                    )}
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Gas Flow (L/min)
@@ -503,7 +522,7 @@ export default function WeldingCalculatorPage() {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Gas Cost ($/m³)
+                        Gas Cost ($/m^3)
                       </label>
                       <input
                         type="number"
@@ -634,15 +653,44 @@ export default function WeldingCalculatorPage() {
                       )}
                     </div>
                   </div>
+                  <div className="mt-4 p-3 bg-purple-50 rounded-lg">
+                    <p className="text-sm font-semibold text-purple-900 mb-2">Weld quality class & inspection</p>
+                    <div className="grid md:grid-cols-3 gap-3 text-xs">
+                      <div className="bg-white rounded p-2">
+                        <p className="font-semibold text-gray-900 mb-1">Class A – stringent</p>
+                        <p className="text-gray-700">
+                          Aerospace and pressure-vessel work with full NDT. Expect 5–15 minutes per part of inspection and
+                          documentation.
+                        </p>
+                      </div>
+                      <div className="bg-white rounded p-2">
+                        <p className="font-semibold text-gray-900 mb-1">Class B – standard</p>
+                        <p className="text-gray-700">
+                          Automotive and general industrial welds with visual plus spot checks. Typically 1–3 minutes per part.
+                        </p>
+                      </div>
+                      <div className="bg-white rounded p-2">
+                        <p className="font-semibold text-gray-900 mb-1">Class C – basic</p>
+                        <p className="text-gray-700">
+                          Prototypes and non-critical welds with a quick visual check under 1 minute per part.
+                        </p>
+                      </div>
+                    </div>
+                    <p className="mt-2 text-xs text-gray-600">
+                      Enter inspection time according to your quality class. Higher classes increase time and cost but reduce
+                      rework and risk.
+                    </p>
+                  </div>
                 </div>
 
                 {/* Buttons */}
                 <div className="flex gap-4 pt-4">
                   <button
                     type="submit"
-                    className="flex-1 bg-gradient-to-r from-orange-600 to-red-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-orange-700 hover:to-red-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    disabled={isCalculating}
+                    className="flex-1 bg-gradient-to-r from-orange-600 to-red-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-orange-700 hover:to-red-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-60"
                   >
-                    Calculate Cost
+                    {isCalculating ? 'Calculating...' : 'Calculate Cost'}
                   </button>
                   <button
                     type="button"
@@ -656,7 +704,7 @@ export default function WeldingCalculatorPage() {
             </div>
 
             {/* Results Panel */}
-            <div className="space-y-6">
+            <div id="results" className="space-y-6">
               {result && (
                 <>
                   {/* Time Analysis */}
@@ -729,13 +777,17 @@ export default function WeldingCalculatorPage() {
                       <TrendingUp className="w-6 h-6 mr-2 text-green-600" />
                       Pricing Recommendation
                     </h2>
+                    <p className="mb-3 text-sm text-gray-700">
+                      These prices are calculated from your cost inputs and the profit margin used in this scenario. Treat them as a
+                      modeled starting point, and adjust based on your quoting policies, risk, and market conditions.
+                    </p>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center py-2">
                         <span className="text-gray-600">Profit Margin:</span>
                         <span className="font-semibold">{result.profitMargin}%</span>
                       </div>
                       <div className="flex justify-between items-center py-3 bg-white -mx-2 px-2 rounded-lg border-2 border-green-300">
-                        <span className="font-bold text-gray-900">Recommended Price/Piece:</span>
+                        <span className="font-bold text-gray-900">Modeled Price/Piece (based on your inputs):</span>
                         <span className="font-bold text-green-700 text-xl">${result.recommendedPrice}</span>
                       </div>
                       <div className="flex justify-between items-center py-2">
@@ -768,6 +820,39 @@ export default function WeldingCalculatorPage() {
                       </div>
                     </div>
                   </div>
+
+                  <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl shadow-xl p-6">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center">
+                      <Info className="w-6 h-6 mr-2 text-indigo-600" />
+                      Cost vs quality considerations
+                    </h2>
+                    <p className="text-sm text-gray-700 mb-4">
+                      Use the quality and batch fields to explore how requirements change cost. Higher quality usually means
+                      slower welding, more inspection time, and higher hourly rates—but lower rework and risk.
+                    </p>
+                    <div className="grid md:grid-cols-2 gap-4 text-xs text-gray-700">
+                      <div className="bg-white rounded-lg p-3">
+                        <p className="font-semibold text-gray-900 mb-1">Signals you are in a high-quality regime:</p>
+                        <ul className="list-disc ml-4 space-y-1">
+                          {watchValues.qualityInspectionTimeMin > 0 && (
+                            <li>Inspection time ≥ {watchValues.qualityInspectionTimeMin} min per part</li>
+                          )}
+                          {watchValues.requiresPreheat && <li>Preheat enabled for this joint</li>}
+                          {watchValues.requiresPostHeatTreatment && <li>Post‑weld heat treatment enabled</li>}
+                          <li>Utilization rate around {result.utilizationRate}% (more time welding than handling)</li>
+                        </ul>
+                      </div>
+                      <div className="bg-white rounded-lg p-3">
+                        <p className="font-semibold text-gray-900 mb-1">Ways to reduce cost safely:</p>
+                        <ul className="list-disc ml-4 space-y-1">
+                          <li>Group parts into larger batches to spread setup and inspection time.</li>
+                          <li>Use a standard quality class where codes and customer requirements allow.</li>
+                          <li>Optimize shielding gas type and flow with supplier guidance, not just default values.</li>
+                          <li>Run trial welds and update this calculator with measured speeds and times.</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </>
               )}
 
@@ -776,8 +861,41 @@ export default function WeldingCalculatorPage() {
                   <Calculator className="w-16 h-16 text-orange-400 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">Ready to Calculate</h3>
                   <p className="text-gray-600">
-                    Enter your welding parameters and click "Calculate Cost" to see detailed analysis.
+                    Enter your welding parameters and click &quot;Calculate Cost&quot; to see detailed analysis.
                   </p>
+                </div>
+              )}
+              {result && (
+                <div className="mt-6 flex flex-col gap-4 sm:flex-row">
+                  <ExportButton
+                    title="Laser Welding Cost Report"
+                    calculationType="Welding"
+                    inputData={watchValues}
+                    results={{
+                      'Cost Per Piece': result.costPerPiece,
+                      'Recommended Price': result.recommendedPrice,
+                      'Total Batch Cost': result.totalBatchCost,
+                      'Total Batch Time': result.totalBatchTimeFormatted,
+                      'Weld Speed (mm/s)': result.weldSpeedMmPerSec,
+                      'Weld Time Per Piece (sec)': result.weldTimePerPieceSec,
+                      'Setup Time Per Piece (min)': result.setupTimePerPieceMin,
+                      'Electricity Per Hour': result.electricityPerHour,
+                      'Depreciation Per Hour': result.depreciationPerHour,
+                      'Gas Cost Per Hour': result.gasCostPerHour,
+                      'Total Hourly Cost': result.totalHourlyCost,
+                      'Profit Margin (%)': result.profitMargin,
+                      'Pieces Per Hour': result.piecesPerHour,
+                      'Revenue Per Hour': result.revenuePerHour,
+                      'Utilization Rate (%)': result.utilizationRate,
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className="px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    New Welding Scenario
+                  </button>
                 </div>
               )}
             </div>
@@ -796,10 +914,9 @@ export default function WeldingCalculatorPage() {
                   Process Selection
                 </h3>
                 <ul className="text-sm text-blue-800 space-y-1 ml-7">
-                  <li>• Use keyhole for thick materials (&gt;3mm)</li>
-                  <li>• Conduction mode for thin sheet (&lt;2mm)</li>
-                  <li>• Seam welding for continuous joints</li>
-                  <li>• Spot welding for quick tack welds</li>
+                  <li>- Compare conduction and keyhole modes for your thickness range using the welding process input</li>
+                  <li>- Use seam welding settings for continuous joints and spot welding for discrete tack points where appropriate</li>
+                  <li>- Reflect your actual procedure choices in the calculator so the time and cost outputs match your process plan</li>
                 </ul>
               </div>
               <div className="bg-green-50 rounded-lg p-4">
@@ -808,10 +925,10 @@ export default function WeldingCalculatorPage() {
                   Cost Reduction
                 </h3>
                 <ul className="text-sm text-green-800 space-y-1 ml-7">
-                  <li>• Maximize batch sizes to reduce setup time</li>
-                  <li>• Use nitrogen instead of argon for mild steel</li>
-                  <li>• Optimize gas flow (15-20 L/min typical)</li>
-                  <li>• Regular maintenance prevents costly failures</li>
+                  <li>- Increase batch sizes where possible to spread setup time across more pieces, and adjust quantity per batch in the calculator to see the impact</li>
+                  <li>- Use the shielding gas type, flow rate, and gas cost fields to compare different gas scenarios for cost versus quality</li>
+                  <li>- Try different power levels and weld speeds within your qualified ranges to see how they influence hourly cost and cost per piece</li>
+                  <li>- Regular maintenance and reliable equipment reduce unplanned downtime, which is not modeled directly but affects how many hours you can bill</li>
                 </ul>
               </div>
               <div className="bg-purple-50 rounded-lg p-4">
@@ -820,10 +937,9 @@ export default function WeldingCalculatorPage() {
                   Quality Improvement
                 </h3>
                 <ul className="text-sm text-purple-800 space-y-1 ml-7">
-                  <li>• Ensure proper joint fit-up (gap &lt;0.2mm)</li>
-                  <li>• Use appropriate shielding gas for material</li>
-                  <li>• Preheat thick sections to prevent cracking</li>
-                  <li>• Post-weld heat treatment for stress relief</li>
+                  <li>- Maintain tight and consistent joint fit-up according to your welding procedure to help quality and repeatability</li>
+                  <li>- Choose shielding gas and parameters that meet your material and quality requirements, then mirror those settings in the calculator</li>
+                  <li>- If procedures require preheat or post-weld heat treatment, enable those options and add inspection time so related time is reflected in the estimate</li>
                 </ul>
               </div>
               <div className="bg-orange-50 rounded-lg p-4">
@@ -832,10 +948,10 @@ export default function WeldingCalculatorPage() {
                   Pricing Strategy
                 </h3>
                 <ul className="text-sm text-orange-800 space-y-1 ml-7">
-                  <li>• 40%+ margin for complex welding jobs</li>
-                  <li>• Charge setup fees for small batches</li>
-                  <li>• Premium pricing for certified welds</li>
-                  <li>• Volume discounts at 50+ pieces</li>
+                  <li>- Use the cost per piece and recommended price from this calculator as a starting point, then adjust margins based on project complexity and risk</li>
+                  <li>- Consider setup fees for small batches where setup time is high relative to weld time</li>
+                  <li>- Premium pricing for certified or high-spec welds can reflect additional qualification and inspection effort</li>
+                  <li>- Offer volume discounts only where higher quantities genuinely improve your overall economics</li>
                 </ul>
               </div>
             </div>
@@ -874,12 +990,6 @@ export default function WeldingCalculatorPage() {
     </>
   );
 }
-
-
-
-
-
-
 
 
 

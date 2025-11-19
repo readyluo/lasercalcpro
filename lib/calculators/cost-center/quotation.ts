@@ -169,30 +169,30 @@ export function calculateQuotationMargin(input: QuotationMarginInput): Quotation
   // Margin analysis
   if (targetMarginPercent < 20) {
     recommendations.push(
-      'Target margin below 20% is low. Ensure volume justifies thin margins or consider increasing price.'
+      'In this calculation, the target margin is below 20%. Lower margins reduce buffer for cost variation and risk, so check that your expected volume, customer relationship, and risk level justify operating at this level.'
     );
   } else if (targetMarginPercent > 50) {
     recommendations.push(
-      'Target margin above 50% is high. Ensure value proposition justifies premium pricing or risk losing to competitors.'
+      'In this calculation, the target margin is above 50%. Higher margins may reduce win rates in some markets; ensure your value proposition and customer expectations support this pricing level.'
     );
   }
   
   // Cost structure analysis
   if (materialPercent > 60) {
     recommendations.push(
-      `Material costs are ${materialPercent.toFixed(0)}% of price. Consider negotiating bulk discounts with suppliers.`
+      `In this scenario, material costs are about ${materialPercent.toFixed(0)}% of the modeled price. You may want to review material specifications, yields, and supplier options if you are looking to change this cost structure.`
     );
   }
   
   if (laborPercent > 40) {
     recommendations.push(
-      'Labor costs are high. Consider automation or process optimization opportunities.'
+      'Labor makes up a large share of the modeled price in this scenario. Consider whether process changes, scheduling, or automation could improve productivity, given your constraints.'
     );
   }
   
   if (overheadPercent > 30) {
     recommendations.push(
-      'Overhead allocation is high. Review if overhead rates are current and accurate.'
+      'Overhead represents more than 30% of the modeled price. It may be worth reviewing whether your overhead rates and allocation bases are current and reflect your operations.'
     );
   }
   
@@ -232,7 +232,7 @@ export function calculateQuotationMargin(input: QuotationMarginInput): Quotation
     const lowestMargin = Math.min(...volumePricing.map(v => v.marginPercent));
     if (lowestMargin < 15) {
       recommendations.push(
-        `Volume discount reduces margin to ${lowestMargin.toFixed(0)}%. Ensure volume justifies thin margins.`
+        `In at least one tier, the modeled margin falls to about ${lowestMargin.toFixed(0)}%. Check whether projected volumes, strategic importance, or other factors justify operating at that margin level.`
       );
     }
   }
@@ -244,7 +244,7 @@ export function calculateQuotationMargin(input: QuotationMarginInput): Quotation
   
   if (targetMarginPercent >= 25 && targetMarginPercent <= 35) {
     recommendations.push(
-      'Target margin is in healthy range (25-35%) for custom fabrication work.'
+      'In this calculation, the target margin falls in a mid-range band (around 25–35%). Some custom fabrication shops operate in this region, but your acceptable range should be based on your actual costs, risk profile, and market.'
     );
   }
   

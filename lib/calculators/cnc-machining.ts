@@ -43,6 +43,40 @@ const MATERIAL_DENSITY: Record<string, number> = {
 
 /**
  * Calculate CNC machining costs with batch pricing
+ * 
+ * ⚠️ ESTIMATION LIMITATIONS:
+ * This calculator provides cost estimates based on user inputs and simplified assumptions.
+ * 
+ * What IS modeled:
+ * - Material cost based on part volume and density
+ * - Machine time cost (user-provided cycle time)
+ * - Labor cost with assumed multi-machine monitoring factor
+ * - Tooling cost amortized over tool life
+ * - Setup cost amortized across batch
+ * - Overhead as percentage of direct costs
+ * - Volume pricing tiers with economies of scale
+ * 
+ * What is NOT modeled:
+ * - Actual machining strategy optimization
+ * - Programming time cost
+ * - Inspection and quality control time
+ * - Part-specific complexity factors
+ * - Scrap rate and rework costs
+ * - Material waste beyond finished part volume
+ * 
+ * Key assumptions to verify:
+ * - Labor utilization factor is 40% (assumes operator monitors multiple machines)
+ *   Actual: 10-100% depending on automation level
+ * - Profit margin is 25% for single pieces (volume discounts reduce this)
+ *   Actual: varies widely by market, customer, and competition
+ * - Overhead rate is user-input (default 15%)
+ *   Actual: typically 10-40% depending on shop structure
+ * 
+ * For accurate quoting:
+ * - Input your actual measured machining times (from CAM or time studies)
+ * - Use your shop's actual hourly rates and overhead structure
+ * - Validate against historical job costs
+ * - Adjust labor factor based on your automation level
  */
 export function calculateCNCMachining(input: CNCMachiningInput): CNCMachiningResult {
   // 1. Calculate part volume and weight
@@ -61,8 +95,21 @@ export function calculateCNCMachining(input: CNCMachiningInput): CNCMachiningRes
   const machineCostPerPart = input.machiningTime * input.machineRate;
 
   // 5. Labor cost per part
-  // Operator typically monitors multiple machines, so labor is 40% of machining time
-  const laborCostPerPart = input.machiningTime * input.laborRate * 0.4;
+  // ⚠️ IMPORTANT: This assumes 40% labor utilization (operator monitors multiple machines)
+  // Actual labor requirements vary significantly:
+  // - Manual operations: 80-100% (dedicated operator attention required)
+  // - Semi-automated: 40-60% (periodic monitoring and tool changes)
+  // - Fully automated cells: 20-30% (setup and inspection only)
+  // - Multi-machine monitoring: 10-40% (one operator, multiple machines)
+  // 
+  // For accurate costing:
+  // 1. Track actual operator time per part in your shop
+  // 2. Calculate your labor utilization factor: (operator_hours / machine_hours)
+  // 3. Consider adding a labor utilization input field to the calculator
+  // 
+  // This 40% factor is a middle-ground estimate for shops with moderate automation.
+  const laborUtilizationFactor = 0.4; // 40% - example for semi-automated operation
+  const laborCostPerPart = input.machiningTime * input.laborRate * laborUtilizationFactor;
 
   // 6. Tooling cost per part
   const toolingCostPerPart = input.toolCost / input.toolLife;
@@ -90,8 +137,21 @@ export function calculateCNCMachining(input: CNCMachiningInput): CNCMachiningRes
   const totalBatchTime = input.setupTime + input.machiningTime * input.batchSize;
   const totalMaterialCost = materialCostPerPart * input.batchSize;
 
-  // 10. Pricing (25% markup for single units, decreases with volume)
-  const suggestedPricePerPart = totalCostPerPart * 1.25;
+  // 10. Pricing (default 25% markup for single units, decreases with volume)
+  // ⚠️ Profit margin assumptions vary widely by market and business model:
+  // - Prototype/R&D work: often 30-50% due to uncertainty and small batches
+  // - Production quantities: typically 15-30% depending on competition
+  // - High-volume contract manufacturing: may be 8-15% with high reliability
+  // - Rush jobs: may justify 40-60% premium for schedule accommodation
+  // 
+  // This calculator uses 25% as a middle-ground example for single-piece pricing.
+  // Adjust your final quotes based on:
+  // - Customer relationship and volume commitments
+  // - Market competition and geographic factors  
+  // - Risk level, payment terms, and warranty requirements
+  // - Your competitive advantage and specialized capabilities
+  const defaultMarkupPercent = 0.25; // 25% markup (example for single-piece)
+  const suggestedPricePerPart = totalCostPerPart * (1 + defaultMarkupPercent);
   const profitPerPart = suggestedPricePerPart - totalCostPerPart;
   const totalProfit = profitPerPart * input.batchSize;
 
@@ -171,18 +231,27 @@ function calculateVolumePricing(
     const newCostPerPart = directCosts + overheadPerPart;
 
     // Volume discount: larger quantities get better margins
+    // ⚠️ These markup percentages are EXAMPLES for illustration purposes.
+    // Actual pricing strategies vary significantly by:
+    // - Your cost structure and breakeven volume
+    // - Market positioning (premium specialist vs. high-volume player)
+    // - Customer relationship and negotiating power
+    // - Inventory risk and working capital constraints
+    // - Competition level in your market
+    // 
+    // Example markup strategy used here:
     let markup: number;
-    if (quantity === 1) markup = 1.25;
-    // 25%
-    else if (quantity <= 10) markup = 1.20;
-    // 20%
-    else if (quantity <= 50) markup = 1.15;
-    // 15%
-    else if (quantity <= 100) markup = 1.12;
-    // 12%
-    else if (quantity <= 500) markup = 1.10;
-    // 10%
-    else markup = 1.08; // 8%
+    if (quantity === 1) markup = 1.25;       // 25% - single piece/prototype
+    else if (quantity <= 10) markup = 1.20;  // 20% - small batch
+    else if (quantity <= 50) markup = 1.15;  // 15% - medium batch
+    else if (quantity <= 100) markup = 1.12; // 12% - larger batch
+    else if (quantity <= 500) markup = 1.10; // 10% - production quantity
+    else markup = 1.08;                      // 8% - high volume
+    // 
+    // Many shops also add:
+    // - Minimum order charges for very small quantities
+    // - Setup fees separate from per-piece pricing
+    // - Volume discounts negotiated per customer relationship
 
     const pricePerPart = newCostPerPart * markup;
     const discount = ((basePrice - pricePerPart) / basePrice) * 100;

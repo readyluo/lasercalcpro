@@ -3,7 +3,11 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
+import {
+  generateCalculatorHowToSchema,
+  generateFAQSchema,
+  generateSoftwareApplicationSchema,
+} from '@/lib/seo/schema';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 import Link from 'next/link';
 import { useEnglish } from '@/lib/i18n';
@@ -15,8 +19,9 @@ import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { laserCuttingSchema, laserCuttingDefaults, type LaserCuttingInput } from '@/lib/validations/laser-cutting';
 import { calculateLaserCutting, type LaserCuttingResult } from '@/lib/calculators/laser-cutting';
-import { Calculator, Download, RotateCcw, TrendingUp, Zap, DollarSign, Clock, Info } from 'lucide-react';
+import { Calculator, RotateCcw, TrendingUp, Zap, DollarSign, Clock, Info } from 'lucide-react';
 import { ExportButton } from '@/components/calculators/ExportButton';
+import { saveCalculationToAPI } from '@/lib/utils/api-client';
 export default function LaserCuttingCalculatorPage() {
   const t = useEnglish();
   const [result, setResult] = React.useState<LaserCuttingResult | null>(null);
@@ -25,10 +30,10 @@ export default function LaserCuttingCalculatorPage() {
   // SEO structured data
   const howToSchema = generateCalculatorHowToSchema(
     'Laser Cutting Cost Calculator',
-    'Calculate accurate laser cutting costs including material, power, labor, and gas costs',
+    'Estimate laser cutting costs including material, power, labor, and gas components based on your input data',
     [
       { name: 'Select Material Type', text: 'Choose your material type (steel, aluminum, copper, etc.)' },
-      { name: 'Enter Dimensions', text: 'Input material thickness and cutting length' },
+      { name: 'Enter Dimensions', text: 'Input material thickness, cutting length, and part geometry' },
       { name: 'Set Equipment Parameters', text: 'Specify laser power and operating costs' },
       { name: 'Calculate Costs', text: 'Get detailed cost breakdown and recommendations' },
     ]
@@ -37,7 +42,8 @@ export default function LaserCuttingCalculatorPage() {
   const faqSchema = generateFAQSchema([
     {
       question: 'How accurate is the laser cutting cost calculator?',
-      answer: 'Our calculator uses industry-standard formulas and real manufacturing data to provide highly accurate cost estimates, typically within 5-10% of actual costs.',
+      answer:
+        'This calculator uses simplified cost formulas together with your input data to provide approximate estimates. Actual costs vary with your equipment, process, and local rates, so always compare results with your own production data.',
     },
     {
       question: 'What factors affect laser cutting costs?',
@@ -48,6 +54,8 @@ export default function LaserCuttingCalculatorPage() {
       answer: 'Yes, you can export detailed PDF reports with complete cost breakdowns and recommendations.',
     },
   ]);
+
+  const softwareSchema = generateSoftwareApplicationSchema('Laser Cutting Cost Calculator');
 
   const {
     register,
@@ -60,33 +68,30 @@ export default function LaserCuttingCalculatorPage() {
     defaultValues: laserCuttingDefaults,
   });
 
+  const thickness = watch('thickness');
+  const materialUtilization = watch('materialUtilization');
+
   const onSubmit = async (data: LaserCuttingInput) => {
     setIsCalculating(true);
 
-    // Simulate calculation time for better UX
-    setTimeout(async () => {
+    try {
       const calculationResult = calculateLaserCutting(data);
       setResult(calculationResult);
-      setIsCalculating(false);
 
-      // Scroll to results
       document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
 
-      // Save calculation to database for analytics
-      try {
-        await fetch('/api/calculate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            toolType: 'laser-cutting',
-            params: data,
-            result: calculationResult,
-          }),
-        });
-      } catch (error) {
-        console.error('Failed to save calculation:', error);
+      const saveResult = await saveCalculationToAPI({
+        tool_type: 'laser-cutting',
+        input_params: data,
+        result: calculationResult as unknown as Record<string, unknown>,
+      });
+
+      if (!saveResult.success) {
+        console.error('Failed to save calculation:', saveResult.error);
       }
-    }, 300);
+    } finally {
+      setIsCalculating(false);
+    }
   };
 
   const handleReset = () => {
@@ -106,17 +111,57 @@ export default function LaserCuttingCalculatorPage() {
     <>
       <SchemaMarkup schema={howToSchema} />
       <SchemaMarkup schema={faqSchema} />
+      <SchemaMarkup schema={softwareSchema} />
       <Navigation />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
 
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">
+          {/* When to use this calculator */}
+          <div className="mb-4 rounded-2xl bg-blue-50 border-l-4 border-blue-500 px-4 py-3">
+            <h2 className="mb-1 text-sm font-semibold text-gray-900">When to use this laser cutting calculator</h2>
+            <div className="grid gap-3 md:grid-cols-2 text-xs text-gray-700">
+              <div>
+                <p className="font-semibold text-gray-900">✓ Best suited for:</p>
+                <ul className="mt-1 ml-5 list-disc space-y-1">
+                  <li>Sheet and plate cutting with typical fiber or CO₂ laser systems</li>
+                  <li>Order-of-magnitude cost estimates using your own rates and material prices</li>
+                  <li>Comparing material choices, thicknesses, and utilization scenarios</li>
+                  <li>Explaining cost structure (material vs power vs labor) to internal teams or customers</li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">✗ Not ideal for:</p>
+                <ul className="mt-1 ml-5 list-disc space-y-1">
+                  <li>Highly optimized production quoting based on detailed CAM time studies</li>
+                  <li>Jobs dominated by setup, fixturing, or complex secondary operations</li>
+                  <li>Very thick plate or exotic alloys beyond your proven parameter tables</li>
+                  <li>Guaranteeing margins without first validating against your own production data</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Header - Compact */}
+          <div className="mb-4">
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">
               {t.laserCutting.title}
             </h1>
-            <p className="text-xl text-gray-600">{t.laserCutting.description}</p>
+            <p className="text-base text-gray-600">{t.laserCutting.description}</p>
+          </div>
+
+          {/* Disclaimer - Simplified */}
+          <div className="mb-4 border-l-4 border-amber-500 bg-amber-50 px-4 py-3">
+            <p className="text-sm text-amber-900">
+              <Info className="mr-2 inline h-4 w-4" />
+              <strong>Estimates only:</strong> This calculator combines your own inputs with simplified empirical models and a
+              few default assumptions (e.g. typical equipment cost, lifespan, auxiliary power). Actual cutting speeds, gas
+              usage, and margins depend strongly on your machine, parameters, nesting strategy, and local rates.
+            </p>
+            <p className="mt-1 text-xs text-amber-800">
+              Use these results as a structured starting point, then compare them against your real jobs and CAM estimates
+              before final quoting—especially for very thick material, unusual alloys, or tight-tolerance parts.
+            </p>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-2">
@@ -155,9 +200,15 @@ export default function LaserCuttingCalculatorPage() {
                         step="0.1"
                         label={t.laserCutting.fields.thickness}
                         error={errors.thickness?.message}
-                        helperText="Material thickness in millimeters"
+                        helperText="Material thickness in millimeters. Typical fiber range: ~0.5–25 mm; verify your machine limits."
                         required
                       />
+                      {thickness !== undefined && thickness > 25 && (
+                        <p className="mt-1 text-xs text-amber-600">
+                          ⚠️ Thickness above ~25 mm can be very slow or infeasible on many laser systems. Double-check your
+                          equipment capability and parameter tables for this material and thickness.
+                        </p>
+                      )}
 
                       <Input
                         {...register('materialPrice', { valueAsNumber: true })}
@@ -194,6 +245,47 @@ export default function LaserCuttingCalculatorPage() {
                         leftIcon={<Zap className="h-4 w-4" />}
                         required
                       />
+                    </div>
+                  </div>
+
+                  {/* Part Geometry & Utilization */}
+                  <div>
+                    <div className="mb-4 flex items-center justify-between">
+                      <h3 className="text-lg font-semibold text-gray-900">Part Geometry & Utilization</h3>
+                      <span className="text-sm text-gray-500">Used to calculate sheet mass</span>
+                    </div>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <Input
+                        {...register('partLength', { valueAsNumber: true })}
+                        type="number"
+                        step="1"
+                        label={t.laserCutting.fields.partLength}
+                        error={errors.partLength?.message}
+                        helperText="Longest dimension of a single part"
+                        required
+                      />
+                      <Input
+                        {...register('partWidth', { valueAsNumber: true })}
+                        type="number"
+                        step="1"
+                        label={t.laserCutting.fields.partWidth}
+                        error={errors.partWidth?.message}
+                        helperText="Second dimension of a single part"
+                        required
+                      />
+                    </div>
+                    <Input
+                      {...register('materialUtilization', { valueAsNumber: true })}
+                      type="number"
+                      step="0.01"
+                      min={0.1}
+                      max={1}
+                      label={t.laserCutting.fields.materialUtilization}
+                      error={errors.materialUtilization?.message}
+                      helperText="Enter as decimal (0.85 = 85% sheet usage, including scrap)"
+                    />
+                    <div className="mt-2 rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+                      More realistic geometry and utilization inputs help the material cost estimate reflect the full sheet, not just kerf waste.
                     </div>
                   </div>
 
@@ -295,6 +387,10 @@ export default function LaserCuttingCalculatorPage() {
                       <CostItem label="Labor Cost" value={result.laborCost} />
                       <CostItem label="Gas Cost" value={result.gasCost} />
                       <CostItem label="Equipment Depreciation" value={result.depreciation} />
+                      <p className="mt-1 ml-6 text-xs text-gray-500">
+                        Based on a default assumption of ~$150k equipment cost, 10-year life, and 2000 operating hours per
+                        year. Your actual ownership cost may differ.
+                      </p>
                       <CostItem label="Maintenance" value={result.maintenanceCost} />
                       <div className="border-t pt-3">
                         <CostItem label="Total" value={result.totalCost} isTotal />
@@ -326,6 +422,76 @@ export default function LaserCuttingCalculatorPage() {
                         label="Cutting Time"
                         value={`${(result.cuttingTime * 60).toFixed(1)} min`}
                       />
+                      <MetricCard
+                        icon={<Info className="h-6 w-6" />}
+                        label="Material Weight"
+                        value={`${result.materialWeight.toFixed(2)} kg`}
+                      />
+                      <MetricCard
+                        icon={<TrendingUp className="h-6 w-6" />}
+                        label="Material Utilization"
+                        value={`${(((materialUtilization ?? 0.85) * 100)).toFixed(0)}%`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Quick sanity check */}
+                  <div className="card border-l-4 border-purple-500 bg-purple-50">
+                    <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-gray-900">
+                      <Info className="h-5 w-5 text-purple-600" />
+                      Quick sanity check
+                    </h3>
+                    <div className="space-y-2 text-sm text-gray-700">
+                      {result.totalCost > 0 && result.materialCost / result.totalCost > 0.6 ? (
+                        <p className="flex items-start gap-2 text-xs">
+                          <span className="text-amber-600">⚠️</span>
+                          <span>
+                            Material is about
+                            {' '}
+                            {((result.materialCost / result.totalCost) * 100).toFixed(0)}% of the modeled total. This is
+                            common for expensive alloys or high utilization, but if it surprises you, double-check material
+                            price, sheet size, and utilization assumptions.
+                          </span>
+                        </p>
+                      ) : (
+                        <p className="flex items-start gap-2 text-xs">
+                          <span className="text-green-600">✓</span>
+                          <span>
+                            Material share of total cost looks within a typical range for many jobs. Still compare against
+                            your accounting data for similar parts.
+                          </span>
+                        </p>
+                      )}
+
+                      {result.costPerMeter > 15 ? (
+                        <p className="flex items-start gap-2 text-xs">
+                          <span className="text-amber-600">⚠️</span>
+                          <span>
+                            Modeled cost per meter (${result.costPerMeter.toFixed(2)}) is on the high side. For thin mild
+                            steel with good nesting, many shops see lower values; for thick stainless or copper, higher
+                            numbers can be normal. Recheck thickness, material, and rate inputs if this seems off.
+                          </span>
+                        </p>
+                      ) : (
+                        <p className="flex items-start gap-2 text-xs">
+                          <span className="text-green-600">✓</span>
+                          <span>
+                            Cost per meter (${result.costPerMeter.toFixed(2)}) is within a moderate range. Validate it
+                            against one or two real jobs as a spot-check.
+                          </span>
+                        </p>
+                      )}
+
+                      {materialUtilization !== undefined && materialUtilization < 0.65 && (
+                        <p className="flex items-start gap-2 text-xs">
+                          <span className="text-amber-600">⚠️</span>
+                          <span>
+                            Material utilization ({(materialUtilization * 100).toFixed(0)}%) is below the 70–75% often seen in
+                            everyday work. That can be correct for tricky shapes or very small batches; otherwise, revisit
+                            nesting and part grouping.
+                          </span>
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -338,6 +504,9 @@ export default function LaserCuttingCalculatorPage() {
                         inputData={{
                           materialType: watch('materialType'),
                           thickness: watch('thickness'),
+                          partLength: watch('partLength'),
+                          partWidth: watch('partWidth'),
+                          materialUtilization: watch('materialUtilization'),
                           cuttingLength: watch('cuttingLength'),
                           laserPower: watch('laserPower'),
                           electricityRate: watch('electricityRate'),
@@ -361,17 +530,19 @@ export default function LaserCuttingCalculatorPage() {
                           'Cost per Meter': `$${result.costPerMeter}`,
                           'Cost per Minute': `$${result.costPerMinute}`,
                           'Energy Efficiency': result.energyEfficiency,
+                          'Material Weight (kg)': result.materialWeight,
+                          'Material Volume (cm^3)': result.materialVolume,
                         }}
                         recommendations={[
                           result.energyEfficiency === 'Poor' 
                             ? 'Consider using a more energy-efficient laser or optimizing cutting parameters to reduce energy consumption.'
-                            : 'Your energy efficiency is good. Maintain current operating parameters.',
+                            : 'In this estimate, energy use per meter is relatively low under the current assumptions; compare it with your own measurements.',
                           result.materialCost > result.totalCost * 0.6
-                            ? 'Material cost is high (>60% of total). Consider bulk purchasing or negotiating better material prices.'
-                            : 'Material cost is well-balanced with total project cost.',
+                            ? 'In this estimate, material cost represents more than 60% of the modeled total. You may want to review material pricing, nesting, scrap, and specification choices if that does not match your expectations.'
+                            : 'In this estimate, material cost is a smaller share of the modeled total; check that this aligns with your accounting data and typical jobs.',
                           result.costPerMeter > 10
-                            ? 'Cost per meter is relatively high. Consider optimizing cutting speed or reviewing labor rates.'
-                            : 'Cost per meter is competitive.',
+                            ? 'In this scenario, the modeled cost per meter is on the higher side for the assumptions entered. Consider exploring changes to cutting speed, batch sizes, or labor and overhead assumptions and compare against your actual job data.'
+                            : 'In this scenario, the modeled cost per meter appears moderate; validate it against your historical jobs and target pricing.',
                           'Always verify calculations against actual production data for your specific equipment and conditions.',
                         ]}
                       />
@@ -410,7 +581,7 @@ export default function LaserCuttingCalculatorPage() {
                 <div>
                   <h2 className="text-3xl font-bold text-gray-900">How to Use This Calculator</h2>
                   <p className="mt-2 text-gray-600">
-                    Follow these steps to get accurate cost estimates for your laser cutting projects
+                    Follow these steps to get structured cost estimates for your laser cutting projects based on your own inputs
                   </p>
                 </div>
               </div>
@@ -436,7 +607,7 @@ export default function LaserCuttingCalculatorPage() {
                   <h3 className="mb-2 text-lg font-semibold text-gray-900">Step 3: Cost Factors</h3>
                   <p className="text-gray-600">
                     Input your local electricity rate, labor cost, material price, and assist gas consumption. These values 
-                    directly affect your total cost. Use current market rates for the most accurate results.
+                    directly affect your total cost. Use up-to-date rates so the estimates better reflect your current situation.
                   </p>
                 </div>
 
@@ -458,19 +629,19 @@ export default function LaserCuttingCalculatorPage() {
               <div className="space-y-4">
                 <FAQItem
                   question="How accurate is this calculator?"
-                  answer="Our calculator uses industry-standard formulas based on real manufacturing data, achieving 95-98% accuracy. However, actual costs may vary based on specific equipment efficiency, operator skill, and material quality. Always verify with actual production data."
+                  answer="This calculator uses simplified cost formulas and your input data to estimate costs. Actual results depend on your equipment, parameters, material quality, and local prices, so treat the output as a guide and validate it against your own production data."
                 />
                 <FAQItem
                   question="What cutting length should I enter?"
-                  answer="Enter the total length of all cutting paths including outer contours, inner holes, and details. Measure in millimeters. For complex parts, use your CAD software's 'measure length' function on the cutting path."
+                  answer="Enter the total length of all cutting paths including outer contours, inner holes, and details. Measure in millimeters. For complex parts, use your CAD software&rsquo;s &quot;measure length&quot; function on the cutting path."
                 />
                 <FAQItem
                   question="How is equipment depreciation calculated?"
-                  answer="Depreciation is calculated based on equipment cost ($150,000 default), lifespan (10 years), and annual working hours (2000 hours). This represents the hourly cost of owning and operating the equipment. You can adjust these values in advanced settings."
+                  answer="Depreciation in this calculator is estimated from an assumed equipment cost ($150,000), lifespan (10 years), and annual working hours (2000 hours). This approximates an hourly ownership cost that is added on top of material, energy, and labor. Your actual equipment cost structure may differ from these defaults."
                 />
                 <FAQItem
                   question="What assist gas should I use?"
-                  answer="Oxygen (O2) for mild steel (faster cutting), Nitrogen (N2) for stainless steel and aluminum (cleaner edges), or Air for general purpose (cost-effective). Gas consumption varies by nozzle size and pressure, typically 0.5-3 m³/hour."
+                  answer="Oxygen (O2) is commonly used for mild steel when cutting speed is the priority. Nitrogen (N2) is often used for stainless steel and aluminum where clean, oxide-free edges are required. Compressed air can be an option for some thinner materials when edge quality requirements allow. Gas consumption depends on nozzle size, pressure, and machine setup, so rely on your own process data when entering gas-related values in the calculator."
                 />
                 <FAQItem
                   question="Why is my cost per meter high?"
@@ -485,8 +656,9 @@ export default function LaserCuttingCalculatorPage() {
             <div className="card">
               <h2 className="mb-6 text-3xl font-bold text-gray-900">Material Selection Guide</h2>
               <p className="mb-6 text-gray-700">
-                Different materials require different cutting parameters and affect overall costs significantly. 
-                Here's what you need to know about common materials. For current material pricing, see our{' '}
+                Different materials require different cutting parameters and affect overall costs in different ways.
+                The calculator uses your selected material type together with your own price inputs to estimate cost.
+                For up-to-date material pricing, see our{' '}
                 <Link href="/calculators/quick-reference/material-costs" className="text-primary-600 hover:underline font-semibold">
                   Material Costs Reference
                 </Link>.
@@ -497,10 +669,10 @@ export default function LaserCuttingCalculatorPage() {
                   <h3 className="mb-2 font-bold text-gray-900">Mild Steel (Carbon Steel)</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Best for:</strong> General fabrication, structural parts, brackets</p>
-                    <p><strong>Cutting speed:</strong> Fast (up to 20 m/min for thin sheets with fiber laser)</p>
-                    <p><strong>Assist gas:</strong> Oxygen (faster) or Nitrogen (cleaner edges)</p>
-                    <p><strong>Typical thickness range:</strong> 0.5mm - 25mm</p>
-                    <p><strong>Cost consideration:</strong> Most economical option, ~$3-5/kg</p>
+                    <p><strong>Cutting characteristics:</strong> Generally cuts quickly and economically with fiber lasers.</p>
+                    <p><strong>Assist gas:</strong> Often cut with oxygen for speed or nitrogen for cleaner edges.</p>
+                    <p><strong>Thickness range:</strong> Commonly used from thin sheet to medium plate thicknesses.</p>
+                    <p><strong>Cost consideration:</strong> Often one of the lower-cost sheet metals; enter your current purchase price in the calculator.</p>
                   </div>
                 </div>
 
@@ -508,10 +680,10 @@ export default function LaserCuttingCalculatorPage() {
                   <h3 className="mb-2 font-bold text-gray-900">Stainless Steel 304/316</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Best for:</strong> Food equipment, medical devices, corrosion-resistant parts</p>
-                    <p><strong>Cutting speed:</strong> Moderate (60-70% of mild steel speed)</p>
-                    <p><strong>Assist gas:</strong> Nitrogen required for oxide-free edges</p>
-                    <p><strong>Typical thickness range:</strong> 0.5mm - 20mm</p>
-                    <p><strong>Cost consideration:</strong> 60-80% more expensive than mild steel, ~$5-8/kg</p>
+                    <p><strong>Cutting characteristics:</strong> Typically slower to cut than mild steel and more sensitive to parameter settings.</p>
+                    <p><strong>Assist gas:</strong> Commonly cut with nitrogen to achieve oxide-free edges.</p>
+                    <p><strong>Thickness range:</strong> Used across a wide range of sheet and plate gauges.</p>
+                    <p><strong>Cost consideration:</strong> Usually more expensive than mild steel; use your current supplier pricing when entering material price.</p>
                   </div>
                 </div>
 
@@ -519,10 +691,10 @@ export default function LaserCuttingCalculatorPage() {
                   <h3 className="mb-2 font-bold text-gray-900">Aluminum (5052, 6061)</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Best for:</strong> Lightweight parts, aerospace, transportation</p>
-                    <p><strong>Cutting speed:</strong> Fast (high reflectivity requires fiber laser)</p>
-                    <p><strong>Assist gas:</strong> Nitrogen (Air for thinner sheets)</p>
-                    <p><strong>Typical thickness range:</strong> 0.5mm - 12mm</p>
-                    <p><strong>Cost consideration:</strong> Material costs ~$8-12/kg, but lighter weight reduces shipping</p>
+                    <p><strong>Cutting characteristics:</strong> Can be cut quickly but requires appropriate equipment because of reflectivity.</p>
+                    <p><strong>Assist gas:</strong> Often cut with nitrogen; compressed air may be suitable for some thin gauges.</p>
+                    <p><strong>Thickness range:</strong> Common in thin to medium sheet applications.</p>
+                    <p><strong>Cost consideration:</strong> Material is lighter than steel for the same volume; use your current price per kg in the calculator.</p>
                   </div>
                 </div>
 
@@ -530,10 +702,10 @@ export default function LaserCuttingCalculatorPage() {
                   <h3 className="mb-2 font-bold text-gray-900">Copper & Brass</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Best for:</strong> Electrical components, decorative parts</p>
-                    <p><strong>Cutting speed:</strong> Slow (high thermal conductivity, reflective)</p>
-                    <p><strong>Assist gas:</strong> Nitrogen or Air</p>
-                    <p><strong>Typical thickness range:</strong> 0.5mm - 8mm</p>
-                    <p><strong>Cost consideration:</strong> Expensive materials ($15-20/kg), requires high-power fiber laser</p>
+                    <p><strong>Cutting characteristics:</strong> More challenging to cut due to high thermal conductivity and reflectivity.</p>
+                    <p><strong>Assist gas:</strong> Often cut with nitrogen or compressed air depending on quality requirements.</p>
+                    <p><strong>Thickness range:</strong> Typically used in thinner gauges for laser cutting applications.</p>
+                    <p><strong>Cost consideration:</strong> Generally higher-cost materials; use your actual purchase price to reflect cost accurately in the calculator.</p>
                   </div>
                 </div>
               </div>
@@ -552,9 +724,9 @@ export default function LaserCuttingCalculatorPage() {
                     Optimize Nesting and Material Utilization
                   </h3>
                   <p className="ml-10 text-gray-700">
-                    Proper nesting can improve material utilization from 60-70% to 80-90%. Use automatic nesting software 
-                    to minimize waste. Common rectangle nesting achieves 75-80%, while advanced algorithms can reach 85-90%. 
-                    A 10% improvement in nesting efficiency can reduce material costs by the same percentage.
+                    Better nesting layouts can significantly increase how much of each sheet becomes usable parts and reduce scrap.
+                    Use the material utilization input in this calculator to compare different nesting approaches and see how
+                    changes in utilization affect your total material cost.
                   </p>
                 </div>
 
@@ -564,9 +736,9 @@ export default function LaserCuttingCalculatorPage() {
                     Batch Similar Jobs Together
                   </h3>
                   <p className="ml-10 text-gray-700">
-                    Setup time typically adds 6-18 minutes per job. By batching similar parts, you can amortize setup 
-                    costs across multiple pieces. For example, 10 identical parts might take only 20% more time than one part, 
-                    reducing per-unit cost by 70-80%.
+                    Setup and loading time is usually shared across all parts in a batch. When similar parts are produced together,
+                    the setup time per piece is reduced and cost per part decreases. Use this calculator together with your
+                    typical batch sizes to understand how setup time influences your overall job cost.
                   </p>
                 </div>
 
@@ -576,9 +748,10 @@ export default function LaserCuttingCalculatorPage() {
                     Choose the Right Assist Gas
                   </h3>
                   <p className="ml-10 text-gray-700">
-                    Oxygen cutting is 20-30% faster than nitrogen for mild steel but leaves oxidized edges. Nitrogen produces 
-                    clean edges but costs $0.50-2.00/m³ vs $0.10-0.30/m³ for oxygen. Air is cheapest but only suitable for 
-                    thin sheets (&lt;3mm). Choose based on edge quality requirements vs. cost tradeoffs.
+                    Different assist gases influence both cut quality and operating cost. Oxygen is often used when cutting speed
+                    on carbon steel is a priority, while nitrogen is preferred when clean, oxide-free edges are required.
+                    Compressed air can be suitable for some applications when edge quality requirements permit. Use your own
+                    gas consumption and price data in the calculator to compare scenarios.
                   </p>
                 </div>
 
@@ -588,9 +761,10 @@ export default function LaserCuttingCalculatorPage() {
                     Optimize Cutting Parameters
                   </h3>
                   <p className="ml-10 text-gray-700">
-                    Running at 80-90% of maximum speed often provides the best balance between speed and edge quality. 
-                    Over-cutting (too slow) wastes time and energy. Under-cutting (too fast) causes dross and requires 
-                    secondary operations. Proper focus position can improve cutting speed by 10-15%.
+                    There is always a trade-off between speed, edge quality, and process stability. Cutting too slowly wastes
+                    time and energy, while cutting too fast can create dross and require secondary operations. Work with
+                    your machine supplier's recommended parameters and then use this calculator to understand how changes in
+                    cutting speed impact total cost.
                   </p>
                 </div>
 
@@ -600,9 +774,9 @@ export default function LaserCuttingCalculatorPage() {
                     Minimize Piercing Operations
                   </h3>
                   <p className="ml-10 text-gray-700">
-                    Each pierce takes 0.5-3 seconds depending on thickness. For parts with many holes, piercing time can exceed 
-                    cutting time. Design parts to minimize internal features when possible. Lead-in paths should be optimized 
-                    to reduce pierce points.
+                    Piercing adds extra time and wear to the process, especially on thicker materials and parts with many holes.
+                    Where design requirements allow, reducing internal features and pierce points can shorten total processing
+                    time and lower cost. Reflect this in the cutting length and setup assumptions you use in the calculator.
                   </p>
                 </div>
               </div>
@@ -617,74 +791,30 @@ export default function LaserCuttingCalculatorPage() {
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="rounded-lg bg-white p-4 shadow-sm">
                   <h3 className="mb-3 text-lg font-semibold text-gray-900">Cutting Speed Benchmarks (Fiber Laser)</h3>
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="pb-2 text-left">Material/Thickness</th>
-                        <th className="pb-2 text-right">Speed</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-gray-700">
-                      <tr className="border-b">
-                        <td className="py-2">Mild Steel 1mm</td>
-                        <td className="text-right">15-20 m/min</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="py-2">Mild Steel 3mm</td>
-                        <td className="text-right">4-6 m/min</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="py-2">Mild Steel 10mm</td>
-                        <td className="text-right">0.8-1.2 m/min</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="py-2">Stainless 2mm</td>
-                        <td className="text-right">6-8 m/min</td>
-                      </tr>
-                      <tr>
-                        <td className="py-2">Aluminum 3mm</td>
-                        <td className="text-right">8-12 m/min</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <p className="text-sm text-gray-700">
+                    Typical cutting speeds depend strongly on material, thickness, laser power, assist gas, and machine setup.
+                    Always use your own proven parameter tables or machine supplier data when estimating processing time.
+                    This calculator combines your cutting length and power assumptions with a simplified speed model to
+                    estimate cutting time.
+                  </p>
                   <p className="mt-3 text-xs text-gray-600">
-                    Based on 6kW fiber laser with optimized parameters.{' '}
+                    For additional example ranges, refer to your machine documentation or the{' '}
                     <Link href="/calculators/quick-reference/cutting-speeds" className="text-primary-600 hover:underline font-semibold">
-                      View complete cutting speeds reference →
+                      Cutting Speeds Reference
                     </Link>
+                    .
                   </p>
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
                   <h3 className="mb-3 text-lg font-semibold text-gray-900">Typical Cost Breakdown</h3>
-                  <div className="space-y-2 text-sm text-gray-700">
-                    <div className="flex justify-between">
-                      <span>Material costs:</span>
-                      <span className="font-semibold">40-60%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Labor costs:</span>
-                      <span className="font-semibold">15-25%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Energy costs:</span>
-                      <span className="font-semibold">5-10%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Equipment depreciation:</span>
-                      <span className="font-semibold">10-15%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Consumables (gas, nozzles):</span>
-                      <span className="font-semibold">5-10%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Overhead:</span>
-                      <span className="font-semibold">10-15%</span>
-                    </div>
-                  </div>
+                  <p className="text-sm text-gray-700">
+                    The share of total cost coming from material, labor, energy, depreciation, consumables, and overhead
+                    varies widely from one shop to another. This calculator breaks these components out separately so you can
+                    compare its output with your own accounting data instead of relying on generic percentages.
+                  </p>
                   <p className="mt-3 text-xs text-gray-600">
-                    Percentages vary based on material type and thickness. See{' '}
+                    Use the cost breakdown on this page together with your internal reports, and refer to related tools such as{' '}
                     <Link href="/calculators/quick-reference/assist-gas" className="text-primary-600 hover:underline font-semibold">
                       Assist Gas Costs
                     </Link>
@@ -692,31 +822,28 @@ export default function LaserCuttingCalculatorPage() {
                     <Link href="/calculators/quick-reference/power-consumption" className="text-primary-600 hover:underline font-semibold">
                       Power Consumption
                     </Link>
-                    {' '}references for detailed breakdowns.
+                    {' '}when you need more detailed references.
                   </p>
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
                   <h3 className="mb-3 text-lg font-semibold text-gray-900">Machine Utilization Targets</h3>
-                  <div className="space-y-2 text-sm text-gray-700">
-                    <p><strong>Cutting time:</strong> 60-70% of total time</p>
-                    <p><strong>Setup/loading:</strong> 15-20% of total time</p>
-                    <p><strong>Programming:</strong> 5-10% of total time</p>
-                    <p><strong>Maintenance:</strong> 3-5% of total time</p>
-                    <p><strong>Idle time:</strong> Should be &lt;10%</p>
-                  </div>
-                  <p className="mt-3 text-xs text-gray-600">Based on job shop operations with mixed work</p>
+                  <p className="text-sm text-gray-700">
+                    Many shops track how much of their available time is spent cutting, setting up and loading parts,
+                    programming, performing maintenance, or sitting idle. The time outputs from this calculator can support
+                    those analyses, but actual utilization targets should come from your own production planning and KPIs.
+                  </p>
+                  <p className="mt-3 text-xs text-gray-600">Use your shop's utilization data and goals when interpreting time-related results.</p>
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
                   <h3 className="mb-3 text-lg font-semibold text-gray-900">Quality Standards</h3>
-                  <div className="space-y-2 text-sm text-gray-700">
-                    <p><strong>Edge roughness (Ra):</strong> 6.3-12.5 μm (typical)</p>
-                    <p><strong>Kerf width:</strong> 0.1-0.5mm depending on thickness</p>
-                    <p><strong>Perpendicularity:</strong> ±0.1mm per 10mm thickness</p>
-                    <p><strong>Dimensional accuracy:</strong> ±0.1mm (general), ±0.05mm (precision)</p>
-                  </div>
-                  <p className="mt-3 text-xs text-gray-600">Per ISO 9013 quality standards</p>
+                  <p className="text-sm text-gray-700">
+                    Edge roughness, kerf width, perpendicularity, and dimensional accuracy are defined by customer drawings
+                    and relevant standards (for example, ISO 9013). This calculator focuses on cost and time and does not
+                    evaluate quality. Always confirm that your chosen cutting parameters meet required quality levels.
+                  </p>
+                  <p className="mt-3 text-xs text-gray-600">Refer to applicable standards and your quality documentation when setting requirements.</p>
                 </div>
               </div>
             </div>
@@ -726,32 +853,13 @@ export default function LaserCuttingCalculatorPage() {
           <div className="mt-12">
             <div className="card">
               <h2 className="mb-6 text-3xl font-bold text-gray-900">Advanced Questions</h2>
-              <div className="space-y-4">
-                <FAQItem
-                  question="How does laser power affect cutting speed and cost?"
-                  answer="Higher power lasers cut thicker materials faster but cost more to purchase and operate. A 6kW laser costs ~$150k-200k vs. $80k-120k for 3kW. Operating costs scale with power (electricity, cooling). General rule: use 1kW per 3-4mm of mild steel thickness. Over-powered lasers waste energy on thin materials; under-powered struggle with thick materials."
-                />
-                <FAQItem
-                  question="What's the difference between CO2 and fiber lasers for cost?"
-                  answer="Fiber lasers are 3-5x more energy efficient than CO2 lasers. A 3kW fiber uses ~10kW total power vs ~30kW for equivalent CO2. Fiber lasers have lower maintenance (no gas refills, mirrors last longer) saving $10k-20k/year. Initial cost is similar, but 5-year operating cost is 40-50% lower for fiber. Fiber lasers also cut thin materials 2-3x faster, reducing per-part costs."
-                />
-                <FAQItem
-                  question="How do I calculate the true cost per hour of my laser?"
-                  answer="True hourly cost includes: Equipment depreciation ($150k machine / 10 years / 2000 hrs = $7.50/hr), Electricity (~10kW x $0.12 = $1.20/hr), Labor ($25/hr operator), Consumables (nozzles, lenses ~$2/hr), Assist gas ($1-5/hr depending on type), Maintenance reserve ($2-3/hr), Facility overhead (rent, insurance ~$5-10/hr). Total: $45-55/hr is typical for a 6kW fiber laser system."
-                />
-                <FAQItem
-                  question="When should I outsource vs. buying equipment?"
-                  answer="Buy equipment if: Annual cutting volume exceeds $150k-200k in outsourcing costs (typical 2-3 year payback), You have consistent workload (>60% machine utilization), In-house control is critical for lead times. Outsource if: Volume is sporadic, Multiple material types needed (avoiding multiple machines), Capital is limited, You lack technical expertise. Break-even is typically 1500-2000 hours of annual cutting time."
-                />
-                <FAQItem
-                  question="How can I reduce assist gas costs?"
-                  answer="Gas costs can be 20-40% of operating expenses. Strategies: 1) Use Air instead of N2 for mild steel when edge quality permits (saves $1-2/hr), 2) Buy bulk gas vs. cylinders (50% cost reduction at scale), 3) On-site nitrogen generator pays for itself in 2-3 years above 40 hrs/week usage, 4) Optimize gas pressure - excessive pressure wastes gas without improving cut quality, 5) Fix leaks promptly - even small leaks waste $500-1000/year."
-                />
-                <FAQItem
-                  question="What maintenance costs should I budget for?"
-                  answer="Annual maintenance typically runs 5-8% of machine cost. Fiber laser (6kW): Protective windows: $500-800/year (replaced 2-4x), Cutting nozzles: $1000-2000/year, Focus lenses: $800-1200/year, Chiller maintenance: $500-800/year, Preventive service: $2000-3000/year. CO2 laser adds: Laser gas refills: $3000-5000/year, Mirror replacements: $2000-4000/year. Total: $5k-8k/year for fiber, $12k-20k/year for CO2."
-                />
-              </div>
+              <p className="text-gray-700">
+                Topics such as detailed machine selection, outsourcing versus in-house production, gas supply economics, and
+                long-term return on investment depend heavily on your specific situation and are not modeled in full detail
+                by this calculator. Use the cost breakdown and time estimates on this page together with your own shop data
+                or the dedicated calculators (for example, Energy Cost, ROI, or Cost Center tools) when you analyse those
+                decisions.
+              </p>
             </div>
           </div>
 
@@ -830,7 +938,7 @@ export default function LaserCuttingCalculatorPage() {
                   Assist Gas Guide
                 </h3>
                 <p className="text-sm text-gray-600">
-                  O₂ vs N₂ selection and cost optimization
+                  O2 vs N2 selection and cost optimization
                 </p>
               </Link>
             </div>
@@ -895,4 +1003,3 @@ function MetricCard({ icon, label, value }: { icon: React.ReactNode; label: stri
     </div>
   );
 }
-

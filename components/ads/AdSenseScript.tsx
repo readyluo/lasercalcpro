@@ -3,42 +3,59 @@
 import { useEffect, useState } from 'react';
 import Script from 'next/script';
 
+const ENV_ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID ?? null;
+
+interface AdSettingsState {
+  clientId: string | null;
+  enabled: boolean;
+  resolved: boolean;
+}
+
 export function AdSenseScript() {
-  const [adSettings, setAdSettings] = useState<{ clientId: string | null; enabled: boolean }>({
-    clientId: null,
-    enabled: false,
+  const [adSettings, setAdSettings] = useState<AdSettingsState>({
+    clientId: ENV_ADSENSE_ID,
+    enabled: Boolean(ENV_ADSENSE_ID),
+    resolved: Boolean(ENV_ADSENSE_ID),
   });
-  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    // Fetch AdSense settings from database via public API
+    if (ENV_ADSENSE_ID) {
+      return;
+    }
+
+    let isMounted = true;
+
     const fetchAdSenseSettings = async () => {
       try {
         const response = await fetch('/api/settings/public');
-        if (response.ok) {
-          const data = await response.json();
-          setAdSettings({
-            clientId: data.adsenseClientId || null,
-            enabled: data.adsenseEnabled !== false,
-          });
-        }
+        if (!response.ok) return;
+        const data = await response.json();
+        if (!isMounted) return;
+        setAdSettings({
+          clientId: data.adsenseClientId || null,
+          enabled: data.adsenseEnabled !== false,
+          resolved: true,
+        });
       } catch (error) {
         console.error('Failed to fetch AdSense settings:', error);
-        // Fallback to environment variable
-        setAdSettings({
-          clientId: process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || null,
-          enabled: true,
-        });
-      } finally {
-        setLoaded(true);
+        if (isMounted) {
+          setAdSettings({
+            clientId: null,
+            enabled: false,
+            resolved: true,
+          });
+        }
       }
     };
 
     fetchAdSenseSettings();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  // Don't render until we've checked for AdSense settings
-  if (!loaded || !adSettings.enabled || !adSettings.clientId) {
+  if (!adSettings.resolved || !adSettings.enabled || !adSettings.clientId) {
     return null;
   }
 

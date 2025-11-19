@@ -26,7 +26,7 @@ const scenarios = [
       }
     ],
     tips: [
-      'Add 15-20% margin for business risk',
+      'Include a margin that reflects your business risk and overhead assumptions',
       'Consider setup time for small batches',
       'Account for material price fluctuations'
     ]
@@ -114,7 +114,7 @@ const scenarios = [
     ],
     tips: [
       'Track costs over time to identify trends',
-      'Benchmark against industry standards',
+      'Compare your results against your own historical performance and relevant market information',
       'Prioritize high-impact opportunities'
     ]
   },
@@ -147,7 +147,7 @@ const scenarios = [
     ],
     tips: [
       'Use multiple calculators and sum results',
-      'Add 10-15% for coordination overhead',
+      'Allow for coordination overhead in your time and cost assumptions',
       'Consider inspection and rework costs'
     ]
   },

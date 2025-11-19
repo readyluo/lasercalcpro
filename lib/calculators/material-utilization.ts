@@ -68,6 +68,31 @@ const MATERIAL_DENSITY: Record<string, number> = {
 
 /**
  * Calculate material utilization and nesting layout
+ * 
+ * ⚠️ NESTING ALGORITHM NOTES:
+ * This calculator uses a simple rectangular grid nesting algorithm suitable for
+ * rectangular parts. It calculates optimal orientation (normal vs. rotated) to
+ * maximize parts per sheet.
+ * 
+ * What IS calculated:
+ * - Rectangular grid arrangement (rows × columns)
+ * - Normal and rotated orientations
+ * - Part spacing, kerf allowance, and edge margins
+ * - Accurate area, weight, and cost calculations
+ * 
+ * What is NOT calculated:
+ * - Complex irregular part shapes
+ * - True mixed-orientation optimization (only rough estimate provided)
+ * - Nested parts within waste areas
+ * - Advanced nesting algorithms (genetic algorithms, etc.)
+ * - Part-to-part interference or collision detection
+ * 
+ * For complex parts or maximum utilization:
+ * - Use dedicated nesting software (SigmaNEST, ProNest, TruTops, etc.)
+ * - Results from this calculator provide good baseline estimates
+ * - Professional software typically achieves 5-15% better utilization
+ * 
+ * Calculations for area, weight, and cost are exact based on the nesting layout.
  */
 export function calculateMaterialUtilization(
   input: MaterialUtilizationInput
@@ -276,12 +301,33 @@ function generateAlternativeLayouts(
     partsPerSheet: partsRotated,
   });
 
-  // Mixed orientation (advanced)
+  // Mixed orientation (advanced) - ESTIMATION ONLY
+  // ⚠️ IMPORTANT: This is a ROUGH ESTIMATE, not a true mixed-orientation calculation
+  // 
+  // Real mixed-orientation nesting:
+  // - Requires specialized nesting software (e.g., SigmaNEST, ProNest, TruTops)
+  // - Involves manual optimization and iterative refinement
+  // - Results vary greatly by part geometry and aspect ratio
+  // - May not always be feasible or cost-effective to implement
+  //
+  // This estimate uses a simplified weighted formula to suggest potential improvement range:
+  // Formula: (normal_parts × 0.8) + (rotated_parts × 0.3)
+  // 
+  // Interpretation:
+  // - Assumes you might achieve ~80% of the normal orientation part count
+  // - Plus ~30% of additional parts from strategically rotated pieces
+  // - Actual results could be significantly higher or lower
+  //
+  // For accurate mixed nesting:
+  // - Use professional nesting software with optimization algorithms
+  // - Perform actual layout tests with your specific part geometry
+  // - Factor in increased programming and setup time costs
+  // - Consider material handling complexity
   const partsMixed = Math.floor(partsNormal * 0.8 + partsRotated * 0.3);
   const utilizationMixed = ((partLength * partWidth * partsMixed) / sheetArea) * 100;
 
   alternatives.push({
-    description: 'Mixed orientation (requires manual nesting)',
+    description: 'Mixed orientation (rough estimate - requires nesting software and manual optimization)',
     utilizationRate: parseFloat(utilizationMixed.toFixed(2)),
     partsPerSheet: partsMixed,
   });
@@ -303,13 +349,14 @@ function generateRecommendations(
   }
 ): MaterialUtilizationResult['recommendations'] {
   const recommendations: MaterialUtilizationResult['recommendations'] = [];
+  const partArea = input.partLength * input.partWidth;
 
   // 1. Low utilization rate
   if (metrics.utilizationRate < 70) {
     const potentialSavings = metrics.wasteCost * 0.3;
     recommendations.push({
       title: 'Optimize Part Orientation',
-      description: `Current utilization is ${metrics.utilizationRate.toFixed(1)}%. Consider rotating parts or using nested layouts to achieve 80%+ utilization. This could reduce material waste by up to 30%.`,
+      description: `Current utilization is ${metrics.utilizationRate.toFixed(1)}%. Consider exploring improved nesting strategies such as part rotation, adjusted spacing, or dedicated nesting software. Higher utilization generally reduces waste and material cost, but achievable levels depend on your parts, materials, and cutting process.`,
       potentialSavings: parseFloat(potentialSavings.toFixed(2)),
       priority: 'high',
     });
@@ -328,10 +375,13 @@ function generateRecommendations(
 
   // 3. Kerf optimization
   if (input.kerf > 0.5) {
-    const savings = (input.quantity * input.partArea * input.kerf * 0.001 * input.materialPricePerKg);
+    const kerfWasteMm3 = input.quantity * partArea * input.kerf;
+    const kerfWasteKg =
+      (kerfWasteMm3 / 1000000000) * MATERIAL_DENSITY[input.materialType];
+    const savings = kerfWasteKg * input.materialPricePerKg;
     recommendations.push({
       title: 'Optimize Cutting Process',
-      description: `Your kerf width (${input.kerf}mm) is relatively wide. Finer cutting processes or optimized parameters could reduce material loss by 20-30%.`,
+      description: `Your kerf width (${input.kerf}mm) is relatively wide. In some cases, finer cutting processes or optimized parameters can reduce material loss. Review whether your current kerf is required for quality and adjust if your process and equipment allow.`,
       potentialSavings: parseFloat(savings.toFixed(2)),
       priority: 'medium',
     });
@@ -352,7 +402,8 @@ function generateRecommendations(
     const savings = metrics.wasteCost * 0.15;
     recommendations.push({
       title: 'Implement Common Cut Lines',
-      description: 'Adjacent parts can share cutting paths, reducing total cutting length by up to 40%. This saves both time and reduces kerf waste.',
+      description:
+        'Adjacent parts can sometimes share cutting paths, which reduces total cutting length and kerf waste. Evaluate whether your part geometry and quality requirements permit this, and adjust spacing and cutting strategy accordingly.',
       potentialSavings: parseFloat(savings.toFixed(2)),
       priority: 'medium',
     });
@@ -363,7 +414,7 @@ function generateRecommendations(
     const potentialScrapValue = metrics.wasteCost * 0.4;
     recommendations.push({
       title: 'Improve Scrap Recycling Program',
-      description: `Your scrap value is ${((input.scrapValuePerKg / input.materialPricePerKg) * 100).toFixed(0)}% of material cost. Better scrap management could recover 30-50% of waste material value.`,
+      description: `Your scrap value is ${((input.scrapValuePerKg / input.materialPricePerKg) * 100).toFixed(0)}% of material cost. Reviewing scrap handling, sorting, and recycling agreements may improve how much of the waste material cost you recover.`,
       potentialSavings: parseFloat(potentialScrapValue.toFixed(2)),
       priority: 'low',
     });
@@ -374,8 +425,6 @@ function generateRecommendations(
     return priorityOrder[a.priority] - priorityOrder[b.priority];
   });
 }
-
-
 
 
 

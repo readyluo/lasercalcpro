@@ -30,7 +30,7 @@ export default function AdminLoginPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || '登录失败，请检查用户名和密码');
+        throw new Error(data.message || 'Unable to sign in. Check your credentials.');
       }
 
       // Store token in localStorage as backup
@@ -41,8 +41,9 @@ export default function AdminLoginPage() {
       // Redirect to admin dashboard
       router.push('/admin');
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || '登录失败，请重试');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unable to sign in. Please try again.';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -57,10 +58,10 @@ export default function AdminLoginPage() {
             <Shield className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            管理后台登录
+            Admin Sign In
           </h1>
           <p className="text-gray-600">
-            LaserCalc Pro Admin Login
+            Secure access for LaserCalc Pro administrators
           </p>
         </div>
 
@@ -80,7 +81,7 @@ export default function AdminLoginPage() {
             {/* Username Field */}
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                用户名 <span className="text-gray-500 font-normal">(Username)</span>
+                Username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -93,7 +94,7 @@ export default function AdminLoginPage() {
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  placeholder="输入管理员用户名"
+                  placeholder="Enter your admin username"
                   disabled={loading}
                 />
               </div>
@@ -102,7 +103,7 @@ export default function AdminLoginPage() {
             {/* Password Field */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                密码 <span className="text-gray-500 font-normal">(Password)</span>
+                Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -115,7 +116,7 @@ export default function AdminLoginPage() {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  placeholder="输入密码"
+                  placeholder="Enter your password"
                   disabled={loading}
                 />
               </div>
@@ -133,10 +134,10 @@ export default function AdminLoginPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  登录中...
+                  Signing in…
                 </span>
               ) : (
-                '登录'
+                'Sign in'
               )}
             </button>
           </form>
@@ -144,7 +145,7 @@ export default function AdminLoginPage() {
           {/* Footer Info */}
           <div className="mt-6 pt-6 border-t border-gray-200">
             <p className="text-center text-sm text-gray-600">
-              🔒 安全连接 (Secure Connection) • 仅限授权访问 (Authorized Access Only)
+              🔒 Secure connection • Authorized access only
             </p>
           </div>
         </div>
@@ -152,11 +153,10 @@ export default function AdminLoginPage() {
         {/* Help Text */}
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
-            忘记密码？请联系系统管理员
+            Forgot your password? Contact the site administrator for assistance.
           </p>
         </div>
       </div>
     </div>
   );
 }
-

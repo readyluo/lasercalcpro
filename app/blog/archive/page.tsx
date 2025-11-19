@@ -2,6 +2,10 @@ import type { Metadata } from 'next';
 import { Archive, Calendar, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { getArchiveGroups } from '@/lib/db/articles';
+import { Navigation } from '@/components/layout/Navigation';
+import { Footer } from '@/components/layout/Footer';
+import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 
 export const metadata: Metadata = {
   title: 'Blog Archive | LaserCalc Pro',
@@ -35,40 +39,34 @@ export default async function BlogArchivePage() {
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
+  const archiveSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'LaserCalc Pro Blog Archive',
+    url: 'https://www.lasercalcpro.com/blog/archive',
+    description: 'Month-by-month manufacturing article archive for LaserCalc Pro.',
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex items-center gap-3 mb-4">
-            <Archive className="h-8 w-8 text-primary-600" />
-            <h1 className="text-4xl font-bold text-gray-900">
-              Blog Archive
-            </h1>
+    <>
+      <Navigation />
+      <SchemaMarkup schema={archiveSchema} />
+      <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        <div className="bg-white border-b border-gray-200">
+          <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+            <div className="mb-4 flex items-center gap-3">
+              <Archive className="h-8 w-8 text-primary-600" />
+              <h1 className="text-4xl font-bold text-gray-900">Blog Archive</h1>
+            </div>
+            <p className="text-lg text-gray-600">Browse {totalArticles} articles organized by publication date</p>
           </div>
-          <p className="text-lg text-gray-600">
-            Browse {totalArticles} articles organized by publication date
-          </p>
         </div>
-      </div>
 
-      {/* Navigation Breadcrumb */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <nav className="flex items-center space-x-2 text-sm text-gray-600">
-          <Link href="/" className="hover:text-primary-600 transition-colors">
-            Home
-          </Link>
-          <span>/</span>
-          <Link href="/blog" className="hover:text-primary-600 transition-colors">
-            Blog
-          </Link>
-          <span>/</span>
-          <span className="text-gray-900 font-medium">Archive</span>
-        </nav>
-      </div>
+        <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
+          <Breadcrumbs />
+        </div>
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         {years.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
             <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -122,17 +120,17 @@ export default async function BlogArchivePage() {
           </div>
         )}
 
-        {/* Back to Blog */}
-        <div className="mt-8 text-center">
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-gray-700"
-          >
-            ← Back to Blog
-          </Link>
+          <div className="mt-8 text-center">
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            >
+              ← Back to Blog
+            </Link>
+          </div>
         </div>
-      </div>
-    </div>
+      </main>
+      <Footer />
+    </>
   );
 }
-

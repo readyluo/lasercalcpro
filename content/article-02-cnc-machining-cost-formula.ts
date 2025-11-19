@@ -12,6 +12,8 @@ export const article = {
   content: `
 <div class="article-content">
 
+<p><em>Note: All percentages, scrap factors, margin bands, ROI windows, and payback examples in this guide are illustrative and based on simplified scenarios. Always use your own shop data, financial policies, and risk profile when setting pricing, overhead, and investment decisions.</em></p>
+
 <h2>Introduction: The Foundation of Profitable CNC Operations</h2>
 
 <p>Accurate cost estimation is fundamental to profitable CNC machining operations. Whether you're quoting jobs, evaluating equipment investments, or optimizing production efficiency, understanding the complete cost formula is essential. This comprehensive guide reveals industry-standard formulas, hidden cost factors, and profit optimization strategies used by successful machine shops.</p>
@@ -28,23 +30,25 @@ export const article = {
 
 <p><strong>Formula:</strong> Material Cost = (Volume × Density × Price per Pound) × Scrap Factor</p>
 
-<h3>Common Material Prices (2025)</h3>
+<h3>Common Material Prices (Early 2025 Reference)</h3>
+
+<p><em>⚠️ Note: Material prices vary by supplier, order quantity, and market conditions. Verify current prices with your suppliers before quoting. Consider updating these benchmarks quarterly.</em></p>
 
 <ul>
 <li><strong>Aluminum 6061-T6:</strong> $2.50-$4.00 per pound</li>
 <li><strong>Steel 1018:</strong> $0.80-$1.50 per pound</li>
 <li><strong>Stainless Steel 304:</strong> $3.00-$5.00 per pound</li>
-<li><strong>Titanium Grade 5:</strong> $15.00-$25.00 per pound</li>
+<li><strong>Titanium Grade 5:</strong> $15.00-$25.00 per pound (highly market-dependent)</li>
 <li><strong>Brass C360:</strong> $4.00-$6.50 per pound</li>
 </ul>
 
-<h3>Scrap Factors by Stock Type</h3>
+<h3>Scrap Factors by Stock Type (example planning ranges)</h3>
 
 <ul>
-<li><strong>Simple parts from plate:</strong> 1.3-1.7× (30-70% waste)</li>
-<li><strong>Complex parts from block:</strong> 1.7-2.5× (70-150% waste)</li>
-<li><strong>Bar stock turning:</strong> 1.1-1.25× (10-25% waste)</li>
-<li><strong>Near-net-shape castings:</strong> 1.05-1.15× (5-15% waste)</li>
+<li><strong>Simple parts from plate:</strong> 1.3-1.7× (30-70% waste) in some job mixes</li>
+<li><strong>Complex parts from block:</strong> 1.7-2.5× (70-150% waste) in more aggressive roughing scenarios</li>
+<li><strong>Bar stock turning:</strong> 1.1-1.25× (10-25% waste) in many turning operations</li>
+<li><strong>Near-net-shape castings:</strong> 1.05-1.15× (5-15% waste) when castings are well matched to the final geometry</li>
 </ul>
 
 <p><strong>Example:</strong> 3" × 2" × 1" aluminum block machined to 2.5" × 1.75" × 0.75" bracket:</p>
@@ -83,7 +87,7 @@ export const article = {
 <li><strong>Total Machine Rate: $12.89/hr ≈ $13/hr</strong></li>
 </ul>
 
-<p>For quoting purposes, most shops use <strong>$35-$75/hr</strong> machine rates that include profit margins and overhead allocation.</p>
+<p>For quoting purposes, many shops use internal machine-rate assumptions in bands such as <strong>$35-$75/hr</strong> that include profit margins and overhead allocation. This article uses that range for examples only; your actual rate should be calculated from your own equipment cost, utilization, and margin requirements.</p>
 
 <h2>3. Machine Time Estimation</h2>
 
@@ -198,18 +202,18 @@ export const article = {
 <h3>Overhead Components</h3>
 
 <ul>
-<li><strong>Facility costs:</strong> 25-35% (rent, utilities, insurance, property tax)</li>
-<li><strong>Indirect labor:</strong> 15-25% (supervision, QC, shipping, admin)</li>
-<li><strong>Quality control:</strong> 5-10% (inspection equipment, CMM, gauges)</li>
-<li><strong>Software & IT:</strong> 3-5% (CAM software, ERP, network)</li>
-<li><strong>Supplies & consumables:</strong> 2-4% (shop supplies, safety equipment)</li>
+<li><strong>Facility costs:</strong> often on the order of 25-35% of an overhead budget (rent, utilities, insurance, property tax)</li>
+<li><strong>Indirect labor:</strong> commonly 15-25% (supervision, QC, shipping, admin)</li>
+<li><strong>Quality control:</strong> in some shops 5-10% (inspection equipment, CMM, gauges)</li>
+<li><strong>Software & IT:</strong> example range 3-5% (CAM software, ERP, network)</li>
+<li><strong>Supplies & consumables:</strong> often 2-4% (shop supplies, safety equipment)</li>
 </ul>
 
-<p><strong>Overhead Allocation Method:</strong> Most shops apply overhead as a percentage of direct costs or as a multiplier:</p>
+<p><strong>Overhead Allocation Method:</strong> Many shops apply overhead as a percentage of direct costs or as a multiplier, using bands like the following as planning examples:</p>
 
 <ul>
-<li><strong>Percentage method:</strong> Add 50-80% to direct costs</li>
-<li><strong>Multiplier method:</strong> Multiply direct costs by 1.5-2.0×</li>
+<li><strong>Percentage method:</strong> Add 50-80% to direct costs (example range)</li>
+<li><strong>Multiplier method:</strong> Multiply direct costs by 1.5-2.0× (example range)</li>
 </ul>
 
 <p><strong>Example:</strong> Direct costs = $20, overhead rate = 60%</p>
@@ -219,35 +223,37 @@ export const article = {
 
 <p><strong>Final Quoted Price = Total Cost × (1 + Profit Margin %)</strong></p>
 
-<h3>Industry-Standard Profit Margins</h3>
+<h3>Example Profit Margin Bands (for discussion)</h3>
 
 <ul>
-<li><strong>High volume production (500+ parts):</strong> 10-20% profit margin
+<li><strong>High volume production (500+ parts):</strong> 10-20% profit margin in some shops
   <ul>
-  <li>Lower margin acceptable due to guaranteed volume and reduced risk</li>
+  <li>Lower margins are sometimes accepted due to guaranteed volume and reduced risk</li>
   </ul>
 </li>
-<li><strong>Medium volume (50-500 parts):</strong> 20-30% profit margin
+<li><strong>Medium volume (50-500 parts):</strong> 20-30% profit margin in many "standard" pricing models
   <ul>
-  <li>Standard shop margin for established customers</li>
+  <li>Often used as a reference band for established customers</li>
   </ul>
 </li>
-<li><strong>Low volume/prototype (1-50 parts):</strong> 30-50% profit margin
+<li><strong>Low volume/prototype (1-50 parts):</strong> 30-50% profit margin in some examples
   <ul>
-  <li>Higher margin compensates for setup-intensive work and uncertainty</li>
+  <li>Higher margins can compensate for setup-intensive work and uncertainty</li>
   </ul>
 </li>
-<li><strong>Specialty/tight tolerance work:</strong> 35-60% profit margin
+<li><strong>Specialty/tight tolerance work:</strong> 35-60% profit margin in certain specialty shops
   <ul>
-  <li>Reflects specialized expertise and equipment investment</li>
+  <li>Intended to reflect specialized expertise and equipment investment</li>
   </ul>
 </li>
-<li><strong>Rush jobs (less than 1 week):</strong> Add 25-50% rush premium
+<li><strong>Rush jobs (less than 1 week):</strong> Some pricing models add 25-50% rush premiums
   <ul>
-  <li>Compensates for schedule disruption and expedited material costs</li>
+  <li>Used to compensate for schedule disruption and expedited material costs</li>
   </ul>
 </li>
 </ul>
+
+<p>Your actual profit margin policy should be set deliberately with your leadership, finance, and sales teams rather than copied directly from any example band.</p>
 
 <h2>Complete Example: Aluminum Bracket - 100 Pieces</h2>
 
@@ -325,12 +331,12 @@ export const article = {
 
 <ul>
 <li>Group similar parts to minimize setup changes</li>
-<li>Invest in modular fixturing systems (ROI typically 6-18 months)</li>
+<li>Invest in modular fixturing systems (in example ROI models, often 6-18 months when fixtures are heavily reused)</li>
 <li>Consider automation for high-volume work:
   <ul>
-  <li>Bar feeders: $15,000-$40,000, 1-2 year payback</li>
-  <li>Pallet changers: $50,000-$150,000, 2-4 year payback</li>
-  <li>Robotic loading: $80,000-$200,000, 2-4 year payback</li>
+  <li>Bar feeders: $15,000-$40,000, with some case studies modeling 1-2 year payback under high utilization</li>
+  <li>Pallet changers: $50,000-$150,000, sometimes modeled with 2-4 year payback</li>
+  <li>Robotic loading: $80,000-$200,000, often analyzed with 2-4 year payback scenarios</li>
   </ul>
 </li>
 </ul>
@@ -338,13 +344,13 @@ export const article = {
 <h2>Common Costing Mistakes to Avoid</h2>
 
 <ol>
-<li><strong>Underestimating Setup Time:</strong> Always add 30-50% buffer for new jobs. Unexpected issues always arise.</li>
+<li><strong>Underestimating Setup Time:</strong> Many shops add 30-50% buffer for new jobs as a starting point, since unexpected issues often arise. Track your own history and adjust the buffer accordingly.</li>
 
-<li><strong>Forgetting Secondary Operations:</strong> Deburring, washing, inspection, packaging add 10-25% to labor costs.</li>
+<li><strong>Forgetting Secondary Operations:</strong> Deburring, washing, inspection, and packaging can add on the order of 10-25% to labor costs in some operations.</li>
 
 <li><strong>Not Accounting for Material Price Volatility:</strong> Lock in material prices for quotes valid more than 30 days.</li>
 
-<li><strong>Ignoring Scrap and Rework:</strong> Budget 2-5% scrap rate for established parts, 5-10% for new parts.</li>
+<li><strong>Ignoring Scrap and Rework:</strong> Some planning models budget scrap and rework in ranges such as 2-5% for established parts and 5-10% for new parts, but your actual targets should be based on measured performance.</li>
 
 <li><strong>Underpricing to Win Business:</strong> Losing money on every part doesn't lead to profitability, even at high volume.</li>
 

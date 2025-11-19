@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { Navigation } from '@/components/layout/Navigation';
+import { Footer } from '@/components/layout/Footer';
 import { Eye, Keyboard, VolumeX, Gauge, CheckCircle, AlertCircle, MessageSquare } from 'lucide-react';
 
 export const metadata: Metadata = {
@@ -12,24 +14,26 @@ export const metadata: Metadata = {
 
 export default function AccessibilityPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex items-center gap-3 mb-4">
-            <Eye className="h-8 w-8 text-primary-600" />
-            <h1 className="text-4xl font-bold text-gray-900">
-              Accessibility Statement
-            </h1>
+    <>
+      <Navigation />
+      <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="flex items-center gap-3 mb-4">
+              <Eye className="h-8 w-8 text-primary-600" />
+              <h1 className="text-4xl font-bold text-gray-900">
+                Accessibility Statement
+              </h1>
+            </div>
+            <p className="text-lg text-gray-600">
+              Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </p>
           </div>
-          <p className="text-lg text-gray-600">
-            Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-          </p>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Content */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Commitment */}
         <section className="mb-12">
           <div className="p-6 bg-primary-50 rounded-lg border border-primary-200">
@@ -349,7 +353,9 @@ export default function AccessibilityPage() {
           </div>
         </section>
       </div>
-    </div>
+      </main>
+      <Footer />
+    </>
   );
 }
 

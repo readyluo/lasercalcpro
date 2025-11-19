@@ -1,18 +1,40 @@
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
+import { generateMetadata } from '@/lib/seo/metadata';
 import { FileText, AlertCircle, Scale, Ban } from 'lucide-react';
 
-export const metadata = {
-  title: 'Terms of Service - LaserCalc Pro',
-  description: 'Read the Terms of Service for using LaserCalc Pro. Understand your rights and responsibilities when using our manufacturing cost calculators.',
-  robots: 'index, follow',
+const LAST_UPDATED_TEXT = 'February 12, 2024';
+const LAST_UPDATED_ISO = '2024-02-12';
+
+export const metadata = generateMetadata({
+  title: 'Terms of Service | LaserCalc Pro',
+  description: 'Understand your rights, permitted use, and liability limitations when using LaserCalc Pro manufacturing calculators.',
+  keywords: ['LaserCalc Pro terms', 'manufacturing calculator terms of service', 'laser cutting tool agreement'],
+  alternates: { canonical: '/terms' },
+});
+
+const termsSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'LaserCalc Pro Terms of Service',
+  url: 'https://www.lasercalcpro.com/terms',
+  datePublished: LAST_UPDATED_ISO,
+  dateModified: LAST_UPDATED_ISO,
+  description: 'Terms governing the use of LaserCalc Pro calculators, reports, and resources.',
+  isPartOf: {
+    '@type': 'WebSite',
+    name: 'LaserCalc Pro',
+    url: 'https://www.lasercalcpro.com',
+  },
 };
 
 export default function TermsPage() {
   return (
     <>
       <Navigation />
+      <SchemaMarkup schema={termsSchema} />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
@@ -26,7 +48,7 @@ export default function TermsPage() {
               Terms of Service
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-gray-600">
-              Last updated: October 30, 2025
+              Last updated: {LAST_UPDATED_TEXT}
             </p>
           </div>
 
@@ -93,7 +115,7 @@ export default function TermsPage() {
 
             <h3>2.2 Trademarks</h3>
             <p>
-              "LaserCalc Pro" and related marks are trademarks of LaserCalc Pro. You may not use these trademarks 
+              &quot;LaserCalc Pro&quot; and related marks are trademarks of LaserCalc Pro. You may not use these trademarks 
               without our prior written permission.
             </p>
 
@@ -163,7 +185,7 @@ export default function TermsPage() {
             <h2>5. Indemnification</h2>
             <p>
               You agree to indemnify, defend, and hold harmless LaserCalc Pro and its affiliates from any claims, 
-              damages, losses, liabilities, costs, or expenses (including reasonable attorneys' fees) arising from:
+              damages, losses, liabilities, costs, or expenses (including reasonable attorneys&rsquo; fees) arising from:
             </p>
             <ul>
               <li>Your use or misuse of the service</li>
@@ -268,7 +290,7 @@ export default function TermsPage() {
             <h3>11.5 Changes to Terms</h3>
             <p>
               We reserve the right to modify these Terms at any time. We will notify users of material changes by 
-              posting the updated Terms and updating the "Last updated" date. Your continued use of the service after 
+              posting the updated Terms and updating the &quot;Last updated&quot; date. Your continued use of the service after 
               changes constitutes acceptance of the new Terms.
             </p>
 

@@ -1,4 +1,4 @@
-import { getDbClient } from './client';
+import { getClient } from './client';
 
 export interface SharedCalculation {
   id?: number;
@@ -19,7 +19,7 @@ export async function createSharedCalculation(data: {
   calculationData: any;
   expiresAt: Date;
 }): Promise<void> {
-  const client = getDbClient();
+  const client = getClient();
 
   await client.execute({
     sql: `
@@ -39,7 +39,7 @@ export async function createSharedCalculation(data: {
  * Get shared calculation by short code
  */
 export async function getSharedCalculation(shortCode: string): Promise<SharedCalculation | null> {
-  const client = getDbClient();
+  const client = getClient();
 
   const result = await client.execute({
     sql: `
@@ -77,7 +77,7 @@ export async function getSharedCalculation(shortCode: string): Promise<SharedCal
  * Increment view count for a shared calculation
  */
 export async function incrementSharedCalculationViews(shortCode: string): Promise<void> {
-  const client = getDbClient();
+  const client = getClient();
 
   await client.execute({
     sql: `
@@ -93,7 +93,7 @@ export async function incrementSharedCalculationViews(shortCode: string): Promis
  * Delete expired shared calculations (cleanup job)
  */
 export async function deleteExpiredSharedCalculations(): Promise<number> {
-  const client = getDbClient();
+  const client = getClient();
 
   const result = await client.execute({
     sql: `

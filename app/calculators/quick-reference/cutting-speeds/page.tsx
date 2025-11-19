@@ -5,9 +5,9 @@ import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
-import { generateFAQSchema } from '@/lib/seo/schema';
+import { generateFAQSchema, generateSoftwareApplicationSchema } from '@/lib/seo/schema';
 import Link from 'next/link';
-import { Zap, Info } from 'lucide-react';
+import { Zap, Info, Gauge, Calculator } from 'lucide-react';
 
 const mildSteelRows = [
   { t: '0.5mm', speed: '20-25 m/min', power: '1-2 kW', gas: 'O₂ or N₂' },
@@ -40,6 +40,7 @@ const aluminumRows = [
 ];
 
 export default function CuttingSpeedsQuickReferencePage() {
+  const softwareSchema = generateSoftwareApplicationSchema('Cutting Speeds Reference');
   const faqSchema = generateFAQSchema([
     {
       question: 'What factors affect laser cutting speed?',
@@ -47,7 +48,7 @@ export default function CuttingSpeedsQuickReferencePage() {
     },
     {
       question: 'Why is oxygen faster than nitrogen for mild steel?',
-      answer: 'Oxygen creates an exothermic reaction that adds heat to the cutting process, allowing 20-30% faster speeds. However, it leaves an oxidized edge. Nitrogen produces cleaner edges but cuts slower.',
+      answer: 'Oxygen creates an exothermic reaction that adds heat to the cutting process and can enable higher cutting speeds in many setups, at the cost of an oxidized edge. Nitrogen produces cleaner, oxide-free edges but may require slower feeds for similar quality. Actual speed differences depend on your machine, parameters, and quality targets.',
     },
     {
       question: 'How do I convert m/min to in/min?',
@@ -58,6 +59,7 @@ export default function CuttingSpeedsQuickReferencePage() {
   return (
     <>
       <SchemaMarkup schema={faqSchema} />
+      <SchemaMarkup schema={softwareSchema} />
       <Navigation />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
@@ -70,7 +72,7 @@ export default function CuttingSpeedsQuickReferencePage() {
               </div>
               <div>
                 <h1 className="text-4xl font-bold text-gray-900">Laser Cutting Speeds Quick Reference</h1>
-                <p className="text-gray-600">Fiber laser benchmarks with optimized parameters</p>
+                <p className="text-gray-600">Example fiber laser cutting speed benchmarks under tuned parameters. Always verify against your own machine and cut charts.</p>
               </div>
             </div>
           </div>
@@ -101,7 +103,7 @@ export default function CuttingSpeedsQuickReferencePage() {
               </table>
             </div>
             <p className="mt-3 text-xs text-gray-600">
-              O₂ (oxygen) cutting is 20-30% faster but leaves oxidized edges. N₂ (nitrogen) provides cleaner edges.
+              In many setups, O₂ (oxygen) cutting can achieve higher speeds but leaves oxidized edges. N₂ (nitrogen) is typically used when cleaner, oxide-free edges are required, often at different feed rates. Use these rows as starting points and fine-tune for your own equipment.
             </p>
           </div>
 
@@ -131,7 +133,7 @@ export default function CuttingSpeedsQuickReferencePage() {
               </table>
             </div>
             <p className="mt-3 text-xs text-gray-600">
-              Nitrogen required for oxide-free edges. High gas pressure (12-20 bar) recommended.
+              Nitrogen is commonly used for oxide-free edges. Specific assist gas pressures should follow your machine supplier's cut charts and application notes rather than a single generic range.
             </p>
           </div>
 
@@ -161,8 +163,97 @@ export default function CuttingSpeedsQuickReferencePage() {
               </table>
             </div>
             <p className="mt-3 text-xs text-gray-600">
-              Requires fiber laser due to high reflectivity. CO₂ lasers cannot cut aluminum efficiently.
+              These benchmarks assume a fiber laser, since high reflectivity makes many aluminum jobs challenging for typical CO₂ systems. Always follow your machine documentation for which aluminum grades and thicknesses are supported.
             </p>
+          </div>
+
+          {/* Units & Conversion */}
+          <div className="card mb-8">
+            <div className="mb-4 flex items-start gap-3">
+              <div className="rounded-full bg-blue-100 p-2">
+                <Gauge className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">Units & Conversion Checklist</h2>
+                <p className="mt-1 text-gray-700">
+                  Feed rates here are shown in meters per minute (m/min) as illustrative production benchmarks.
+                  Keep every note in a consistent unit system before driving quotes or machine programs, and confirm final feeds against your own process limits.
+                </p>
+              </div>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="rounded-lg bg-gray-50 p-4 text-sm">
+                <p className="font-semibold text-gray-900">Speed conversion</p>
+                <p className="text-gray-700">IPM (in/min) = m/min x 39.37</p>
+                <div className="mt-3 rounded bg-white p-3 font-mono text-xs text-gray-900">
+                  197 IPM = 5 m/min x 39.37
+                </div>
+                <p className="mt-2 text-gray-600">Use this factor when entering feeds into legacy CAM posts.</p>
+              </div>
+              <div className="rounded-lg bg-gray-50 p-4 text-sm">
+                <p className="font-semibold text-gray-900">Material shorthand</p>
+                <p className="text-gray-700">
+                  Thickness values (t) are in millimeters. Laser power values refer to optical output; actual electrical draw will be higher and depends on machine efficiency. Assist gas notes assume high-purity nitrogen or oxygen at typical cutting pressures for these materials.
+                </p>
+                <p className="mt-2 text-gray-700">
+                  Keep your machine's measured kerf width in your CAM profile when matching these feeds; in many fiber setups this is on the order of a small fraction of a millimeter.
+                </p>
+              </div>
+            </div>
+            <p className="mt-4 text-xs text-gray-600">
+              Need nozzle, focus, or pierce timing guidance? Review the{' '}
+              <Link
+                href="/calculators/quick-reference/processing-parameters"
+                className="text-primary-700 underline-offset-2 hover:underline"
+              >
+                processing parameters reference
+              </Link>{' '}
+              for the rest of the stack.
+            </p>
+          </div>
+
+          {/* Workflow */}
+          <div className="card mb-8 bg-gradient-to-br from-primary-50 to-blue-50">
+            <div className="mb-4 flex items-start gap-3">
+              <div className="rounded-full bg-primary-100 p-2">
+                <Calculator className="h-6 w-6 text-primary-700" />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">How to Use These Speeds</h2>
+                <p className="mt-1 text-gray-700">
+                  Turn feed benchmarks into costed quotes by pairing them with our calculators.
+                </p>
+              </div>
+            </div>
+            <ol className="space-y-4 text-sm text-gray-800">
+              <li>
+                <span className="font-semibold text-gray-900">1. Select a baseline.</span> Match material, thickness,
+                and optical power from the tables above, then note the mid-point of the speed range.
+              </li>
+              <li>
+                <span className="font-semibold text-gray-900">2. Convert the feed into machine time.</span> Enter the
+                m/min value in the{' '}
+                <Link
+                  href="/calculators/quick/price-per-meter"
+                  className="text-primary-700 underline-offset-2 hover:underline"
+                >
+                  Price per Meter calculator
+                </Link>{' '}
+                or plug it directly into the{' '}
+                <Link
+                  href="/calculators/laser-cutting"
+                  className="text-primary-700 underline-offset-2 hover:underline"
+                >
+                  full laser cutting calculator
+                </Link>{' '}
+                to compute cycle time and machine cost.
+              </li>
+              <li>
+                <span className="font-semibold text-gray-900">3. Adjust for quality requirements.</span> Reduce speed
+                as needed for weld-ready or painted edges, and prioritize faster benchmark feeds only where a slight
+                dross line is acceptable. Use trial cuts and inspection to decide how much to change speed for each job.
+              </li>
+            </ol>
           </div>
 
           {/* Important Notes */}
@@ -178,6 +269,21 @@ export default function CuttingSpeedsQuickReferencePage() {
             
             <div className="space-y-4">
               <div className="border-l-4 border-blue-600 pl-4">
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Baseline parameters for this chart</h3>
+                <p className="text-gray-700">
+                  These tables were compiled from example data for modern fiber lasers across a typical power range, with common spot sizes, nozzle sizes, and high-purity gases.
+                  Older CO₂ equipment or setups with poorer alignment, beam quality, or gas purity will often run slower than these benchmarks. Always confirm speeds against your own cut charts and sample cuts.
+                </p>
+              </div>
+
+              <div className="border-l-4 border-blue-600 pl-4">
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Focus & pierce settings matter</h3>
+                <p className="text-gray-700">
+                  Focus position and pierce settings strongly affect cut quality, reliability, and speed. Use your machine's parameter library and application notes as a starting point, then log the combinations that work well for your materials and thicknesses so you can reuse them in future nests.
+                </p>
+              </div>
+
+              <div className="border-l-4 border-blue-600 pl-4">
                 <h3 className="mb-2 text-lg font-semibold text-gray-900">These are Benchmark Values</h3>
                 <p className="text-gray-700">
                   Actual cutting speeds vary based on equipment brand, beam quality, focus lens, nozzle design, 
@@ -189,17 +295,16 @@ export default function CuttingSpeedsQuickReferencePage() {
               <div className="border-l-4 border-blue-600 pl-4">
                 <h3 className="mb-2 text-lg font-semibold text-gray-900">Power Requirements</h3>
                 <p className="text-gray-700">
-                  Higher power lasers can cut thicker materials and/or cut faster. A 3kW laser is suitable for 
-                  up to 6mm mild steel, while 6kW handles up to 12mm, and 12kW+ for 15-25mm thick plates.
+                  Higher power lasers can cut thicker materials and/or cut faster, but the practical limits and benefits depend on your specific machine and optics.
+                  In many shops, lower-power sources are used mainly for thin sheet and higher-power sources for thicker plate; follow your machine supplier's material and thickness guidelines instead of relying on a single generic mapping.
                 </p>
               </div>
 
               <div className="border-l-4 border-blue-600 pl-4">
                 <h3 className="mb-2 text-lg font-semibold text-gray-900">Edge Quality Trade-offs</h3>
                 <p className="text-gray-700">
-                  Faster speeds may produce more dross (slag) on the bottom edge. For critical applications, 
-                  reduce speed by 10-20% to achieve cleaner cuts. For non-critical parts, maximize speed to 
-                  reduce cost.
+                  Faster feeds generally increase burr height and discoloration. For parts that require welding, painting, or food-grade finishes, you may need slower feeds, higher assist gas pressure, or a finishing pass; for less demanding parts, you might prioritize shorter machine time.
+                  Use test cuts and inspection to find a balance between edge quality and throughput that fits your work.
                 </p>
               </div>
             </div>
@@ -215,7 +320,7 @@ export default function CuttingSpeedsQuickReferencePage() {
               />
               <FAQItem
                 question="Why is oxygen faster than nitrogen for mild steel?"
-                answer="Oxygen creates an exothermic reaction that adds heat to the cutting process, allowing 20-30% faster speeds. However, it leaves an oxidized edge. Nitrogen produces cleaner edges but cuts slower."
+                answer="Oxygen creates an exothermic reaction that adds heat to the cutting process and can enable higher cutting speeds in many setups, at the cost of an oxidized edge. Nitrogen produces cleaner, oxide-free edges but may require different feeds for similar quality. Actual speed differences depend on your machine, parameters, and quality targets."
               />
               <FAQItem
                 question="How do I convert m/min to in/min?"
@@ -223,7 +328,7 @@ export default function CuttingSpeedsQuickReferencePage() {
               />
               <FAQItem
                 question="Can I cut faster with more power?"
-                answer="Yes, but with diminishing returns. Doubling power doesn't double speed. A 6kW laser cuts mild steel 3mm about 40-50% faster than 3kW, not 100% faster. Beyond optimal power for a thickness, gains are minimal."
+                answer="Yes, but with diminishing returns. Doubling power does not usually double speed. In many 3mm mild steel applications, moving from 3kW to 6kW yields noticeably faster but less-than-proportional speed increases. Beyond the power level that your machine and material are optimized for, additional gains can be modest."
               />
             </div>
           </div>
@@ -297,5 +402,3 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
     </div>
   );
 }
-
-

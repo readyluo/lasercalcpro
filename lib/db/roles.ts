@@ -26,10 +26,9 @@ export async function getRoleBySlug(slug: string): Promise<Role | null> {
 }
 
 export async function createRole(name: string, slug: string, permissions: Record<string, PermissionAction[]>): Promise<boolean> {
-  return executeWrite(
-    `INSERT INTO roles (name, slug, permissions, created_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)`,
-    [name, slug, JSON.stringify(permissions)]
-  );
+  const query = `INSERT INTO roles (name, slug, permissions, created_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)`;
+  const result = await executeWrite(query, [name, slug, JSON.stringify(permissions)]);
+  return result.rowsAffected > 0;
 }
 
 export async function updateRole(id: number, data: { name?: string; slug?: string; permissions?: Record<string, PermissionAction[]> }): Promise<boolean> {
@@ -43,9 +42,13 @@ export async function updateRole(id: number, data: { name?: string; slug?: strin
   if (fields.length === 0) return true;
 
   values.push(id);
-  return executeWrite(`UPDATE roles SET ${fields.join(', ')} WHERE id = ?`, values);
+  const query = `UPDATE roles SET ${fields.join(', ')} WHERE id = ?`;
+  const result = await executeWrite(query, values);
+  return result.rowsAffected > 0;
 }
 
 export async function deleteRole(id: number): Promise<boolean> {
-  return executeWrite('DELETE FROM roles WHERE id = ?', [id]);
+  const query = 'DELETE FROM roles WHERE id = ?';
+  const result = await executeWrite(query, [id]);
+  return result.rowsAffected > 0;
 }

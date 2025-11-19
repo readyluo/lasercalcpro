@@ -22,16 +22,15 @@ import {
   calculateCNCMachining,
   type CNCMachiningResult,
 } from '@/lib/calculators/cnc-machining';
+import { Calculator, RotateCcw, DollarSign, Package, TrendingDown } from 'lucide-react';
 import {
-  Calculator,
-  Download,
-  RotateCcw,
-  DollarSign,
-  Package,
-  TrendingDown,
-} from 'lucide-react';
-import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
+  generateCalculatorHowToSchema,
+  generateFAQSchema,
+  generateSoftwareApplicationSchema,
+} from '@/lib/seo/schema';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
+import { saveCalculationToAPI } from '@/lib/utils/api-client';
+import { ExportButton } from '@/components/calculators/ExportButton';
 
 export default function CNCMachiningCalculatorPage() {
   const t = useEnglish();
@@ -40,7 +39,7 @@ export default function CNCMachiningCalculatorPage() {
 
   const howToSchema = generateCalculatorHowToSchema(
     'CNC Machining Cost Calculator',
-    'Calculate CNC machining costs with batch pricing and tooling analysis',
+    'Estimate CNC machining costs with batch pricing and tooling analysis based on your own inputs',
     [
       { name: 'Enter Part Dimensions', text: 'Input length, width, and height of your part in millimeters' },
       { name: 'Select Material', text: 'Choose material type and enter price per kg' },
@@ -53,53 +52,55 @@ export default function CNCMachiningCalculatorPage() {
   const faqSchema = generateFAQSchema([
     {
       question: 'How accurate is this CNC cost calculator?',
-      answer: 'The calculator achieves 85-95% accuracy for typical parts. Simple parts are within ±5% while complex parts with many features may vary ±15%. Always verify with actual machine time data for your shop.',
+      answer:
+        'This calculator uses simplified cost formulas together with your input data to estimate CNC machining costs. Actual results depend on your machines, tooling, programming strategies, and shop rates, so treat the output as a guide and compare it against measured cycle times and historical jobs in your own shop.',
     },
     {
       question: 'Why is the first piece more expensive than production quantities?',
-      answer: 'Setup time is amortized across the batch. For example, a 60-minute setup with 15-minute cycle time makes the first piece cost $93.75 at $75/hr, while 100 pieces cost only $19.50 per piece.',
+      answer:
+        'Setup time is spread across all pieces in a batch. When you only make one part, the entire setup cost sits on that part. As batch size increases, the same setup time is divided by more parts, so cost per piece decreases. Use the setup time and batch size fields in this calculator to see how different batch sizes change per-part cost.',
     },
     {
       question: 'What is included in the machine hour rate?',
-      answer: 'Machine hour rate includes equipment depreciation, labor, facility overhead, maintenance reserve, and profit margin. A typical $75/hr rate breaks down into equipment ($12.50), labor ($25-35), overhead ($15-20), and profit ($12-15).',
+      answer:
+        'Machine hour rate usually bundles equipment depreciation, labor, facility overhead, maintenance, and profit. In this calculator you can represent this by combining your machine, labor, and overhead assumptions into the machine and overhead rate fields. For exact breakdowns, rely on your own cost accounting rather than generic hourly examples.',
     },
   ]);
+  const softwareSchema = generateSoftwareApplicationSchema('CNC Machining Cost Calculator');
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
   } = useForm<CNCMachiningInput>({
     resolver: zodResolver(cncMachiningSchema),
     defaultValues: cncMachiningDefaults,
   });
+  const watchedValues = watch();
 
   const onSubmit = async (data: CNCMachiningInput) => {
     setIsCalculating(true);
 
-    setTimeout(async () => {
+    try {
       const calculationResult = calculateCNCMachining(data);
       setResult(calculationResult);
-      setIsCalculating(false);
 
       document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
 
-      // Save calculation for analytics
-      try {
-        await fetch('/api/calculate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            toolType: 'cnc-machining',
-            params: data,
-            result: calculationResult,
-          }),
-        });
-      } catch (error) {
-        console.error('Failed to save calculation:', error);
+      const saveResult = await saveCalculationToAPI({
+        tool_type: 'cnc-machining',
+        input_params: data,
+        result: calculationResult as unknown as Record<string, unknown>,
+      });
+
+      if (!saveResult.success) {
+        console.error('Failed to save calculation:', saveResult.error);
       }
-    }, 300);
+    } finally {
+      setIsCalculating(false);
+    }
   };
 
   const handleReset = () => {
@@ -119,17 +120,59 @@ export default function CNCMachiningCalculatorPage() {
     <>
       <SchemaMarkup schema={howToSchema} />
       <SchemaMarkup schema={faqSchema} />
+      <SchemaMarkup schema={softwareSchema} />
       <Navigation />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
 
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">
+          {/* When to use this calculator */}
+          <div className="mb-4 rounded-2xl bg-blue-50 border-l-4 border-blue-500 px-4 py-3">
+            <h2 className="mb-1 text-sm font-semibold text-gray-900">When to use this CNC machining calculator</h2>
+            <div className="grid gap-3 md:grid-cols-2 text-xs text-gray-700">
+              <div>
+                <p className="font-semibold text-gray-900">✓ Best suited for:</p>
+                <ul className="mt-1 ml-5 list-disc space-y-1">
+                  <li>Simple prismatic parts with mostly milling, turning, and drilling</li>
+                  <li>Rough cost comparisons between materials and batch sizes</li>
+                  <li>Understanding setup vs. cycle time impact on cost/part</li>
+                  <li>Early-stage quoting where you already know approximate cycle times</li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">✗ Not ideal for:</p>
+                <ul className="mt-1 ml-5 list-disc space-y-1">
+                  <li>Highly complex 5-axis surfaces, undercuts, or deep cavities</li>
+                  <li>Jobs dominated by programming, inspection, or fixturing time</li>
+                  <li>Exotic materials (Inconel, hardened steels) without measured cycle data</li>
+                  <li>Fully-optimized production lines with detailed time studies</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Header - Compact */}
+          <div className="mb-4">
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">
               {t.cncMachining.title}
             </h1>
-            <p className="text-xl text-gray-600">{t.cncMachining.description}</p>
+            <p className="text-base text-gray-600">{t.cncMachining.description}</p>
+          </div>
+
+          {/* Disclaimer - Simplified */}
+          <div className="mb-4 border-l-4 border-amber-500 bg-amber-50 px-4 py-3">
+            <p className="text-sm text-amber-900">
+              <svg className="mr-2 inline h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <strong>Estimates only:</strong> This tool combines your own time and rate inputs with simplified cost formulas.
+              It does not model detailed toolpaths, fixturing strategies, programming time, inspection, coolant usage, or scrap.
+              Always compare against measured cycle times and historical jobs in your own shop before final quoting.
+            </p>
+            <p className="mt-1 text-xs text-amber-800">
+              Complex 5-axis parts, hard-to-machine alloys, and tight-tolerance features can be significantly slower than
+              simple prismatic examples. Treat these results as planning guidance, not a guaranteed shop rate.
+            </p>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-2">
@@ -194,6 +237,69 @@ export default function CNCMachiningCalculatorPage() {
                         error={errors.materialType?.message}
                         required
                       />
+
+                      {watchedValues.materialType && (
+                        <div className="mt-1 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-gray-800">
+                          {(() => {
+                            const map: Record<
+                              string,
+                              { index: number; note: string; level: 'easy' | 'medium' | 'hard' }
+                            > = {
+                              aluminum: {
+                                index: 4.5,
+                                note: 'Excellent machinability – high feeds/speeds and long tool life when coolant is correct.',
+                                level: 'easy',
+                              },
+                              steel: {
+                                index: 3.0,
+                                note: 'Baseline machinability – standard feeds/speeds and common tooling.',
+                                level: 'medium',
+                              },
+                              stainless_steel: {
+                                index: 2.0,
+                                note: 'Work-hardening – needs conservative feeds, sharp tools, and good coolant.',
+                                level: 'hard',
+                              },
+                              brass: {
+                                index: 5.0,
+                                note: 'Free-cutting – very fast machining, but material cost is higher.',
+                                level: 'easy',
+                              },
+                              plastic: {
+                                index: 4.0,
+                                note: 'Easy to cut but sensitive to heat and deflection – chip evacuation and fixturing matter.',
+                                level: 'medium',
+                              },
+                            };
+
+                            const mat = map[watchedValues.materialType as keyof typeof map];
+                            const label = materialOptions.find(m => m.value === watchedValues.materialType)?.label;
+                            if (!mat || !label) return null;
+
+                            return (
+                              <div className="flex items-start gap-3">
+                                <div
+                                  className={`mt-0.5 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${{
+                                    easy: 'bg-green-100 text-green-700',
+                                    medium: 'bg-blue-100 text-blue-700',
+                                    hard: 'bg-red-100 text-red-700',
+                                  }[mat.level]}`}
+                                >
+                                  {mat.index.toFixed(1)}
+                                </div>
+                                <div className="flex-1">
+                                  <p className="font-semibold text-gray-900">{label} machinability index</p>
+                                  <p className="mt-0.5 text-gray-700">{mat.note}</p>
+                                  <p className="mt-1 text-[11px] text-gray-600">
+                                    Compared to easy-cutting brass at ~5.0. Lower index usually means slower feeds/speeds and
+                                    higher tool wear, which should be reflected in your machining time and tooling inputs above.
+                                  </p>
+                                </div>
+                              </div>
+                            );
+                          })()}
+                        </div>
+                      )}
 
                       <Input
                         {...register('materialPrice', { valueAsNumber: true })}
@@ -427,16 +533,86 @@ export default function CNCMachiningCalculatorPage() {
                     </div>
                   </div>
 
+                  {/* Optimization opportunities */}
+                  <div className="card border-l-4 border-green-500 bg-green-50">
+                    <h3 className="mb-3 flex items-center gap-2 text-xl font-bold text-gray-900">
+                      <TrendingDown className="h-6 w-6 text-green-600" />
+                      Optimization opportunities
+                    </h3>
+                    <div className="space-y-3 text-sm text-gray-800">
+                      {result.setupCostPerPart > result.machineCostPerPart && (
+                        <div className="rounded bg-white p-3 text-xs">
+                          <p className="font-semibold text-amber-800 mb-1">Setup dominating unit cost</p>
+                          <p>
+                            Setup cost per part (${result.setupCostPerPart.toFixed(2)}) is higher than machine time
+                            (${result.machineCostPerPart.toFixed(2)}). For recurring work, consider larger batch sizes,
+                            reusable fixtures, or consolidating similar jobs to spread setup across more parts.
+                          </p>
+                        </div>
+                      )}
+
+                      {result.toolingCostPerPart > result.totalCostPerPart * 0.25 && (
+                        <div className="rounded bg-white p-3 text-xs">
+                          <p className="font-semibold text-blue-800 mb-1">
+                            Tooling is ~
+                            {((result.toolingCostPerPart / result.totalCostPerPart) * 100).toFixed(0)}% of cost/part
+                          </p>
+                          <p>
+                            High tooling share suggests aggressive parameters, difficult materials, or suboptimal tool
+                            choice. Check insert grade, coating, coolant, and whether a different tool strategy could extend
+                            life without sacrificing quality.
+                          </p>
+                        </div>
+                      )}
+
+                      {result.machineUtilization < 60 && (
+                        <div className="rounded bg-white p-3 text-xs">
+                          <p className="font-semibold text-purple-800 mb-1">Low cutting-time utilization</p>
+                          <p>
+                            Machine utilization is {result.machineUtilization}% – much of the batch time is in setup or
+                            non-cutting activities. Review fixturing, probing, and toolchange strategy, and consider
+                            combining operations or using palletization for repeat jobs.
+                          </p>
+                        </div>
+                      )}
+
+                      {watchedValues.batchSize < 10 && (
+                        <div className="rounded bg-white p-3 text-xs">
+                          <p className="font-semibold text-gray-900 mb-1">Very small batch size</p>
+                          <p>
+                            With a batch of {watchedValues.batchSize} part
+                            {watchedValues.batchSize === 1 ? '' : 's'}, setup has a strong impact on cost per part. For
+                            prototype or pre-production work, consider charging a separate setup fee or quoting a small
+                            minimum order rather than only a per-piece price.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
                   {/* Actions */}
-                  <div className="flex gap-4">
-                    <Button
-                      variant="primary"
-                      size="lg"
-                      className="flex-1"
-                      leftIcon={<Download className="h-5 w-5" />}
-                    >
-                      Export PDF Report
-                    </Button>
+                  <div className="flex flex-col gap-4 sm:flex-row">
+                    <ExportButton
+                      title="CNC Machining Cost Report"
+                      calculationType="CNC Machining"
+                      inputData={watchedValues}
+                      results={{
+                        'Cost Per Part': result.totalCostPerPart,
+                        'Suggested Price': result.suggestedPricePerPart,
+                        'Total Batch Cost': result.totalBatchCost,
+                        'Total Batch Time (hrs)': result.totalBatchTime,
+                        'Material Cost Per Part': result.materialCostPerPart,
+                        'Machine Cost Per Part': result.machineCostPerPart,
+                        'Labor Cost Per Part': result.laborCostPerPart,
+                        'Tooling Cost Per Part': result.toolingCostPerPart,
+                        'Setup Cost Per Part': result.setupCostPerPart,
+                        'Overhead Per Part': result.overheadPerPart,
+                        'Part Weight (kg)': result.partWeight,
+                        'Machine Utilization (%)': result.machineUtilization,
+                        'Profit Per Part': result.profitPerPart,
+                        'Total Profit': result.totalProfit,
+                      }}
+                    />
                     <Button
                       variant="outline"
                       size="lg"
@@ -473,44 +649,44 @@ export default function CNCMachiningCalculatorPage() {
                 <div className="border-l-4 border-blue-500 bg-blue-50 p-4">
                   <h3 className="mb-3 font-bold text-gray-900">Milling Operations</h3>
                   <div className="space-y-2 text-sm text-gray-700">
-                    <p><strong>Face Milling:</strong> Fastest material removal, $50-80/hr machine rate</p>
-                    <p><strong>End Milling:</strong> Versatile for profiles and pockets, $60-90/hr</p>
-                    <p><strong>Slotting:</strong> Slower than face milling, requires multiple passes</p>
-                    <p><strong>3D Contouring:</strong> Complex surfaces, $80-120/hr for 5-axis machines</p>
-                    <p><strong>Typical Feed Rates:</strong> 100-500 mm/min for steel, 300-1000 mm/min for aluminum</p>
+                    <p><strong>Face Milling:</strong> Often used for high-area stock removal. Actual hourly rates depend on machine size, tooling cost, and regional labor markets. Calculate your rate from equipment depreciation, labor burden, overhead, and target profit using this calculator.</p>
+                    <p><strong>End Milling:</strong> Versatile for profiles and pockets. Rates vary widely by machine capability and shop specialization. Use your own cost structure when pricing these operations.</p>
+                    <p><strong>Slotting:</strong> Slower than face milling due to higher engagement; requires multiple passes. Factor in longer cycle times when estimating.</p>
+                    <p><strong>3D Contouring:</strong> Complex surfaces on 4- or 5-axis equipment typically command premium rates reflecting machine investment, programming time, and operator skill. Your pricing should reflect these value-added capabilities.</p>
+                    <p><strong>Feed Rates:</strong> Safe and productive feeds depend on material, tooling, rigidity, and machine capability. Always use values from your tooling manufacturer recommendations, CAM libraries, and validated test cuts rather than generic examples.</p>
                   </div>
                 </div>
 
                 <div className="border-l-4 border-purple-500 bg-purple-50 p-4">
                   <h3 className="mb-3 font-bold text-gray-900">Turning Operations</h3>
                   <div className="space-y-2 text-sm text-gray-700">
-                    <p><strong>External Turning:</strong> High material removal rates, $45-70/hr</p>
-                    <p><strong>Facing:</strong> Quick operation for flat surfaces</p>
-                    <p><strong>Boring:</strong> Internal diameter precision work, slower speeds</p>
-                    <p><strong>Threading:</strong> Time-intensive, requires multiple passes</p>
-                    <p><strong>Typical Speeds:</strong> 100-300 m/min surface speed for steel</p>
+                    <p><strong>External Turning:</strong> Capable of high material removal rates. Machine hour rates vary by equipment size, chuck capacity, and automation level. Use this calculator with your actual machine and labor costs.</p>
+                    <p><strong>Facing:</strong> Quick operation for flat surfaces; cycle time depends on part diameter and finish requirements.</p>
+                    <p><strong>Boring:</strong> Internal diameter precision work typically requires slower speeds and careful tool selection.</p>
+                    <p><strong>Threading:</strong> Time-intensive operation requiring multiple passes; cycle time depends on thread pitch and length.</p>
+                    <p><strong>Cutting Speeds:</strong> Surface speeds vary significantly with material, insert grade, and coolant. Always follow your insert manufacturer data and validate with your machine capabilities.</p>
                   </div>
                 </div>
 
                 <div className="border-l-4 border-green-500 bg-green-50 p-4">
                   <h3 className="mb-3 font-bold text-gray-900">Drilling & Boring</h3>
                   <div className="space-y-2 text-sm text-gray-700">
-                    <p><strong>Spot Drilling:</strong> Essential for accurate hole location, 5-10 sec/hole</p>
-                    <p><strong>Drilling:</strong> 10-30 seconds per hole depending on depth and diameter</p>
-                    <p><strong>Reaming:</strong> Precision finishing, adds 20-40% to drilling time</p>
-                    <p><strong>Tapping:</strong> Thread cutting, 15-45 sec per hole</p>
-                    <p><strong>Cost Impact:</strong> 100 holes can add 30-60 minutes of machine time</p>
+                    <p><strong>Spot Drilling:</strong> Essential for accurate hole location. Cycle time per hole depends on your machine spindle speed, feed rate, and tool approach strategy.</p>
+                    <p><strong>Drilling:</strong> Cycle time depends on depth, diameter, material, and chip evacuation requirements. Tighter tolerances or difficult materials extend drilling time. Use your CAM time estimates or measured cycle times when quoting.</p>
+                    <p><strong>Reaming:</strong> Precision finishing operation adds time beyond drilling. The additional time depends on tolerance requirements, reamer quality, and material. Validate with your own process data.</p>
+                    <p><strong>Tapping:</strong> Thread cutting cycles are sensitive to material, lubrication quality, and thread depth. Cycle time varies significantly; use proven parameters from your shop.</p>
+                    <p><strong>Cost Impact:</strong> Multiple-hole patterns can accumulate significant machine time. Use your own cycle-time reports from CAM or time studies to accurately quantify hole-making costs in your quotes.</p>
                   </div>
                 </div>
 
                 <div className="border-l-4 border-orange-500 bg-orange-50 p-4">
                   <h3 className="mb-3 font-bold text-gray-900">Finishing Operations</h3>
                   <div className="space-y-2 text-sm text-gray-700">
-                    <p><strong>Deburring:</strong> Manual or tumbling, $15-30/hr labor</p>
-                    <p><strong>Surface Grinding:</strong> Tight tolerances ±0.005mm, $60-100/hr</p>
-                    <p><strong>Polishing:</strong> Mirror finish, labor-intensive, $25-40/hr</p>
-                    <p><strong>Heat Treatment:</strong> Stress relief or hardening, $50-200 per batch</p>
-                    <p><strong>Anodizing/Coating:</strong> Adds $5-20 per part depending on size</p>
+                    <p><strong>Deburring:</strong> Manual or tumbling operations require labor time. Use your own wage rates and burden factors when calculating deburring costs.</p>
+                    <p><strong>Surface Grinding:</strong> Precision grinding for tight tolerances typically commands higher machine rates than basic milling. Your rate should reflect the specialized equipment and skill required.</p>
+                    <p><strong>Polishing:</strong> Mirror finishes are labor-intensive operations. Time required varies greatly by part geometry, material, and finish specification. Use time studies from your shop to estimate polishing costs accurately.</p>
+                    <p><strong>Heat Treatment:</strong> Stress relief, hardening, or tempering is often outsourced and priced per batch. Obtain quotes from your heat treat suppliers for specific alloys and requirements.</p>
+                    <p><strong>Anodizing/Coating:</strong> Per-part finishing charges vary widely by part size, surface area, alloy, and coating type. Obtain current quotes from your finishing suppliers rather than using generic estimates when pricing finished parts.</p>
                   </div>
                 </div>
               </div>
@@ -523,8 +699,19 @@ export default function CNCMachiningCalculatorPage() {
               <h2 className="mb-6 text-3xl font-bold text-gray-900">Material Selection & Machinability</h2>
               <p className="mb-6 text-gray-700">
                 Material choice significantly impacts machining time, tool life, and overall cost. Machinability rating 
-                indicates how easy a material is to machine (higher = easier).
+                indicates relative ease of machining (higher = easier in general terms).
               </p>
+              
+              <div className="mb-4 rounded-lg border-l-4 border-yellow-500 bg-yellow-50 p-4">
+                <div className="flex items-start gap-2">
+                  <svg className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <p className="text-sm text-yellow-900">
+                    <strong>Reference Data Only:</strong> The machinability ratings, cost ranges, and speed factors in this table are simplified reference values for general comparison. Actual values vary significantly with specific alloy grades, heat treatment, tooling, cutting conditions, and regional suppliers. Use your own material costs and validated machining times when entering values into the calculator.
+                  </p>
+                </div>
+              </div>
               
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -605,7 +792,9 @@ export default function CNCMachiningCalculatorPage() {
                 </table>
               </div>
               <p className="mt-4 text-xs text-gray-600">
-                *Machinability ratings relative to Brass C360 (100%). Speed factors relative to mild steel baseline.
+                *These machinability ratings and price/speed ranges are illustrative only and based on simplified reference data.
+                Actual values vary with alloy, tooling, coolant, machine, and supplier pricing. Use them only as rough context and
+                rely on your own material costs and machining times when entering values into this calculator.
               </p>
             </div>
           </div>
@@ -622,10 +811,10 @@ export default function CNCMachiningCalculatorPage() {
                     Design for Manufacturability (DFM)
                   </h3>
                   <div className="ml-10 space-y-2 text-gray-700">
-                    <p><strong>Use standard tool sizes:</strong> Custom tools cost $50-300 each and add lead time. Standard end mills (1/8", 1/4", 1/2") are readily available.</p>
-                    <p><strong>Avoid deep pockets:</strong> Depth-to-diameter ratio should be &lt;3:1 for efficiency. Deeper pockets require smaller tools and multiple passes.</p>
-                    <p><strong>Minimize setups:</strong> Each additional setup adds 15-30 minutes. Design parts to be machined from one or two sides maximum.</p>
-                    <p><strong>Standard tolerances:</strong> ±0.005" is standard. Tighter tolerances (±0.001") can double machining time and require inspection.</p>
+                    <p><strong>Use standard tool sizes:</strong> Custom tools are more expensive and add lead time. Where possible, design around common cutter diameters to simplify tooling.</p>
+                    <p><strong>Avoid very deep pockets:</strong> Deep, narrow pockets often require smaller tools and multiple passes, which increases cycle time. Simpler geometries are usually faster to machine.</p>
+                    <p><strong>Minimize setups:</strong> Each additional setup adds non-cutting time. Parts that can be completed in fewer setups typically have lower per-part cost.</p>
+                    <p><strong>Standard tolerances:</strong> Tighter tolerances and special surface finish requirements can significantly increase machining and inspection time. Use only as tight as the function of the part requires.</p>
                   </div>
                 </div>
 
@@ -635,10 +824,10 @@ export default function CNCMachiningCalculatorPage() {
                     Optimize Batch Sizing
                   </h3>
                   <div className="ml-10 space-y-2 text-gray-700">
-                    <p><strong>Setup time impact:</strong> Setup typically takes 30-90 minutes. For a 15-minute part, one piece costs 7x more than 100 pieces.</p>
-                    <p><strong>Tooling amortization:</strong> $200 in custom tooling spread over 100 parts = $2/part vs. $200 for one piece.</p>
-                    <p><strong>Economic batch size:</strong> Generally 10-50 pieces for prototypes, 100-500 for production parts.</p>
-                    <p><strong>Just-in-time consideration:</strong> Balance inventory costs (~20% annually) against batch savings.</p>
+                    <p><strong>Setup time impact:</strong> When setup time is large compared to machining time, very small batches can make each part expensive. Larger batches spread the same setup effort across more parts. Use the setup time and batch size fields in this calculator to explore that trade-off.</p>
+                    <p><strong>Tooling amortization:</strong> Spreading custom tooling cost across more parts reduces tooling cost per part. Adjust tool cost and tool life inputs to reflect how many pieces you expect a tool to run.</p>
+                    <p><strong>Batch sizing:</strong> Choose batch sizes that balance machine efficiency, changeover frequency, and your inventory strategy rather than relying on a single "typical" number.</p>
+                    <p><strong>Inventory vs. efficiency:</strong> Larger batches may reduce unit machining cost but increase inventory. Use this calculator together with your inventory carrying cost assumptions to decide what is appropriate for your shop.</p>
                   </div>
                 </div>
 
@@ -648,10 +837,10 @@ export default function CNCMachiningCalculatorPage() {
                     Material Stock Selection
                   </h3>
                   <div className="ml-10 space-y-2 text-gray-700">
-                    <p><strong>Use near-net shapes:</strong> Starting with 6" diameter for a 5" part wastes 30% material vs. starting with 5.5" stock.</p>
-                    <p><strong>Standard stock sizes:</strong> Custom sizes add 2-4 weeks lead time and 20-50% cost premium.</p>
-                    <p><strong>Material utilization:</strong> Typical is 40-60% after machining. Design to maximize usable material.</p>
-                    <p><strong>Scrap value:</strong> Aluminum and brass scrap has 40-60% of new material value. Steel scrap ~5-10%.</p>
+                    <p><strong>Use near-net shapes:</strong> Oversized stock increases material waste and machine time. Where possible, choose bar, plate, or extrusion sizes that are close to the finished part envelope.</p>
+                    <p><strong>Standard stock sizes:</strong> Standard sizes are usually easier to source and more economical than highly customized dimensions. Check with your suppliers to see which sizes give the best overall value.</p>
+                    <p><strong>Material utilization:</strong> Consider how much of each blank becomes finished part versus chips and offcuts, and reflect your expectations in the material cost inputs.</p>
+                    <p><strong>Scrap value:</strong> Scrap can offset some material cost, but actual values depend on local markets and scrap handling. Use your own scrap value assumptions when analyzing material cost.</p>
                   </div>
                 </div>
 
@@ -661,10 +850,10 @@ export default function CNCMachiningCalculatorPage() {
                     Cutting Parameters Optimization
                   </h3>
                   <div className="ml-10 space-y-2 text-gray-700">
-                    <p><strong>High-speed machining:</strong> Modern CAM can reduce cycle time by 30-50% with optimized toolpaths and feeds.</p>
-                    <p><strong>Adaptive clearing:</strong> Maintains constant tool load, increasing feed rates by 3-5x for roughing.</p>
-                    <p><strong>Tool life balance:</strong> Running tools at 80% of max speed doubles tool life while only reducing speed 20%.</p>
-                    <p><strong>Coolant selection:</strong> Flood coolant extends tool life 2-3x vs. dry machining. High-pressure through-tool coolant adds another 50%.</p>
+                    <p><strong>High-speed machining:</strong> Modern CAM strategies can significantly reduce cycle time by improving toolpaths, feeds, and engagement. Use the machining time input in this calculator to capture those gains once you validate them on your machines.</p>
+                    <p><strong>Adaptive clearing:</strong> Toolpaths that maintain more constant tool load often allow higher feeds for roughing compared to traditional paths, which can shorten roughing time.</p>
+                    <p><strong>Tool life balance:</strong> Running tools aggressively can shorten tool life; running more conservatively can extend it but may lengthen cycle time. Use your experience and tooling data to find a balance, and update tool cost and tool life in the calculator accordingly.</p>
+                    <p><strong>Coolant selection:</strong> Appropriate coolant type and delivery can improve tool life and surface finish. Reflect any changes in tool life and machining time in your calculator inputs rather than relying on generic multipliers.</p>
                   </div>
                 </div>
 
@@ -674,10 +863,10 @@ export default function CNCMachiningCalculatorPage() {
                     Alternative Processes
                   </h3>
                   <div className="ml-10 space-y-2 text-gray-700">
-                    <p><strong>Castings:</strong> For volumes &gt;100 parts, casting + machining can be 40-60% cheaper than solid machining.</p>
-                    <p><strong>Laser/waterjet blanking:</strong> Pre-cut 2D profiles before machining to reduce roughing time by 50-70%.</p>
-                    <p><strong>3D printing + machining:</strong> Print complex features, machine critical surfaces. Hybrid approach saves 30-50% on complex parts.</p>
-                    <p><strong>EDM for hard materials:</strong> For hardened steel or exotic alloys, EDM can be faster and cheaper than milling.</p>
+                    <p><strong>Castings:</strong> At higher volumes, casting plus finish machining can sometimes be more economical than machining from solid. Use this calculator alongside your casting quotes to compare total part cost.</p>
+                    <p><strong>Laser/waterjet blanking:</strong> Pre-cut 2D profiles before machining can reduce roughing time for some geometries. Reflect any time savings by updating the machining time input when you validate them on your parts.</p>
+                    <p><strong>3D printing + machining:</strong> Printing complex features and machining only critical surfaces can be beneficial for certain shapes. Model this by entering the machining time and material cost for the post-process CNC step.</p>
+                    <p><strong>EDM for hard materials:</strong> For hardened steels or exotic alloys, EDM or other processes may be more suitable than milling. Compare alternative process quotes to the CNC estimates from this tool rather than assuming one method is always cheaper.</p>
                   </div>
                 </div>
               </div>
@@ -688,89 +877,53 @@ export default function CNCMachiningCalculatorPage() {
           <div className="mt-12">
             <div className="card bg-gradient-to-br from-purple-50 to-indigo-50">
               <h2 className="mb-6 text-3xl font-bold text-gray-900">Industry Benchmarks & Performance</h2>
-              
+
+              <p className="mb-6 text-gray-700">
+                Benchmarks for machine rates, tool life, and tolerances vary widely by region, equipment, and industry.
+                This calculator does not enforce any specific benchmark values; instead, it helps you apply your own shop
+                data consistently. Use the following points as guidance on how to think about benchmarks rather than as
+                fixed targets.
+              </p>
+
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="rounded-lg bg-white p-4 shadow-sm">
-                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Machine Hour Rates (2024)</h3>
-                  <div className="space-y-2 text-sm text-gray-700">
-                    <div className="flex justify-between border-b pb-2">
-                      <span>3-axis VMC (small):</span>
-                      <span className="font-semibold">$45-65/hr</span>
-                    </div>
-                    <div className="flex justify-between border-b pb-2">
-                      <span>3-axis VMC (large):</span>
-                      <span className="font-semibold">$75-95/hr</span>
-                    </div>
-                    <div className="flex justify-between border-b pb-2">
-                      <span>4-axis horizontal:</span>
-                      <span className="font-semibold">$80-110/hr</span>
-                    </div>
-                    <div className="flex justify-between border-b pb-2">
-                      <span>5-axis simultaneous:</span>
-                      <span className="font-semibold">$120-180/hr</span>
-                    </div>
-                    <div className="flex justify-between border-b pb-2">
-                      <span>Swiss-type lathe:</span>
-                      <span className="font-semibold">$70-100/hr</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Manual machining:</span>
-                      <span className="font-semibold">$35-50/hr</span>
-                    </div>
-                  </div>
-                  <p className="mt-3 text-xs text-gray-600">Rates vary by region, machine capability, and facility overhead</p>
+                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Machine Hour Rates</h3>
+                  <p className="text-sm text-gray-700">
+                    Machine hour rates are typically built from equipment costs, labor, overhead, maintenance, and
+                    profit. Gather your own hourly costs for different machine types and enter them into the machine
+                    rate and labor rate fields. This will give results that reflect your shop instead of generic market
+                    ranges.
+                  </p>
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
-                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Typical Project Breakdown</h3>
-                  <div className="space-y-2 text-sm text-gray-700">
-                    <div className="flex justify-between">
-                      <span>Programming & CAM:</span>
-                      <span className="font-semibold">10-20% of cycle</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Setup & fixturing:</span>
-                      <span className="font-semibold">15-25%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Roughing operations:</span>
-                      <span className="font-semibold">30-40%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Finishing operations:</span>
-                      <span className="font-semibold">20-30%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Inspection & deburr:</span>
-                      <span className="font-semibold">10-15%</span>
-                    </div>
-                  </div>
-                  <p className="mt-3 text-xs text-gray-600">For typical machined parts with moderate complexity</p>
+                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Time Breakdown</h3>
+                  <p className="text-sm text-gray-700">
+                    The share of time spent on programming, setup, roughing, finishing, and inspection depends heavily
+                    on part geometry and workflow. Rather than relying on universal percentages, estimate setup and
+                    machining time for your job and input those directly. You can then review how much of the total cost
+                    is driven by non-cutting activities.
+                  </p>
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
-                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Tool Life Expectations</h3>
-                  <div className="space-y-2 text-sm text-gray-700">
-                    <p><strong>Carbide end mills (steel):</strong> 2-4 hours cutting time</p>
-                    <p><strong>Carbide end mills (aluminum):</strong> 6-12 hours</p>
-                    <p><strong>HSS drills:</strong> 20-50 holes in steel</p>
-                    <p><strong>Carbide drills:</strong> 200-500 holes in steel</p>
-                    <p><strong>Inserts (turning):</strong> 20-40 parts before indexing</p>
-                    <p><strong>Taps (steel):</strong> 50-200 holes depending on material</p>
-                  </div>
-                  <p className="mt-3 text-xs text-gray-600">Varies significantly based on material hardness and cutting parameters</p>
+                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Tool Life</h3>
+                  <p className="text-sm text-gray-700">
+                    Tool life is influenced by material, coatings, coolant, and cutting parameters. Use your tooling
+                    supplier recommendations and in-house experience to decide reasonable tool life assumptions, then set
+                    tool cost and tool life values in the calculator so the tooling cost per part reflects your actual
+                    usage.
+                  </p>
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
-                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Quality & Tolerance Standards</h3>
-                  <div className="space-y-2 text-sm text-gray-700">
-                    <p><strong>Standard tolerance:</strong> ±0.005" (±0.13mm)</p>
-                    <p><strong>Precision tolerance:</strong> ±0.001" (±0.025mm)</p>
-                    <p><strong>Ultra-precision:</strong> ±0.0005" (±0.013mm)</p>
-                    <p><strong>Surface finish Ra:</strong> 63-125 µin (standard), 16-32 µin (fine)</p>
-                    <p><strong>Flatness/parallelism:</strong> 0.001" per inch typical</p>
-                  </div>
-                  <p className="mt-3 text-xs text-gray-600">Per ASME Y14.5 geometric dimensioning standards</p>
+                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Quality & Tolerances</h3>
+                  <p className="text-sm text-gray-700">
+                    Tolerances, surface finish, and geometric requirements should come from drawings and standards such
+                    as ASME Y14.5, not from this calculator. Tighter quality requirements typically increase machining
+                    and inspection time, which you can represent by adjusting machining time, setup time, and overhead
+                    in your inputs.
+                  </p>
                 </div>
               </div>
             </div>
@@ -783,31 +936,31 @@ export default function CNCMachiningCalculatorPage() {
               <div className="space-y-4">
                 <FAQItem
                   question="How accurate is this CNC cost calculator?"
-                  answer="This calculator achieves 85-95% accuracy for typical parts. Accuracy depends on complexity: simple parts (±5%), complex parts with many features (±15%). Always verify with actual machine time data for your specific shop. Factors like programmer efficiency, machine condition, and material variability affect real-world costs."
+                  answer="This calculator combines your inputs with simplified cost formulas to estimate machining costs. The results are intended as a planning and quoting aid rather than an exact prediction. Real costs depend on programming strategy, operator efficiency, tool choices, and how closely your assumptions match actual cycle times, so you should always compare estimates with your own historical data."
                 />
                 <FAQItem
                   question="Why is my first piece so expensive compared to production quantity?"
-                  answer="Setup time is amortized across the batch. For example: 60-minute setup + 15-minute cycle time. First piece = 75 minutes ($93.75 @ $75/hr). 100 pieces = 60 + (100×15) = 1560 minutes, or $19.50 per piece. The setup cost drops from $60/piece to $0.60/piece. This is why job shops often have minimum order quantities of 10-50 pieces."
+                  answer="Setup time is spread across all parts in a batch. When you run only a few pieces, each one carries a large share of the setup effort; as batch size increases, that same setup time is divided among more parts, so cost per piece falls. You can see this effect directly by changing batch size and setup time in the calculator and watching how per-part cost responds."
                 />
                 <FAQItem
                   question="What's included in the machine hour rate?"
-                  answer="Typical breakdown of $75/hr rate: Equipment depreciation ($250k machine / 10 years / 2000 hrs = $12.50), Labor ($25-35/hr operator or programmer), Overhead (facility rent, utilities, insurance = $15-20/hr), Maintenance reserve (tooling, repairs = $8-12/hr), Profit margin (15-25% = $12-15/hr). Rates vary significantly by shop size, location, and machine capabilities."
+                  answer="Machine hour rates usually combine equipment depreciation, labor, facility overhead, maintenance, and profit. The exact breakdown is specific to each shop. In this tool, you can represent that structure by choosing machine, labor, and overhead rates that match your accounting, then using the suggested price output as a starting point for quotes."
                 />
                 <FAQItem
                   question="When should I use 3-axis vs. 5-axis machining?"
-                  answer="Use 3-axis for: Simple parts with features on one or two sides, cost-sensitive projects (3-axis is 40-60% cheaper per hour), high-volume production. Use 5-axis for: Complex compound angles, turbine blades, impellers (reduces 5+ setups to 1-2), aerospace/medical parts requiring full traceability, parts requiring 4+ setups on 3-axis. Break-even is typically when 3-axis requires 3+ setups vs. 1-2 on 5-axis."
+                  answer="3-axis machines are often suitable for simpler parts with features on one or two sides and can be a good fit when hourly rates and fixturing are straightforward. 5-axis machines are typically chosen when you need access to multiple faces in a single setup or have complex angles and contours. The economic trade-off depends on your own machine rates and setup times; you can model different scenarios by changing setup, machining time, and batch size in this calculator."
                 />
                 <FAQItem
                   question="How can I reduce tooling costs?"
-                  answer="Strategies: 1) Design for standard tools – custom tools are $100-500 vs. $20-50 for standard. 2) Minimize tool changes – each change adds 30-90 seconds. 3) Use coated tools – cost 2x but last 3-5x longer. 4) Optimize feeds/speeds – running tools too hard reduces life 50%, too conservatively wastes time. 5) Batch similar parts – tooling setup once for entire batch. 6) Consider tooling package deals for production – pre-negotiated tool sets save 20-30%."
+                  answer="Strategies include designing around standard tool sizes where possible, minimizing unnecessary tool changes, using appropriate coatings and grades for your materials, and tuning feeds and speeds so tools last reliably without excessive cycle time. Grouping similar parts into shared setups can also help spread tooling and setup effort. Reflect these choices in the tool cost and tool life inputs so the calculator matches your real usage."
                 />
                 <FAQItem
                   question="What's the difference between CNC milling and turning costs?"
-                  answer="Turning (lathe) is generally 30-50% less expensive per hour ($45-70 vs $75-95) and has higher material removal rates for cylindrical parts. However, milling can produce more complex geometries. For round parts: Use turning when length &lt; 3× diameter and external features dominate. Use milling when: part has prismatic features, length &gt; 5× diameter, or requires compound angles. Many parts benefit from mill-turn machines that combine both in one setup."
+                  answer="Turning is typically well-suited for cylindrical parts and can achieve high material removal rates when most features are rotational. Milling is more flexible for prismatic parts and complex 3D geometries. For many jobs, a combination of milling and turning (or mill-turn platforms) is appropriate. Rather than assuming one is always cheaper, estimate realistic times for each approach and compare the resulting costs with this calculator."
                 />
                 <FAQItem
                   question="How do I account for scrap rate in my estimates?"
-                  answer="Industry standards: Prototype/first article: 20-50% scrap rate (learning curve), Low-volume production: 5-15% scrap, High-volume production: 2-5% scrap, Simple parts: 1-3%, Complex/tight tolerance: 5-10%. Build scrap cost into pricing by dividing total cost by yield. Example: $100 part cost / 0.95 yield = $105.26 selling price to account for 5% scrap. Also factor first article inspection (100% inspection initially, sampling for production)."
+                  answer="Scrap and rework rates depend on part complexity, process stability, and inspection strategy. One common way to reflect scrap in pricing is to divide your expected unit cost by the yield you typically achieve on similar work, so that the price covers both good parts and unavoidable losses. You can also add extra machining or inspection time into the inputs when you know a job will have a steeper learning curve or tighter requirements."
                 />
               </div>
             </div>
@@ -910,4 +1063,3 @@ function CostItem({
     </div>
   );
 }
-

@@ -17,18 +17,18 @@ import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/sche
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 
 const materialOptions = [
-  { value: 'mild_steel', label: 'Mild Steel - Fast piercing, standard settings' },
-  { value: 'stainless_steel', label: 'Stainless Steel - Slower pierce, higher gas consumption' },
-  { value: 'aluminum', label: 'Aluminum - Fast piercing, lower power' },
-  { value: 'copper_brass', label: 'Copper/Brass - Highly reflective, challenging to pierce' },
+  { value: 'mild_steel', label: 'Mild Steel - Example of standard piercing behavior in this reference' },
+  { value: 'stainless_steel', label: 'Stainless Steel - Often slower pierce with higher gas demand' },
+  { value: 'aluminum', label: 'Aluminum - Often supports faster piercing at lower power in many setups' },
+  { value: 'copper_brass', label: 'Copper/Brass - Highly reflective and can be more challenging to pierce consistently' },
 ];
 
 const strategyOptions = [
-  { value: 'highPressure', label: 'High Pressure - Fastest, most gas consumption' },
-  { value: 'ramped', label: 'Ramped - Gradual power increase, good quality' },
-  { value: 'lowPower', label: 'Low Power - Slower, better for thin materials' },
+  { value: 'highPressure', label: 'High Pressure - Often among the faster options, with higher gas consumption' },
+  { value: 'ramped', label: 'Ramped - Gradual power increase, often used for balanced quality' },
+  { value: 'lowPower', label: 'Low Power - Generally slower and gentler on thin materials' },
   { value: 'pulsed', label: 'Pulsed - Controlled energy, reduced spatter' },
-  { value: 'edgeStart', label: 'Edge Start - No pierce needed, fastest overall' },
+  { value: 'edgeStart', label: 'Edge Start - No pierce when geometry allows; can be one of the fastest overall approaches' },
 ];
 
 const qualityOptions = [
@@ -53,7 +53,7 @@ export default function PierceEstimatorPage() {
     [
       { name: 'Material & Thickness', text: 'Select material type and enter thickness in millimeters.' },
       { name: 'Holes & Strategy', text: 'Enter hole count and select piercing strategy and quality level.' },
-      { name: 'Gas & Rates', text: 'Select gas type and price per m³, and your hourly cost.' },
+      { name: 'Gas & Rates', text: 'Select gas type and price per m^3, and your hourly cost.' },
       { name: 'Calculate', text: 'Review total piercing time, cost, and optimization recommendations.' },
     ]
   );
@@ -107,9 +107,17 @@ export default function PierceEstimatorPage() {
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
 
-          <div className="mb-8">
-            <h1 className="mb-2 text-4xl font-bold text-gray-900 md:text-5xl">Piercing Time & Cost Estimator</h1>
-            <p className="text-gray-600">Quantify piercing time and costs, and discover optimization opportunities.</p>
+          <div className="mb-4">
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">Piercing Time & Cost Estimator</h1>
+            <p className="text-base text-gray-600">Quantify piercing time and costs, and discover optimization opportunities.</p>
+          </div>
+
+          {/* Disclaimer - Simplified */}
+          <div className="mb-4 border-l-4 border-indigo-500 bg-indigo-50 px-4 py-3">
+            <p className="text-sm text-indigo-900">
+              <CalculatorIcon className="mr-2 inline h-4 w-4" />
+              <strong>Reference Estimates:</strong> Pierce times use simplified models. Actual times depend on equipment, material condition, and parameter tuning. Use for comparison and planning.
+            </p>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-2">
@@ -178,7 +186,7 @@ export default function PierceEstimatorPage() {
                       {...register('gasPricePerCubicMeter', { valueAsNumber: true })} 
                       type="number" 
                       step="0.01" 
-                      label="Gas Price (USD/m³)" 
+                      label="Gas Price (USD/m^3)" 
                       placeholder="e.g., 1.50"
                       helperText="Local gas supplier cost"
                       leftIcon={<DollarSign className="h-4 w-4" />}
@@ -252,6 +260,11 @@ export default function PierceEstimatorPage() {
                       <Stat label="Cost Saved" value={`$${designSavings.costSavings}`} />
                       <Stat label="Annual Savings" value={`$${designSavings.annualSavings}`} />
                     </div>
+                    <p className="mt-2 text-xs text-gray-600">
+                      This section models an illustrative case where the hole count is reduced by 20% from your current input. Use it to
+                      understand how design changes could affect time and cost, and rerun the estimator with your own design alternatives,
+                      volumes, and rates before making decisions.
+                    </p>
                   </div>
 
                   {/* Export */}

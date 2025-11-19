@@ -50,6 +50,13 @@ export const roiSchema = z.object({
     .max(100, 'Down payment cannot exceed 100%')
     .default(20),
 
+  loanTermYears: z
+    .number()
+    .int('Loan term must be a whole number')
+    .min(1, 'Loan term must be at least 1 year')
+    .max(20, 'Loan term cannot exceed 20 years')
+    .default(5),
+
   // Analysis parameters
   analysisYears: z
     .number()
@@ -76,10 +83,10 @@ export const roiDefaults: Partial<ROIInput> = {
   annualGrowthRate: 5,
   financingRate: 0,
   downPayment: 20,
+  loanTermYears: 5,
   analysisYears: 5,
   discountRate: 10,
 };
-
 
 
 

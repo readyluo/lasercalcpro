@@ -54,8 +54,8 @@ export function Breadcrumbs() {
         </li>
 
         {/* Breadcrumb items */}
-        {breadcrumbs.map((crumb, index) => {
-          const isLast = index === breadcrumbs.length - 1;
+        {breadcrumbs.map((crumb) => {
+          const isLast = breadcrumbs.indexOf(crumb) === breadcrumbs.length - 1;
 
           return (
             <li key={crumb.href} className="flex items-center">

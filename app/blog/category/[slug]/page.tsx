@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { getPublishedArticlesByCategory } from '@/lib/db/articles';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
+import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 
 interface PageProps {
   params: { slug: 'tutorials' | 'industry' | 'case-studies' | 'news' };
@@ -38,12 +40,28 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
   
   const totalPages = Math.ceil(total / pageSize);
 
+  const categorySchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${CATEGORY_TITLES[params.slug]} blog articles`,
+    url: `https://www.lasercalcpro.com/blog/category/${params.slug}`,
+    description: `LaserCalc Pro posts filed under ${CATEGORY_TITLES[params.slug]}.`,
+    hasPart: articles.map((article) => ({
+      '@type': 'BlogPosting',
+      headline: article.title,
+      url: `https://www.lasercalcpro.com/blog/${article.slug}`,
+      datePublished: article.published_at || article.created_at,
+    })),
+  };
+
   return (
     <>
       <Navigation />
+      <SchemaMarkup schema={categorySchema} />
       <main className="min-h-screen bg-gradient-to-b from-white to-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-5xl">
+            <Breadcrumbs />
             <header className="mb-8 text-center">
               <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">
                 {CATEGORY_TITLES[params.slug]}

@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
+import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 import { SubscriptionPreferencesForm } from '@/components/subscribe/SubscriptionPreferencesForm';
 import { getSubscriberByToken } from '@/lib/db/subscribers';
 import { Settings, Mail, Bell } from 'lucide-react';
@@ -10,6 +12,14 @@ export const metadata: Metadata = {
   title: 'Email Preferences - LaserCalc Pro',
   description: 'Manage your email subscription preferences',
   robots: 'noindex, nofollow',
+};
+
+const preferencesSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'LaserCalc Pro Email Preferences',
+  url: 'https://www.lasercalcpro.com/subscribe/preferences',
+  description: 'Manage the newsletters and alerts you receive from LaserCalc Pro.',
 };
 
 interface PreferencesPageProps {
@@ -35,9 +45,11 @@ export default async function SubscriptionPreferencesPage({ searchParams }: Pref
   return (
     <>
       <Navigation />
+      <SchemaMarkup schema={preferencesSchema} />
       <main className="min-h-screen bg-gradient-to-b from-white to-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl">
+            <Breadcrumbs />
             {/* Header */}
             <div className="mb-8 text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
@@ -59,7 +71,7 @@ export default async function SubscriptionPreferencesPage({ searchParams }: Pref
                   <span className="font-semibold">Subscribed</span>
                 </div>
                 <p className="text-sm text-blue-600">
-                  You're receiving updates from LaserCalc Pro
+                  You&apos;re receiving updates from LaserCalc Pro
                 </p>
               </div>
               <div className="rounded-lg border border-green-200 bg-green-50 p-4">
@@ -112,4 +124,3 @@ export default async function SubscriptionPreferencesPage({ searchParams }: Pref
     </>
   );
 }
-

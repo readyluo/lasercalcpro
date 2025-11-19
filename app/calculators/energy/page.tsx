@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEnglish } from '@/lib/i18n';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
@@ -12,19 +11,23 @@ import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { energySchema, energyDefaults, type EnergyInput } from '@/lib/validations/energy';
 import { calculateEnergy, type EnergyResult, calculateTotalPotentialSavings } from '@/lib/calculators/energy';
-import { Calculator, Download, RotateCcw, Zap, Leaf, AlertCircle, TrendingUp, DollarSign } from 'lucide-react';
-import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
+import { Calculator, RotateCcw, Zap, Leaf, TrendingUp, DollarSign } from 'lucide-react';
+import {
+  generateCalculatorHowToSchema,
+  generateFAQSchema,
+  generateSoftwareApplicationSchema,
+} from '@/lib/seo/schema';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
-import Link from 'next/link';
+import { saveCalculationToAPI } from '@/lib/utils/api-client';
+import { ExportButton } from '@/components/calculators/ExportButton';
 
 export default function EnergyCalculatorPage() {
-  const t = useEnglish();
   const [result, setResult] = useState<EnergyResult | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
 
   const howToSchema = generateCalculatorHowToSchema(
     'Energy Cost Calculator',
-    'Calculate equipment energy costs and carbon footprint',
+    'Estimate equipment energy costs and carbon footprint based on your inputs',
     [
       { name: 'Select Equipment', text: 'Choose equipment type and enter power rating' },
       { name: 'Set Operating Time', text: 'Enter daily and yearly operating hours' },
@@ -36,11 +39,12 @@ export default function EnergyCalculatorPage() {
   const faqSchema = generateFAQSchema([
     {
       question: 'How accurate is the energy cost calculator?',
-      answer: 'The calculator provides estimates within 5-10% accuracy based on rated power and operating hours. Actual costs vary with equipment efficiency, power factor, and variable loads.',
+      answer:
+        'This calculator uses your equipment power, operating schedule, and rate assumptions to estimate energy use and cost. Actual utility bills depend on factors like efficiency, power factor, varying loads, and tariff structure, so treat the results as directional estimates and compare them with your own meter and billing data.',
     },
     {
       question: 'What is included in total power consumption?',
-      answer: 'Total power includes equipment rated power plus auxiliary systems (cooling, extraction, controls). The calculator adds 30% overhead for auxiliary loads by default.',
+      answer: 'Total power includes equipment rated power plus auxiliary systems (cooling, extraction, controls). Total power equals rated load multiplied by the average load factor plus any auxiliary power you enter for cooling/extraction systems.',
     },
   ]);
 
@@ -49,35 +53,37 @@ export default function EnergyCalculatorPage() {
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
   } = useForm<EnergyInput>({
     resolver: zodResolver(energySchema),
     defaultValues: energyDefaults,
   });
+  const softwareSchema = generateSoftwareApplicationSchema('Energy Cost Calculator');
+  const watchValues = watch();
+  const auxiliaryShare =
+    result && result.annualCost > 0 ? Math.min(100, Math.max(0, (result.auxiliaryCost / result.annualCost) * 100)) : 0;
 
   const onSubmit = async (data: EnergyInput) => {
     setIsCalculating(true);
 
-    setTimeout(async () => {
+    try {
       const calculationResult = calculateEnergy(data);
       setResult(calculationResult);
-      setIsCalculating(false);
 
       document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
 
-      try {
-        await fetch('/api/calculate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            toolType: 'energy',
-            params: data,
-            result: calculationResult,
-          }),
-        });
-      } catch (error) {
-        console.error('Failed to save calculation:', error);
+      const saveResult = await saveCalculationToAPI({
+        tool_type: 'energy',
+        input_params: data,
+        result: calculationResult as unknown as Record<string, unknown>,
+      });
+
+      if (!saveResult.success) {
+        console.error('Failed to save calculation:', saveResult.error);
       }
-    }, 300);
+    } finally {
+      setIsCalculating(false);
+    }
   };
 
   const handleReset = () => {
@@ -97,22 +103,59 @@ export default function EnergyCalculatorPage() {
     <>
       <SchemaMarkup schema={howToSchema} />
       <SchemaMarkup schema={faqSchema} />
+      <SchemaMarkup schema={softwareSchema} />
       <Navigation />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
 
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">
+          {/* Use cases & boundaries */}
+          <div className="mb-4 card bg-gradient-to-br from-green-50 to-emerald-50 border-l-4 border-green-500">
+            <h2 className="mb-2 text-lg font-semibold text-gray-900">
+              When this energy calculator is (and isn't) a good fit
+            </h2>
+            <div className="grid gap-4 md:grid-cols-2 text-xs text-gray-700">
+              <div>
+                <p className="font-semibold text-green-700 mb-1">✓ Well suited for:</p>
+                <ul className="space-y-0.5 ml-4 list-disc">
+                  <li>Comparing the running cost of different machines</li>
+                  <li>Identifying which equipment drives most of your bill</li>
+                  <li>Rough carbon footprint estimates for a specific line</li>
+                  <li>Building inputs for ROI or equipment upgrade decisions</li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-amber-700 mb-1">
+                  ✗ Not a replacement for:
+                </p>
+                <ul className="space-y-0.5 ml-4 list-disc">
+                  <li>Official utility bills or power-quality studies</li>
+                  <li>Detailed demand / peak power charges</li>
+                  <li>Complex time-of-use tariffs with many price bands</li>
+                  <li>Regulatory carbon reporting without further validation</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Header - Compact */}
+          <div className="mb-4">
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">
               Energy Cost Calculator
             </h1>
-            <p className="text-xl text-gray-600">
-              Calculate power consumption, energy costs, and carbon footprint. See our{' '}
-              <Link href="/calculators/quick-reference/power-consumption" className="text-primary-600 hover:underline font-semibold">
-                Power Consumption Reference
-              </Link>
-              {' '}for equipment benchmarks.
+            <p className="text-base text-gray-600">
+              Estimate power consumption, energy costs, and carbon footprint.
+            </p>
+          </div>
+
+          {/* Disclaimer - Simplified */}
+          <div className="mb-4 border-l-4 border-green-500 bg-green-50 px-4 py-3">
+            <p className="text-sm text-green-900">
+              <Zap className="mr-2 inline h-4 w-4" />
+              <strong>Directional estimates only:</strong> Results are based on rated power, average load, and simplified tariff
+              assumptions. Actual bills depend on real-time load variation, auxiliary systems, power factor penalties, demand
+              charges, and detailed time-of-use structures. Before you calibrate the model with your own data, it is common to
+              see differences in roughly the 15–20% range. Always compare against your own meter readings and utility bills.
             </p>
           </div>
 
@@ -145,6 +188,29 @@ export default function EnergyCalculatorPage() {
                         error={errors.equipmentType?.message}
                         required
                       />
+
+                      {watchValues.equipmentType && (
+                        <div className="rounded-lg bg-blue-50 p-3 text-xs text-blue-800">
+                          <p className="mb-1 font-semibold text-blue-900">Typical power ranges (for reference only)</p>
+                          <p>
+                            {(() => {
+                              switch (watchValues.equipmentType) {
+                                case 'laser_cutter':
+                                  return 'Modern fiber lasers are commonly around 2–3 kW for light work and 4–12 kW for heavy plate; older CO2 models are often in the 2–6 kW range.';
+                                case 'cnc_mill':
+                                  return 'Many CNC mills fall roughly in the 7–30 kW spindle plus axis drive range, depending on size and configuration.';
+                                case 'plasma_cutter':
+                                  return 'Industrial plasma systems can range from about 50–200 kW; always check the nameplate on your power supply.';
+                                case 'waterjet':
+                                  return 'Waterjet pumps are often in the 20–60 kW range (including intensifier and drive motors).';
+                                default:
+                                  return 'Use the nameplate on your equipment or manufacturer datasheet for the most accurate kW rating.';
+                              }
+                            })()}
+                            {' '}Always check your own machine's nameplate or manual and enter that value here.
+                          </p>
+                        </div>
+                      )}
 
                       <Input
                         {...register('ratedPower', { valueAsNumber: true })}
@@ -229,6 +295,15 @@ export default function EnergyCalculatorPage() {
                         error={errors.peakHoursPercentage?.message}
                       />
                     </div>
+                    <div className="mt-3 rounded-lg bg-yellow-50 p-3 text-xs text-yellow-800">
+                      <p className="font-semibold text-yellow-900 mb-1">Time-of-use simplification</p>
+                      <p>
+                        This model treats peak pricing as a simple percentage uplift on your base rate over a share of hours.
+                        It does <span className="font-semibold">not</span> model detailed tariff ladders or demand charges.
+                        Use it to explore rough savings from shifting work out of peak hours, then validate with your actual
+                        tariff sheet.
+                      </p>
+                    </div>
                   </div>
 
                   {/* Auxiliary Systems */}
@@ -255,10 +330,22 @@ export default function EnergyCalculatorPage() {
                         {...register('gridCarbonIntensity', { valueAsNumber: true })}
                         type="number"
                         step="10"
-                        label="Grid Carbon Intensity (g CO₂/kWh)"
+                        label="Grid Carbon Intensity (g CO2/kWh)"
                         error={errors.gridCarbonIntensity?.message}
-                        helperText="Average for your region"
+                        helperText="Average for your region; adjust using your utility or government data"
                       />
+                    </div>
+                    <div className="mt-3 rounded-lg bg-emerald-50 p-3 text-xs text-emerald-800">
+                      <p className="mb-1 font-semibold text-emerald-900">Typical regional values (order-of-magnitude)</p>
+                      <ul className="ml-4 list-disc space-y-0.5">
+                        <li>Coal-heavy grids: ~800–950 g CO2/kWh</li>
+                        <li>Mixed generation (gas + renewables): ~350–550 g CO2/kWh</li>
+                        <li>Hydro / nuclear heavy grids: ~20–100 g CO2/kWh</li>
+                      </ul>
+                      <p className="mt-1">
+                        For serious carbon accounting, replace the default with numbers from your local utility or national
+                        inventory.
+                      </p>
                     </div>
                   </div>
 
@@ -334,6 +421,19 @@ export default function EnergyCalculatorPage() {
                         <p className="text-sm text-gray-600">Power Efficiency</p>
                         <p className="text-lg font-semibold">{result.powerEfficiency}%</p>
                       </div>
+
+                      <div className="rounded-lg bg-gray-50 p-4">
+                        <p className="text-sm text-gray-600">Average Load</p>
+                        <p className="text-lg font-semibold">{result.averagePowerConsumption} kW</p>
+                      </div>
+
+                      <div className="rounded-lg bg-gray-50 p-4">
+                        <p className="text-sm text-gray-600">Auxiliary Cost Share</p>
+                        <p className="text-lg font-semibold">
+                          {auxiliaryShare.toFixed(1)}%
+                        </p>
+                        <p className="text-xs text-gray-500">Cooling + extraction portion of annual cost</p>
+                      </div>
                     </div>
                   </div>
 
@@ -358,7 +458,7 @@ export default function EnergyCalculatorPage() {
                     </h3>
                     <div className="grid gap-4 md:grid-cols-2">
                       <div>
-                        <p className="text-sm text-green-700">Annual CO₂ Emissions</p>
+                        <p className="text-sm text-green-700">Annual CO2 Emissions</p>
                         <p className="text-2xl font-bold text-green-900">{result.annualCO2.toFixed(2)} tonnes</p>
                       </div>
 
@@ -368,17 +468,17 @@ export default function EnergyCalculatorPage() {
                       </div>
 
                       <div>
-                        <p className="text-sm text-green-700">Monthly CO₂</p>
+                        <p className="text-sm text-green-700">Monthly CO2</p>
                         <p className="text-lg font-semibold text-green-900">{result.monthlyCO2.toFixed(0)} kg</p>
                       </div>
 
                       <div>
-                        <p className="text-sm text-green-700">Daily CO₂</p>
+                        <p className="text-sm text-green-700">Daily CO2</p>
                         <p className="text-lg font-semibold text-green-900">{result.dailyCO2.toFixed(1)} kg</p>
                       </div>
                     </div>
                     <p className="mt-4 text-sm text-green-700">
-                      💡 Equivalent to {(result.annualCO2 * 2.5).toFixed(0)} trees needed to offset annual emissions
+                      For illustration, this model uses a simple tree-equivalent factor and shows {(result.annualCO2 * 2.5).toFixed(0)} notional tree offsets; actual sequestration per tree varies widely by species, age, and project.
                     </p>
                   </div>
 
@@ -388,8 +488,12 @@ export default function EnergyCalculatorPage() {
                       <TrendingUp className="h-6 w-6 text-primary-600" />
                       Energy Saving Recommendations
                     </h3>
-                    <p className="mb-4 text-sm text-gray-600">
-                      Total Potential Annual Savings: <span className="font-semibold text-green-600">${calculateTotalPotentialSavings(result.recommendations).toLocaleString()}</span>
+                    <p className="mb-1 text-sm text-gray-600">
+                      Modeled potential annual savings in this scenario:{' '}
+                      <span className="font-semibold text-green-600">${calculateTotalPotentialSavings(result.recommendations).toLocaleString()}</span>
+                    </p>
+                    <p className="mb-4 text-xs text-gray-500">
+                      These savings figures are based on simplified assumptions inside each recommendation. Use them as directional estimates and compare against your own tariffs, equipment data, and implementation plans.
                     </p>
                     <div className="space-y-4">
                       {result.recommendations.map((rec, index) => (
@@ -422,16 +526,53 @@ export default function EnergyCalculatorPage() {
                     </div>
                   </div>
 
+                  {/* Validation guide */}
+                  <div className="card bg-gray-50 border-gray-200">
+                    <h3 className="mb-3 text-xl font-bold text-gray-900">How to validate these estimates</h3>
+                    <ol className="mb-2 list-decimal space-y-1 pl-5 text-sm text-gray-700">
+                      <li>
+                        Pick one representative machine and time period, then gather its meter readings or utility bill data
+                        (kWh and cost).
+                      </li>
+                      <li>
+                        Enter the same operating hours and tariffs here and compare the modeled annual or monthly cost to
+                        your real numbers.
+                      </li>
+                      <li>
+                        Adjust average load, auxiliary power, and peak-hour share until the model lines up with reality, then
+                        reuse those calibrated assumptions for similar equipment.
+                      </li>
+                    </ol>
+                    <p className="text-xs text-gray-600">
+                      As a rule of thumb: around 10% difference is excellent, up to about 20% is reasonable for planning, and
+                      anything above 30% means you should revisit inputs or tariff details before using the results for major
+                      decisions.
+                    </p>
+                  </div>
+
                   {/* Actions */}
-                  <div className="flex gap-4">
-                    <Button
-                      variant="primary"
-                      size="lg"
-                      className="flex-1"
-                      leftIcon={<Download className="h-5 w-5" />}
-                    >
-                      Export Energy Report
-                    </Button>
+                  <div className="flex flex-col gap-4 sm:flex-row">
+                    <ExportButton
+                      title='Energy Cost Report'
+                      calculationType='Energy Cost'
+                      inputData={watchValues}
+                      results={{
+                        'Annual Cost': result.annualCost,
+                        'Monthly Cost': result.monthlyCost,
+                        'Daily Cost': result.dailyCost,
+                        'Cost Per Operating Hour': result.costPerOperatingHour,
+                        'Annual kWh': result.annualEnergyConsumption,
+                        'Monthly kWh': result.monthlyEnergyConsumption,
+                        'Daily kWh': result.dailyEnergyConsumption,
+                        'Total System Power (kW)': result.totalSystemPower,
+                        'Average Load (kW)': result.averagePowerConsumption,
+                        'Auxiliary Cost ($/yr)': result.auxiliaryCost,
+                        'Peak Rate Cost ($/yr)': result.peakRateCost,
+                        'Standard Rate Cost ($/yr)': result.standardRateCost,
+                        'Carbon Cost ($/yr)': result.carbonCostPerYear,
+                      }}
+                      recommendations={result.recommendations.map(rec => `${rec.title}: ${rec.description}`)}
+                    />
                     <Button
                       variant="outline"
                       size="lg"
@@ -472,4 +613,3 @@ function CostItem({ label, value, isTotal = false }: { label: string; value: num
     </div>
   );
 }
-

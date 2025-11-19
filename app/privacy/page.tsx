@@ -1,18 +1,40 @@
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
+import { generateMetadata } from '@/lib/seo/metadata';
 import { Shield, Lock, Eye, Database, UserX, Mail } from 'lucide-react';
 
-export const metadata = {
-  title: 'Privacy Policy - LaserCalc Pro',
-  description: 'Learn how LaserCalc Pro collects, uses, and protects your personal information. Our commitment to your privacy and data security.',
-  robots: 'index, follow',
+const LAST_UPDATED_TEXT = 'February 12, 2024';
+const LAST_UPDATED_ISO = '2024-02-12';
+
+export const metadata = generateMetadata({
+  title: 'Privacy Policy | LaserCalc Pro',
+  description: 'Learn how LaserCalc Pro collects, uses, and protects manufacturing data and personal information across our calculators and newsletters.',
+  keywords: ['LaserCalc Pro privacy policy', 'manufacturing calculator data', 'laser cutting privacy'],
+  alternates: { canonical: '/privacy' },
+});
+
+const privacySchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'LaserCalc Pro Privacy Policy',
+  url: 'https://www.lasercalcpro.com/privacy',
+  datePublished: LAST_UPDATED_ISO,
+  dateModified: LAST_UPDATED_ISO,
+  description: 'Privacy commitments, data usage, and contact options for LaserCalc Pro users.',
+  isPartOf: {
+    '@type': 'WebSite',
+    name: 'LaserCalc Pro',
+    url: 'https://www.lasercalcpro.com',
+  },
 };
 
 export default function PrivacyPage() {
   return (
     <>
       <Navigation />
+      <SchemaMarkup schema={privacySchema} />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
@@ -26,7 +48,7 @@ export default function PrivacyPage() {
               Privacy Policy
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-gray-600">
-              Last updated: October 30, 2025
+              Last updated: {LAST_UPDATED_TEXT}
             </p>
           </div>
 
@@ -92,7 +114,7 @@ export default function PrivacyPage() {
             <p>We use the collected information for the following purposes:</p>
             <ul>
               <li><strong>Provide Services:</strong> To deliver our calculation tools and generate reports</li>
-              <li><strong>Communication:</strong> To respond to inquiries and send updates you've subscribed to</li>
+              <li><strong>Communication:</strong> To respond to inquiries and send updates you&apos;ve subscribed to</li>
               <li><strong>Analytics:</strong> To analyze usage patterns and improve our services</li>
               <li><strong>Marketing:</strong> To send newsletters and promotional materials (with your consent)</li>
               <li><strong>Security:</strong> To protect against fraud, abuse, and unauthorized access</li>
@@ -170,7 +192,7 @@ export default function PrivacyPage() {
 
             <hr className="my-8 border-gray-200" />
 
-            <h2>Children's Privacy</h2>
+            <h2>Children&apos;s Privacy</h2>
             <p>
               Our services are not directed to individuals under the age of 18. We do not knowingly collect 
               personal information from children. If you become aware that a child has provided us with personal 
@@ -190,7 +212,7 @@ export default function PrivacyPage() {
             <h2>Changes to This Policy</h2>
             <p>
               We may update this Privacy Policy from time to time. We will notify you of any changes by posting 
-              the new Privacy Policy on this page and updating the "Last updated" date. We encourage you to 
+              the new Privacy Policy on this page and updating the &quot;Last updated&quot; date. We encourage you to 
               review this Privacy Policy periodically.
             </p>
 

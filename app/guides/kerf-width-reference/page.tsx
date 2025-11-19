@@ -493,7 +493,7 @@ export default function KerfWidthReferencePage() {
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Dimensional Accuracy</h3>
                     <p className="text-gray-700 mb-2">
                       Proper kerf compensation achieves ±0.05-0.15mm tolerance on thin materials (1-3mm) and 
-                      ±0.10-0.25mm on thick materials (>6mm). Without compensation, errors are typically 
+                      ±0.10-0.25mm on thick materials (&gt;6mm). Without compensation, errors are typically 
                       2-5x the kerf width.
                     </p>
                     <div className="grid grid-cols-2 gap-3 text-sm">

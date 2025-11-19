@@ -1,4 +1,3 @@
-import { D1Database } from '@cloudflare/workers-types';
 import { executeQuery, executeWrite } from './client';
 
 export interface Article {
@@ -16,6 +15,7 @@ export interface Article {
   reading_time?: number;
   meta_title?: string;
   meta_description?: string;
+  meta_keywords?: string;
   created_at: string;
   updated_at: string;
   published_at?: string;
@@ -42,6 +42,17 @@ export interface ArchiveGroup {
   month: number;
   count: number;
   articles?: Article[];
+}
+
+// Article input type for create/update operations
+export type ArticleInput = Omit<Article, 'id' | 'created_at' | 'updated_at' | 'views'>;
+
+// Pagination parameters
+export interface PaginationParams {
+  page?: number;
+  limit?: number;
+  orderBy?: string;
+  orderDir?: 'ASC' | 'DESC';
 }
 
 // Create a new article
@@ -235,19 +246,22 @@ export async function updateArticle(id: number, updates: Partial<Article>): Prom
   `;
 
   params.push(id);
-  return executeWrite(query, params);
+  const result = await executeWrite(query, params);
+  return result.rowsAffected > 0;
 }
 
 // Delete article
 export async function deleteArticle(id: number): Promise<boolean> {
   const query = `DELETE FROM articles WHERE id = ?`;
-  return executeWrite(query, [id]);
+  const result = await executeWrite(query, [id]);
+  return result.rowsAffected > 0;
 }
 
 // Increment article views
 export async function incrementArticleViews(id: number): Promise<boolean> {
   const query = `UPDATE articles SET views = views + 1 WHERE id = ?`;
-  return executeWrite(query, [id]);
+  const result = await executeWrite(query, [id]);
+  return result.rowsAffected > 0;
 }
 
 // Get article statistics
@@ -390,4 +404,26 @@ export async function getArticlesByYearMonth(
     articles: articles || [],
     total,
   };
+}
+
+// Get recent published articles
+export async function getRecentArticles(limit: number = 5): Promise<Article[]> {
+  const query = `
+    SELECT * FROM articles
+    WHERE status = 'published'
+    ORDER BY published_at DESC
+    LIMIT ?
+  `;
+  
+  const articles = await executeQuery<Article>(query, [limit]);
+  
+  if (articles) {
+    articles.forEach(article => {
+      if (article.tags && typeof article.tags === 'string') {
+        article.tags = JSON.parse(article.tags);
+      }
+    });
+  }
+  
+  return articles || [];
 }

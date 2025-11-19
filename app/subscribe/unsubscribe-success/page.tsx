@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
+import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 import { CheckCircle, Home, Mail } from 'lucide-react';
 import Link from 'next/link';
 
@@ -10,12 +12,22 @@ export const metadata: Metadata = {
   robots: 'noindex, nofollow',
 };
 
+const unsubscribeSuccessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'LaserCalc Pro Unsubscribed',
+  url: 'https://www.lasercalcpro.com/subscribe/unsubscribe-success',
+  description: 'Confirmation page for subscribers who have opted out of LaserCalc Pro emails.',
+};
+
 export default function UnsubscribeSuccessPage() {
   return (
     <>
       <Navigation />
+      <SchemaMarkup schema={unsubscribeSuccessSchema} />
       <main className="min-h-screen bg-gradient-to-b from-white to-gray-50 py-12">
         <div className="container mx-auto px-4">
+          <Breadcrumbs />
           <div className="mx-auto max-w-2xl text-center">
             {/* Success Icon */}
             <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
@@ -24,10 +36,10 @@ export default function UnsubscribeSuccessPage() {
 
             {/* Heading */}
             <h1 className="mb-4 text-3xl font-bold text-gray-900 md:text-4xl">
-              You've Been Unsubscribed
+              You&apos;ve Been Unsubscribed
             </h1>
             <p className="mb-8 text-lg text-gray-600">
-              We've removed your email address from our mailing list.
+              We&apos;ve removed your email address from our mailing list.
             </p>
 
             {/* Confirmation Details */}
@@ -98,4 +110,3 @@ export default function UnsubscribeSuccessPage() {
     </>
   );
 }
-

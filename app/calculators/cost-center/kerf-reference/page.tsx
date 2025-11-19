@@ -9,27 +9,27 @@ import { Button } from '@/components/ui/Button';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
-import { Calculator as CalculatorIcon, RotateCcw } from 'lucide-react';
+import { Calculator as CalculatorIcon, RotateCcw, Ruler } from 'lucide-react';
 import { kerfReferenceSchema, kerfReferenceDefaults, type KerfReferenceInput } from '@/lib/validations/cost-center';
 import { KERF_WIDTH_MATRIX, getKerfWidth, getRecommendedNozzle, calculateKerfMaterialLoss } from '@/lib/calculators/constants/kerf';
 import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 
 const materialOptions = [
-  { value: 'mild_steel', label: 'Mild Steel - Standard kerf widths' },
-  { value: 'stainless_steel', label: 'Stainless Steel - Slightly wider kerf' },
-  { value: 'aluminum', label: 'Aluminum - Narrower kerf possible' },
-  { value: 'copper_brass', label: 'Copper/Brass - Reflective, specialized' },
+  { value: 'mild_steel', label: 'Mild Steel - Example kerf widths in this reference' },
+  { value: 'stainless_steel', label: 'Stainless Steel - Often slightly wider kerf in these examples' },
+  { value: 'aluminum', label: 'Aluminum - Example cases where narrower kerf is possible' },
+  { value: 'copper_brass', label: 'Copper/Brass - Reflective materials with specialized settings' },
 ];
 
 const nozzleOptions = [
-  { value: '1.0mm_nozzle', label: '1.0mm - Thin materials, precision' },
-  { value: '1.5mm_nozzle', label: '1.5mm - 1-3mm materials' },
-  { value: '2.0mm_nozzle', label: '2.0mm - Most common, 2-8mm' },
-  { value: '2.5mm_nozzle', label: '2.5mm - 3-10mm materials' },
-  { value: '3.0mm_nozzle', label: '3.0mm - 5-12mm thick' },
-  { value: '3.5mm_nozzle', label: '3.5mm - 8-15mm thick' },
-  { value: '4.0mm_nozzle', label: '4.0mm - Heavy materials, 10mm+' },
+  { value: '1.0mm_nozzle', label: '1.0mm - Often used for thin materials and precision work' },
+  { value: '1.5mm_nozzle', label: '1.5mm - Common around 1-3mm materials in this reference' },
+  { value: '2.0mm_nozzle', label: '2.0mm - General purpose; examples shown for ~2-8mm' },
+  { value: '2.5mm_nozzle', label: '2.5mm - Frequently used in the mid-thickness range' },
+  { value: '3.0mm_nozzle', label: '3.0mm - Example for thicker plate in this kerf table' },
+  { value: '3.5mm_nozzle', label: '3.5mm - Larger nozzle option for heavier sections' },
+  { value: '4.0mm_nozzle', label: '4.0mm - Heavy material example; confirm in your cut charts' },
 ];
 
 export default function KerfReferencePage() {
@@ -38,7 +38,7 @@ export default function KerfReferencePage() {
 
   const howToSchema = generateCalculatorHowToSchema(
     'Kerf Width Reference',
-    'Look up typical kerf width for your material, thickness and nozzle, and estimate material loss per meter.',
+    'Look up reference kerf width estimates for your material, thickness and nozzle, and estimate material loss per meter based on those assumptions.',
     [
       { name: 'Select Material & Thickness', text: 'Choose your material and enter the thickness in millimeters.' },
       { name: 'Select Nozzle', text: 'Pick the nozzle diameter. Use the recommended list as guidance.' },
@@ -47,8 +47,16 @@ export default function KerfReferencePage() {
   );
 
   const faqSchema = generateFAQSchema([
-    { question: 'Is kerf width exact?', answer: 'Kerf varies with parameters. Values provided are typical references and should be verified on your machine.' },
-    { question: 'Which nozzle should I use?', answer: 'Use the recommended nozzle list for your thickness, then fine-tune based on edge quality and speed.' },
+    {
+      question: 'Is kerf width exact?',
+      answer:
+        'No. Kerf varies with power, speed, focus, gas, and machine condition. The values here are internal reference points from the kerf table; always validate with test cuts on your own machine before relying on a specific kerf value for tight tolerances.',
+    },
+    {
+      question: 'Which nozzle should I use?',
+      answer:
+        'The recommended nozzle list is a starting point based on thickness bands in this reference. Final nozzle choice should be made using your machine manual, cut charts, and trial cuts to balance edge quality, speed, and stability for your process.',
+    },
   ]);
 
   const { register, handleSubmit, formState: { errors }, reset, watch } = useForm<KerfReferenceInput>({
@@ -84,9 +92,17 @@ export default function KerfReferencePage() {
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
 
-          <div className="mb-8">
-            <h1 className="mb-2 text-4xl font-bold text-gray-900 md:text-5xl">Kerf Width Reference</h1>
-            <p className="text-gray-600">Reference kerf width by material, thickness and nozzle. Estimate material loss per meter.</p>
+          <div className="mb-4">
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">Kerf Width Reference</h1>
+            <p className="text-base text-gray-600">View kerf width estimates by material, thickness and nozzle, and approximate material loss.</p>
+          </div>
+
+          {/* Disclaimer - Simplified */}
+          <div className="mb-4 border-l-4 border-slate-500 bg-slate-50 px-4 py-3">
+            <p className="text-sm text-slate-900">
+              <Ruler className="mr-2 inline h-4 w-4" />
+              <strong>Reference Data:</strong> Values from typical ranges. Actual kerf depends on machine, focus, gas pressure, and speed. Always verify with test cuts for your setup.
+            </p>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-2">
@@ -121,7 +137,7 @@ export default function KerfReferencePage() {
                       {...register('nozzleDiameter')} 
                       label="Nozzle Diameter" 
                       options={nozzleOptions}
-                      helperText="Larger nozzle = wider kerf"
+                      helperText="In this reference, larger nozzles are associated with wider kerf values"
                       error={errors.nozzleDiameter?.message} 
                       required 
                     />
@@ -165,8 +181,8 @@ export default function KerfReferencePage() {
                   <div className="card">
                     <h3 className="mb-4 text-xl font-bold">Material Loss (from Kerf)</h3>
                     <div className="grid gap-4 md:grid-cols-3">
-                      <Stat label="Linear Area Loss" value={`${loss.linearAreaLossCm2.toFixed(2)} cm²`} />
-                      <Stat label="Volume Loss" value={`${loss.volumeLossCm3.toFixed(2)} cm³`} />
+                      <Stat label="Linear Area Loss" value={`${loss.linearAreaLossCm2.toFixed(2)} cm^2`} />
+                      <Stat label="Volume Loss" value={`${loss.volumeLossCm3.toFixed(2)} cm^3`} />
                       <Stat label="Mass Loss (steel)" value={`${loss.massLossKg.toFixed(3)} kg`} />
                     </div>
                   </div>
@@ -188,14 +204,19 @@ export default function KerfReferencePage() {
                         {['1mm','2mm','3mm','5mm','8mm','10mm'].map(t => (
                           <tr key={t} className="border-b">
                             <td className="py-2">{t}</td>
-                            <td className="py-2 text-right">{KERF_WIDTH_MATRIX.mild_steel[t as keyof typeof KERF_WIDTH_MATRIX.mild_steel]?.['1.5mm_nozzle'] ?? '-'}</td>
-                            <td className="py-2 text-right">{KERF_WIDTH_MATRIX.mild_steel[t as keyof typeof KERF_WIDTH_MATRIX.mild_steel]?.['2.0mm_nozzle'] ?? '-'}</td>
-                            <td className="py-2 text-right">{KERF_WIDTH_MATRIX.mild_steel[t as keyof typeof KERF_WIDTH_MATRIX.mild_steel]?.['2.5mm_nozzle'] ?? '-'}</td>
+                            <td className="py-2 text-right">{(KERF_WIDTH_MATRIX.mild_steel[t as keyof typeof KERF_WIDTH_MATRIX.mild_steel] as any)?.['1.5mm_nozzle'] ?? '-'}</td>
+                            <td className="py-2 text-right">{(KERF_WIDTH_MATRIX.mild_steel[t as keyof typeof KERF_WIDTH_MATRIX.mild_steel] as any)?.['2.0mm_nozzle'] ?? '-'}</td>
+                            <td className="py-2 text-right">{(KERF_WIDTH_MATRIX.mild_steel[t as keyof typeof KERF_WIDTH_MATRIX.mild_steel] as any)?.['2.5mm_nozzle'] ?? '-'}</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
+                  <p className="mt-2 text-xs text-gray-600">
+                    Kerf values and nozzle associations in this table come from an internal reference matrix for mild steel.
+                    Treat them as starting points and confirm actual kerf and nozzle choices with your own cut charts and test cuts
+                    before using them for tight-tolerance work or detailed cost calculations.
+                  </p>
                 </div>
               </div>
             </div>

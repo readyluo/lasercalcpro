@@ -118,12 +118,13 @@ export async function POST(request: NextRequest) {
 
     // Record audit log
     try {
-      await recordAuditLog(
-        'settings',
-        'update',
-        admin.id,
-        JSON.stringify(settings)
-      );
+      await recordAuditLog({
+        user_id: admin.id,
+        action: 'settings_update',
+        module: 'settings',
+        description: 'Updated system settings',
+        payload: JSON.stringify(settings),
+      });
     } catch (error) {
       console.error('Failed to record audit log:', error);
       // Don't fail the request if audit log fails

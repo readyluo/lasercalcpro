@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit, Trash2, Shield, X } from 'lucide-react';
 
 interface Admin {
@@ -27,11 +27,7 @@ export default function AdminUsersPage() {
     role: 'admin',
   });
 
-  useEffect(() => {
-    fetchAdmins();
-  }, []);
-
-  const fetchAdmins = async () => {
+  const fetchAdmins = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch('/api/admin/users');
@@ -45,7 +41,11 @@ export default function AdminUsersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchAdmins();
+  }, [fetchAdmins]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,16 +73,16 @@ export default function AdminUsersPage() {
         fetchAdmins();
       } else {
         const data = await response.json();
-        alert(data.error || '操作失败');
+        alert(data.error || 'Unable to save admin');
       }
     } catch (error) {
       console.error('Failed to save admin:', error);
-      alert('操作失败');
+      alert('Unable to save admin');
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('确定要删除这个管理员吗？')) return;
+    if (!confirm('Delete this administrator? This cannot be undone.')) return;
 
     try {
       const response = await fetch(`/api/admin/users?id=${id}`, {
@@ -93,11 +93,11 @@ export default function AdminUsersPage() {
         fetchAdmins();
       } else {
         const data = await response.json();
-        alert(data.error || '删除失败');
+        alert(data.error || 'Unable to delete admin');
       }
     } catch (error) {
       console.error('Failed to delete admin:', error);
-      alert('删除失败');
+      alert('Unable to delete admin');
     }
   };
 
@@ -147,12 +147,8 @@ export default function AdminUsersPage() {
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            管理员账户
-          </h1>
-          <p className="text-gray-600">
-            管理系统管理员账户和权限
-          </p>
+          <h1 className="mb-2 text-3xl font-bold text-gray-900">Admin Accounts</h1>
+          <p className="text-gray-600">Manage dashboard users and their permissions.</p>
         </div>
         <button
           onClick={() => {
@@ -160,19 +156,19 @@ export default function AdminUsersPage() {
             setEditingAdmin(null);
             setShowModal(true);
           }}
-          className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          className="flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-white transition-colors hover:bg-primary-700"
         >
           <Plus className="h-4 w-4" />
-          添加管理员
+          Add admin
         </button>
       </div>
 
       {/* Table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="text-center py-12">
+          <div className="py-12 text-center">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent" />
-            <p className="mt-4 text-gray-600">加载中...</p>
+            <p className="mt-4 text-gray-600">Loading administrators…</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -180,22 +176,22 @@ export default function AdminUsersPage() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    用户名
+                    Username
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    邮箱
+                    Email
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    角色
+                    Role
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    状态
+                    Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    最后登录
+                    Last login
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    操作
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -221,8 +217,8 @@ export default function AdminUsersPage() {
                           ? 'bg-purple-100 text-purple-800'
                           : 'bg-blue-100 text-blue-800'
                       }`}>
-                        <Shield className="h-3 w-3 mr-1" />
-                        {admin.role === 'admin' ? '管理员' : '编辑'}
+                        <Shield className="mr-1 h-3 w-3" />
+                        {admin.role === 'admin' ? 'Admin' : 'Editor'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -234,18 +230,18 @@ export default function AdminUsersPage() {
                             : 'bg-gray-100 text-gray-800'
                         }`}
                       >
-                        {admin.is_active ? '活跃' : '禁用'}
+                        {admin.is_active ? 'Active' : 'Disabled'}
                       </button>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {admin.last_login
-                        ? new Date(admin.last_login).toLocaleString('zh-CN')
-                        : '从未登录'}
+                        {admin.last_login
+                        ? new Date(admin.last_login).toLocaleString('en-US')
+                        : 'Never'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button
                         onClick={() => handleEdit(admin)}
-                        className="text-primary-600 hover:text-primary-900 mr-3"
+                        className="mr-3 text-primary-600 hover:text-primary-900"
                       >
                         <Edit className="h-4 w-4 inline" />
                       </button>
@@ -270,7 +266,7 @@ export default function AdminUsersPage() {
           <div className="bg-white rounded-xl max-w-md w-full">
             <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900">
-                {editingAdmin ? '编辑管理员' : '添加管理员'}
+                {editingAdmin ? 'Edit admin' : 'Add admin'}
               </h3>
               <button
                 onClick={() => {
@@ -286,7 +282,7 @@ export default function AdminUsersPage() {
               {!editingAdmin && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    用户名 *
+                    Username *
                   </label>
                   <input
                     type="text"
@@ -300,7 +296,7 @@ export default function AdminUsersPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  邮箱 *
+                    Email *
                 </label>
                 <input
                   type="email"
@@ -314,7 +310,7 @@ export default function AdminUsersPage() {
               {!editingAdmin && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    密码 *
+                    Password *
                   </label>
                   <input
                     type="password"
@@ -328,7 +324,7 @@ export default function AdminUsersPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  显示名称
+                  Display name
                 </label>
                 <input
                   type="text"
@@ -340,7 +336,7 @@ export default function AdminUsersPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  角色 *
+                  Role *
                 </label>
                 <select
                   required
@@ -348,8 +344,8 @@ export default function AdminUsersPage() {
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 >
-                  <option value="admin">管理员</option>
-                  <option value="editor">编辑</option>
+                  <option value="admin">Admin</option>
+                  <option value="editor">Editor</option>
                 </select>
               </div>
 
@@ -358,7 +354,7 @@ export default function AdminUsersPage() {
                   type="submit"
                   className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
                 >
-                  {editingAdmin ? '更新' : '创建'}
+                  {editingAdmin ? 'Update' : 'Create'}
                 </button>
                 <button
                   type="button"
@@ -366,9 +362,9 @@ export default function AdminUsersPage() {
                     setShowModal(false);
                     setEditingAdmin(null);
                   }}
-                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                  className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-gray-800 transition-colors hover:bg-gray-300"
                 >
-                  取消
+                  Cancel
                 </button>
               </div>
             </form>
@@ -378,4 +374,3 @@ export default function AdminUsersPage() {
     </div>
   );
 }
-

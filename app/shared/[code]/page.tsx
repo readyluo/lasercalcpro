@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
+import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 import { getSharedCalculation, incrementSharedCalculationViews } from '@/lib/db/shared-calculations';
 import { Eye, Calendar, AlertCircle } from 'lucide-react';
 
@@ -12,10 +14,19 @@ interface SharedCalculationPageProps {
 }
 
 export async function generateMetadata({ params }: SharedCalculationPageProps): Promise<Metadata> {
+  const shared = await getSharedCalculation(params.code);
+  if (!shared) {
+    return {
+      title: 'Shared Calculation - LaserCalc Pro',
+      robots: 'noindex, nofollow',
+    };
+  }
+
   return {
-    title: 'Shared Calculation - LaserCalc Pro',
-    description: 'View shared calculation results',
+    title: `${shared.toolType} Calculation (Shared) | LaserCalc Pro`,
+    description: `View read-only ${shared.toolType} results shared from LaserCalc Pro.`,
     robots: 'noindex, nofollow',
+    alternates: { canonical: `/shared/${params.code}` },
   };
 }
 
@@ -34,13 +45,24 @@ export default async function SharedCalculationPage({ params }: SharedCalculatio
 
   const { toolType, calculationData, expiresAt, views } = shared;
   const { inputData, results } = calculationData;
+  const sharedSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: `${toolType} Shared Calculation`,
+    url: `https://www.lasercalcpro.com/shared/${code}`,
+    description: 'Read-only manufacturing calculator output shared from LaserCalc Pro.',
+    datePublished: shared.createdAt || undefined,
+    expires: expiresAt || undefined,
+  };
 
   return (
     <>
       <Navigation />
+      <SchemaMarkup schema={sharedSchema} />
       <main className="min-h-screen bg-gradient-to-b from-white to-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
+            <Breadcrumbs />
             {/* Header */}
             <div className="mb-8 rounded-xl bg-primary-600 p-8 text-white shadow-lg">
               <h1 className="mb-2 text-3xl font-bold md:text-4xl">
@@ -53,8 +75,8 @@ export default async function SharedCalculationPage({ params }: SharedCalculatio
               {/* Metadata */}
               <div className="mt-6 flex flex-wrap gap-4 text-sm">
                 <div className="flex items-center gap-2">
-                  <Eye className="h-4 w-4" />
-                  <span>{views + 1} views</span>
+                  <Eye className="mr-2 h-5 w-5" />
+                  <span>{shared.views ?? 0} views</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
@@ -165,7 +187,7 @@ function formatKey(key: string): string {
     .trim();
 }
 
-function formatValue(value: any): string {
+function formatValue(value: unknown): string {
   if (typeof value === 'number') {
     return value.toLocaleString('en-US', { maximumFractionDigits: 2 });
   }
@@ -174,4 +196,3 @@ function formatValue(value: any): string {
   }
   return String(value);
 }
-

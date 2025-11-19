@@ -1,6 +1,7 @@
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 import { generateMetadata } from '@/lib/seo/metadata';
 import { Target, Clock, Zap, AlertTriangle, CheckCircle, TrendingDown, Calculator, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -63,10 +64,7 @@ export default function PiercingStrategyPage() {
   return (
     <>
       <Navigation />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
+      <SchemaMarkup schema={faqSchema} />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
@@ -108,7 +106,7 @@ export default function PiercingStrategyPage() {
                   <Target className="h-5 w-5 text-green-600" />
                   <h3 className="font-bold text-gray-900">Ramp Pierce</h3>
                 </div>
-                <p className="text-sm text-gray-700 mb-2">Use when: Thick material (>10mm), aerospace quality, minimal spatter</p>
+                <p className="text-sm text-gray-700 mb-2">Use when: Thick material (&gt;10mm), aerospace quality, minimal spatter</p>
                 <p className="text-xs text-gray-600">✓ Best quality • ✗ Slowest</p>
               </div>
             </div>
@@ -245,7 +243,7 @@ export default function PiercingStrategyPage() {
                         <li>• Best nozzle life (200-300 pierces)</li>
                         <li>• Minimal HAZ and thermal stress</li>
                         <li>• Aerospace/medical device quality</li>
-                        <li>• Best for thick material (>10mm)</li>
+                        <li>• Best for thick material (&gt;10mm)</li>
                       </ul>
                     </div>
                     <div>
@@ -392,7 +390,7 @@ export default function PiercingStrategyPage() {
                   <div className="p-4 bg-gray-50 rounded-lg">
                     <h3 className="font-bold text-gray-900 mb-2">3. Match Strategy to Quality Requirements</h3>
                     <p className="text-gray-700 mb-2">
-                      Don't use soft/ramp pierce on hidden surfaces or high-volume non-critical parts. 
+                      Don&apos;t use soft/ramp pierce on hidden surfaces or high-volume non-critical parts. 
                       Reserve quality piercing for visible surfaces and thick material only.
                     </p>
                     <p className="text-sm text-gray-600">
@@ -591,4 +589,3 @@ export default function PiercingStrategyPage() {
     </>
   );
 }
-

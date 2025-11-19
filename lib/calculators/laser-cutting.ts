@@ -71,20 +71,71 @@ const MATERIAL_PROPERTIES: Record<
   },
 };
 
+function estimatePartArea(input: LaserCuttingInput): number {
+  if (input.partArea && input.partArea > 0) {
+    return input.partArea;
+  }
+  if (input.partLength && input.partWidth) {
+    return input.partLength * input.partWidth;
+  }
+
+  // Fallback: assume near-rectangular part where area ≈ (perimeter / 4)^2
+  const perimeter = Math.max(input.cuttingLength, 1);
+  return Math.pow(perimeter / 4, 2);
+}
+
 /**
  * Calculate laser cutting cost with detailed breakdown
- * Formula based on industry standards and real manufacturing data
+ * 
+ * ⚠️ ESTIMATION LIMITATIONS:
+ * This calculator uses simplified formulas for order-of-magnitude cost estimates.
+ * 
+ * What IS modeled:
+ * - Material cost based on part envelope and utilization
+ * - Energy consumption including auxiliary systems
+ * - Labor cost based on total time
+ * - Assist gas consumption during cutting
+ * - Equipment depreciation and maintenance
+ * 
+ * What is NOT modeled in detail:
+ * - Pierce time per hole (lumped into cutting time)
+ * - Lead-in/ramp time
+ * - Acceleration/deceleration effects
+ * - Common-line cutting optimization
+ * - Part removal and sorting time
+ * - Quality-dependent speed adjustments
+ * - Specific assist gas effects on speed
+ * 
+ * For accurate quoting:
+ * - Validate results against your actual production data
+ * - Use your machine's proven parameter tables
+ * - Perform test cuts for unfamiliar materials or thicknesses
+ * - Track actual setup times by job type
+ * 
+ * Formula basis: Simplified empirical models calibrated to industry averages.
+ * Individual shop results will vary based on equipment, process, and efficiency.
  */
 export function calculateLaserCutting(input: LaserCuttingInput): LaserCuttingResult {
   const material = MATERIAL_PROPERTIES[input.materialType];
 
   // 1. Calculate cutting time
-  // Speed decreases with thickness and increases with power
-  // Formula: speed = baseCuttingSpeed × (power / thickness) × efficiencyFactor
-  const baseCuttingSpeed = material.cuttingSpeed; // mm/min
-  const thicknessFactor = Math.sqrt(input.thickness); // Nonlinear relationship
-  const powerFactor = Math.sqrt(input.laserPower);
-  const reflectivityPenalty = 1 - material.reflectivity * 0.3; // High reflectivity reduces efficiency
+  // ⚠️ IMPORTANT: This uses a simplified empirical formula for estimation.
+  // Real cutting speeds depend on many factors not modeled here:
+  // - Assist gas type and pressure (O2 vs N2 significantly affects speed)
+  // - Cut quality requirements (precision vs. speed trade-off)
+  // - Material surface condition (mill scale, coatings, oxidation)
+  // - Nozzle condition and alignment
+  // - Focus position and beam quality
+  // - Specific cutting parameters (frequency, pulse settings for pulsed lasers)
+  // 
+  // Formula: speed = baseCuttingSpeed × sqrt(power) / sqrt(thickness) × reflectivityFactor
+  // This provides a rough order-of-magnitude estimate only.
+  // For accurate quotes, always use your machine's proven parameter tables.
+  
+  const baseCuttingSpeed = material.cuttingSpeed; // mm/min at reference conditions
+  const thicknessFactor = Math.sqrt(input.thickness); // Nonlinear: thicker = slower (simplified)
+  const powerFactor = Math.sqrt(input.laserPower); // More power = faster (diminishing returns)
+  const reflectivityPenalty = 1 - material.reflectivity * 0.3; // High reflectivity reduces efficiency (simplified)
 
   const effectiveCuttingSpeed =
     (baseCuttingSpeed * powerFactor * reflectivityPenalty) / thicknessFactor;
@@ -93,23 +144,40 @@ export function calculateLaserCutting(input: LaserCuttingInput): LaserCuttingRes
   const cuttingTime = cuttingTimeMinutes / 60; // Convert to hours
 
   // Setup time: 0.1-0.3 hours (6-18 minutes) depending on complexity
-  const setupTime = 0.15 + input.thickness * 0.005;
+  // ⚠️ This is a simplified linear model: base_time + thickness_factor
+  // Actual setup time depends on:
+  // - Part complexity and nesting arrangement
+  // - Material loading method (manual vs. automated)
+  // - Operator experience
+  // - Programming time (if not pre-programmed)
+  // - Fixturing and alignment requirements
+  // For better accuracy, track your actual setup times by job type.
+  const baseSetupTime = 0.15; // hours (~9 minutes)
+  const thicknessAdjustment = input.thickness * 0.005; // slight increase for thicker materials
+  const setupTime = baseSetupTime + thicknessAdjustment;
 
   const totalTime = cuttingTime + setupTime;
 
   // 2. Calculate material cost
-  // Estimate material weight based on cutting length and thickness
-  const kerf = 0.3; // mm, typical laser kerf width
-  const cuttingPathWidth = kerf;
-  const materialVolumeCm3 =
-    (input.cuttingLength * cuttingPathWidth * input.thickness) / 1000; // cm³
-
-  const materialWeight = (materialVolumeCm3 * material.density) / 1000000; // kg
+  // Estimate part area and gross material allocation (includes scrap/kerf allowance)
+  const partArea = estimatePartArea(input); // mm²
+  const utilization = Math.min(Math.max(input.materialUtilization ?? 0.85, 0.1), 1);
+  const grossArea = partArea / utilization;
+  const materialVolumeMm3 = grossArea * input.thickness;
+  const materialVolumeCm3 = materialVolumeMm3 / 1000;
+  const materialWeight = (materialVolumeMm3 / 1000000000) * material.density; // kg
   const materialCost = materialWeight * input.materialPrice;
 
   // 3. Calculate power cost
   // Total power = laser power + auxiliary systems (cooling, extraction, etc.)
-  const totalPowerConsumption = input.laserPower * 1.3; // 30% overhead for auxiliary systems
+  // ⚠️ Auxiliary multiplier (1.3x) is a simplified average assumption.
+  // Actual auxiliary power consumption varies:
+  // - Efficient fiber lasers with air cooling: ~1.2x laser power
+  // - Systems with heavy water chillers: ~1.4-1.5x laser power
+  // - CO2 lasers with turbine blowers: ~1.5-2x laser power
+  // Use your actual measured power consumption for accurate costing.
+  const auxiliaryMultiplier = 1.3; // 30% overhead for auxiliary systems (industry average)
+  const totalPowerConsumption = input.laserPower * auxiliaryMultiplier;
   const energyConsumed = totalPowerConsumption * cuttingTime; // kWh
   const powerCost = energyConsumed * input.electricityRate;
 
@@ -127,8 +195,16 @@ export function calculateLaserCutting(input: LaserCuttingInput): LaserCuttingRes
   const hourlyDepreciation = equipmentCost / (equipmentLifespan * annualWorkingHours);
   const depreciation = hourlyDepreciation * totalTime;
 
-  // 7. Calculate maintenance cost (5-10% of depreciation)
-  const maintenanceCost = depreciation * 0.07;
+  // 7. Calculate maintenance cost (typically 5-10% of depreciation)
+  // ⚠️ This uses 7% as a mid-range estimate.
+  // Actual maintenance costs vary by:
+  // - Equipment age and condition
+  // - Operating hours and intensity
+  // - Preventive maintenance program quality
+  // - Local service costs
+  // Track your actual maintenance expenses for accurate budgeting.
+  const maintenanceMultiplier = 0.07; // 7% of depreciation (simplified average)
+  const maintenanceCost = depreciation * maintenanceMultiplier;
 
   // 8. Calculate totals
   const totalCost =
@@ -209,7 +285,6 @@ export function validateInputs(input: Partial<LaserCuttingInput>): string[] {
 
   return errors;
 }
-
 
 
 

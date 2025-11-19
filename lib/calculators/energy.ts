@@ -61,37 +61,42 @@ export function calculateEnergy(input: EnergyInput): EnergyResult {
   const auxiliaryPower = input.coolingSystemPower + input.extractionSystemPower;
 
   // 2. Calculate time-based usage
-  const annualOperatingHours = 
-    input.dailyOperatingHours * 
-    input.operatingDaysPerWeek * 
+  const annualOperatingHours =
+    input.dailyOperatingHours *
+    input.operatingDaysPerWeek *
     input.weeksPerYear;
 
-  const dailyEnergyConsumption = totalSystemPower * input.dailyOperatingHours;
+  const peakShare = Math.min(Math.max(input.peakHoursPercentage / 100, 0), 1);
+  const peakHours = input.dailyOperatingHours * peakShare;
+  const offPeakHours = Math.max(input.dailyOperatingHours - peakHours, 0);
+  const dailyPeakEnergy = totalSystemPower * peakHours;
+  const dailyOffPeakEnergy = totalSystemPower * offPeakHours;
+  const dailyEnergyConsumption = dailyPeakEnergy + dailyOffPeakEnergy;
   const weeklyEnergyConsumption = dailyEnergyConsumption * input.operatingDaysPerWeek;
-  const monthlyEnergyConsumption = (annualOperatingHours / 12) * totalSystemPower;
-  const annualEnergyConsumption = annualOperatingHours * totalSystemPower;
+  const annualEnergyConsumption = weeklyEnergyConsumption * input.weeksPerYear;
+  const monthlyEnergyConsumption = annualEnergyConsumption / 12;
 
   // 3. Calculate costs with peak/off-peak rates
   const peakRate = input.electricityRate * (1 + input.peakRatePremium / 100);
-  const peakHours = input.dailyOperatingHours * (input.peakHoursPercentage / 100);
-  const offPeakHours = input.dailyOperatingHours - peakHours;
-
-  const dailyPeakCost = totalSystemPower * peakHours * peakRate;
-  const dailyOffPeakCost = totalSystemPower * offPeakHours * input.electricityRate;
+  const dailyPeakCost = dailyPeakEnergy * peakRate;
+  const dailyOffPeakCost = dailyOffPeakEnergy * input.electricityRate;
   const dailyCost = dailyPeakCost + dailyOffPeakCost;
 
   const weeklyCost = dailyCost * input.operatingDaysPerWeek;
-  const monthlyCost = (annualOperatingHours / 12) * 
-    ((totalSystemPower * input.electricityRate) + 
-    (totalSystemPower * peakRate * input.peakHoursPercentage / 100));
-  const annualCost = monthlyCost * 12;
+  const annualCost = weeklyCost * input.weeksPerYear;
+  const monthlyCost = annualCost / 12;
 
   // Cost breakdown
-  const standardRateCost = annualEnergyConsumption * input.electricityRate * 
-    (1 - input.peakHoursPercentage / 100);
-  const peakRateCost = annualEnergyConsumption * peakRate * 
-    (input.peakHoursPercentage / 100);
-  const auxiliaryCost = auxiliaryPower * annualOperatingHours * input.electricityRate;
+  const standardRateCost =
+    dailyOffPeakEnergy *
+    input.operatingDaysPerWeek *
+    input.weeksPerYear *
+    input.electricityRate;
+  const peakRateCost =
+    dailyPeakEnergy * input.operatingDaysPerWeek * input.weeksPerYear * peakRate;
+  const auxiliaryShare =
+    totalSystemPower > 0 ? Math.min(Math.max(auxiliaryPower / totalSystemPower, 0), 1) : 0;
+  const auxiliaryCost = annualCost * auxiliaryShare;
 
   // 4. Calculate carbon footprint
   const dailyCO2 = (dailyEnergyConsumption * input.gridCarbonIntensity) / 1000; // kg
@@ -189,7 +194,7 @@ function generateRecommendations(
     const savings = metrics.peakRateCost * 0.5;
     recommendations.push({
       title: 'Shift Operations to Off-Peak Hours',
-      description: `${input.peakHoursPercentage}% of your operations occur during peak hours. Shifting 50% of production to off-peak hours could reduce your electricity costs significantly.`,
+      description: `${input.peakHoursPercentage}% of your operations occur during peak hours. Reducing the share of production that runs during peak-rate periods and moving it to off-peak windows can significantly lower electricity costs, depending on your tariff structure and scheduling flexibility.`,
       potentialSavings: parseFloat(savings.toFixed(2)),
       priority: 'high',
     });
@@ -200,7 +205,7 @@ function generateRecommendations(
     const savings = metrics.annualCost * 0.15;
     recommendations.push({
       title: 'Optimize Equipment Load Factor',
-      description: `Your equipment is operating at ${metrics.powerEfficiency.toFixed(1)}% efficiency. Optimizing batch sizes and reducing idle time could improve efficiency by 15%.`,
+      description: `In this estimate, the average load factor is ${metrics.powerEfficiency.toFixed(1)}%. Reviewing batch sizes, idle time, and how work is scheduled across shifts may help improve effective utilization and reduce time spent running without productive output.`,
       potentialSavings: parseFloat(savings.toFixed(2)),
       priority: 'high',
     });
@@ -211,7 +216,7 @@ function generateRecommendations(
     const savings = metrics.auxiliaryCost * 0.25;
     recommendations.push({
       title: 'Upgrade Auxiliary Systems',
-      description: `Your auxiliary systems consume ${((input.coolingSystemPower + input.extractionSystemPower) / input.ratedPower * 100).toFixed(0)}% of main equipment power. Consider more efficient cooling and extraction systems.`,
+      description: `Based on the power values entered here, auxiliary systems account for ${((input.coolingSystemPower + input.extractionSystemPower) / input.ratedPower * 100).toFixed(0)}% of main equipment power. You may want to assess whether more efficient cooling and extraction options or control strategies could reduce this share while still meeting process requirements.`,
       potentialSavings: parseFloat(savings.toFixed(2)),
       priority: 'medium',
     });
@@ -222,7 +227,7 @@ function generateRecommendations(
     const savings = metrics.annualCost * 0.3;
     recommendations.push({
       title: 'Consider Solar Panel Installation',
-      description: `With annual consumption of ${metrics.annualEnergyConsumption.toFixed(0)} kWh, a solar installation could offset 30-50% of your electricity costs within 5-7 years.`,
+      description: `With annual consumption of ${metrics.annualEnergyConsumption.toFixed(0)} kWh, a solar or other on-site generation project may be worth evaluating. You can use this calculator's annual kWh as an input when modeling different system sizes and financial scenarios with your energy provider.`,
       potentialSavings: parseFloat(savings.toFixed(2)),
       priority: 'medium',
     });
@@ -232,7 +237,8 @@ function generateRecommendations(
   const savings = metrics.annualCost * 0.08;
   recommendations.push({
     title: 'Install Power Factor Correction',
-    description: 'Poor power factor can result in utility penalties and wasted energy. Power factor correction equipment typically provides 5-10% energy savings.',
+    description:
+      'Poor power factor can result in utility penalties and wasted energy. Where penalties or inefficiencies are significant, power factor correction equipment can help reduce reactive power draw and associated costs. Review your utility bills and demand charges to decide whether this investment is justified.',
     potentialSavings: parseFloat(savings.toFixed(2)),
     priority: 'low',
   });
@@ -260,8 +266,6 @@ function generateRecommendations(
 export function calculateTotalPotentialSavings(recommendations: EnergyResult['recommendations']): number {
   return recommendations.reduce((total, rec) => total + rec.potentialSavings, 0);
 }
-
-
 
 
 

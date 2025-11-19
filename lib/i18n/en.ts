@@ -71,6 +71,9 @@ export const en = {
     fields: {
       materialType: 'Material Type',
       thickness: 'Thickness (mm)',
+      partLength: 'Part Length (mm)',
+      partWidth: 'Part Width (mm)',
+      materialUtilization: 'Material Utilization (0-1)',
       cuttingLength: 'Cutting Length (mm)',
       laserPower: 'Laser Power (kW)',
       electricityRate: 'Electricity Rate ($/kWh)',
@@ -202,7 +205,6 @@ export const en = {
 } as const;
 
 export type EnglishTexts = typeof en;
-
 
 
 

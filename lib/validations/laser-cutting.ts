@@ -75,6 +75,35 @@ export const laserCuttingSchema = z.object({
     .max(50, 'Gas price cannot exceed $50/m³')
     .default(1.5),
 
+  // Optional geometry + efficiency parameters
+  partLength: z
+    .number({
+      invalid_type_error: 'Part length must be a number',
+    })
+    .min(1, 'Part length must be at least 1mm')
+    .max(5000, 'Part length cannot exceed 5000mm')
+    .default(500),
+
+  partWidth: z
+    .number({
+      invalid_type_error: 'Part width must be a number',
+    })
+    .min(1, 'Part width must be at least 1mm')
+    .max(5000, 'Part width cannot exceed 5000mm')
+    .default(300),
+
+  partArea: z
+    .number()
+    .min(1)
+    .max(25000000) // up to 5000mm x 5000mm
+    .optional(),
+
+  materialUtilization: z
+    .number()
+    .min(0.1, 'Utilization must be at least 10%')
+    .max(1, 'Utilization cannot exceed 100%')
+    .default(0.85),
+
   // Optional: Equipment parameters
   equipmentCost: z
     .number()
@@ -101,23 +130,26 @@ export const laserCuttingSchema = z.object({
 export type LaserCuttingInput = z.infer<typeof laserCuttingSchema>;
 
 // Default values for quick calculations
+// ⚠️ IMPORTANT: These are EXAMPLE VALUES ONLY for demonstration purposes.
+// Actual values vary significantly by region, equipment, and market conditions.
+// Users should replace these with their own shop-specific data for accurate estimates.
 export const laserCuttingDefaults: Partial<LaserCuttingInput> = {
   materialType: 'stainless_steel',
-  thickness: 3,
-  cuttingLength: 1000,
-  laserPower: 3,
-  electricityRate: 0.12,
-  laborRate: 25,
-  materialPrice: 5,
-  gasConsumption: 2,
-  gasPrice: 1.5,
-  equipmentCost: 150000,
-  equipmentLifespan: 10,
-  annualWorkingHours: 2000,
+  thickness: 3,                    // Example: 3mm sheet (common thickness)
+  cuttingLength: 1000,             // Example: 1 meter total cut path
+  partLength: 500,                 // Example: 500mm part dimension
+  partWidth: 300,                  // Example: 300mm part dimension
+  laserPower: 3,                   // Example: 3kW fiber laser (common mid-range)
+  electricityRate: 0.12,           // Example rate (varies by region: typically $0.08-0.25)
+  laborRate: 25,                   // Example rate (varies widely by region and skill level)
+  materialPrice: 5,                // Example: ~$5/kg for 304 stainless (market-dependent)
+  gasConsumption: 2,               // Example: 2 m³/hr (depends on nozzle size and pressure)
+  gasPrice: 1.5,                   // Example: $1.5/m³ (varies by gas type and supplier)
+  materialUtilization: 0.85,       // Example: 85% nesting efficiency (typical range 70-90%)
+  equipmentCost: 150000,           // Example: entry-level fiber laser system
+  equipmentLifespan: 10,           // Example: 10 years (varies by usage and maintenance)
+  annualWorkingHours: 2000,        // Example: single-shift operation (2000 hrs/year)
 };
-
-
-
 
 
 

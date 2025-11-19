@@ -10,7 +10,7 @@ import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { ExportButton } from '@/components/calculators/ExportButton';
-import { Calculator as CalculatorIcon, RotateCcw, DollarSign } from 'lucide-react';
+import { Calculator as CalculatorIcon, RotateCcw, DollarSign, Sparkles } from 'lucide-react';
 import { finishingGuideSchema, finishingGuideDefaults, type FinishingGuideInput } from '@/lib/validations/cost-center';
 import { calculateFinishingGuide, compareFinishingMethods, calculateFinishingEquipmentROI } from '@/lib/calculators/cost-center/finishing';
 import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
@@ -67,7 +67,11 @@ export default function FinishingGuidePage() {
 
   const faqSchema = generateFAQSchema([
     { question: 'Why finishing time varies?', answer: 'Cut quality, material, and quality level significantly affect finishing. Nitrogen cuts typically need less finishing than oxygen cuts.' },
-    { question: 'When to invest in automation?', answer: 'If finishing workload exceeds ~500 hours/year, automated deburring often pays back within 12-24 months.' },
+    {
+      question: 'When to invest in automation?',
+      answer:
+        'There is no single workload threshold where automation is always justified. Use this guide to estimate your current manual finishing time and cost, then model an automated scenario with your own volumes, labor rates, and equipment cost to compare payback and ROI under your conditions.',
+    },
   ]);
 
   const { register, handleSubmit, formState: { errors }, reset, watch } = useForm<FinishingGuideInput>({
@@ -117,9 +121,17 @@ export default function FinishingGuidePage() {
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
 
-          <div className="mb-8">
-            <h1 className="mb-2 text-4xl font-bold text-gray-900 md:text-5xl">Edge Finishing Time Guide</h1>
-            <p className="text-gray-600">Estimate finishing time and costs, compare methods, and assess equipment ROI.</p>
+          <div className="mb-4">
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">Edge Finishing Time Guide</h1>
+            <p className="text-base text-gray-600">Estimate finishing time and costs, compare methods, and assess equipment ROI.</p>
+          </div>
+
+          {/* Disclaimer - Simplified */}
+          <div className="mb-4 border-l-4 border-gray-500 bg-gray-50 px-4 py-3">
+            <p className="text-sm text-gray-900">
+              <Sparkles className="mr-2 inline h-4 w-4" />
+              <strong>Time Guide:</strong> Estimates based on typical rates. Actual finishing time varies by operator skill, part geometry, and quality requirements. Test with your parts for accuracy.
+            </p>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-2">
@@ -262,6 +274,12 @@ export default function FinishingGuidePage() {
                       <Stat label="Payback (months)" value={`${roi.paybackMonths}`} />
                       <Stat label="ROI (annual)" value={`${roi.roiPercent}%`} />
                     </div>
+                    <p className="mt-2 text-xs text-gray-600">
+                      This ROI block is based on an example scenario that assumes 500 meters of finishing per month and an equipment
+                      cost of $25,000 for powered finishing. Treat these figures as an illustration of how the math works rather than
+                      a universal payback threshold, and use your own volumes, labor rates, and equipment pricing when modeling
+                      real investment decisions.
+                    </p>
                   </div>
 
                   {/* Export */}

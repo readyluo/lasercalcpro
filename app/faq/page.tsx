@@ -1,22 +1,13 @@
-import { Metadata } from 'next';
+'use client';
+
+import { useState, useMemo } from 'react';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { FAQAccordion } from '@/components/faq/FAQAccordion';
-import { generateMetadata } from '@/lib/seo/metadata';
 import { generateFAQSchema } from '@/lib/seo/schema';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
-import { MessageCircle, HelpCircle, BookOpen, Users } from 'lucide-react';
+import { MessageCircle, HelpCircle, BookOpen, Users, Star, Search } from 'lucide-react';
 import Link from 'next/link';
-
-export const metadata: Metadata = generateMetadata({
-  title: 'Frequently Asked Questions - LaserCalc Pro',
-  description: 'Find answers to common questions about laser cutting cost calculators, CNC machining estimators, and manufacturing cost analysis tools. Learn how to use our tools effectively.',
-  keywords: ['laser cutting calculator FAQ', 'CNC cost estimator questions', 'manufacturing calculator help', 'cost analysis tools guide'],
-  openGraph: {
-    title: 'FAQ - LaserCalc Pro Cost Calculators',
-    description: 'Everything you need to know about using our manufacturing cost calculators.',
-  }
-});
 
 // FAQ data organized by category
 const faqCategories = [
@@ -32,11 +23,11 @@ const faqCategories = [
       },
       {
         question: 'Are the calculators really free to use?',
-        answer: 'Yes! All our calculators are 100% free with no hidden fees, registration requirements, or usage limits. We believe in providing valuable tools to the manufacturing community. Our platform is supported by ethical advertising and partnerships.'
+        answer: 'Yes! All our calculators are free to use with no hidden fees, registration requirements, or usage limits. We believe in providing valuable tools to the manufacturing community. Over time we plan to support the platform through optional premium features, educational content, and selected partnerships instead of ads or paywalls on the core calculators.'
       },
       {
         question: 'How accurate are the cost calculations?',
-        answer: 'Our calculators use industry-standard formulas calibrated against real-world data from manufacturing facilities worldwide. Typical accuracy is approximately 90-98% for standard scenarios. However, results are estimates and should be verified by professionals before making critical business decisions. Actual costs may vary based on specific equipment, materials, regional factors, and operational conditions.'
+        answer: 'Our calculators use industry-standard formulas validated against manufacturer specifications and shop data. Accuracy varies by calculator type: cutting time estimates are typically within 5-10% for standard materials and thicknesses; energy consumption is typically within 10-20% depending on load factor; material utilization is typically within 5-15% depending on part geometry and nesting; and total job cost is often within 15-25% because it combines material prices, labor rates, overhead, and risk. Treat results as directional estimates for planning and comparison, add a 10-20% safety margin for business risk, and always verify against your own shop data before using them for firm quotes.'
       },
       {
         question: 'What makes LaserCalc Pro different from other cost calculators?',
@@ -44,7 +35,7 @@ const faqCategories = [
       },
       {
         question: 'How do you protect my data?',
-        answer: 'Your calculation data is processed locally in your browser and is not stored on our servers unless you explicitly save results or subscribe. We respect your privacy and do not collect or share specific calculation details. We only collect anonymized usage statistics to improve our tools. See our Privacy Policy for complete details.'
+        answer: 'Your calculation data is processed locally in your browser and is not stored on our servers unless you explicitly choose to save results in a future cloud feature or subscribe with your email. PDF reports are generated directly in your browser, so your inputs are not uploaded as part of export. We collect only anonymized usage statistics to improve our tools and store email addresses only if you opt into the newsletter. See our Privacy Policy for full details.'
       }
     ]
   },
@@ -68,7 +59,7 @@ const faqCategories = [
       },
       {
         question: 'How do I save my calculation history?',
-        answer: 'Currently, calculations are stored in your browser\'s local storage for quick access during your session. To keep permanent records, we recommend exporting results as PDF files. For registered users (coming soon), we\'ll offer cloud-based calculation history with search and organization features.'
+        answer: 'Currently, calculations are stored in your browser\'s local storage for quick access during your session. To keep permanent records, we recommend exporting results as PDF files (generated instantly in your browser, with no upload required). For the future, we are exploring optional cloud-based history with search and organization features for registered users, but there is no firm timeline yet, so subscribe to our newsletter if you would like to be notified when this becomes available.'
       },
       {
         question: 'What materials and processes are supported?',
@@ -109,6 +100,10 @@ const faqCategories = [
       {
         question: 'What browsers and devices are supported?',
         answer: 'Our calculators work on all modern browsers: Chrome 90+, Firefox 88+, Safari 14+, and Edge 90+. Mobile browsers are fully supported. We recommend keeping your browser updated for the best performance, security, and features. Internet Explorer is not supported. JavaScript must be enabled.'
+      },
+      {
+        question: 'What are common mistakes users make, and how can I avoid them?',
+        answer: 'Some typical pitfalls include using outdated material prices, forgetting to include realistic setup and changeover time, assuming an incorrect kerf width, ignoring auxiliary power such as extraction, cooling, and compressed air, leaving calculator default rates unchanged instead of using your own shop numbers, and not adding any safety margin. You can avoid these by updating material prices regularly, measuring actual setup and kerf on your machines, entering your true shop rates, including auxiliary loads in energy calculations, and adding a 10-20% contingency for waste, rework, and unexpected issues.'
       }
     ]
   },
@@ -127,12 +122,16 @@ const faqCategories = [
         answer: 'No account required! All calculators are instantly accessible without registration. However, subscribing to our newsletter (optional) gives you: Exclusive calculation tips, Industry cost trend updates, New feature announcements, Advanced guides and case studies, and Access to our community forum (coming soon).'
       },
       {
+        question: 'How do you handle my data under GDPR and CCPA?',
+        answer: 'We design LaserCalc Pro with data protection in mind. In practice this means we collect anonymous usage analytics (for example which calculators are opened) and email addresses only if you voluntarily subscribe to the newsletter; we do not store your individual calculation inputs or results on our servers unless you explicitly save them in a future cloud feature; and you can request access to or deletion of any personal data we hold about you. Calculations and PDF exports run in your browser, newsletter subscriptions are managed via a double opt-in provider, and analytics are anonymized. See our Privacy Policy for full details and contact privacy@lasercalc.pro for GDPR or CCPA data requests.'
+      },
+      {
         question: 'Can I embed these calculators on my website?',
         answer: 'We offer calculator embedding for business partners and educational institutions. Embedded widgets can be customized with your branding and default parameters. Contact us at partners@lasercalc.pro to discuss integration options, API access, and partnership opportunities. White-label solutions are available for enterprise clients.'
       },
       {
         question: 'Do you provide API access?',
-        answer: 'API access is currently in beta testing for selected partners. Our API allows programmatic access to calculation engines for integration with ERP systems, quoting software, or custom applications. Contact our business development team to discuss API access, pricing, rate limits, and documentation. Public API launch is planned for Q2 2026.'
+        answer: 'API access is currently in beta testing for selected partners. Our API allows programmatic access to calculation engines for integration with ERP systems, quoting software, or custom applications. Contact our business development team to discuss API access, pricing, rate limits, and documentation. A broader public launch is on our roadmap, but we do not have a firm date yet.'
       },
       {
         question: 'How can I partner with LaserCalc Pro?',
@@ -147,9 +146,27 @@ const faqCategories = [
 ];
 
 export default function FAQPage() {
+  const [searchQuery, setSearchQuery] = useState('');
+  
   // Generate FAQ schema for all questions
   const allFAQs = faqCategories.flatMap(category => category.faqs);
   const faqSchema = generateFAQSchema(allFAQs);
+  
+  // Filter FAQs based on search query
+  const filteredCategories = useMemo(() => {
+    if (!searchQuery.trim()) return faqCategories;
+    
+    const query = searchQuery.toLowerCase();
+    return faqCategories.map(category => ({
+      ...category,
+      faqs: category.faqs.filter(faq => 
+        faq.question.toLowerCase().includes(query) ||
+        faq.answer.toLowerCase().includes(query)
+      )
+    })).filter(category => category.faqs.length > 0);
+  }, [searchQuery]);
+  
+  const totalResults = filteredCategories.reduce((sum, cat) => sum + cat.faqs.length, 0);
 
   return (
     <>
@@ -173,6 +190,88 @@ export default function FAQPage() {
                 </Link>
                 {' '}for personalized support
               </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Search Section */}
+        <section className="border-b border-gray-200 bg-gray-50 py-8">
+          <div className="container mx-auto px-4">
+            <div className="mx-auto max-w-2xl">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search questions... (e.g., 'accuracy', 'export PDF', 'material prices')"
+                  className="w-full rounded-lg border border-gray-300 py-3 pl-12 pr-4 text-gray-900 placeholder-gray-500 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              {searchQuery && (
+                <div className="mt-2 text-sm text-gray-600">
+                  Found <span className="font-semibold">{totalResults}</span> result{totalResults !== 1 ? 's' : ''} for &quot;{searchQuery}&quot;
+                  {totalResults === 0 && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="ml-2 text-primary-600 hover:underline"
+                    >
+                      Clear search
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Top 5 most asked questions */}
+        <section className="border-b border-gray-200 bg-white py-10">
+          <div className="container mx-auto px-4">
+            <div className="mx-auto max-w-4xl rounded-xl bg-gradient-to-br from-primary-50 to-blue-50 border-l-4 border-primary-500 p-6">
+              <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-gray-900">
+                <Star className="h-6 w-6 text-primary-600" />
+                Top 5 Most Asked Questions
+              </h2>
+              <div className="space-y-3">
+                {[
+                  {
+                    q: 'How accurate are the cost calculations?',
+                    a: 'Time-focused estimates are often closer than full job cost totals, which combine many uncertain factors. Always treat outputs as estimates, not guarantees.',
+                    href: '#about-q3'
+                  },
+                  {
+                    q: 'Can I use these calculators for commercial quotes?',
+                    a: 'Yes, many shops do, but you should always validate critical jobs, add a safety margin, and include clear quote terms.',
+                    href: '#business-q1'
+                  },
+                  {
+                    q: "Why might calculation results differ from my actual costs?",
+                    a: 'Most gaps come from outdated material prices, missing setup time, or using default rates instead of your own shop numbers.',
+                    href: '#technical-q1'
+                  },
+                  {
+                    q: 'How do I save my calculation history?',
+                    a: 'Today you can export PDFs and store them in your own systems. In the future we are exploring optional cloud history for registered users.',
+                    href: '#usage-q4'
+                  },
+                  {
+                    q: 'Which calculator should I use for my project?',
+                    a: 'Use Laser Cutting for sheet work, CNC for machining, ROI for equipment purchases, plus energy and material-utilization tools for supporting analysis.',
+                    href: '#usage-q2'
+                  }
+                ].map((item, index) => (
+                  <div key={item.q} className="rounded-lg bg-white p-4 shadow-sm">
+                    <p className="mb-1 font-semibold text-gray-900">
+                      {index + 1}. {item.q}
+                    </p>
+                    <p className="mb-2 text-sm text-gray-700">{item.a}</p>
+                    <a href={item.href} className="text-xs font-semibold text-primary-600 hover:underline">
+                      Read full answer →
+                    </a>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -210,35 +309,46 @@ export default function FAQPage() {
         </section>
 
         {/* FAQ Categories */}
-        <section className="py-16">
+        <section className="py-12">
           <div className="container mx-auto px-4">
-            <div className="mx-auto max-w-4xl space-y-16">
-              {faqCategories.map((category, categoryIndex) => (
-                <div key={category.id} id={category.id} className="scroll-mt-20">
-                  {/* Category Header */}
-                  <div className="mb-8">
-                    <div className="mb-4 flex items-center gap-3">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-100 text-primary-600">
-                        {category.icon}
-                      </div>
-                      <div>
-                        <h2 className="text-3xl font-bold text-gray-900">
-                          {category.title}
-                        </h2>
-                        <p className="text-gray-600">{category.description}</p>
-                      </div>
-                    </div>
-                    <div className="h-1 w-24 rounded-full bg-primary-600"></div>
-                  </div>
-
-                  {/* Accordion */}
-                  <FAQAccordion 
-                    faqs={category.faqs} 
-                    categoryId={category.id}
-                    defaultOpenIndex={categoryIndex === 0 ? 0 : null}
-                  />
+            <div className="mx-auto max-w-4xl">
+              {filteredCategories.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-gray-600 text-lg mb-4">No results found for &quot;{searchQuery}&quot;</p>
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="text-primary-600 hover:underline font-semibold"
+                  >
+                    Clear search and show all questions
+                  </button>
                 </div>
-              ))}
+              ) : (
+                <div className="space-y-8">
+                  {filteredCategories.map((category, categoryIndex) => (
+                    <div key={category.id} id={category.id} className="scroll-mt-8">
+                      <div className="mb-6">
+                        <div className="mb-2 flex items-center gap-3">
+                          {category.icon}
+                          <div>
+                            <h2 className="text-3xl font-bold text-gray-900">
+                              {category.title}
+                            </h2>
+                            <p className="text-gray-600">{category.description}</p>
+                          </div>
+                        </div>
+                        <div className="h-1 w-24 rounded-full bg-primary-600"></div>
+                      </div>
+
+                      {/* Accordion */}
+                      <FAQAccordion 
+                        faqs={category.faqs} 
+                        categoryId={category.id}
+                        defaultOpenIndex={categoryIndex === 0 ? 0 : null}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </section>

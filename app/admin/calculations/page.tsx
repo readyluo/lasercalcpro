@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   Filter, Download, Trash2, Eye,
   ChevronLeft, ChevronRight
 } from 'lucide-react';
+import { buildCalculationQuery } from '@/lib/admin/query';
 
 interface Calculation {
   id: number;
@@ -29,22 +30,19 @@ export default function CalculationsManagementPage() {
   });
   const [selectedCalc, setSelectedCalc] = useState<Calculation | null>(null);
 
-  useEffect(() => {
-    fetchCalculations();
-  }, [page, filters]);
-
-  const fetchCalculations = async () => {
+  const fetchCalculations = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: '20',
-        ...Object.fromEntries(
-          Object.entries(filters).filter(([_, v]) => v !== '')
-        ),
+      const query = buildCalculationQuery({
+        page,
+        limit: 20,
+        toolType: filters.tool_type || undefined,
+        startDate: filters.start_date || undefined,
+        endDate: filters.end_date || undefined,
+        country: filters.country || undefined,
       });
 
-      const response = await fetch(`/api/admin/calculations?${params}`);
+      const response = await fetch(`/api/admin/calculations?${query}`);
       const data = await response.json();
 
       if (data.success) {
@@ -56,10 +54,14 @@ export default function CalculationsManagementPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters, page]);
+
+  useEffect(() => {
+    fetchCalculations();
+  }, [fetchCalculations]);
 
   const handleDelete = async (id: number) => {
-    if (!confirm('确定要删除这条计算记录吗？')) return;
+    if (!confirm('Delete this calculation record?')) return;
 
     try {
       const response = await fetch(`/api/admin/calculations?id=${id}`, {
@@ -76,23 +78,23 @@ export default function CalculationsManagementPage() {
 
   const formatToolName = (tool: string): string => {
     const names: Record<string, string> = {
-      'laser-cutting': '激光切割',
-      'cnc-machining': 'CNC加工',
-      'roi': 'ROI投资回报',
-      'energy': '能源成本',
-      'material-utilization': '材料利用率',
+      'laser-cutting': 'Laser Cutting',
+      'cnc-machining': 'CNC Machining',
+      roi: 'ROI',
+      energy: 'Energy Cost',
+      'material-utilization': 'Material Utilization',
     };
     return names[tool] || tool;
   };
 
   const exportToCSV = () => {
-    const headers = ['ID', '计算器类型', 'IP地址', '国家', '创建时间'];
+    const headers = ['ID', 'Calculator', 'IP Address', 'Country', 'Created At'];
     const rows = calculations.map(calc => [
       calc.id,
       formatToolName(calc.tool_type),
       calc.user_ip || '',
       calc.user_country || '',
-      new Date(calc.created_at).toLocaleString('zh-CN'),
+      new Date(calc.created_at).toLocaleString('en-US'),
     ]);
 
     const csvContent = [
@@ -111,12 +113,8 @@ export default function CalculationsManagementPage() {
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          计算历史管理
-        </h1>
-        <p className="text-gray-600">
-          查看和管理所有计算记录
-        </p>
+        <h1 className="mb-2 text-3xl font-bold text-gray-900">Calculation Logs</h1>
+        <p className="text-gray-600">Review calculator usage across tools.</p>
       </div>
 
       {/* Filters */}
@@ -124,7 +122,7 @@ export default function CalculationsManagementPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              计算器类型
+              Calculator
             </label>
             <select
               value={filters.tool_type}
@@ -142,7 +140,7 @@ export default function CalculationsManagementPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              开始日期
+              Start date
             </label>
             <input
               type="date"
@@ -154,7 +152,7 @@ export default function CalculationsManagementPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              结束日期
+              End date
             </label>
             <input
               type="date"
@@ -166,13 +164,13 @@ export default function CalculationsManagementPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              国家
+              Country
             </label>
             <input
               type="text"
               value={filters.country}
               onChange={(e) => setFilters({ ...filters, country: e.target.value })}
-              placeholder="输入国家代码"
+              placeholder="ISO country code"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             />
           </div>
@@ -184,14 +182,14 @@ export default function CalculationsManagementPage() {
             className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
           >
             <Filter className="h-4 w-4 inline mr-2" />
-            应用筛选
+            Apply filters
           </button>
           <button
             onClick={exportToCSV}
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
           >
             <Download className="h-4 w-4 inline mr-2" />
-            导出 CSV
+            Export CSV
           </button>
         </div>
       </div>
@@ -199,9 +197,9 @@ export default function CalculationsManagementPage() {
       {/* Table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="text-center py-12">
+          <div className="py-12 text-center">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent" />
-            <p className="mt-4 text-gray-600">加载中...</p>
+            <p className="mt-4 text-gray-600">Loading calculations…</p>
           </div>
         ) : (
           <>
@@ -213,19 +211,19 @@ export default function CalculationsManagementPage() {
                       ID
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      计算器类型
+                      Calculator
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      IP地址
+                      IP
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      国家
+                      Country
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      创建时间
+                      Created
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      操作
+                      Actions
                     </th>
                   </tr>
                 </thead>
@@ -247,7 +245,7 @@ export default function CalculationsManagementPage() {
                         {calc.user_country || '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {new Date(calc.created_at).toLocaleString('zh-CN')}
+                        {new Date(calc.created_at).toLocaleString('en-US')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <button
@@ -271,9 +269,7 @@ export default function CalculationsManagementPage() {
 
             {/* Pagination */}
             <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-              <div className="text-sm text-gray-600">
-                第 {page} 页，共 {totalPages} 页
-              </div>
+              <div className="text-sm text-gray-600">Page {page} of {totalPages}</div>
               <div className="flex gap-2">
                 <button
                   onClick={() => setPage(Math.max(1, page - 1))}
@@ -300,7 +296,7 @@ export default function CalculationsManagementPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">计算详情</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Calculation Details</h3>
               <button
                 onClick={() => setSelectedCalc(null)}
                 className="text-gray-400 hover:text-gray-600"
@@ -311,13 +307,13 @@ export default function CalculationsManagementPage() {
             <div className="p-6">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">输入参数</label>
+                  <label className="block text-sm font-medium text-gray-700">Input parameters</label>
                   <pre className="mt-1 p-3 bg-gray-50 rounded-lg text-xs overflow-x-auto">
                     {JSON.stringify(JSON.parse(selectedCalc.input_params), null, 2)}
                   </pre>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">计算结果</label>
+                  <label className="block text-sm font-medium text-gray-700">Results</label>
                   <pre className="mt-1 p-3 bg-gray-50 rounded-lg text-xs overflow-x-auto">
                     {JSON.stringify(JSON.parse(selectedCalc.result), null, 2)}
                   </pre>
@@ -330,4 +326,3 @@ export default function CalculationsManagementPage() {
     </div>
   );
 }
-

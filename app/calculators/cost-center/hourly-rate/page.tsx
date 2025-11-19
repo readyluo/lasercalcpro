@@ -10,7 +10,7 @@ import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { ExportButton } from '@/components/calculators/ExportButton';
-import { DollarSign, Calculator as CalculatorIcon, RotateCcw, Info, HelpCircle, PieChart, TrendingUp, AlertCircle } from 'lucide-react';
+import { DollarSign, Calculator as CalculatorIcon, RotateCcw, HelpCircle, PieChart, TrendingUp, AlertCircle } from 'lucide-react';
 import { hourlyRateSchema, hourlyRateDefaults, type HourlyRateInput } from '@/lib/validations/cost-center';
 import { calculateHourlyRate, calculateBreakEvenUtilization, compareToIndustryBenchmarks } from '@/lib/calculators/cost-center/hourly-rate';
 import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
@@ -18,9 +18,9 @@ import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 
 // Gas type options
 const gasTypeOptions = [
-  { value: 'nitrogen', label: 'Nitrogen - High purity, best cut quality ($1.00-2.00/m³)' },
-  { value: 'oxygen', label: 'Oxygen - Fast cutting for mild steel ($0.50-1.00/m³)' },
-  { value: 'air', label: 'Air - Most economical, lower quality ($0.10-0.30/m³)' },
+  { value: 'nitrogen', label: 'Nitrogen - High purity, best cut quality' },
+  { value: 'oxygen', label: 'Oxygen - Fast cutting for mild steel' },
+  { value: 'air', label: 'Air - Most economical, lower quality' },
   { value: 'mixed', label: 'Mixed - Combination approach for different materials' },
 ];
 
@@ -30,12 +30,12 @@ export default function HourlyRateCalculatorPage() {
 
   const howToSchema = generateCalculatorHowToSchema(
     'Shop Hourly Rate Builder',
-    'Calculate complete hourly shop rate with depreciation, labor, energy, maintenance, facility, overhead and gas costs.',
+    'Estimate shop hourly rate with depreciation, labor, energy, maintenance, facility, overhead and gas cost components based on your inputs.',
     [
       { name: 'Enter Equipment Data', text: 'Input equipment cost, lifespan and annual working hours.' },
       { name: 'Enter Labor & Energy', text: 'Provide operator rate, benefits multiplier, total kW and electricity rate.' },
       { name: 'Facility & Overhead', text: 'Enter monthly rent, utilities, insurance and overhead costs.' },
-      { name: 'Gas Costs', text: 'Select gas type and enter consumption and price per m³.' },
+      { name: 'Gas Costs', text: 'Select gas type and enter consumption and price per m^3.' },
       { name: 'Calculate', text: 'Get hourly rate and cost breakdown with recommendations.' },
     ]
   );
@@ -47,7 +47,8 @@ export default function HourlyRateCalculatorPage() {
     },
     {
       question: 'How accurate is this calculation?',
-      answer: 'The calculation is 100% mathematically accurate based on the inputs you provide. Accuracy of your final rate depends on using your actual local costs. Default values are industry averages only - you must replace them with your specific numbers. Update inputs quarterly or whenever costs change significantly (equipment purchase, wage increases, rent changes).',
+      answer:
+        'This calculator applies straightforward formulas to the cost and utilization inputs you provide to estimate a shop hourly rate. The usefulness of the result depends on how representative your inputs are for your shop. Treat defaults as placeholders, replace them with your own current costs, and update the numbers when wages, energy, rent, or production volume change.',
     },
     {
       question: 'How often should I update my hourly rate?',
@@ -55,19 +56,23 @@ export default function HourlyRateCalculatorPage() {
     },
     {
       question: 'What is the break-even utilization rate?',
-      answer: 'Break-even utilization is the minimum machine hours per year needed to cover your fixed costs (equipment depreciation, facility, overhead). Running below this point means you lose money. Most shops target 60-80% utilization (1200-1600 hours/year) for healthy profitability. Higher utilization spreads fixed costs over more hours, reducing per-hour cost.',
+      answer:
+        'In this tool, break-even utilization is an estimate of the minimum machine hours per year needed to cover the fixed and variable costs you entered. Running well below that level may indicate that your modeled costs are not being recovered. Use the result as a planning reference and choose utilization targets that reflect your actual backlog, staffing, and capacity strategy.',
     },
     {
       question: 'How do I compare my rate to industry benchmarks?',
-      answer: 'Industry benchmarks vary by region, equipment type, and capabilities. For laser cutting: Low range $40-60/hr (basic shops, high competition), Mid range $60-90/hr (most professional shops), High range $90-150+/hr (premium capabilities, specialized services). Consider your market, competition, and value-added services when positioning.',
+      answer:
+        'There is no single “correct” hourly rate for every shop. Rather than relying on generic benchmark ranges, compare your modeled rate with your own historical quotes, win/loss data, and the rates you see in your specific market. The positioning information in this tool is only a rough guide and should be validated against your actual customers, competitors, and value-added services.',
     },
     {
       question: 'Should I include profit margin in the hourly rate?',
-      answer: 'This calculator shows your break-even cost. Add profit margin separately when quoting: 15-25% for standard work, 30-50% for complex or rush jobs, 50-100% for specialized services. Also consider: job complexity, customer relationship, market competition, and risk factors. Your hourly rate is the floor, not the ceiling.',
+      answer:
+        'This calculator focuses on estimating your break-even cost. Profit margin is typically added separately when quoting and should reflect job complexity, customer relationship, competition, and risk. Many shops test a range of margin levels in their quoting process rather than relying on a single fixed percentage. Treat the hourly rate here as a cost baseline, not a final selling price.',
     },
     {
       question: 'How does equipment utilization affect my costs?',
-      answer: 'Higher utilization dramatically reduces your per-hour cost by spreading fixed expenses (depreciation, facility, overhead) over more billable hours. Example: $50k/year in fixed costs ÷ 1000 hours = $50/hr, but ÷ 2000 hours = $25/hr. This is why batching jobs and maintaining high utilization is crucial for profitability.',
+      answer:
+        'When fixed expenses like depreciation, facility, and overhead are a large share of your cost, increasing the number of billable hours tends to reduce the cost per hour. For example, if you spread $50k/year in fixed costs over 1000 hours versus 2000 hours, the resulting cost per hour is very different. Use this calculator to model different annual working hours and see how sensitive your own hourly rate is to utilization.',
     }
   ]);
 
@@ -99,13 +104,11 @@ export default function HourlyRateCalculatorPage() {
 
   const equipmentCost = watch('equipmentCost');
   const equipmentLifespan = watch('equipmentLifespan');
-  const annualWorkingHours = watch('annualWorkingHours');
-
   const breakEven = result
     ? calculateBreakEvenUtilization(
         equipmentCost,
         equipmentLifespan,
-        // Fixed costs: facility + overhead monthly × 12
+        // Fixed costs: facility + overhead monthly  x  12
         (watch('facilityRentMonthly') + watch('utilitiesMonthly') + watch('insuranceMonthly') + watch('overheadMonthly')) * 12,
         // Variable per hour: labor + energy + consumables + gas + maintenance
         result.labor + result.energy + result.consumables + result.gas + result.maintenance,
@@ -124,44 +127,20 @@ export default function HourlyRateCalculatorPage() {
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
 
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="mb-2 text-4xl font-bold text-gray-900 md:text-5xl">Shop Hourly Rate Builder</h1>
-            <p className="mb-4 text-lg text-gray-600">
-              Calculate a complete, accurate hourly rate for your laser cutting operation with transparent cost breakdown and industry benchmarking.
+          {/* Header - Compact */}
+          <div className="mb-4">
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">Shop Hourly Rate Builder</h1>
+            <p className="text-base text-gray-600">
+              Estimate a shop hourly rate with transparent cost breakdown.
             </p>
-            
-            {/* Quick Guide */}
-            <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
-              <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-blue-900">
-                <HelpCircle className="h-5 w-5" />
-                How to Calculate Your True Hourly Cost
-              </h2>
-              <ol className="space-y-2 text-sm text-blue-800">
-                <li className="flex gap-2">
-                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">1</span>
-                  <span><strong>Equipment Costs:</strong> Enter your laser system cost, expected lifespan, and annual operating hours to calculate depreciation</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">2</span>
-                  <span><strong>Operating Expenses:</strong> Input labor rates with benefits, electricity costs, maintenance, and consumables</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">3</span>
-                  <span><strong>Facility & Overhead:</strong> Include rent, utilities, insurance, and general overhead (admin, sales, management)</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">4</span>
-                  <span><strong>Review Results:</strong> Analyze cost breakdown, check benchmark position, and identify optimization opportunities</span>
-                </li>
-              </ol>
-              <div className="mt-3 rounded-lg bg-white p-3">
-                <p className="text-xs text-gray-700">
-                  💡 <strong>Pro Tip:</strong> This calculator shows your break-even cost. Add 20-50% profit margin when quoting to customers. 
-                  Your hourly rate is the minimum you must charge to stay in business.
-                </p>
-              </div>
-            </div>
+          </div>
+
+          {/* Disclaimer - Simplified */}
+          <div className="mb-4 border-l-4 border-purple-500 bg-purple-50 px-4 py-3">
+            <p className="text-sm text-purple-900">
+              <DollarSign className="mr-2 inline h-4 w-4" />
+              <strong>Cost Baseline:</strong> Results show break-even hourly cost. Add profit margin when quoting based on your market and risk. Compare with your accounting data.
+            </p>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-2">
@@ -260,7 +239,7 @@ export default function HourlyRateCalculatorPage() {
                         {...register('gasConsumptionPerHour', { valueAsNumber: true })} 
                         type="number" 
                         step="0.1" 
-                        label="Consumption (m³/hr)" 
+                        label="Consumption (m^3/hr)" 
                         placeholder="e.g., 1.5"
                         helperText="Average gas flow rate"
                         error={errors.gasConsumptionPerHour?.message} 
@@ -270,7 +249,7 @@ export default function HourlyRateCalculatorPage() {
                         {...register('gasPricePerCubicMeter', { valueAsNumber: true })} 
                         type="number" 
                         step="0.01" 
-                        label="Gas Price (USD/m³)" 
+                        label="Gas Price (USD/m^3)" 
                         placeholder="e.g., 1.50"
                         helperText="Local gas supplier cost"
                         error={errors.gasPricePerCubicMeter?.message} 
@@ -299,7 +278,7 @@ export default function HourlyRateCalculatorPage() {
                         <p className="mt-2 text-sm text-blue-200">per operating hour</p>
                       </div>
                       <div>
-                        <p className="mb-1 text-sm text-blue-100">Industry Benchmark</p>
+                        <p className="mb-1 text-sm text-blue-100">Rate Context</p>
                         <p className="text-3xl font-semibold capitalize">{benchmark?.position}</p>
                         <p className="mt-2 text-sm text-blue-200">{benchmark?.description}</p>
                       </div>
@@ -310,8 +289,8 @@ export default function HourlyRateCalculatorPage() {
                             <div>
                               <p className="font-semibold">Break-Even Analysis</p>
                               <p className="mt-1 text-sm">
-                                Minimum <span className="font-semibold">{breakEven.breakEvenHours} hours/year</span> ({breakEven.breakEvenPercentage}% utilization) to cover costs.
-                                Recommended target: <span className="font-semibold">{breakEven.recommendedMinimumHours} hours/year</span> for healthy margins.
+                                Minimum <span className="font-semibold">{breakEven.breakEvenHours} hours/year</span> ({breakEven.breakEvenPercentage}% utilization) in this modeled scenario to cover the costs you entered.
+                                This example also shows <span className="font-semibold">{breakEven.recommendedMinimumHours} hours/year</span> as a higher-utilization case you can compare against your own backlog, staffing, and capacity strategy rather than as a universal target.
                               </p>
                             </div>
                           </div>
@@ -372,12 +351,12 @@ export default function HourlyRateCalculatorPage() {
                         <AlertCircle className="mt-1 h-6 w-6 flex-shrink-0 text-amber-600" />
                         <div>
                           <h3 className="text-xl font-bold text-amber-900">Insights & Recommendations</h3>
-                          <p className="mt-1 text-sm text-amber-700">Based on your cost structure and industry benchmarks</p>
+                          <p className="mt-1 text-sm text-amber-700">Based on your cost structure and the assumptions in this calculator</p>
                         </div>
                       </div>
                         {result.alerts.length > 0 && (
                         <div className="mb-4">
-                          <h4 className="mb-3 font-semibold text-red-900">⚠️ Action Required</h4>
+                          <h4 className="mb-3 font-semibold text-red-900">Warning: Action Required</h4>
                           <ul className="space-y-2">
                             {result.alerts.map((a, idx) => (
                               <li key={idx} className="flex gap-3 rounded-lg bg-white p-3 shadow-sm">
@@ -392,7 +371,7 @@ export default function HourlyRateCalculatorPage() {
                         )}
                         {result.recommendations.length > 0 && (
                           <div>
-                          <h4 className="mb-3 font-semibold text-amber-900">💡 Optimization Opportunities</h4>
+                          <h4 className="mb-3 font-semibold text-amber-900">Optimization Opportunities</h4>
                           <ul className="space-y-2">
                             {result.recommendations.map((r, idx) => (
                               <li key={idx} className="flex gap-3 rounded-lg bg-white p-3 shadow-sm">

@@ -129,7 +129,7 @@ Route Statistics:
 
 ### 🔌 API检查
 
-#### ✅ /api/calculate
+#### ✅ /api/calculations
 - ✅ POST端点存在
 - ✅ 数据验证
 - ✅ 错误处理

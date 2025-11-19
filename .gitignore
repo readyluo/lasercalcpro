@@ -6,6 +6,7 @@ node_modules/
 # Testing
 coverage/
 .nyc_output/
+.tests-dist/
 
 # Next.js
 .next/
@@ -46,7 +47,6 @@ next-env.d.ts
 .idea/
 *.swp
 *.swo
-
 
 
 

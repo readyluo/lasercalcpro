@@ -12,7 +12,7 @@ import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { Timer, Zap, AlertCircle, Info } from 'lucide-react';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
-import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
+import { generateCalculatorHowToSchema, generateFAQSchema, generateSoftwareApplicationSchema } from '@/lib/seo/schema';
 import Link from 'next/link';
 
 // Validation schema
@@ -49,8 +49,17 @@ const PIERCE_BASE_TIME_MS: Record<string, (thickness: number, power: number) => 
   },
 };
 
+type PierceResult = {
+  pierceTimePerHole: number;
+  totalPierceTime: number;
+  pierceTimeMinutes: number;
+  electricityCost: number;
+  laborCost: number;
+  efficiency: string;
+};
+
 export default function PierceTimeCalculatorPage() {
-  const { register, handleSubmit, formState: { errors }, watch, reset } = useForm<PierceTimeInput>({
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<PierceTimeInput>({
     resolver: zodResolver(pierceTimeSchema),
     defaultValues: {
       materialType: 'mild_steel',
@@ -60,14 +69,7 @@ export default function PierceTimeCalculatorPage() {
     },
   });
 
-  const [result, setResult] = React.useState<{
-    pierceTimePerHole: number;
-    totalPierceTime: number;
-    pierceTimeMinutes: number;
-    efficiency: string;
-  } | null>(null);
-
-  const watchedValues = watch();
+  const [result, setResult] = React.useState<PierceResult | null>(null);
 
   const howToSchema = generateCalculatorHowToSchema(
     'Pierce Time Estimator',
@@ -87,7 +89,8 @@ export default function PierceTimeCalculatorPage() {
     },
     {
       question: 'Why does piercing take so long on thick material?',
-      answer: 'Thick materials require more energy to melt through completely. Piercing 10mm steel can take 0.4-0.8 seconds, while cutting at 1 m/min would traverse the same thickness in 0.6 seconds. For 100 holes, this adds 40-80 seconds of pure piercing time.',
+      answer:
+        'Thick materials require more energy to melt through completely, so pierce time increases with thickness. As one example, piercing 10mm steel might fall in a range like 0.4-0.8 seconds in some setups, while cutting at 1 m/min would traverse the same thickness in about 0.6 seconds. For 100 holes, that would add tens of seconds of pure piercing time. Always validate actual times on your own machine.',
     },
     {
       question: 'How can I reduce piercing time?',
@@ -95,7 +98,8 @@ export default function PierceTimeCalculatorPage() {
     },
     {
       question: 'Does laser power affect pierce time?',
-      answer: 'Yes, significantly. A 12kW laser pierces thick material 2x faster than a 6kW laser. However, piercing is often power-limited to prevent splatter damage, so the improvement may be less than 2x in practice.',
+      answer:
+        'Yes, higher available power can significantly reduce modeled pierce times. In simple comparisons, moving from 6kW to 12kW may cut pierce time for some thick materials to roughly around half, but in practice piercing is often power-limited to avoid splatter and damage. Use this estimator and your own cut data to understand how power changes affect your specific jobs.',
     },
   ]);
 
@@ -111,6 +115,10 @@ export default function PierceTimeCalculatorPage() {
     const pierceTimeMsPerHole = PIERCE_BASE_TIME_MS[data.materialType](data.thickness, data.laserPower);
     const totalPierceTimeMs = pierceTimeMsPerHole * data.pierceCount;
     const pierceTimeMinutes = totalPierceTimeMs / 60000;
+    const assumedElectricity = 0.12;
+    const assumedLabor = 40;
+    const electricityCost = (data.laserPower * 1.6 * assumedElectricity * pierceTimeMinutes) / 60;
+    const laborCost = (assumedLabor * pierceTimeMinutes) / 60;
 
     let efficiency = 'Good';
     if (pierceTimeMinutes > 5) efficiency = 'High pierce time - consider optimization';
@@ -120,6 +128,8 @@ export default function PierceTimeCalculatorPage() {
       pierceTimePerHole: pierceTimeMsPerHole / 1000,
       totalPierceTime: totalPierceTimeMs / 1000,
       pierceTimeMinutes,
+      electricityCost: Number(electricityCost.toFixed(2)),
+      laborCost: Number(laborCost.toFixed(2)),
       efficiency,
     });
   };
@@ -131,6 +141,7 @@ export default function PierceTimeCalculatorPage() {
 
   return (
     <>
+      <SchemaMarkup schema={softwareSchema} />
       <SchemaMarkup schema={howToSchema} />
       <SchemaMarkup schema={faqSchema} />
       <Navigation />
@@ -210,7 +221,7 @@ export default function PierceTimeCalculatorPage() {
                     <p className="mb-2 font-semibold">Pierce Time Impact:</p>
                     <ul className="list-disc space-y-1 pl-4">
                       <li>Increases linearly with hole count</li>
-                      <li>Can represent 20-40% of total job time</li>
+                      <li>Can represent a significant share of total cutting time on highly perforated jobs</li>
                       <li>Often overlooked in manual quotes</li>
                     </ul>
                   </div>
@@ -269,17 +280,20 @@ export default function PierceTimeCalculatorPage() {
                     <h3 className="mb-4 text-xl font-bold text-gray-900">Cost Impact</h3>
                     <div className="space-y-3 text-sm">
                       <div className="rounded-lg bg-gray-50 p-3">
-                        <p className="mb-1 font-semibold text-gray-900">At $50/hour labor rate:</p>
+                        <p className="mb-1 font-semibold text-gray-900">Estimated labor cost impact:</p>
                         <p className="text-gray-700">
-                          Pierce time adds <span className="font-bold">${(result.pierceTimeMinutes * 50 / 60).toFixed(2)}</span> to job cost
+                          Pierce time adds <span className="font-bold">${result.laborCost.toFixed(2)}</span> at a $40/hr labor rate
                         </p>
                       </div>
                       <div className="rounded-lg bg-gray-50 p-3">
-                        <p className="mb-1 font-semibold text-gray-900">At $100/hour machine rate:</p>
+                        <p className="mb-1 font-semibold text-gray-900">Estimated electricity impact:</p>
                         <p className="text-gray-700">
-                          Pierce time adds <span className="font-bold">${(result.pierceTimeMinutes * 100 / 60).toFixed(2)}</span> to job cost
+                          Adds <span className="font-bold">${result.electricityCost.toFixed(2)}</span> assuming $0.12/kWh and laser + chiller draw
                         </p>
                       </div>
+                      <p className="text-xs text-gray-500">
+                        Use the Hourly Rate calculator to replace these assumptions with your actual burden.
+                      </p>
                     </div>
                   </div>
 
@@ -289,19 +303,19 @@ export default function PierceTimeCalculatorPage() {
                       <h3 className="mb-4 text-xl font-bold text-gray-900">Optimization Recommendations</h3>
                       <ul className="space-y-2 text-sm text-gray-700">
                         <li className="flex items-start gap-2">
-                          <span className="mt-1 text-orange-500">▸</span>
+                          <span className="mt-1 text-orange-500">-</span>
                           <span>Combine parts to reduce total pierce count</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <span className="mt-1 text-orange-500">▸</span>
+                          <span className="mt-1 text-orange-500">-</span>
                           <span>Move small holes to part edges (no piercing needed)</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <span className="mt-1 text-orange-500">▸</span>
+                          <span className="mt-1 text-orange-500">-</span>
                           <span>Use common-line cutting for nested parts</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <span className="mt-1 text-orange-500">▸</span>
+                          <span className="mt-1 text-orange-500">-</span>
                           <span>Consider higher-power laser for thick material production</span>
                         </li>
                       </ul>
@@ -380,8 +394,40 @@ export default function PierceTimeCalculatorPage() {
             </div>
             <p className="mt-4 text-xs text-gray-600">
               Pierce times are approximate and vary with laser power, gas pressure, nozzle condition, and material quality.
-              Times scale inversely with power (12kW ≈ 0.5× these values).
+              In simple models, pierce time tends to decrease as available power increases; as a rough mental check, doubling power
+              can sometimes bring times closer to half these values. Real processes are often power-limited and may not follow this
+              scaling exactly, so always rely on your own cut charts and test parts.
             </p>
+          </div>
+
+          {/* Workflow */}
+          <div className="card mt-8">
+            <h2 className="mb-6 text-2xl font-bold text-gray-900">Workflow Integration</h2>
+            <ol className="space-y-3 text-sm text-gray-700">
+              <li>
+                <span className="font-semibold text-gray-900">1. Pull job inputs.</span> Use CAM data or the{' '}
+                <Link href="/calculators/quick-reference/processing-parameters" className="text-primary-600 hover:underline">
+                  processing parameters reference
+                </Link>{' '}
+                to log thickness and hole counts.
+              </li>
+              <li>
+                <span className="font-semibold text-gray-900">2. Run the pierce estimator.</span> Capture the extra
+                minutes and plug the cost impact into the{' '}
+                <Link href="/calculators/laser-cutting" className="text-primary-600 hover:underline">
+                  laser cutting calculator
+                </Link>{' '}
+                or{' '}
+                <Link href="/calculators/quick/price-per-meter" className="text-primary-600 hover:underline">
+                  price per meter tool
+                </Link>
+                .
+              </li>
+              <li>
+                <span className="font-semibold text-gray-900">3. Archive the data.</span> Save pierce assumptions with
+                your hourly rate burden so future quotes reuse the same values.
+              </li>
+            </ol>
           </div>
 
           {/* Educational Content */}
@@ -393,24 +439,26 @@ export default function PierceTimeCalculatorPage() {
               <p className="text-gray-700">
                 Piercing is the process of creating an initial hole through the material before the laser begins cutting a contour. 
                 The laser must burn completely through the material at a single point, which requires significantly more time than 
-                cutting along a line because there's no forward motion to distribute the heat.
+                cutting along a line because there is no forward motion to distribute the heat.
               </p>
 
               <h3 className="mt-6 text-xl font-semibold text-gray-900">Why Pierce Time Matters</h3>
               <p className="text-gray-700">
-                Pierce time is often overlooked in manual quotes, but it can represent 20-40% of total job time for parts with many 
-                small features. For example, a 100-hole part in 10mm steel requires 40-80 seconds of pure piercing time before any 
-                cutting begins. At $100/hour machine rate, that's $1.10-2.20 just for piercing.
+                Pierce time is often overlooked in manual quotes, but on parts with many small features it can be a noticeable share
+                of modeled job time. As an illustration, a 100-hole part in 10mm steel might contribute on the order of tens of
+                seconds of pure piercing time (for example, a range like 40-80 seconds in some setups) before any cutting begins.
+                At a $100/hour machine rate, that kind of pierce-time block would correspond to roughly a couple of dollars of
+                modeled cost. Always confirm actual times and costs using your own cycle data.
               </p>
 
               <h3 className="mt-6 text-xl font-semibold text-gray-900">Pierce Time vs. Cutting Time</h3>
               <div className="rounded-lg bg-gray-50 p-4">
                 <p className="mb-2 font-semibold text-gray-900">Example: 10mm Mild Steel with 6kW Fiber Laser</p>
                 <ul className="list-disc space-y-1 pl-6 text-sm text-gray-700">
-                  <li>Pierce time: 0.8 seconds per hole</li>
-                  <li>Cutting speed: 1 m/min = 16.7 mm/sec</li>
-                  <li>Cutting 10mm would take: 0.6 seconds</li>
-                  <li>Result: Piercing takes 33% longer than cutting the same thickness</li>
+                  <li>Pierce time (example): 0.8 seconds per hole</li>
+                  <li>Cutting speed (example): 1 m/min = 16.7 mm/sec</li>
+                  <li>Cutting 10mm in this simple model: about 0.6 seconds</li>
+                  <li>Result in this scenario: the modeled pierce time is longer than the modeled cutting time for the same thickness; your actual ratio will depend on your parameters and machine.</li>
                 </ul>
               </div>
 
@@ -450,11 +498,11 @@ export default function PierceTimeCalculatorPage() {
             <div className="space-y-4">
               <FAQItem
                 question="What is piercing in laser cutting?"
-                answer="Piercing is the process of creating an initial hole through the material before cutting begins. The laser must burn through the full thickness at high power, which takes significantly longer than cutting along a line."
+                answer="Piercing is the process of creating an initial hole through the material before cutting begins. The laser must burn through the full thickness at high power, which typically takes longer than cutting along a line because there is no forward motion to distribute the heat."
               />
               <FAQItem
                 question="Why does piercing take so long on thick material?"
-                answer="Thick materials require more energy to melt through completely. Piercing 10mm steel can take 0.4-0.8 seconds, while cutting at 1 m/min would traverse the same thickness in 0.6 seconds. For 100 holes, this adds 40-80 seconds of pure piercing time."
+                answer="Thick materials require more energy to melt through completely, so pierce time increases with thickness. As one example, piercing 10mm steel might fall in a range like 0.4-0.8 seconds in some setups, while cutting at 1 m/min would traverse the same thickness in about 0.6 seconds. For 100 holes, that would add tens of seconds of pure piercing time. Always validate actual times on your own machine."
               />
               <FAQItem
                 question="How can I reduce piercing time?"
@@ -462,7 +510,7 @@ export default function PierceTimeCalculatorPage() {
               />
               <FAQItem
                 question="Does laser power affect pierce time?"
-                answer="Yes, significantly. A 12kW laser pierces thick material 2x faster than a 6kW laser. However, piercing is often power-limited to prevent splatter damage, so the improvement may be less than 2x in practice."
+                answer="Yes, higher available power can significantly reduce modeled pierce times. In simple comparisons, moving from 6kW to 12kW may cut pierce time for some thick materials to roughly around half, but in practice piercing is often power-limited to avoid splatter and damage. Use this estimator and your own cut data to understand how power changes affect your specific jobs."
               />
             </div>
           </div>
@@ -526,7 +574,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
       >
         <span className="font-semibold text-gray-900">{question}</span>
         <span className="flex-shrink-0 text-gray-400">
-          {isOpen ? '−' : '+'}
+          {isOpen ? '-' : '+'}
         </span>
       </button>
       {isOpen && (
@@ -564,4 +612,4 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 
 
 
-
+  const softwareSchema = generateSoftwareApplicationSchema('Pierce Time Estimator');

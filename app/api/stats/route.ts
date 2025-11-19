@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getCalculationStats } from '@/lib/db/calculations';
 import { getSubscriberStats } from '@/lib/db/subscribers';
 import { getArticleStats } from '@/lib/db/articles';

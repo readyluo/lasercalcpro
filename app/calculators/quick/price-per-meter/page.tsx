@@ -12,7 +12,7 @@ import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { DollarSign, Ruler, Scissors, Info } from 'lucide-react';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
-import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
+import { generateCalculatorHowToSchema, generateFAQSchema, generateSoftwareApplicationSchema } from '@/lib/seo/schema';
 import Link from 'next/link';
 
 const MATERIAL_BASE_SPEED_M_PER_MIN: Record<string, (thickness: number) => number> = {
@@ -25,8 +25,17 @@ const MATERIAL_BASE_SPEED_M_PER_MIN: Record<string, (thickness: number) => numbe
 
 const POWER_EFFICIENCY_FACTOR = (kw: number) => Math.min(1.4, 0.7 + kw / 10);
 
+type PricePerMeterResult = {
+  costPerMeter: number;
+  minutesPerMeter: number;
+  speedMPerMin: number;
+  electricityPerMeter: number;
+  laborPerMeter: number;
+  consumablesPerMeter: number;
+};
+
 export default function PricePerMeterMiniCalculatorPage() {
-  const { register, handleSubmit, formState: { errors }, watch, reset } = useForm<PricePerMeterInput>({
+  const { register, handleSubmit, formState: { errors } } = useForm<PricePerMeterInput>({
     resolver: zodResolver(pricePerMeterSchema),
     defaultValues: {
       materialType: 'mild_steel',
@@ -37,7 +46,7 @@ export default function PricePerMeterMiniCalculatorPage() {
     },
   });
 
-  const [pricePerMeter, setPricePerMeter] = React.useState<number | null>(null);
+  const [result, setResult] = React.useState<PricePerMeterResult | null>(null);
 
   const howToSchema = generateCalculatorHowToSchema(
     'Laser Cutting Price per Meter Calculator',
@@ -56,13 +65,16 @@ export default function PricePerMeterMiniCalculatorPage() {
     },
     {
       question: 'How accurate is this quick calculator?',
-      answer: 'This provides a rough estimate (±20%) based on typical cutting speeds. For detailed quotes, use the full laser cutting calculator.',
+      answer:
+        'This provides a rough ballpark estimate based on internal cutting speed assumptions. Actual costs depend on your machine, parameters, and local rates, so always compare results against your own production data. For detailed quotes, use the full laser cutting calculator or your shop-specific cost models.',
     },
     {
       question: 'Why does thickness affect price so much?',
       answer: 'Thicker materials require slower cutting speeds, which increases the time (and thus labor and electricity cost) per meter of cut.',
     },
   ]);
+
+  const softwareSchema = generateSoftwareApplicationSchema('Laser Cutting Price per Meter Calculator');
 
   const materialOptions = [
     { value: 'mild_steel', label: 'Mild Steel' },
@@ -72,27 +84,34 @@ export default function PricePerMeterMiniCalculatorPage() {
     { value: 'copper', label: 'Copper' },
   ];
 
-  function calculate(form: PricePerMeterInput): number {
+  function calculate(form: PricePerMeterInput): PricePerMeterResult {
     const baseSpeed = MATERIAL_BASE_SPEED_M_PER_MIN[form.materialType](form.thickness);
     const speed = baseSpeed * POWER_EFFICIENCY_FACTOR(form.laserPower);
     const minutesPerMeter = 1 / Math.max(0.1, speed);
-    const powerCostPerHour = form.totalPowerKw ? 0 : 0; // placeholder to avoid ts unused vars
     const equipmentKw = form.laserPower * 1.6; // approx system power (laser + chiller + exhaust)
     const electricityPerMinute = (equipmentKw * form.electricityRate) / 60;
     const laborPerMinute = form.laborRate / 60;
     const operatingCostPerMinute = electricityPerMinute + laborPerMinute + 0.05; // small consumables buffer
     const costPerMeter = operatingCostPerMinute * minutesPerMeter;
-    return Number(costPerMeter.toFixed(2));
+    return {
+      costPerMeter: Number(costPerMeter.toFixed(2)),
+      minutesPerMeter,
+      speedMPerMin: speed,
+      electricityPerMeter: Number((electricityPerMinute * minutesPerMeter).toFixed(2)),
+      laborPerMeter: Number((laborPerMinute * minutesPerMeter).toFixed(2)),
+      consumablesPerMeter: Number((0.05 * minutesPerMeter).toFixed(2)),
+    };
   }
 
   const onSubmit = (data: PricePerMeterInput) => {
     const ppm = calculate(data);
-    setPricePerMeter(ppm);
+    setResult(ppm);
     setTimeout(() => document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' }), 50);
   };
 
   return (
     <>
+      <SchemaMarkup schema={softwareSchema} />
       <SchemaMarkup schema={howToSchema} />
       <SchemaMarkup schema={faqSchema} />
       <Navigation />
@@ -102,7 +121,7 @@ export default function PricePerMeterMiniCalculatorPage() {
 
           <div className="mb-8">
             <h1 className="mb-2 text-3xl font-bold text-gray-900">Laser Cutting Price per Meter</h1>
-            <p className="text-gray-600">Ultra-fast estimator: get an approximate operating price per meter by material and thickness.</p>
+            <p className="text-gray-600">Quick estimator to get an approximate operating cost per meter by material and thickness, based on simplified internal speed assumptions.</p>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-2">
@@ -154,7 +173,7 @@ export default function PricePerMeterMiniCalculatorPage() {
             </div>
 
             <div>
-              {pricePerMeter === null ? (
+              {result === null ? (
                 <div className="card flex min-h-[260px] flex-col items-center justify-center text-center">
                   <Scissors className="mb-3 h-12 w-12 text-gray-300" />
                   <p className="text-gray-600">Enter parameters and calculate to see price per meter.</p>
@@ -163,8 +182,22 @@ export default function PricePerMeterMiniCalculatorPage() {
                 <div id="results" className="space-y-6">
                   <div className="card bg-gradient-to-br from-primary-600 to-primary-800 text-white">
                     <h2 className="mb-2 text-xl font-bold">Estimated Price per Meter</h2>
-                    <p className="text-4xl font-bold">${pricePerMeter}</p>
+                    <p className="text-4xl font-bold">${result.costPerMeter}</p>
                     <p className="mt-2 text-sm text-blue-100">Approximate operating cost only. Material cost and gas not included.</p>
+                  </div>
+
+                  <div className="card grid gap-4 md:grid-cols-2">
+                    <div>
+                      <h3 className="mb-1 text-sm font-semibold text-gray-500">Assumptions</h3>
+                      <p className="text-sm text-gray-700">Speed: {result.speedMPerMin.toFixed(2)} m/min</p>
+                      <p className="text-sm text-gray-700">Minutes per meter: {result.minutesPerMeter.toFixed(2)} min</p>
+                    </div>
+                    <div>
+                      <h3 className="mb-1 text-sm font-semibold text-gray-500">Cost Breakdown</h3>
+                      <p className="text-sm text-gray-700">Electricity: ${result.electricityPerMeter}</p>
+                      <p className="text-sm text-gray-700">Labor: ${result.laborPerMeter}</p>
+                      <p className="text-sm text-gray-700">Consumables buffer: ${result.consumablesPerMeter}</p>
+                    </div>
                   </div>
 
                   <div className="card">
@@ -197,7 +230,7 @@ export default function PricePerMeterMiniCalculatorPage() {
 
               <div className="space-y-4">
                 <div className="border-l-4 border-primary-600 pl-4">
-                  <h3 className="mb-2 font-semibold text-gray-900">What's Included</h3>
+                  <h3 className="mb-2 font-semibold text-gray-900">What&apos;s Included</h3>
                   <p className="text-gray-600">
                     Electricity cost (laser + system power) and labor cost per meter based on typical cutting speeds. 
                     This gives you a baseline operating cost estimate.
@@ -205,7 +238,7 @@ export default function PricePerMeterMiniCalculatorPage() {
                 </div>
 
                 <div className="border-l-4 border-primary-600 pl-4">
-                  <h3 className="mb-2 font-semibold text-gray-900">What's Not Included</h3>
+                  <h3 className="mb-2 font-semibold text-gray-900">What&apos;s Not Included</h3>
                   <p className="text-gray-600">
                     Material costs, assist gas consumption, equipment depreciation, and overhead. For complete 
                     project quotes, use the <Link href="/calculators/laser-cutting" className="text-primary-600 hover:underline">full laser cutting calculator</Link>.
@@ -224,6 +257,42 @@ export default function PricePerMeterMiniCalculatorPage() {
             </div>
           </div>
 
+          {/* Workflow */}
+          <div className="mt-12">
+            <div className="card">
+              <h2 className="mb-4 text-2xl font-bold text-gray-900">Workflow Integration</h2>
+              <ol className="space-y-3 text-sm text-gray-700">
+                <li>
+                  <span className="font-semibold text-gray-900">1. Pull reference data.</span> Grab feed rates from the{' '}
+                  <Link href="/calculators/quick-reference/cutting-speeds" className="text-primary-600 hover:underline">
+                    cutting speeds reference
+                  </Link>{' '}
+                  and confirm gas assumptions in the{' '}
+                  <Link href="/calculators/quick-reference/assist-gas" className="text-primary-600 hover:underline">
+                    assist gas guide
+                  </Link>
+                  .
+                </li>
+                <li>
+                  <span className="font-semibold text-gray-900">2. Run the quick calculator.</span> Use this tool to
+                  translate that speed into an operating cost target for phone quotes or early scoping.
+                </li>
+                <li>
+                  <span className="font-semibold text-gray-900">3. Promote to detailed tools.</span> Once the job is
+                  serious, feed the same assumptions into the{' '}
+                  <Link href="/calculators/laser-cutting" className="text-primary-600 hover:underline">
+                    full laser cutting calculator
+                  </Link>{' '}
+                  or{' '}
+                  <Link href="/calculators/quick/hourly-rate" className="text-primary-600 hover:underline">
+                    hourly rate calculator
+                  </Link>{' '}
+                  so the final quote includes material, gas, depreciation, and markup.
+                </li>
+              </ol>
+            </div>
+          </div>
+
           {/* FAQ */}
           <div className="mt-12">
             <div className="card">
@@ -235,7 +304,7 @@ export default function PricePerMeterMiniCalculatorPage() {
                 />
                 <FAQItem
                   question="How accurate is this quick calculator?"
-                  answer="This provides a rough estimate (±20%) based on typical cutting speeds. For detailed quotes, use the full laser cutting calculator."
+                  answer="This provides a rough ballpark estimate based on internal cutting speed assumptions. Actual costs depend on your machine, parameters, and local rates, so always compare results against your own production data. For detailed quotes, use the full laser cutting calculator or your shop-specific cost models."
                 />
                 <FAQItem
                   question="Why does thickness affect price so much?"
@@ -318,5 +387,3 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
     </div>
   );
 }
-
-

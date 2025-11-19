@@ -1,15 +1,17 @@
-import type { Metadata } from 'next';
-import { Handshake, CheckCircle, Star, ArrowRight, Mail } from 'lucide-react';
 import Link from 'next/link';
+import { Handshake, CheckCircle, Star, ArrowRight, Mail } from 'lucide-react';
+import { Navigation } from '@/components/layout/Navigation';
+import { Footer } from '@/components/layout/Footer';
+import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
+import { generateMetadata } from '@/lib/seo/metadata';
 
-export const metadata: Metadata = {
+export const metadata = generateMetadata({
   title: 'Partners & Integrations | LaserCalc Pro',
-  description: 'Explore our trusted partners and integrations. Join our partner network to provide enhanced value to your customers.',
-  openGraph: {
-    title: 'Partners & Integrations | LaserCalc Pro',
-    description: 'Explore our trusted partners and integrations.',
-  },
-};
+  description: 'Explore embedded calculator partners, API integrations, and white-label opportunities with LaserCalc Pro.',
+  keywords: ['laser cutting partners', 'manufacturing software integrations', 'LaserCalc Pro partner program'],
+  alternates: { canonical: '/partners' },
+});
 
 interface Partner {
   id: string;
@@ -50,6 +52,24 @@ const partners: Partner[] = [
     featured: false,
   },
 ];
+
+const partnersSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'LaserCalc Pro Partners & Integrations',
+  url: 'https://www.lasercalcpro.com/partners',
+  description: 'Directory of LaserCalc Pro equipment, software, and service partners plus integration options.',
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: partners.map((partner, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: partner.name,
+      url: partner.website,
+      description: partner.description,
+    })),
+  },
+};
 
 const categoryLabels = {
   equipment: 'Equipment Manufacturers',
@@ -106,30 +126,31 @@ export default function PartnersPage() {
     acc[partner.category].push(partner);
     return acc;
   }, {} as Record<string, Partner[]>);
+  const featuredPartners = partners.filter(partner => partner.featured);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <Handshake className="h-12 w-12 text-primary-600" />
-              <h1 className="text-5xl font-bold text-gray-900">
-                Partners & Integrations
-              </h1>
+    <>
+      <Navigation />
+      <SchemaMarkup schema={partnersSchema} />
+      <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        <div className="border-b border-gray-200 bg-white">
+          <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+            <Breadcrumbs />
+            <div className="mt-8 text-center">
+              <div className="mb-6 flex items-center justify-center gap-3">
+                <Handshake className="h-12 w-12 text-primary-600" />
+                <h1 className="text-5xl font-bold text-gray-900">Partners & Integrations</h1>
+              </div>
+              <p className="mx-auto max-w-3xl text-xl text-gray-600">
+                Collaborate with LaserCalc Pro to embed calculators, power quoting workflows, or co-market manufacturing intelligence.
+              </p>
             </div>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We collaborate with industry leaders to provide comprehensive solutions for manufacturing cost optimization
-            </p>
           </div>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Featured Partners */}
-        {partners.filter(p => p.featured).length > 0 && (
+        {featuredPartners.length > 0 && (
           <section className="mb-16">
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-100 text-primary-700 rounded-full mb-4">
@@ -141,7 +162,7 @@ export default function PartnersPage() {
               </h2>
             </div>
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {partners.filter(p => p.featured).map(partner => (
+              {featuredPartners.map(partner => (
                 <div key={partner.id} className="bg-white rounded-xl border-2 border-primary-200 p-8 hover:shadow-lg transition-shadow">
                   <div className="flex items-center justify-between mb-6">
                     <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -379,7 +400,8 @@ export default function PartnersPage() {
           </div>
         </section>
       </div>
-    </div>
+      </main>
+      <Footer />
+    </>
   );
 }
-

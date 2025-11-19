@@ -2,6 +2,8 @@
  * API client utilities for frontend
  */
 
+import type { CalculationToolType } from '@/lib/types/calculations';
+
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
@@ -12,9 +14,9 @@ export interface ApiResponse<T> {
  * Save a calculation to the database
  */
 export async function saveCalculationToAPI(data: {
-  tool_type: string;
-  input_params: Record<string, any>;
-  result: Record<string, any>;
+  tool_type: CalculationToolType;
+  input_params: Record<string, unknown>;
+  result: Record<string, unknown>;
 }): Promise<ApiResponse<{ id: number }>> {
   try {
     const response = await fetch('/api/calculations', {
@@ -89,8 +91,6 @@ export async function getSiteStats(): Promise<ApiResponse<{
     };
   }
 }
-
-
 
 
 

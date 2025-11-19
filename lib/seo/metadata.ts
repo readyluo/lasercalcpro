@@ -15,6 +15,19 @@ export interface SEOProps {
   modifiedTime?: string;
   authors?: string[];
   noindex?: boolean;
+  alternates?: {
+    canonical?: string;
+    languages?: Record<string, string>;
+  };
+  robots?: {
+    index?: boolean;
+    follow?: boolean;
+  };
+  openGraph?: {
+    title?: string;
+    description?: string;
+    images?: string[];
+  };
 }
 
 export function generateMetadata(props: SEOProps = {}): Metadata {

@@ -1,35 +1,55 @@
-import type { Metadata } from 'next';
+import { Navigation } from '@/components/layout/Navigation';
+import { Footer } from '@/components/layout/Footer';
+import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
+import { generateMetadata } from '@/lib/seo/metadata';
 import { Cookie, Shield, Settings, FileText } from 'lucide-react';
 
-export const metadata: Metadata = {
+const LAST_UPDATED_TEXT = 'February 12, 2024';
+const LAST_UPDATED_ISO = '2024-02-12';
+
+export const metadata = generateMetadata({
   title: 'Cookie Policy | LaserCalc Pro',
-  description: 'Learn about how LaserCalc Pro uses cookies and similar technologies to enhance your experience. Understand your rights and manage your cookie preferences.',
-  openGraph: {
-    title: 'Cookie Policy | LaserCalc Pro',
-    description: 'Learn about how LaserCalc Pro uses cookies and similar technologies to enhance your experience.',
+  description: 'Understand how LaserCalc Pro uses necessary, functional, and advertising cookies plus the options available to manage consent.',
+  keywords: ['LaserCalc Pro cookies', 'manufacturing calculator cookies', 'cookie policy'],
+  alternates: { canonical: '/cookie-policy' },
+});
+
+const cookieSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'LaserCalc Pro Cookie Policy',
+  url: 'https://www.lasercalcpro.com/cookie-policy',
+  datePublished: LAST_UPDATED_ISO,
+  dateModified: LAST_UPDATED_ISO,
+  description: 'Cookie categories, retention windows, and preference instructions for LaserCalc Pro.',
+  isPartOf: {
+    '@type': 'WebSite',
+    name: 'LaserCalc Pro',
+    url: 'https://www.lasercalcpro.com',
   },
 };
 
 export default function CookiePolicyPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex items-center gap-3 mb-4">
-            <Cookie className="h-8 w-8 text-primary-600" />
-            <h1 className="text-4xl font-bold text-gray-900">
-              Cookie Policy
-            </h1>
+    <>
+      <Navigation />
+      <SchemaMarkup schema={cookieSchema} />
+      <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        {/* Header */}
+        <div className="border-b border-gray-200 bg-white">
+          <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+            <Breadcrumbs />
+            <div className="mt-6 flex items-center gap-3">
+              <Cookie className="h-8 w-8 text-primary-600" />
+              <h1 className="text-4xl font-bold text-gray-900">Cookie Policy</h1>
+            </div>
+            <p className="mt-3 text-lg text-gray-600">Last updated: {LAST_UPDATED_TEXT}</p>
           </div>
-          <p className="text-lg text-gray-600">
-            Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-          </p>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Content */}
+        <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Quick Links */}
         <div className="mb-8 p-6 bg-primary-50 rounded-lg border border-primary-200">
           <div className="flex items-center gap-2 mb-4">
@@ -42,7 +62,7 @@ export default function CookiePolicyPage() {
             You can control and manage cookies in various ways. Please keep in mind that removing or blocking cookies can impact your user experience.
           </p>
           <a
-            href="#cookie-settings"
+            href="/cookie-settings"
             className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
           >
             <Settings className="h-4 w-4" />
@@ -105,7 +125,7 @@ export default function CookiePolicyPage() {
                 Analytics and Performance Cookies
               </h3>
               <p className="text-gray-700 mb-3">
-                These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously. This helps us improve our website's performance and user experience.
+                These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously. This helps us improve our website&apos;s performance and user experience.
               </p>
               <div className="bg-gray-50 rounded p-4">
                 <p className="text-sm font-medium text-gray-900 mb-2">Examples:</p>
@@ -311,10 +331,10 @@ export default function CookiePolicyPage() {
             <p className="text-gray-700 mb-4">
               If you have any questions about our use of cookies or this Cookie Policy, please contact us:
             </p>
-            <div className="space-y-2 text-gray-700">
-              <p><strong>Email:</strong> privacy@lasercalcpro.com</p>
-              <p><strong>Address:</strong> [Your Business Address]</p>
-            </div>
+                <div className="space-y-2 text-gray-700">
+                  <p><strong>Email:</strong> privacy@lasercalcpro.com</p>
+                  <p><strong>Address:</strong> LaserCalc Pro, 123 Manufacturing Street, Industrial Park, CA 94000, United States</p>
+                </div>
           </div>
         </section>
 
@@ -325,12 +345,13 @@ export default function CookiePolicyPage() {
           </h2>
           <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
             <p className="text-gray-700">
-              We may update our Cookie Policy from time to time. We will notify you of any changes by posting the new Cookie Policy on this page and updating the "Last updated" date at the top of this policy.
+              We may update our Cookie Policy from time to time. We will notify you of any changes by posting the new Cookie Policy on this page and updating the &quot;Last updated&quot; date at the top of this policy.
             </p>
           </div>
         </section>
       </div>
-    </div>
+      </main>
+      <Footer />
+    </>
   );
 }
-

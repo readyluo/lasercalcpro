@@ -2,7 +2,7 @@
  * Finishing Time & Cost Estimator
  * 
  * Calculates post-cut finishing time and costs.
- * Pure functions based on industry time studies.
+ * Pure functions built on shared finishing time and cost constants.
  */
 
 import type { FinishingGuideInput } from '@/lib/validations/cost-center';
@@ -11,7 +11,7 @@ import {
   EDGE_QUALITY_LEVELS,
   ADDITIONAL_FINISHING,
   CUT_QUALITY_FINISHING_RELATIONSHIP,
-  FINISHING_LABOR_RATES,
+  // FINISHING_LABOR_RATES, // Reserved for future use
 } from '@/lib/calculators/constants/finishing';
 
 export interface FinishingGuideResult {
@@ -139,28 +139,29 @@ export function calculateFinishingGuide(input: FinishingGuideInput): FinishingGu
       'Cut quality is affecting finishing time. Optimize laser cutting parameters to reduce dross and improve edge quality.'
     );
     costSavingOpportunities.push(
-      'Improving cut quality from "fair" to "good" can reduce finishing time by 30%'
+      'Improving cut quality from "fair" to "good" can meaningfully reduce finishing time; use this model with your own parameters to compare scenarios.'
     );
   }
   
   // Method recommendations
   if (input.method === 'manual' && input.edgeLengthMeters > 5) {
     costSavingOpportunities.push(
-      'Consider powered deburring tools for edges > 5m to reduce time by 30-40%'
+      'Consider powered deburring tools for longer edges to reduce manual touch time; compare modeled manual and powered scenarios with your own data.'
     );
   }
   
   if (input.method === 'powered' && totalTimeMinutes > 60) {
     costSavingOpportunities.push(
-      'High finishing volume detected. Automated deburring equipment may provide ROI with 50-60% time savings'
+      'High modeled finishing volume detected. Automated deburring equipment may be worth evaluating; use the ROI helper here with your volumes, labor rates, and equipment cost to compare options.'
     );
   }
   
   // Quality level recommendations
   const qualityData = EDGE_QUALITY_LEVELS[input.qualityLevel];
   if (input.qualityLevel === 'high' || input.qualityLevel === 'mirror') {
+    const multiplier = (qualityData as any).finishingTimeMultiplier || 2;
     recommendations.push(
-      `High-quality finish requires ${qualityData.finishingTimeMultiplier}x baseline time. Ensure customer requirements justify the cost.`
+      `High-quality finish requires ${multiplier}x baseline time. Ensure customer requirements justify the cost.`
     );
   }
   
@@ -179,7 +180,7 @@ export function calculateFinishingGuide(input: FinishingGuideInput): FinishingGu
   
   if (input.material === 'aluminum' && input.qualityLevel !== 'ascut') {
     recommendations.push(
-      'Aluminum is softer and generally easier to finish than steel. May be able to reduce time estimates by 10-20%.'
+      'Aluminum is softer and often easier to finish than steel. You may find that measured finishing times are lower than conservative estimates used here; adjust your assumptions accordingly.'
     );
   }
   

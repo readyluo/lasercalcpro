@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminAuth } from '@/lib/auth/middleware';
-import { createArticle, getArticleBySlug, updateArticle, Article } from '@/lib/db/articles';
+import { createArticle, getArticleBySlug, updateArticle } from '@/lib/db/articles';
 
 export const runtime = 'nodejs';
 

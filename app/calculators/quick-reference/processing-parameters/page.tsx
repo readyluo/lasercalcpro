@@ -5,55 +5,56 @@ import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
-import { generateFAQSchema } from '@/lib/seo/schema';
+import { generateFAQSchema, generateSoftwareApplicationSchema } from '@/lib/seo/schema';
 import Link from 'next/link';
-import { Settings, Info, Zap, Wind } from 'lucide-react';
+import { Settings, Info, Zap, Wind, Gauge, ClipboardList } from 'lucide-react';
 
 // Material-specific cutting parameters for fiber laser
 const mildSteelParams = [
-  { thickness: '1mm', power: '1-2 kW', speed: '15-20 m/min', focus: '-1 to 0 mm', gas: 'O₂', pressure: '0.8-1.2 bar', nozzle: '1.0-1.5 mm' },
-  { thickness: '2mm', power: '2-3 kW', speed: '8-12 m/min', focus: '-1 to 0 mm', gas: 'O₂', pressure: '0.6-1.0 bar', nozzle: '1.5-2.0 mm' },
-  { thickness: '3mm', power: '3-4 kW', speed: '4-6 m/min', focus: '-1.5 to -0.5 mm', gas: 'O₂', pressure: '0.5-0.8 bar', nozzle: '1.5-2.0 mm' },
-  { thickness: '5mm', power: '4-6 kW', speed: '2-3.5 m/min', focus: '-2 to -1 mm', gas: 'O₂', pressure: '0.4-0.6 bar', nozzle: '2.0-2.5 mm' },
-  { thickness: '6mm', power: '6-8 kW', speed: '1.8-2.5 m/min', focus: '-2 to -1 mm', gas: 'O₂', pressure: '0.3-0.5 bar', nozzle: '2.0-2.5 mm' },
-  { thickness: '8mm', power: '6-10 kW', speed: '1.2-1.8 m/min', focus: '-2.5 to -1.5 mm', gas: 'O₂', pressure: '0.3-0.5 bar', nozzle: '2.5-3.0 mm' },
-  { thickness: '10mm', power: '8-12 kW', speed: '0.8-1.2 m/min', focus: '-3 to -2 mm', gas: 'O₂', pressure: '0.25-0.4 bar', nozzle: '2.5-3.0 mm' },
-  { thickness: '12mm', power: '10-15 kW', speed: '0.6-0.9 m/min', focus: '-3 to -2 mm', gas: 'O₂', pressure: '0.2-0.35 bar', nozzle: '3.0-3.5 mm' },
-  { thickness: '15mm', power: '12-20 kW', speed: '0.4-0.7 m/min', focus: '-3.5 to -2.5 mm', gas: 'O₂', pressure: '0.15-0.3 bar', nozzle: '3.0-3.5 mm' },
+  { thickness: '1 mm', power: '1-2 kW', speed: '15-20 m/min', focus: '-1 to 0 mm', gas: 'O2', pressure: '0.8-1.2 bar', nozzle: '1.0-1.5 mm' },
+  { thickness: '2 mm', power: '2-3 kW', speed: '8-12 m/min', focus: '-1 to 0 mm', gas: 'O2', pressure: '0.6-1.0 bar', nozzle: '1.5-2.0 mm' },
+  { thickness: '3 mm', power: '3-4 kW', speed: '4-6 m/min', focus: '-1.5 to -0.5 mm', gas: 'O2', pressure: '0.5-0.8 bar', nozzle: '1.5-2.0 mm' },
+  { thickness: '5 mm', power: '4-6 kW', speed: '2-3.5 m/min', focus: '-2 to -1 mm', gas: 'O2', pressure: '0.4-0.6 bar', nozzle: '2.0-2.5 mm' },
+  { thickness: '6 mm', power: '6-8 kW', speed: '1.8-2.5 m/min', focus: '-2 to -1 mm', gas: 'O2', pressure: '0.3-0.5 bar', nozzle: '2.0-2.5 mm' },
+  { thickness: '8 mm', power: '6-10 kW', speed: '1.2-1.8 m/min', focus: '-2.5 to -1.5 mm', gas: 'O2', pressure: '0.3-0.5 bar', nozzle: '2.5-3.0 mm' },
+  { thickness: '10 mm', power: '8-12 kW', speed: '0.8-1.2 m/min', focus: '-3 to -2 mm', gas: 'O2', pressure: '0.25-0.4 bar', nozzle: '2.5-3.0 mm' },
+  { thickness: '12 mm', power: '10-15 kW', speed: '0.6-0.9 m/min', focus: '-3 to -2 mm', gas: 'O2', pressure: '0.2-0.35 bar', nozzle: '3.0-3.5 mm' },
+  { thickness: '15 mm', power: '12-20 kW', speed: '0.4-0.7 m/min', focus: '-3.5 to -2.5 mm', gas: 'O2', pressure: '0.15-0.3 bar', nozzle: '3.0-3.5 mm' },
 ];
 
 const stainlessSteelParams = [
-  { thickness: '1mm', power: '1-2 kW', speed: '10-15 m/min', focus: '-1 to 0 mm', gas: 'N₂', pressure: '12-16 bar', nozzle: '1.0-1.5 mm' },
-  { thickness: '2mm', power: '2-3 kW', speed: '5-8 m/min', focus: '-1.5 to -0.5 mm', gas: 'N₂', pressure: '12-16 bar', nozzle: '1.5-2.0 mm' },
-  { thickness: '3mm', power: '3-4 kW', speed: '3-4.5 m/min', focus: '-2 to -1 mm', gas: 'N₂', pressure: '14-18 bar', nozzle: '1.5-2.0 mm' },
-  { thickness: '4mm', power: '4-6 kW', speed: '2-3 m/min', focus: '-2 to -1 mm', gas: 'N₂', pressure: '14-18 bar', nozzle: '2.0-2.5 mm' },
-  { thickness: '5mm', power: '6-8 kW', speed: '1.5-2.2 m/min', focus: '-2.5 to -1.5 mm', gas: 'N₂', pressure: '16-20 bar', nozzle: '2.0-2.5 mm' },
-  { thickness: '6mm', power: '6-10 kW', speed: '1.2-1.8 m/min', focus: '-2.5 to -1.5 mm', gas: 'N₂', pressure: '16-20 bar', nozzle: '2.5-3.0 mm' },
-  { thickness: '8mm', power: '8-12 kW', speed: '0.8-1.2 m/min', focus: '-3 to -2 mm', gas: 'N₂', pressure: '18-22 bar', nozzle: '2.5-3.0 mm' },
-  { thickness: '10mm', power: '10-15 kW', speed: '0.6-0.9 m/min', focus: '-3 to -2 mm', gas: 'N₂', pressure: '18-22 bar', nozzle: '3.0-3.5 mm' },
+  { thickness: '1 mm', power: '1-2 kW', speed: '10-15 m/min', focus: '-1 to 0 mm', gas: 'N2', pressure: '12-16 bar', nozzle: '1.0-1.5 mm' },
+  { thickness: '2 mm', power: '2-3 kW', speed: '5-8 m/min', focus: '-1.5 to -0.5 mm', gas: 'N2', pressure: '12-16 bar', nozzle: '1.5-2.0 mm' },
+  { thickness: '3 mm', power: '3-4 kW', speed: '3-4.5 m/min', focus: '-2 to -1 mm', gas: 'N2', pressure: '14-18 bar', nozzle: '1.5-2.0 mm' },
+  { thickness: '4 mm', power: '4-6 kW', speed: '2-3 m/min', focus: '-2 to -1 mm', gas: 'N2', pressure: '14-18 bar', nozzle: '2.0-2.5 mm' },
+  { thickness: '5 mm', power: '6-8 kW', speed: '1.5-2.2 m/min', focus: '-2.5 to -1.5 mm', gas: 'N2', pressure: '16-20 bar', nozzle: '2.0-2.5 mm' },
+  { thickness: '6 mm', power: '6-10 kW', speed: '1.2-1.8 m/min', focus: '-2.5 to -1.5 mm', gas: 'N2', pressure: '16-20 bar', nozzle: '2.5-3.0 mm' },
+  { thickness: '8 mm', power: '8-12 kW', speed: '0.8-1.2 m/min', focus: '-3 to -2 mm', gas: 'N2', pressure: '18-22 bar', nozzle: '2.5-3.0 mm' },
+  { thickness: '10 mm', power: '10-15 kW', speed: '0.6-0.9 m/min', focus: '-3 to -2 mm', gas: 'N2', pressure: '18-22 bar', nozzle: '3.0-3.5 mm' },
 ];
 
 const aluminumParams = [
-  { thickness: '1mm', power: '2-3 kW', speed: '12-18 m/min', focus: '0 to +1 mm', gas: 'N₂', pressure: '14-18 bar', nozzle: '1.5-2.0 mm' },
-  { thickness: '2mm', power: '3-4 kW', speed: '8-12 m/min', focus: '0 to +1 mm', gas: 'N₂', pressure: '14-18 bar', nozzle: '1.5-2.0 mm' },
-  { thickness: '3mm', power: '4-6 kW', speed: '6-9 m/min', focus: '-0.5 to +0.5 mm', gas: 'N₂', pressure: '16-20 bar', nozzle: '2.0-2.5 mm' },
-  { thickness: '4mm', power: '6-8 kW', speed: '4-6 m/min', focus: '-0.5 to +0.5 mm', gas: 'N₂', pressure: '16-20 bar', nozzle: '2.0-2.5 mm' },
-  { thickness: '5mm', power: '6-10 kW', speed: '3-4.5 m/min', focus: '-1 to 0 mm', gas: 'N₂', pressure: '16-20 bar', nozzle: '2.5-3.0 mm' },
-  { thickness: '6mm', power: '8-12 kW', speed: '2.5-3.5 m/min', focus: '-1 to 0 mm', gas: 'N₂', pressure: '18-22 bar', nozzle: '2.5-3.0 mm' },
-  { thickness: '8mm', power: '10-15 kW', speed: '1.8-2.5 m/min', focus: '-1.5 to -0.5 mm', gas: 'N₂', pressure: '18-22 bar', nozzle: '3.0-3.5 mm' },
-  { thickness: '10mm', power: '12-20 kW', speed: '1.2-1.8 m/min', focus: '-2 to -1 mm', gas: 'N₂', pressure: '20-24 bar', nozzle: '3.0-3.5 mm' },
+  { thickness: '1 mm', power: '2-3 kW', speed: '12-18 m/min', focus: '0 to +1 mm', gas: 'N2', pressure: '14-18 bar', nozzle: '1.5-2.0 mm' },
+  { thickness: '2 mm', power: '3-4 kW', speed: '8-12 m/min', focus: '0 to +1 mm', gas: 'N2', pressure: '14-18 bar', nozzle: '1.5-2.0 mm' },
+  { thickness: '3 mm', power: '4-6 kW', speed: '6-9 m/min', focus: '-0.5 to +0.5 mm', gas: 'N2', pressure: '16-20 bar', nozzle: '2.0-2.5 mm' },
+  { thickness: '4 mm', power: '6-8 kW', speed: '4-6 m/min', focus: '-0.5 to +0.5 mm', gas: 'N2', pressure: '16-20 bar', nozzle: '2.0-2.5 mm' },
+  { thickness: '5 mm', power: '6-10 kW', speed: '3-4.5 m/min', focus: '-1 to 0 mm', gas: 'N2', pressure: '16-20 bar', nozzle: '2.5-3.0 mm' },
+  { thickness: '6 mm', power: '8-12 kW', speed: '2.5-3.5 m/min', focus: '-1 to 0 mm', gas: 'N2', pressure: '18-22 bar', nozzle: '2.5-3.0 mm' },
+  { thickness: '8 mm', power: '10-15 kW', speed: '1.8-2.5 m/min', focus: '-1.5 to -0.5 mm', gas: 'N2', pressure: '18-22 bar', nozzle: '3.0-3.5 mm' },
+  { thickness: '10 mm', power: '12-20 kW', speed: '1.2-1.8 m/min', focus: '-2 to -1 mm', gas: 'N2', pressure: '20-24 bar', nozzle: '3.0-3.5 mm' },
 ];
 
 const copperParams = [
-  { thickness: '1mm', power: '3-4 kW', speed: '6-10 m/min', focus: '0 to +1 mm', gas: 'N₂', pressure: '16-20 bar', nozzle: '1.5-2.0 mm' },
-  { thickness: '2mm', power: '4-6 kW', speed: '3-5 m/min', focus: '0 to +1 mm', gas: 'N₂', pressure: '16-20 bar', nozzle: '2.0-2.5 mm' },
-  { thickness: '3mm', power: '6-8 kW', speed: '2-3 m/min', focus: '-0.5 to +0.5 mm', gas: 'N₂', pressure: '18-22 bar', nozzle: '2.0-2.5 mm' },
-  { thickness: '4mm', power: '8-10 kW', speed: '1.5-2.2 m/min', focus: '-1 to 0 mm', gas: 'N₂', pressure: '18-22 bar', nozzle: '2.5-3.0 mm' },
-  { thickness: '5mm', power: '10-12 kW', speed: '1.2-1.6 m/min', focus: '-1 to 0 mm', gas: 'N₂', pressure: '18-22 bar', nozzle: '2.5-3.0 mm' },
-  { thickness: '6mm', power: '12-15 kW', speed: '0.9-1.3 m/min', focus: '-1.5 to -0.5 mm', gas: 'N₂', pressure: '20-24 bar', nozzle: '3.0-3.5 mm' },
+  { thickness: '1 mm', power: '3-4 kW', speed: '6-10 m/min', focus: '0 to +1 mm', gas: 'N2', pressure: '16-20 bar', nozzle: '1.5-2.0 mm' },
+  { thickness: '2 mm', power: '4-6 kW', speed: '3-5 m/min', focus: '0 to +1 mm', gas: 'N2', pressure: '16-20 bar', nozzle: '2.0-2.5 mm' },
+  { thickness: '3 mm', power: '6-8 kW', speed: '2-3 m/min', focus: '-0.5 to +0.5 mm', gas: 'N2', pressure: '18-22 bar', nozzle: '2.0-2.5 mm' },
+  { thickness: '4 mm', power: '8-10 kW', speed: '1.5-2.2 m/min', focus: '-1 to 0 mm', gas: 'N2', pressure: '18-22 bar', nozzle: '2.5-3.0 mm' },
+  { thickness: '5 mm', power: '10-12 kW', speed: '1.2-1.6 m/min', focus: '-1 to 0 mm', gas: 'N2', pressure: '18-22 bar', nozzle: '2.5-3.0 mm' },
+  { thickness: '6 mm', power: '12-15 kW', speed: '0.9-1.3 m/min', focus: '-1.5 to -0.5 mm', gas: 'N2', pressure: '20-24 bar', nozzle: '3.0-3.5 mm' },
 ];
 
 export default function ProcessingParametersPage() {
+  const softwareSchema = generateSoftwareApplicationSchema('Processing Parameters Reference');
   const [selectedMaterial, setSelectedMaterial] = React.useState('mild_steel');
 
   const faqSchema = generateFAQSchema([
@@ -63,11 +64,13 @@ export default function ProcessingParametersPage() {
     },
     {
       question: 'Why does stainless steel require high nitrogen pressure?',
-      answer: 'High nitrogen pressure (12-22 bar) is needed to prevent oxidation and achieve bright, oxide-free cut edges on stainless steel. The high pressure also helps blow molten material out of the kerf efficiently. Lower pressure results in discolored edges that require secondary finishing.',
+      answer:
+        'In many bright-cut stainless applications, higher nitrogen pressures (for example in the teens of bar) are used to help limit oxidation and blow molten material out of the kerf. The exact range should come from your machine cut charts and gas supplier data; running well below your validated range can lead to discolored edges that may require secondary finishing.',
     },
     {
       question: 'How do I choose the right nozzle diameter?',
-      answer: 'Nozzle diameter should increase with material thickness. Thin materials (1-3mm) use 1.0-2.0mm nozzles for precision. Medium thickness (4-8mm) needs 2.0-3.0mm for adequate gas flow. Thick materials (10mm+) require 3.0-3.5mm nozzles to maintain cutting performance.',
+      answer:
+        'A common pattern in many cut charts is to use smaller nozzles on thinner materials and larger diameters on thick plate. In this reference, thin materials (for example 1-3 mm) are paired with 1.0-2.0 mm example nozzle sizes, medium thicknesses (4-8 mm) with 2.0-3.0 mm, and thicker sections (10 mm+) with 3.0-3.5 mm. Always follow the nozzle recommendations in your machine documentation and gas delivery system.',
     },
     {
       question: 'Can I use these parameters on my laser system?',
@@ -75,7 +78,8 @@ export default function ProcessingParametersPage() {
     },
     {
       question: 'Why is oxygen pressure lower than nitrogen pressure?',
-      answer: 'Oxygen cutting uses an exothermic reaction that generates additional heat, requiring only 0.2-1.2 bar. Nitrogen cutting is purely thermal (no reaction), requiring 12-24 bar to blow molten material out effectively. This pressure difference significantly impacts operating costs.',
+      answer:
+        'Oxygen cutting relies on an exothermic reaction that adds heat to the cut, so many cut charts use relatively low oxygen pressures compared to nitrogen. Nitrogen cutting is primarily thermal and often requires significantly higher pressures to blow molten material out effectively. The specific pressure ranges and cost impact should be taken from your own machine documentation, gas supply, and cost models.',
     },
   ]);
 
@@ -105,13 +109,14 @@ export default function ProcessingParametersPage() {
     copper: {
       name: 'Copper / Brass',
       color: 'orange',
-      notes: 'Extremely reflective - high power essential. Challenging to cut consistently below 3kW.',
+      notes: 'Extremely reflective - high power essential. Challenging to cut consistently below 3 kW.',
     },
   };
 
   return (
     <>
       <SchemaMarkup schema={faqSchema} />
+      <SchemaMarkup schema={softwareSchema} />
       <Navigation />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
@@ -123,8 +128,49 @@ export default function ProcessingParametersPage() {
               Laser Cutting Processing Parameters Reference
             </h1>
             <p className="text-xl text-gray-600">
-              Comprehensive parameter tables for fiber laser cutting across materials and thicknesses
+              Example processing parameter tables for fiber laser cutting across materials and thicknesses
+              that should be calibrated against your own machine cut charts, OEM recommendations, and test cuts.
             </p>
+          </div>
+
+          {/* Parameter Workflow */}
+          <div className="card mb-8 bg-gradient-to-br from-primary-50 to-blue-50">
+            <div className="mb-4 flex items-start gap-3">
+              <div className="rounded-full bg-primary-100 p-2">
+                <ClipboardList className="h-6 w-6 text-primary-700" />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">Parameter Workflow</h2>
+                <p className="mt-1 text-gray-700">Keep programming, quoting, and QA in lockstep.</p>
+              </div>
+            </div>
+            <ol className="space-y-4 text-sm text-gray-800">
+              <li>
+                <span className="font-semibold text-gray-900">1. Capture baselines.</span> Pull the closest thickness row
+                from this chart, then log pierce time, standoff, and lens data in your router so it can be audited later.
+              </li>
+              <li>
+                <span className="font-semibold text-gray-900">2. Validate & iterate.</span> Cut a coupon, measure burr,
+                kerf, and HAZ, then make small, incremental adjustments to power, speed, focus, or pressure until results
+                meet your requirements. Store each revision with a timestamp and operator notes.
+              </li>
+              <li>
+                <span className="font-semibold text-gray-900">3. Push downstream.</span> Feed the approved parameter set
+                into the{' '}
+                <Link href="/calculators/laser-cutting" className="text-primary-700 underline-offset-2 hover:underline">
+                  laser cutting calculator
+                </Link>
+                , reference gas pressure with the{' '}
+                <Link href="/calculators/quick-reference/assist-gas" className="text-primary-700 underline-offset-2 hover:underline">
+                  assist gas guide
+                </Link>
+                , and update hourly burden via the{' '}
+                <Link href="/calculators/quick/hourly-rate" className="text-primary-700 underline-offset-2 hover:underline">
+                  hourly rate tool
+                </Link>{' '}
+                so quotes and SOPs stay aligned.
+              </li>
+            </ol>
           </div>
 
           {/* Quick Info Banner */}
@@ -134,7 +180,7 @@ export default function ProcessingParametersPage() {
               <div>
                 <h3 className="mb-2 text-lg font-semibold text-gray-900">How to Use This Reference</h3>
                 <p className="text-gray-700 mb-3">
-                  These parameters are starting points for modern fiber laser systems (1-20kW). Actual optimal 
+                  These parameters are starting points for modern fiber laser systems (1-20 kW). Actual optimal 
                   parameters vary based on beam quality, material grade, nozzle condition, and environmental factors. 
                   Always verify with test cuts before production runs.
                 </p>
@@ -149,6 +195,51 @@ export default function ProcessingParametersPage() {
                     <span className="font-semibold">Pressure:</span> Assist gas pressure
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Unit & Logging Guide */}
+          <div className="card mb-8">
+            <div className="mb-4 flex items-start gap-3">
+              <div className="rounded-full bg-blue-100 p-2">
+                <Gauge className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">Unit & Logging Checklist</h2>
+                <p className="mt-1 text-gray-700">
+                  Normalize every data point before handing it to programming, quoting, or QA.
+                </p>
+              </div>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="rounded-lg bg-gray-50 p-4 text-sm">
+                <p className="font-semibold text-gray-900">Conversion reminders</p>
+                <ul className="mt-2 list-disc pl-5 text-gray-700">
+                  <li>Focus offset of -1 mm equals 0.001 m below the material surface; positive values sit above.</li>
+                  <li>Pierce time (s) = pierce delay + ramp time per hole. Multiply by pierce count to capture cycle time.</li>
+                  <li>
+                    Cutting feeds: IPM = m/min x 39.37. Cross-check with the{' '}
+                    <Link href="/calculators/quick-reference/cutting-speeds" className="text-primary-700 underline-offset-2 hover:underline">
+                      cutting speeds reference
+                    </Link>{' '}
+                    before programming.
+                  </li>
+                </ul>
+              </div>
+              <div className="rounded-lg bg-gray-50 p-4 text-sm">
+                <p className="font-semibold text-gray-900">Process logging</p>
+                <ul className="mt-2 list-disc pl-5 text-gray-700">
+                  <li>Record power, speed, focus, gas, pierce delay, and nozzle size per material grade or heat lot.</li>
+                  <li>Attach photos of edge quality and note burr height or discoloration for QA baselines.</li>
+                  <li>
+                    Sync validated parameter sets with the{' '}
+                    <Link href="/calculators/laser-cutting" className="text-primary-700 underline-offset-2 hover:underline">
+                      laser cutting calculator
+                    </Link>{' '}
+                    and PDF exports so quotes match shop-floor reality.
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
@@ -195,7 +286,7 @@ export default function ProcessingParametersPage() {
                     <th className="p-3 text-left font-semibold">Focal Position</th>
                     <th className="p-3 text-left font-semibold">Assist Gas</th>
                     <th className="p-3 text-left font-semibold">Gas Pressure</th>
-                    <th className="p-3 text-left font-semibold">Nozzle Ø</th>
+                    <th className="p-3 text-left font-semibold">Nozzle Dia</th>
                   </tr>
                 </thead>
                 <tbody className="text-gray-700">
@@ -218,9 +309,9 @@ export default function ProcessingParametersPage() {
               <div className="flex items-start gap-3">
                 <Zap className="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-600" />
                 <p className="text-sm text-gray-700">
-                  <strong>Note:</strong> These parameters assume good beam quality (M² &lt; 1.5), clean nozzles, 
+                  <strong>Note:</strong> These parameters assume good beam quality (M^2 &lt; 1.5), clean nozzles, 
                   and standard material grades. Higher-quality materials or better beam quality may allow faster speeds. 
-                  Lower-grade materials may require slower speeds or higher power.
+                  Lower-grade materials may require slower speeds or higher power. Always verify with test cuts before production runs.
                 </p>
               </div>
             </div>
@@ -251,7 +342,7 @@ export default function ProcessingParametersPage() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-1 text-blue-600">▸</span>
-                    <span><strong>Rule of Thumb:</strong> Doubling power increases cutting speed by 50-70%, not 100%</span>
+                    <span><strong>Rule of Thumb:</strong> Increasing power usually produces less-than-linear gains in cutting speed; use test coupons at different settings to see how much benefit additional power actually provides on your machine.</span>
                   </li>
                 </ul>
               </div>
@@ -264,19 +355,19 @@ export default function ProcessingParametersPage() {
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li className="flex items-start gap-2">
                     <span className="mt-1 text-green-600">▸</span>
-                    <span><strong>Negative Focus (-2 to -3mm):</strong> Deep penetration, good for thick materials (≥6mm)</span>
+                    <span><strong>Negative Focus (-2 to -3 mm):</strong> Deep penetration, good for thick materials (&gt;=6 mm)</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-1 text-green-600">▸</span>
-                    <span><strong>Zero Focus (0mm):</strong> Balanced performance, general purpose for most thicknesses</span>
+                    <span><strong>Zero Focus (0 mm):</strong> Balanced performance, general purpose for most thicknesses</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-1 text-green-600">▸</span>
-                    <span><strong>Positive Focus (+0.5 to +1mm):</strong> Clean top edge, ideal for reflective materials</span>
+                    <span><strong>Positive Focus (+0.5 to +1 mm):</strong> Clean top edge, ideal for reflective materials</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-1 text-green-600">▸</span>
-                    <span><strong>Adjustment Step:</strong> Change in 0.5mm increments during optimization</span>
+                    <span><strong>Adjustment Step:</strong> Test focus in small increments (for example on the order of fractions of a millimeter) around your baseline while monitoring cut quality.</span>
                   </li>
                 </ul>
               </div>
@@ -301,7 +392,7 @@ export default function ProcessingParametersPage() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-1 text-purple-600">▸</span>
-                    <span><strong>Testing:</strong> Start at recommended pressure, adjust ±2 bar to optimize</span>
+                    <span><strong>Testing:</strong> Start at the pressure recommended in your cut charts, then test modest increases or decreases while observing dross, edge quality, and gas consumption.</span>
                   </li>
                 </ul>
               </div>
@@ -314,19 +405,19 @@ export default function ProcessingParametersPage() {
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li className="flex items-start gap-2">
                     <span className="mt-1 text-orange-600">▸</span>
-                    <span><strong>Small Nozzle (1.0-1.5mm):</strong> Precision cutting, thin materials, tight tolerances</span>
+                    <span><strong>Small Nozzle (1.0-1.5 mm):</strong> Precision cutting, thin materials, tight tolerances</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-1 text-orange-600">▸</span>
-                    <span><strong>Medium Nozzle (2.0-2.5mm):</strong> General purpose, most common for 3-8mm materials</span>
+                    <span><strong>Medium Nozzle (2.0-2.5 mm):</strong> General purpose, most common for 3-8 mm materials</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-1 text-orange-600">▸</span>
-                    <span><strong>Large Nozzle (3.0-3.5mm):</strong> Thick materials (≥10mm), high gas flow required</span>
+                    <span><strong>Large Nozzle (3.0-3.5 mm):</strong> Thick materials (&gt;=10 mm), high gas flow required</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-1 text-orange-600">▸</span>
-                    <span><strong>Maintenance:</strong> Replace or clean nozzles every 20-40 hours of cutting</span>
+                    <span><strong>Maintenance:</strong> Establish a cleaning and replacement interval for nozzles based on your OEM guidance and observed wear—many shops tie this to tens of cutting hours and visual inspection.</span>
                   </li>
                 </ul>
               </div>
@@ -342,8 +433,8 @@ export default function ProcessingParametersPage() {
                 <h3 className="mb-2 text-lg font-semibold text-gray-900">Issue: Excessive Dross (molten material on bottom edge)</h3>
                 <p className="mb-2 text-sm text-gray-700"><strong>Causes:</strong> Insufficient gas pressure, focus too high, speed too slow, nozzle worn/dirty</p>
                 <p className="text-sm text-gray-700">
-                  <strong>Solutions:</strong> Increase gas pressure by 2-4 bar → Lower focal position by 0.5-1mm → 
-                  Increase cutting speed by 10-15% → Clean or replace nozzle → Check nozzle standoff distance
+                  <strong>Solutions:</strong> Increase gas pressure from your baseline, lower the focal position slightly into the material,
+                  try a modest increase in cutting speed, clean or replace the nozzle, and confirm nozzle standoff distance.
                 </p>
               </div>
 
@@ -351,8 +442,8 @@ export default function ProcessingParametersPage() {
                 <h3 className="mb-2 text-lg font-semibold text-gray-900">Issue: Rough or Wavy Edge Quality</h3>
                 <p className="mb-2 text-sm text-gray-700"><strong>Causes:</strong> Speed too fast, power insufficient, gas pressure too high, poor beam quality</p>
                 <p className="text-sm text-gray-700">
-                  <strong>Solutions:</strong> Reduce speed by 15-20% → Increase power by 10-15% → 
-                  Reduce gas pressure by 2-3 bar → Check lens cleanliness → Verify beam alignment
+                  <strong>Solutions:</strong> Gradually reduce cutting speed, increase power if available, adjust gas pressure downward if it is excessively high,
+                  and check lens cleanliness and beam alignment.
                 </p>
               </div>
 
@@ -360,8 +451,8 @@ export default function ProcessingParametersPage() {
                 <h3 className="mb-2 text-lg font-semibold text-gray-900">Issue: Incomplete Cuts or Interrupted Cuts</h3>
                 <p className="mb-2 text-sm text-gray-700"><strong>Causes:</strong> Insufficient power, speed too fast, focal drift, material quality issues</p>
                 <p className="text-sm text-gray-700">
-                  <strong>Solutions:</strong> Increase power by 15-20% → Reduce speed by 20-30% → 
-                  Re-measure and adjust focal position → Verify material thickness consistency → Check for oil/rust on material
+                  <strong>Solutions:</strong> Increase available power where possible, reduce cutting speed, re-measure and adjust focal position,
+                  verify material thickness consistency, and check for oil or rust on the material surface.
                 </p>
               </div>
 
@@ -369,8 +460,9 @@ export default function ProcessingParametersPage() {
                 <h3 className="mb-2 text-lg font-semibold text-gray-900">Issue: Discolored Edges on Stainless Steel</h3>
                 <p className="mb-2 text-sm text-gray-700"><strong>Causes:</strong> Nitrogen pressure too low, oxidation occurring, contaminated gas</p>
                 <p className="text-sm text-gray-700">
-                  <strong>Solutions:</strong> Increase nitrogen pressure to 16-20 bar → Verify nitrogen purity (&gt;99.95%) → 
-                  Check for air leaks in gas line → Reduce cutting speed slightly → Increase gas flow volume
+                  <strong>Solutions:</strong> If your nitrogen pressure is below the range you normally run for bright-cut stainless on your machine,
+                  increase it toward your validated settings, verify nitrogen purity (for example specifications of 99.95% or better),
+                  check for air leaks in the gas line, consider a slight reduction in cutting speed, and increase gas flow volume if needed.
                 </p>
               </div>
 
@@ -378,8 +470,9 @@ export default function ProcessingParametersPage() {
                 <h3 className="mb-2 text-lg font-semibold text-gray-900">Issue: Burning or Melting on Aluminum</h3>
                 <p className="mb-2 text-sm text-gray-700"><strong>Causes:</strong> Focus position too negative, speed too slow, power too high</p>
                 <p className="text-sm text-gray-700">
-                  <strong>Solutions:</strong> Adjust focus to zero or slightly positive → Increase cutting speed by 15-25% → 
-                  Reduce power by 10% if possible → Increase nitrogen pressure → Use higher-purity nitrogen (&gt;99.99%)
+                  <strong>Solutions:</strong> Adjust focus to zero or slightly positive, experiment with higher cutting speeds instead of dwelling too long
+                  in the cut, reduce power if the material is overheating, increase nitrogen pressure where appropriate, and consider higher-purity
+                  nitrogen (for example, specifications above 99.99%) when edge color is critical.
                 </p>
               </div>
             </div>
@@ -394,9 +487,9 @@ export default function ProcessingParametersPage() {
                 <div className="rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 p-5">
                   <h3 className="mb-3 text-lg font-semibold text-gray-900">1. Parameter Testing Matrix</h3>
                   <p className="text-sm text-gray-700">
-                    When optimizing, vary only ONE parameter at a time. Create a test matrix: start with recommended 
-                    parameters, then test speed ±20%, power ±10%, pressure ±20%, and focus ±1mm. Document results 
-                    with photos to identify optimal combinations.
+                    When optimizing, vary only ONE parameter at a time. Create a test matrix: start with recommended
+                    parameters, then explore small positive and negative changes to speed, power, pressure, or focus around that baseline.
+                    Document results with photos to identify combinations that work best on your specific machine and material.
                   </p>
                 </div>
 
@@ -404,26 +497,26 @@ export default function ProcessingParametersPage() {
                   <h3 className="mb-3 text-lg font-semibold text-gray-900">2. Material-Specific Challenges</h3>
                   <p className="text-sm text-gray-700">
                     Galvanized steel requires careful power control to avoid zinc vapor damage. Painted materials 
-                    need higher power. Rusty or oily materials require cleaning or significantly more power (15-25%). 
-                    Account for these variations in production planning.
+                    often need higher power. Rusty or oily materials require cleaning and may need noticeably more power than clean stock; use test cuts
+                    to understand how large the difference is in your environment and account for these variations in production planning.
                   </p>
                 </div>
 
                 <div className="rounded-lg bg-gradient-to-br from-purple-50 to-pink-50 p-5">
                   <h3 className="mb-3 text-lg font-semibold text-gray-900">3. Environmental Factors</h3>
                   <p className="text-sm text-gray-700">
-                    Temperature affects beam quality and material properties. Cold materials (&lt;10°C) may need 10-15% 
-                    more power. High humidity can cause lens condensation. Maintain workshop temperature 15-25°C and 
-                    humidity &lt;60% for consistent results.
+                    Temperature affects beam quality and material properties. Very cold material stock can sometimes require higher power or different
+                    parameters to achieve consistent cuts, and high humidity can cause lens condensation. Follow the environmental ranges and guidelines
+                    in your machine manual (for example, many OEMs recommend operating within a moderate temperature and humidity band) to keep results stable.
                   </p>
                 </div>
 
                 <div className="rounded-lg bg-gradient-to-br from-orange-50 to-red-50 p-5">
                   <h3 className="mb-3 text-lg font-semibold text-gray-900">4. Production vs. Quality Balance</h3>
                   <p className="text-sm text-gray-700">
-                    Maximum speed isn't always optimal. Running at 85-90% of maximum speed often improves edge quality 
-                    significantly while reducing speed by only 10-15%. For high-value parts, prioritize quality. For 
-                    high-volume parts, maximize speed within quality tolerances.
+                    Maximum speed is not always optimal. In many shops, backing off slightly from absolute maximum speed can noticeably improve edge
+                    quality for a modest impact on cycle time. For high-value parts, prioritize quality; for high-volume parts, push speed as far as you
+                    can while staying within required tolerances.
                   </p>
                 </div>
               </div>
@@ -440,11 +533,11 @@ export default function ProcessingParametersPage() {
               />
               <FAQItem
                 question="Why does stainless steel require high nitrogen pressure?"
-                answer="High nitrogen pressure (12-22 bar) is needed to prevent oxidation and achieve bright, oxide-free cut edges on stainless steel. The high pressure also helps blow molten material out of the kerf efficiently. Lower pressure results in discolored edges that require secondary finishing."
+                answer="In many bright-cut stainless applications, higher nitrogen pressures (for example in the teens of bar) are used to help limit oxidation and blow molten material out of the kerf. The exact range should come from your machine cut charts and gas supplier data; running well below your validated range can lead to discolored edges that may require secondary finishing."
               />
               <FAQItem
                 question="How do I choose the right nozzle diameter?"
-                answer="Nozzle diameter should increase with material thickness. Thin materials (1-3mm) use 1.0-2.0mm nozzles for precision. Medium thickness (4-8mm) needs 2.0-3.0mm for adequate gas flow. Thick materials (10mm+) require 3.0-3.5mm nozzles to maintain cutting performance."
+                answer="A common pattern in many cut charts is to use smaller nozzles on thinner materials and larger diameters on thick plate. In this reference, thin materials (for example 1-3 mm) are paired with 1.0-2.0 mm example nozzle sizes, medium thicknesses (4-8 mm) with 2.0-3.0 mm, and thicker sections (10 mm+) with 3.0-3.5 mm. Always follow the nozzle recommendations in your machine documentation and gas delivery system."
               />
               <FAQItem
                 question="Can I use these parameters on my laser system?"
@@ -452,7 +545,7 @@ export default function ProcessingParametersPage() {
               />
               <FAQItem
                 question="Why is oxygen pressure lower than nitrogen pressure?"
-                answer="Oxygen cutting uses an exothermic reaction that generates additional heat, requiring only 0.2-1.2 bar. Nitrogen cutting is purely thermal (no reaction), requiring 12-24 bar to blow molten material out effectively. This pressure difference significantly impacts operating costs."
+                answer="Oxygen cutting relies on an exothermic reaction that adds heat to the cut, so many cut charts use relatively low oxygen pressures compared to nitrogen. Nitrogen cutting is primarily thermal and often requires significantly higher pressures to blow molten material out effectively. The specific pressure ranges and cost impact should be taken from your own machine documentation, gas supply, and cost models."
               />
             </div>
           </div>
@@ -527,10 +620,6 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
     </div>
   );
 }
-
-
-
-
 
 
 

@@ -19,9 +19,7 @@ const inter = Inter({
 
 export const metadata: Metadata = generateMetadata();
 
-// Force dynamic rendering for all pages
-export const dynamic = 'force-dynamic';
-export const dynamicParams = true;
+export const revalidate = 3600; // Cache static shell for one hour
 
 export default function RootLayout({
   children,
@@ -38,6 +36,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body className={`${inter.className} antialiased`}>
         <SchemaMarkup schema={organizationSchema} />
@@ -54,4 +53,3 @@ export default function RootLayout({
     </html>
   );
 }
-

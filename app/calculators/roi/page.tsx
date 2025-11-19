@@ -20,23 +20,25 @@ import {
   YearlyROIChart,
   ROIGrowthChart,
 } from '@/components/calculators/ROIChart';
+import { Calculator, RotateCcw, DollarSign, TrendingUp, Calendar, Target } from 'lucide-react';
 import {
-  Calculator,
-  Download,
-  RotateCcw,
-  DollarSign,
-  TrendingUp,
-  Calendar,
-  Target,
-} from 'lucide-react';
-import { generateCalculatorHowToSchema, generateFAQSchema } from '@/lib/seo/schema';
+  generateCalculatorHowToSchema,
+  generateFAQSchema,
+  generateSoftwareApplicationSchema,
+} from '@/lib/seo/schema';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
+import { saveCalculationToAPI } from '@/lib/utils/api-client';
 
 export default function ROICalculatorPage() {
   const t = useEnglish();
   const [result, setResult] = useState<ROIResult | null>(null);
   const [lastInput, setLastInput] = useState<ROIInput | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+
+  const analysisYears: number =
+    (lastInput?.analysisYears ?? roiDefaults.analysisYears ?? 0) || 0;
+  const discountRate: number =
+    (lastInput?.discountRate ?? roiDefaults.discountRate ?? 0) || 0;
 
   const howToSchema = generateCalculatorHowToSchema(
     'Equipment ROI Calculator',
@@ -52,15 +54,18 @@ export default function ROICalculatorPage() {
   const faqSchema = generateFAQSchema([
     {
       question: 'What is a good ROI for equipment?',
-      answer: 'Good ROI varies by industry. Generally, 15-25% annual ROI is considered good. Payback period under 3 years is acceptable for most manufacturing equipment.',
+      answer:
+        'There is no single ROI or payback target that fits every shop. Acceptable ROI depends on your cost of capital, risk tolerance, and alternative uses of cash. Use this calculator to compare scenarios, then decide on ROI and payback thresholds that make sense for your business and financing situation.',
     },
     {
       question: 'What is NPV and why is it important?',
-      answer: 'Net Present Value (NPV) shows the current value of future cash flows. Positive NPV means the investment will create value. Higher NPV indicates better investment.',
+      answer:
+        'Net Present Value (NPV) shows the present value of the future cash flows in your scenario after accounting for the discount rate you chose. In many finance texts, a positive NPV is interpreted as value-creating relative to that rate, but how convincing a given NPV is depends on your cost of capital, risk profile, and the alternatives you are comparing. This calculator reports NPV for the assumptions you enter; final investment decisions should follow your own financial policies and review process.',
     },
     {
       question: 'How is IRR different from ROI?',
-      answer: 'IRR (Internal Rate of Return) is the discount rate that makes NPV zero. It represents the annualized return rate. ROI is simpler profit/investment ratio.',
+      answer:
+        'IRR (Internal Rate of Return) is the discount rate that makes NPV zero and represents an annualized return rate. ROI is a simpler profit / investment ratio. IRR is helpful for comparing projects with different timelines but has limitations: it assumes you can reinvest cash flows at the same IRR, and unusual cash-flow patterns can produce multiple or misleading IRRs. Use IRR alongside NPV and payback period, not as a standalone decision rule.',
     },
   ]);
 
@@ -73,32 +78,30 @@ export default function ROICalculatorPage() {
     resolver: zodResolver(roiSchema),
     defaultValues: roiDefaults,
   });
+  const softwareSchema = generateSoftwareApplicationSchema('Equipment ROI Calculator');
 
   const onSubmit = async (data: ROIInput) => {
     setIsCalculating(true);
 
-    setTimeout(async () => {
+    try {
       const calculationResult = calculateROI(data);
       setResult(calculationResult);
       setLastInput(data);
-      setIsCalculating(false);
 
       document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
 
-      try {
-        await fetch('/api/calculate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            toolType: 'roi',
-            params: data,
-            result: calculationResult,
-          }),
-        });
-      } catch (error) {
-        console.error('Failed to save calculation:', error);
+      const saveResult = await saveCalculationToAPI({
+        tool_type: 'roi',
+        input_params: data,
+        result: calculationResult as unknown as Record<string, unknown>,
+      });
+
+      if (!saveResult.success) {
+        console.error('Failed to save calculation:', saveResult.error);
       }
-    }, 300);
+    } finally {
+      setIsCalculating(false);
+    }
   };
 
   const handleReset = () => {
@@ -110,17 +113,53 @@ export default function ROICalculatorPage() {
     <>
       <SchemaMarkup schema={howToSchema} />
       <SchemaMarkup schema={faqSchema} />
+      <SchemaMarkup schema={softwareSchema} />
       <Navigation />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
 
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">
+          {/* When to use this calculator */}
+          <div className="mb-4 rounded-2xl bg-blue-50 border-l-4 border-blue-500 px-4 py-3">
+            <h2 className="mb-1 text-sm font-semibold text-gray-900">When to use this equipment ROI calculator</h2>
+            <div className="grid gap-3 md:grid-cols-2 text-xs text-gray-700">
+              <div>
+                <p className="font-semibold text-gray-900">✓ Best suited for:</p>
+                <ul className="mt-1 ml-5 list-disc space-y-1">
+                  <li>Evaluating individual equipment purchases with clear revenue or savings assumptions</li>
+                  <li>Comparing financing vs cash purchase scenarios on the same machine</li>
+                  <li>Checking whether a proposed investment roughly meets your payback and ROI targets</li>
+                  <li>Communicating investment logic to partners, managers, or lenders</li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">✗ Not ideal for:</p>
+                <ul className="mt-1 ml-5 list-disc space-y-1">
+                  <li>Full company valuations or multi-asset portfolio decisions</li>
+                  <li>Detailed tax planning or GAAP/IFRS-compliant financial statements</li>
+                  <li>Projects with highly uncertain or speculative revenue profiles</li>
+                  <li>Making final investment decisions without review by finance or tax advisors</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Header - Compact */}
+          <div className="mb-4">
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">
               {t.roi.title}
             </h1>
-            <p className="text-xl text-gray-600">{t.roi.description}</p>
+            <p className="text-base text-gray-600">{t.roi.description}</p>
+          </div>
+
+          {/* Disclaimer - Simplified */}
+          <div className="mb-4 border-l-4 border-blue-500 bg-blue-50 px-4 py-3">
+            <p className="text-sm text-blue-900">
+              <TrendingUp className="mr-2 inline h-4 w-4" />
+              <strong>Investment analysis (before tax):</strong> This tool models cash flows and financing based on the
+              assumptions you enter. It does not include income tax, depreciation tax shields, or local accounting rules.
+              Treat the outputs as structured what-if scenarios to compare options, not guaranteed returns or financial advice.
+            </p>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-2">
@@ -182,6 +221,15 @@ export default function ROICalculatorPage() {
                         label={t.roi.fields.financingRate}
                         error={errors.financingRate?.message}
                         helperText="Annual interest rate (0 for cash purchase)"
+                      />
+
+                      <Input
+                        {...register('loanTermYears', { valueAsNumber: true })}
+                        type="number"
+                        step="1"
+                        label="Loan Term (Years)"
+                        error={errors.loanTermYears?.message}
+                        helperText="Amortization period for financing"
                       />
                     </div>
                   </div>
@@ -279,6 +327,44 @@ export default function ROICalculatorPage() {
                   </Button>
                 </form>
               </div>
+
+              {/* Typical values reference */}
+              <div className="mt-6 card bg-blue-50 border-l-4 border-blue-500">
+                <h3 className="mb-3 text-lg font-semibold text-gray-900">Typical values reference</h3>
+                <div className="space-y-4 text-sm text-gray-700">
+                  <div>
+                    <p className="font-semibold text-gray-900">Discount rate (for NPV)</p>
+                    <ul className="ml-4 mt-1 space-y-1 text-xs">
+                      <li>• <strong>6–8%:</strong> Lower-risk, established business and stable demand</li>
+                      <li>• <strong>10–12%:</strong> Typical for many manufacturing investments</li>
+                      <li>• <strong>15–20%:</strong> Higher-risk, new markets or aggressive growth</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <p className="font-semibold text-gray-900">Annual revenue growth</p>
+                    <ul className="ml-4 mt-1 space-y-1 text-xs">
+                      <li>• <strong>0–3%:</strong> Conservative (inflation-level growth)</li>
+                      <li>• <strong>5–8%:</strong> Moderate expansion in a healthy market</li>
+                      <li>• <strong>10–15%:</strong> Aggressive plan that should be justified by a clear pipeline</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <p className="font-semibold text-gray-900">Down payment and financing rate</p>
+                    <ul className="ml-4 mt-1 space-y-1 text-xs">
+                      <li>• <strong>Down payment 10–30%:</strong> Common for equipment financing</li>
+                      <li>• <strong>Financing rate 6–10%:</strong> Typical for creditworthy industrial borrowers</li>
+                      <li>• <strong>Higher rates:</strong> Reflect greater risk or weaker credit profile</li>
+                    </ul>
+                  </div>
+
+                  <p className="mt-2 border-t border-blue-200 pt-2 text-xs text-gray-600">
+                    Start with conservative assumptions (higher discount rate, lower growth) to see a downside case, then
+                    explore upside scenarios. Always align these ranges with your accountant or finance team.
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Results */}
@@ -315,6 +401,37 @@ export default function ROICalculatorPage() {
                           {result.annualROI >= 0 ? '+' : ''}{result.annualROI.toFixed(2)}%
                         </p>
                       </div>
+
+                      <div>
+                        <p className="mb-1 text-sm text-blue-100">Loan Term</p>
+                        <p className="text-2xl font-semibold">
+                          {result.loanTermYears} yrs ({result.loanTermMonths} mo)
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tax and accounting scope */}
+                  <div className="card border-l-4 border-amber-500 bg-amber-50">
+                    <div className="flex items-start gap-2">
+                      <TrendingUp className="mt-0.5 h-5 w-5 text-amber-600" />
+                      <div>
+                        <h3 className="mb-1 text-sm font-semibold text-gray-900">Tax considerations not included</h3>
+                        <div className="space-y-1 text-xs text-gray-700">
+                          <p>
+                            This model does <strong>not</strong> include income taxes, depreciation tax shields, investment
+                            credits, or local tax rules. All ROI, NPV, and IRR figures are on a pre-tax basis.
+                          </p>
+                          <p>
+                            Actual after-tax returns are usually lower and depend heavily on your jurisdiction and accounting
+                            policies. For critical decisions, review scenarios with your finance or tax advisor.
+                          </p>
+                          <p className="text-[11px] text-amber-800">
+                            Rough rule of thumb: if your marginal tax rate is ~25%, multiplying annual profit by ~0.75 gives a
+                            basic after-tax estimate before considering depreciation benefits.
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -348,6 +465,53 @@ export default function ROICalculatorPage() {
                         value={formatCurrency(result.monthlyProfit)}
                         positive={result.monthlyProfit > 0}
                       />
+                    </div>
+                    <p className="mt-3 text-xs text-gray-600">
+                      IRR assumes interim cash flows could be reinvested at the same rate and can behave unexpectedly for
+                      unusual cash-flow patterns. Use it together with NPV, payback period, and your own risk thresholds
+                      rather than as a single go / no-go number.
+                    </p>
+                  </div>
+
+                  {/* Quick sanity check */}
+                  <div className="card border-l-4 border-purple-500 bg-purple-50">
+                    <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-gray-900">
+                      <Target className="h-5 w-5 text-purple-600" />
+                      Quick sanity check
+                    </h3>
+                    <div className="space-y-2 text-xs text-gray-700">
+                      {analysisYears > 0 && result.paybackPeriodYears > analysisYears && (
+                        <p className="flex items-start gap-2">
+                          <span className="text-amber-600">⚠️</span>
+                          <span>
+                            Payback period ({result.paybackPeriodYears.toFixed(1)} years) is longer than your analysis
+                            horizon ({analysisYears} years). This can be acceptable for highly strategic equipment, but it
+                            means most returns arrive after the window you are modeling.
+                          </span>
+                        </p>
+                      )}
+
+                      {result.annualROI > 40 && (
+                        <p className="flex items-start gap-2">
+                          <span className="text-amber-600">⚠️</span>
+                          <span>
+                            Annual ROI above {result.annualROI.toFixed(1)}% is quite aggressive for many manufacturing
+                            investments. Double-check production volume, pricing, and operating cost assumptions to ensure
+                            they reflect realistic utilization and margins.
+                          </span>
+                        </p>
+                      )}
+
+                      {discountRate >= 0 && result.npv > 0 && result.irr > discountRate && (
+                        <p className="flex items-start gap-2">
+                          <span className="text-green-600">✓</span>
+                          <span>
+                            IRR ({result.irr.toFixed(1)}%) is above your modeled discount rate ({discountRate.toFixed(1)}%).
+                            Together with a positive NPV, this usually indicates the scenario is value-creating relative to
+                            that required return, subject to the risk and tax caveats above.
+                          </span>
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -414,6 +578,9 @@ export default function ROICalculatorPage() {
                       results={{
                         totalInvestment: result.totalInvestment,
                         paybackPeriodYears: result.paybackPeriodYears,
+                        paybackPeriodMonths: result.breakEvenMonth,
+                        loanTermYears: result.loanTermYears,
+                        loanTermMonths: result.loanTermMonths,
                         fiveYearROI: result.totalROI5Year,
                         annualROI: result.annualROI,
                         npv: result.npv,
@@ -456,17 +623,16 @@ export default function ROICalculatorPage() {
               <h2 className="mb-6 text-3xl font-bold text-gray-900">Investment Decision Framework</h2>
               <p className="mb-6 text-gray-700">
                 Making the right equipment investment decision requires analyzing multiple financial metrics. 
-                Here's how to evaluate your investment systematically.
+                Here&rsquo;s how to evaluate your investment systematically.
               </p>
               
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="border-l-4 border-blue-500 bg-blue-50 p-4">
                   <h3 className="mb-3 font-bold text-gray-900">Return on Investment (ROI)</h3>
                   <div className="space-y-2 text-sm text-gray-700">
-                    <p><strong>Formula:</strong> (Net Profit / Initial Investment) × 100%</p>
-                    <p><strong>Good ROI:</strong> &gt;20% per year in manufacturing</p>
-                    <p><strong>Excellent ROI:</strong> &gt;40% per year</p>
-                    <p><strong>Consider:</strong> ROI alone doesn't account for time value of money</p>
+                    <p><strong>Formula:</strong> (Net Profit / Initial Investment)  x  100%</p>
+                    <p><strong>Interpretation:</strong> Higher ROI means more return per unit of capital invested, but what counts as &ldquo;good&rdquo; depends on your funding costs, business risk, and alternative investments.</p>
+                    <p><strong>Consider:</strong> ROI alone doesn&rsquo;t account for time value of money</p>
                     <p><strong>Use case:</strong> Simple comparison between investments of similar duration</p>
                   </div>
                 </div>
@@ -475,8 +641,7 @@ export default function ROICalculatorPage() {
                   <h3 className="mb-3 font-bold text-gray-900">Payback Period</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Definition:</strong> Time to recover initial investment</p>
-                    <p><strong>Target:</strong> &lt;2 years (excellent), 2-3 years (good), &gt;5 years (risky)</p>
-                    <p><strong>Industry standard:</strong> Most manufacturers target 2-3 year payback</p>
+                    <p><strong>Interpretation:</strong> Shorter payback reduces the time your capital is at risk, but acceptable timelines vary by business model, financing terms, and how strategic the equipment is for your operations.</p>
                     <p><strong>Limitation:</strong> Ignores profits after payback period</p>
                     <p><strong>Best for:</strong> Quick screening of investment opportunities</p>
                   </div>
@@ -486,9 +651,9 @@ export default function ROICalculatorPage() {
                   <h3 className="mb-3 font-bold text-gray-900">Net Present Value (NPV)</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Definition:</strong> Present value of future cash flows minus investment</p>
-                    <p><strong>Decision rule:</strong> Invest if NPV &gt; 0</p>
+                    <p><strong>Interpretation:</strong> Finance texts often treat positive NPV, given a chosen discount rate, as indicating a value-creating scenario, but real decisions usually weigh NPV alongside risk, liquidity, and alternative uses of capital.</p>
                     <p><strong>Advantage:</strong> Accounts for time value of money</p>
-                    <p><strong>Discount rate:</strong> Typically 8-15% for manufacturing equipment</p>
+                    <p><strong>Discount rate:</strong> Choose a rate that reflects your cost of capital, risk profile, and opportunity cost of funds.</p>
                     <p><strong>Best for:</strong> Comparing mutually exclusive projects</p>
                   </div>
                 </div>
@@ -497,8 +662,7 @@ export default function ROICalculatorPage() {
                   <h3 className="mb-3 font-bold text-gray-900">Internal Rate of Return (IRR)</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Definition:</strong> Discount rate where NPV = 0</p>
-                    <p><strong>Target IRR:</strong> Should exceed cost of capital by 5-10%</p>
-                    <p><strong>Typical:</strong> 15-25% IRR is attractive for equipment</p>
+                    <p><strong>Interpretation:</strong> IRR is most useful when compared against your cost of capital and other investment options rather than against a universal target percentage.</p>
                     <p><strong>Limitation:</strong> Can be misleading with non-conventional cash flows</p>
                     <p><strong>Use case:</strong> Ranking multiple investment opportunities</p>
                   </div>
@@ -511,7 +675,11 @@ export default function ROICalculatorPage() {
           <div className="mt-12">
             <div className="card bg-gradient-to-br from-green-50 to-emerald-50">
               <h2 className="mb-6 text-3xl font-bold text-gray-900">Real-World ROI Case Studies</h2>
-              
+              <p className="mb-4 text-sm text-gray-700">
+                The following case-style examples illustrate how different assumptions about investment, savings, and
+                utilization can affect ROI. They are simplified and not industry benchmarks. Always base your own
+                analysis on actual costs, prices, and volumes from your business.
+              </p>
               <div className="space-y-6">
                 <div className="rounded-lg bg-white p-6 shadow-sm">
                   <div className="mb-4 flex items-center justify-between">
@@ -577,7 +745,7 @@ export default function ROICalculatorPage() {
                     <p className="mb-2 text-sm font-semibold text-gray-900">Key Success Factors:</p>
                     <ul className="list-inside list-disc space-y-1 text-sm text-gray-700">
                       <li>Complex aerospace parts previously required 4-6 setups, now 1-2 setups (60% time reduction)</li>
-                      <li>Part accuracy improved from ±0.003" to ±0.001" eliminating rework</li>
+                      <li>Part accuracy improved from +/-0.003&quot; to +/-0.001&quot; eliminating rework</li>
                       <li>Programmer learning curve: 3 months to proficiency, 6 months to full optimization</li>
                       <li>Qualified for new contracts requiring 5-axis capabilities (+$300k annual potential)</li>
                       <li>First year utilization: 55% (below target) but revenue per hour increased 80%</li>
@@ -615,7 +783,7 @@ export default function ROICalculatorPage() {
                       <li><strong>Overestimated demand:</strong> Projected 120 hrs/month usage, actual 35 hrs/month</li>
                       <li><strong>Skills gap:</strong> Existing staff unfamiliar with EDM, hired specialist at $75k/year overhead</li>
                       <li><strong>Lead times:</strong> Wire and consumables had 2-week lead time causing downtime</li>
-                      <li><strong>Marketing issue:</strong> Existing customers didn't need EDM capabilities</li>
+                      <li><strong>Marketing issue:</strong> Existing customers did not need EDM capabilities</li>
                       <li><strong>Recovery plan:</strong> Pivoted to marketing EDM services, reached 45% utilization by year 2, positive ROI by year 3</li>
                     </ul>
                   </div>
@@ -633,18 +801,18 @@ export default function ROICalculatorPage() {
                 <div>
                   <div className="mb-3 flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-red-700">
-                      <span className="text-xl font-bold">⚠️</span>
+                      <span className="text-xl font-bold">!</span>
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900">Demand Risk: Insufficient Workload</h3>
                   </div>
                   <div className="ml-13 space-y-2 text-gray-700">
-                    <p><strong>Risk:</strong> Equipment utilization falls below 40%, making investment unprofitable.</p>
+                    <p><strong>Risk:</strong> Equipment utilization ends up significantly lower than assumed in your ROI model, reducing or delaying expected returns.</p>
                     <p><strong>Mitigation:</strong></p>
                     <ul className="list-inside list-disc space-y-1 pl-4">
-                      <li>Secure 6-12 months of confirmed orders before purchasing</li>
-                      <li>Consider leasing instead of buying for first 2-3 years to reduce commitment</li>
-                      <li>Start with used equipment (50-60% of new cost) to lower break-even point</li>
-                      <li>Market new capabilities 3-6 months before equipment arrival</li>
+                      <li>Secure a realistic pipeline of work and customer commitments before purchasing</li>
+                      <li>Consider leasing or shorter-term arrangements at first if long-term demand is uncertain</li>
+                      <li>Evaluate whether lower-cost or used equipment could reduce your break-even point</li>
+                      <li>Begin marketing new capabilities ahead of installation so demand can ramp as the machine comes online</li>
                     </ul>
                   </div>
                 </div>
@@ -652,7 +820,7 @@ export default function ROICalculatorPage() {
                 <div>
                   <div className="mb-3 flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 text-orange-700">
-                      <span className="text-xl font-bold">⚠️</span>
+                      <span className="text-xl font-bold">!</span>
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900">Technology Risk: Obsolescence</h3>
                   </div>
@@ -660,10 +828,10 @@ export default function ROICalculatorPage() {
                     <p><strong>Risk:</strong> Equipment becomes outdated, losing competitive advantage.</p>
                     <p><strong>Mitigation:</strong></p>
                     <ul className="list-inside list-disc space-y-1 pl-4">
-                      <li>Choose mature, proven technologies over bleeding-edge (e.g., fiber lasers, not hybrid experimental)</li>
-                      <li>Verify supplier has 10+ year track record and strong service network</li>
-                      <li>Factor in resale value: quality machines retain 40-50% value after 5 years</li>
-                      <li>Plan for 7-10 year useful life, not perpetual operation</li>
+                      <li>Favor proven technologies and platforms over untested concepts unless you are prepared for higher risk</li>
+                      <li>Work with suppliers that have a strong service track record and local support</li>
+                      <li>Consider potential resale value in your scenarios instead of assuming equipment will run indefinitely</li>
+                      <li>Plan for a finite useful life and potential upgrade path in your ROI horizon</li>
                     </ul>
                   </div>
                 </div>
@@ -671,7 +839,7 @@ export default function ROICalculatorPage() {
                 <div>
                   <div className="mb-3 flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100 text-yellow-700">
-                      <span className="text-xl font-bold">⚠️</span>
+                      <span className="text-xl font-bold">!</span>
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900">Operational Risk: Skills Gap</h3>
                   </div>
@@ -679,10 +847,10 @@ export default function ROICalculatorPage() {
                     <p><strong>Risk:</strong> Cannot operate equipment efficiently, extending payback period.</p>
                     <p><strong>Mitigation:</strong></p>
                     <ul className="list-inside list-disc space-y-1 pl-4">
-                      <li>Include comprehensive training in purchase contract (1-2 weeks minimum)</li>
-                      <li>Hire experienced operator ($50-70k) or send existing staff for 3-6 month intensive training</li>
+                      <li>Include appropriate training and support in the purchase contract</li>
+                      <li>Consider hiring experienced operators or investing in deeper training for existing staff</li>
                       <li>Start with simple work to build confidence before complex jobs</li>
-                      <li>Budget 3-6 months for learning curve at 40-60% efficiency</li>
+                      <li>Allow for a learning curve period in your ROI scenarios rather than assuming full efficiency on day one</li>
                     </ul>
                   </div>
                 </div>
@@ -690,7 +858,7 @@ export default function ROICalculatorPage() {
                 <div>
                   <div className="mb-3 flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-700">
-                      <span className="text-xl font-bold">⚠️</span>
+                      <span className="text-xl font-bold">!</span>
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900">Financial Risk: Cash Flow Constraint</h3>
                   </div>
@@ -698,10 +866,10 @@ export default function ROICalculatorPage() {
                     <p><strong>Risk:</strong> Equipment purchase strains working capital, affecting operations.</p>
                     <p><strong>Mitigation:</strong></p>
                     <ul className="list-inside list-disc space-y-1 pl-4">
-                      <li>Finance equipment (5-7 year terms at 5-8% interest) to preserve cash</li>
-                      <li>Ensure 6 months operating expenses in reserve after purchase</li>
+                      <li>Consider financing structures that preserve sufficient working capital for day-to-day operations</li>
+                      <li>Maintain an operating reserve that fits your risk tolerance and cash flow volatility</li>
                       <li>Phase investments: buy basic configuration first, add options as revenue grows</li>
-                      <li>Consider SBA 504 loans (up to $5M at favorable rates for equipment)</li>
+                      <li>Explore different loan and leasing options that match your scale and region, and review terms carefully</li>
                     </ul>
                   </div>
                 </div>
@@ -709,7 +877,7 @@ export default function ROICalculatorPage() {
                 <div>
                   <div className="mb-3 flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-purple-700">
-                      <span className="text-xl font-bold">⚠️</span>
+                      <span className="text-xl font-bold">!</span>
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900">Market Risk: Economic Downturn</h3>
                   </div>
@@ -717,10 +885,10 @@ export default function ROICalculatorPage() {
                     <p><strong>Risk:</strong> Recession reduces demand, making debt service difficult.</p>
                     <p><strong>Mitigation:</strong></p>
                     <ul className="list-inside list-disc space-y-1 pl-4">
-                      <li>Diversify customer base: no single customer &gt;25% of revenue</li>
+                      <li>Diversify your customer base so no single account dominates revenue if possible</li>
                       <li>Target countercyclical industries (medical, defense, essential goods)</li>
-                      <li>Maintain debt service coverage ratio of 1.5x or higher</li>
-                      <li>Build cash reserves equal to 12 months of loan payments</li>
+                      <li>Monitor leverage and coverage ratios over time and avoid committing to debt service that your downside scenarios cannot support</li>
+                      <li>Build cash reserves that reflect your own view of acceptable risk and demand volatility</li>
                     </ul>
                   </div>
                 </div>
@@ -738,10 +906,9 @@ export default function ROICalculatorPage() {
                   <h3 className="mb-3 text-lg font-semibold text-gray-900">Break-Even Analysis</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Formula:</strong> Fixed Costs / (Revenue per Hour - Variable Costs per Hour)</p>
-                    <p><strong>Example:</strong> $150k machine / ($100/hr revenue - $40/hr costs) = 2,500 hours to break even</p>
-                    <p><strong>At 40 hrs/week:</strong> 62.5 weeks (14.4 months)</p>
-                    <p><strong>At 60 hrs/week:</strong> 41.7 weeks (9.6 months)</p>
-                    <p><strong>Insight:</strong> Higher utilization dramatically improves payback</p>
+                    <p><strong>Example (illustrative only):</strong> $150k machine / ($100/hr revenue - $40/hr costs) = 2,500 hours to break even</p>
+                    <p>At 40 hrs/week this example would take about 62.5 weeks, at 60 hrs/week about 41.7 weeks. Your own break-even point will depend entirely on your actual rates and costs.</p>
+                    <p><strong>Insight:</strong> Higher utilization generally improves payback when fixed costs are significant, but the effect should be evaluated using your own numbers.</p>
                   </div>
                 </div>
 
@@ -749,26 +916,16 @@ export default function ROICalculatorPage() {
                   <h3 className="mb-3 text-lg font-semibold text-gray-900">Machine Hour Rate Calculation</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Components:</strong></p>
-                    <p>• Depreciation: $150k / 10 years / 2000 hrs = $7.50/hr</p>
-                    <p>• Labor: $25/hr (operator)</p>
-                    <p>• Consumables: $3-5/hr (tooling, gas, etc.)</p>
-                    <p>• Overhead: $15/hr (facility, utilities, insurance)</p>
-                    <p>• Total Cost: ~$50-55/hr</p>
-                    <p>• Profit margin (30%): $15-17/hr</p>
-                    <p>• <strong>Billing rate: $65-72/hr</strong></p>
+                    <p>- Depreciation, labor, consumables, and overhead are all components you can include when building a machine rate.</p>
+                    <p>- The specific dollar amounts will vary widely by shop, region, and equipment. Use your own cost structure and tools like the hourly rate calculator to build a rate rather than adopting generic figures.</p>
                   </div>
                 </div>
 
                 <div className="rounded-lg bg-white p-4 shadow-sm">
                   <h3 className="mb-3 text-lg font-semibold text-gray-900">Utilization Rate Impact</h3>
                   <div className="space-y-2 text-sm text-gray-700">
-                    <p><strong>At 40% utilization:</strong> 800 hrs/year = $64k revenue</p>
-                    <p>Annual profit: $64k - $40k costs = $24k (16% ROI on $150k)</p>
-                    <p><strong>At 60% utilization:</strong> 1,200 hrs/year = $96k revenue</p>
-                    <p>Annual profit: $96k - $52k costs = $44k (29% ROI)</p>
-                    <p><strong>At 80% utilization:</strong> 1,600 hrs/year = $128k revenue</p>
-                    <p>Annual profit: $128k - $64k costs = $64k (43% ROI)</p>
-                    <p><strong>Key insight:</strong> Fixed costs make utilization critical</p>
+                    <p>This calculator lets you test how different utilization assumptions affect revenue, profit, and ROI over time.</p>
+                    <p>Instead of aiming for one fixed "right" utilization level, build scenarios that reflect your current workload, realistic ramp-up, and any capacity constraints, then see how sensitive the investment case is to those assumptions.</p>
                   </div>
                 </div>
 
@@ -776,15 +933,14 @@ export default function ROICalculatorPage() {
                   <h3 className="mb-3 text-lg font-semibold text-gray-900">Financing vs. Cash Purchase</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Cash purchase $150k:</strong></p>
-                    <p>• No interest expense</p>
-                    <p>• Full ownership immediately</p>
-                    <p>• Depletes working capital</p>
-                    <p><strong>Financed at 6% for 7 years:</strong></p>
-                    <p>• Monthly payment: $2,250</p>
-                    <p>• Total interest: $39,000</p>
-                    <p>• Preserves $150k cash for operations</p>
-                    <p>• Tax-deductible interest expense</p>
-                    <p><strong>Recommendation:</strong> Finance if cash flow positive</p>
+                    <p>- No interest expense</p>
+                    <p>- Full ownership immediately</p>
+                    <p>- Depletes working capital</p>
+                    <p><strong>Financed example:</strong></p>
+                    <p>- Spreads the cost over time in exchange for interest expense</p>
+                    <p>- Can preserve cash for operations but increases fixed commitments</p>
+                    <p>- Tax treatment of interest and depreciation will depend on your jurisdiction</p>
+                    <p><strong>Consideration:</strong> Compare cash and financed scenarios in this calculator using your actual loan terms, and ensure projected cash flow remains acceptable under conservative assumptions.</p>
                   </div>
                 </div>
               </div>
@@ -798,31 +954,31 @@ export default function ROICalculatorPage() {
               <div className="space-y-4">
                 <FAQItem
                   question="What's a realistic ROI target for manufacturing equipment?"
-                  answer="Industry standards: 20-30% annual ROI is good, 40%+ is excellent. Payback period of 2-3 years is typical for most manufacturers. However, strategic equipment (enables new markets or critical capabilities) may justify lower ROI of 15-20%. Always compare against alternative uses of capital - if you can earn 12% from other investments, equipment should return at least 15-18% to justify the operational risk."
+                  answer="There is no universal ROI or payback target. Some shops look for projects whose modeled ROI comfortably exceeds their cost of capital, while others are willing to accept lower headline ROI for strategic capabilities or risk reduction. Use this calculator to compare scenarios, then weigh them against alternative ways you could deploy the same capital (e.g., debt reduction, other equipment, or financial investments)."
                 />
                 <FAQItem
                   question="Should I buy new or used equipment to improve ROI?"
-                  answer="Used equipment pros: 50-70% of new cost, faster payback, lower risk if demand uncertain. Cons: Limited warranty (1 year typical vs. 3-5 for new), potential reliability issues, may lack latest features. Buy used if: 1) Testing new market, 2) Budget constrained, 3) Mature technology. Buy new if: 1) Mission-critical equipment, 2) Need warranty support, 3) Latest features improve competitiveness. Many shops start with used equipment and upgrade to new after proving demand."
+                  answer="Used equipment is often significantly cheaper than new and can provide faster payback if demand is uncertain, but may come with shorter warranties, higher maintenance risk, or fewer modern features. New equipment typically offers longer support and current capabilities at a higher upfront cost. Many shops model both options in this calculator using their own purchase prices, expected uptime, and support assumptions before deciding."
                 />
                 <FAQItem
                   question="How do I calculate the opportunity cost of not investing?"
-                  answer="Consider: 1) Revenue lost from outsourcing at 2-3x markup (e.g., paying $100k/year for work you could do for $40k = $60k annual opportunity cost), 2) Lost business from longer lead times vs. competitors, 3) Customer relationships damaged by outsourcing reliability issues, 4) Growth limitation (can't scale without capacity). If opportunity cost exceeds 30% of equipment cost annually, investment typically justified. Example: Losing $75k/year by outsourcing makes $200k equipment purchase break even in 2.7 years on opportunity cost alone."
+                  answer="Think about the gap between what you currently pay for outsourced work or missed opportunities and what it might cost to do that work in-house. This calculator can help you estimate the in-house side of that comparison. Instead of following a fixed rule of thumb, compare the annual opportunity cost you estimate with the modeled investment cost and risk profile for your specific situation."
                 />
                 <FAQItem
                   question="What utilization rate should I target for profitability?"
-                  answer="Minimum viable: 40% (800 hrs/year) covers costs. Target: 60-70% (1,200-1,400 hrs/year) provides healthy profit. Excellent: 80%+ (1,600+ hrs/year) maximizes ROI. Above 85% indicates capacity constraint - consider second machine. Important: Don't confuse spindle time with availability. 70% spindle utilization = ~45% overall utilization when including setup, programming, maintenance. Track 'billable hours' not just 'cutting hours'. Single-shift operations max around 75% practical utilization (1,500 hrs/year)."
+                  answer="Rather than aiming for a single utilization percentage, build scenarios that reflect your realistic workload, shift structure, and mix of setup versus cutting time. Distinguish between available machine hours and true billable hours, and check how sensitive your ROI results are to more conservative utilization assumptions. High modeled utilization may signal a capacity constraint, while very low utilization may indicate that a purchase is more strategic than purely financial."
                 />
                 <FAQItem
                   question="How do I account for productivity improvements in ROI calculations?"
-                  answer="Common productivity gains: 1) Speed: New equipment 30-50% faster than 10-year-old machine, 2) Setup reduction: Advanced work holding cuts setup 40-60%, 3) Lights-out operation: Automated loading adds 8-16 hrs unattended time, 4) First-pass yield: Better accuracy reduces rework from 10% to 2%. Quantify: Old process 15 min/part vs. new 9 min/part = 40% productivity gain. At 1,000 parts/year: saves 100 hours ($10k value). Conservative approach: assume 60% of theoretical gains in year 1, 80% in year 2, full gains by year 3 to account for learning curve."
+                  answer="Productivity gains typically show up as higher output for the same time, lower operating cost per part, or reduced scrap and rework. In this calculator you can reflect those changes by adjusting monthly production, operating cost, and growth assumptions. It is often safer to model improvements conservatively and phase them in over time rather than assuming full theoretical gains from day one."
                 />
                 <FAQItem
                   question="Should I consider tax benefits in ROI calculations?"
-                  answer="Yes, significantly impacts true ROI. Section 179 deduction: Deduct full equipment cost (up to $1.16M in 2024) in year of purchase vs. depreciation over 7 years. Bonus depreciation: 60% (2024) of cost in year 1, phases out by 2027. Example: $200k equipment, 25% tax bracket: immediate $50k tax savings = effective cost $150k (33% improvement in ROI). Also consider state tax benefits: some states offer manufacturing equipment exemptions. Consult tax advisor but typical total benefit is 25-35% of equipment cost depending on tax situation. This can reduce payback period by 6-12 months."
+                  answer="Yes. Tax deductions, accelerated depreciation, and local incentives can materially change the after-tax ROI of equipment purchases, and rules vary by country and over time. This calculator focuses on pre-tax cash flows, so you may want to run separate tax scenarios with your accountant or finance team and use those results alongside this tool when making decisions."
                 />
                 <FAQItem
                   question="How do I project revenue growth realistically for ROI analysis?"
-                  answer="Conservative approach: Year 1: 50% of target utilization (learning curve, marketing ramp), Year 2: 75% of target, Year 3+: Full target. Revenue sources: 1) Insourced work currently outsourced (most predictable), 2) Existing customers buying new capabilities (medium confidence), 3) New customer acquisition (least predictable, 6-12 month sales cycle). Risk: Don't assume 'if you build it they will come'. Validate: secure 6-12 months confirmed orders before purchasing. Red flags: Projecting >30% annual growth without concrete customer commitments, assuming immediate 80%+ utilization, ignoring competitive response (competitors may drop prices)."
+                  answer="One approach is to separate more predictable revenue sources (such as insourcing existing outsourced work) from new or speculative demand, and to model a ramp-up period rather than full utilization on day one. This calculator lets you test different growth and utilization paths. Be cautious about relying on aggressive growth assumptions without concrete customer commitments, and consider stress-testing your ROI with slower ramps and weaker demand to understand downside risk."
                 />
               </div>
             </div>
@@ -932,4 +1088,3 @@ function MetricCard({
     </div>
   );
 }
-

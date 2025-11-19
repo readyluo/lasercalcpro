@@ -191,7 +191,7 @@ export default function FinishingTimeCheatsheetPage() {
                       <div>
                         <p className="font-semibold text-gray-900 mb-1">Best For:</p>
                         <ul className="text-gray-700 space-y-1">
-                          <li>• High-volume production (>100 parts)</li>
+                          <li>• High-volume production (&gt;100 parts)</li>
                           <li>• Flat sheet parts (single-pass)</li>
                           <li>• Light burr removal only</li>
                           <li>• Batch processing of similar parts</li>
@@ -227,7 +227,7 @@ export default function FinishingTimeCheatsheetPage() {
                       <div>
                         <p className="font-semibold text-gray-900 mb-1">Best For:</p>
                         <ul className="text-gray-700 space-y-1">
-                          <li>• Very high volume (>500 parts/batch)</li>
+                          <li>• Very high volume (&gt;500 parts/batch)</li>
                           <li>• Small to medium-sized parts</li>
                           <li>• Uniform deburring + surface finish</li>
                           <li>• Parts that can tolerate mass contact</li>

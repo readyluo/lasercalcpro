@@ -37,11 +37,19 @@ export interface PaginatedAudit {
 }
 
 export async function recordAuditLog(entry: Omit<AuditLog, 'id' | 'created_at'>): Promise<boolean> {
-  return executeWrite(
+  const result = await executeWrite(
     `INSERT INTO audit_logs (user_id, action, module, description, ip_address, payload, created_at)
      VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
-    [entry.user_id ?? null, entry.action, entry.module, entry.description, entry.ip_address ?? null, entry.payload ?? null]
+    [
+      entry.user_id,
+      entry.action,
+      entry.module,
+      entry.description || null,
+      entry.ip_address || null,
+      entry.payload || null,
+    ]
   );
+  return result.rowsAffected > 0;
 }
 
 export async function getAuditLogs(filters: AuditFilters = {}, pagination: Pagination = {}): Promise<PaginatedAudit> {

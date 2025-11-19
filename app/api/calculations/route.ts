@@ -1,43 +1,64 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { saveCalculation, getRecentCalculations } from '@/lib/db/calculations';
+import { CALCULATION_TOOL_TYPES } from '@/lib/types/calculations';
 
 export const runtime = 'edge';
+
+const calculationPayloadSchema = z.object({
+  tool_type: z.enum(CALCULATION_TOOL_TYPES),
+  input_params: z.record(z.any()),
+  result: z.record(z.any()),
+});
+
+type CalculationPayload = z.infer<typeof calculationPayloadSchema>;
+
+function normalizePayload(body: unknown): CalculationPayload | null {
+  if (typeof body !== 'object' || body === null) {
+    return null;
+  }
+
+  const candidate = {
+    tool_type: (body as any).tool_type ?? (body as any).toolType,
+    input_params:
+      (body as any).input_params ??
+      (body as any).params ??
+      (body as any).parameters,
+    result: (body as any).result,
+  };
+
+  const parsed = calculationPayloadSchema.safeParse(candidate);
+  return parsed.success ? parsed.data : null;
+}
 
 /**
  * POST /api/calculations - Save a new calculation
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const rawBody = await request.json().catch(() => null);
+    const payload = normalizePayload(rawBody);
 
-    const { tool_type, input_params, result } = body;
-
-    // Validate required fields
-    if (!tool_type || !input_params || !result) {
+    if (!payload) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Invalid payload: tool_type, input_params, and result are required' },
         { status: 400 }
       );
     }
 
-    // Get client information
-    const ip = request.headers.get('x-real-ip') || 
-               request.headers.get('x-forwarded-for')?.split(',')[0] ||
-               'unknown';
+    const ip =
+      request.headers.get('x-real-ip') ||
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      'unknown';
     const userAgent = request.headers.get('user-agent') || 'unknown';
-    
-    // Get geolocation from Cloudflare (if available)
     const country = request.headers.get('cf-ipcountry') || undefined;
     const city = request.headers.get('cf-ipcity') || undefined;
 
-    // Generate or get session ID from cookie
-    const sessionId = request.cookies.get('session_id')?.value || 
-                     crypto.randomUUID();
+    const existingSession = request.cookies.get('session_id')?.value;
+    const sessionId = existingSession || crypto.randomUUID();
 
     const calculationId = await saveCalculation({
-      tool_type,
-      input_params,
-      result,
+      ...payload,
       user_ip: ip,
       user_agent: userAgent,
       user_country: country,
@@ -57,13 +78,12 @@ export async function POST(request: NextRequest) {
       id: calculationId,
     });
 
-    // Set session cookie if new
-    if (!request.cookies.get('session_id')) {
+    if (!existingSession) {
       response.cookies.set('session_id', sessionId, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 365, // 1 year
+        maxAge: 60 * 60 * 24 * 365,
       });
     }
 
@@ -83,8 +103,14 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '10', 10);
-    const toolType = searchParams.get('tool_type') as any;
+    const limit = Math.min(
+      Math.max(parseInt(searchParams.get('limit') || '10', 10), 1),
+      100
+    );
+    const toolTypeParam = searchParams.get('tool_type');
+    const toolType = toolTypeParam && CALCULATION_TOOL_TYPES.includes(toolTypeParam as any)
+      ? (toolTypeParam as (typeof CALCULATION_TOOL_TYPES)[number])
+      : undefined;
 
     const calculations = await getRecentCalculations(limit, toolType);
 
@@ -94,7 +120,6 @@ export async function GET(request: NextRequest) {
         id: calc.id,
         tool_type: calc.tool_type,
         created_at: calc.created_at,
-        // Don't expose sensitive data in public API
       })),
     });
   } catch (error) {
@@ -105,7 +130,6 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-
 
 
 

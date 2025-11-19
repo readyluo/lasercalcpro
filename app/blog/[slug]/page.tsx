@@ -1,10 +1,11 @@
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
-import { getArticleBySlug, incrementArticleViews, getRecentArticles } from '@/lib/db/articles';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
+import { getArticleBySlug, incrementArticleViews, getRecentArticles, type Article } from '@/lib/db/articles';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Calendar, User, Eye, Clock, Tag, ArrowRight } from 'lucide-react';
+import { Calendar, Eye, Clock, Tag, ArrowRight } from 'lucide-react';
 import { Metadata } from 'next';
 
 interface Props {
@@ -56,13 +57,38 @@ export default async function BlogArticlePage({ params }: Props) {
 
   // Get related articles
   const relatedArticles = await getRecentArticles(3);
-  const tags = article.tags ? JSON.parse(article.tags) : [];
+  let tags: string[] = [];
+  if (article.tags) {
+    try {
+      tags = typeof article.tags === 'string' ? JSON.parse(article.tags) : article.tags;
+    } catch {
+      tags = [];
+    }
+  }
 
   const readingTime = Math.ceil(article.content.split(' ').length / 200); // ~200 words per minute
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: article.title,
+    datePublished: article.published_at || article.created_at,
+    dateModified: article.updated_at || article.published_at || article.created_at,
+    url: `https://www.lasercalcpro.com/blog/${article.slug}`,
+    image: article.featured_image || undefined,
+    articleSection: article.category || undefined,
+    description: article.excerpt || undefined,
+    wordCount: article.content.split(' ').length,
+    author: {
+      '@type': 'Organization',
+      name: 'LaserCalc Pro',
+      url: 'https://www.lasercalcpro.com',
+    },
+  };
 
   return (
     <>
       <Navigation />
+      <SchemaMarkup schema={articleSchema} />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
@@ -117,10 +143,11 @@ export default async function BlogArticlePage({ params }: Props) {
             {/* Featured Image */}
             {article.featured_image && (
               <div className="mb-8 overflow-hidden rounded-xl">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={article.featured_image}
                   alt={article.title}
-                  className="w-full h-auto object-cover"
+                  className="h-auto w-full object-cover"
                 />
               </div>
             )}
@@ -157,7 +184,7 @@ export default async function BlogArticlePage({ params }: Props) {
                 Ready to Calculate Costs?
               </h3>
               <p className="mb-6 text-gray-700">
-                Put what you've learned into practice with our free professional calculators
+                Put what you&apos;ve learned into practice with our free professional calculators
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
@@ -184,9 +211,9 @@ export default async function BlogArticlePage({ params }: Props) {
               <h2 className="mb-8 text-3xl font-bold text-gray-900">Related Articles</h2>
               <div className="grid gap-6 md:grid-cols-3">
                 {relatedArticles
-                  .filter(related => related.id !== article.id)
+                  .filter((related: Article) => related.id !== article.id)
                   .slice(0, 3)
-                  .map((related) => (
+                  .map((related: Article) => (
                     <Link
                       key={related.id}
                       href={`/blog/${related.slug}`}
@@ -194,10 +221,11 @@ export default async function BlogArticlePage({ params }: Props) {
                     >
                       {related.featured_image && (
                         <div className="mb-4 -mt-6 -mx-6 overflow-hidden">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={related.featured_image}
                             alt={related.title}
-                            className="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-105"
+                            className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-105"
                           />
                         </div>
                       )}
@@ -236,8 +264,3 @@ export default async function BlogArticlePage({ params }: Props) {
     </>
   );
 }
-
-
-
-
-

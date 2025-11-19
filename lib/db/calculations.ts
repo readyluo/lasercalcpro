@@ -1,8 +1,9 @@
 import { executeQuery, executeWrite } from './client';
+import type { CalculationToolType } from '@/lib/types/calculations';
 
 export interface Calculation {
   id: number;
-  tool_type: 'laser-cutting' | 'cnc-machining' | 'roi' | 'energy' | 'material-utilization';
+  tool_type: CalculationToolType;
   input_params: string; // JSON
   result: string; // JSON
   user_ip?: string;
@@ -14,9 +15,9 @@ export interface Calculation {
 }
 
 export interface CalculationInput {
-  tool_type: Calculation['tool_type'];
-  input_params: Record<string, any>;
-  result: Record<string, any>;
+  tool_type: CalculationToolType;
+  input_params: Record<string, unknown>;
+  result: Record<string, unknown>;
   user_ip?: string;
   user_agent?: string;
   user_country?: string;
@@ -47,13 +48,9 @@ export async function saveCalculation(data: CalculationInput): Promise<number | 
   ];
 
   try {
-    const success = await executeWrite(query, params);
-    if (success) {
-      // Get the last inserted ID
-      const lastId = await executeQuery<{ id: number }>(
-        'SELECT last_insert_rowid() as id'
-      );
-      return lastId[0]?.id || null;
+    const result = await executeWrite(query, params);
+    if (result && typeof result.lastInsertRowid === 'number') {
+      return result.lastInsertRowid;
     }
     return null;
   } catch (error) {
@@ -170,8 +167,6 @@ export async function deleteOldCalculations(daysToKeep: number = 365): Promise<n
     return 0;
   }
 }
-
-
 
 
 

@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Filter, Download, Trash2, Check, X, Mail,
   ChevronLeft, ChevronRight
 } from 'lucide-react';
+import { buildSubscriberQuery } from '@/lib/admin/query';
 
 interface Subscriber {
   id: number;
@@ -25,22 +26,17 @@ export default function SubscribersManagementPage() {
     search: '',
   });
 
-  useEffect(() => {
-    fetchSubscribers();
-  }, [page, filters]);
-
-  const fetchSubscribers = async () => {
+  const fetchSubscribers = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: '20',
-        ...Object.fromEntries(
-          Object.entries(filters).filter(([_, v]) => v !== '')
-        ),
+      const query = buildSubscriberQuery({
+        page,
+        limit: 20,
+        isConfirmed: filters.is_confirmed || undefined,
+        search: filters.search || undefined,
       });
 
-      const response = await fetch(`/api/admin/subscribers?${params}`);
+      const response = await fetch(`/api/admin/subscribers?${query}`);
       const data = await response.json();
 
       if (data.success) {
@@ -52,10 +48,14 @@ export default function SubscribersManagementPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters, page]);
+
+  useEffect(() => {
+    fetchSubscribers();
+  }, [fetchSubscribers]);
 
   const handleDelete = async (id: number) => {
-    if (!confirm('确定要删除这个订阅用户吗？')) return;
+    if (!confirm('Delete this subscriber? This cannot be undone.')) return;
 
     try {
       const response = await fetch(`/api/admin/subscribers?id=${id}`, {
@@ -90,14 +90,14 @@ export default function SubscribersManagementPage() {
   };
 
   const exportToCSV = () => {
-    const headers = ['ID', '邮箱', '来源', '状态', '订阅时间', '确认时间'];
+    const headers = ['ID', 'Email', 'Source', 'Status', 'Subscribed At', 'Confirmed At'];
     const rows = subscribers.map(sub => [
       sub.id,
       sub.email,
       sub.source_tool || '-',
-      sub.is_confirmed ? '已确认' : '未确认',
-      new Date(sub.subscribed_at).toLocaleString('zh-CN'),
-      sub.confirmed_at ? new Date(sub.confirmed_at).toLocaleString('zh-CN') : '-',
+      sub.is_confirmed ? 'confirmed' : 'pending',
+      new Date(sub.subscribed_at).toLocaleString('en-US'),
+      sub.confirmed_at ? new Date(sub.confirmed_at).toLocaleString('en-US') : '-',
     ]);
 
     const csvContent = [
@@ -116,12 +116,8 @@ export default function SubscribersManagementPage() {
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          订阅用户管理
-        </h1>
-        <p className="text-gray-600">
-          管理和分析订阅用户数据
-        </p>
+        <h1 className="mb-2 text-3xl font-bold text-gray-900">Subscribers</h1>
+        <p className="text-gray-600">Manage sign-ups, confirmations, and exports.</p>
       </div>
 
       {/* Filters */}
@@ -129,28 +125,28 @@ export default function SubscribersManagementPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              确认状态
+              Confirmation status
             </label>
             <select
               value={filters.is_confirmed}
               onChange={(e) => setFilters({ ...filters, is_confirmed: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             >
-              <option value="">全部</option>
-              <option value="true">已确认</option>
-              <option value="false">未确认</option>
+              <option value="">All</option>
+              <option value="true">Confirmed</option>
+              <option value="false">Unconfirmed</option>
             </select>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              搜索邮箱
+              Email
             </label>
             <input
               type="text"
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-              placeholder="输入邮箱地址"
+              placeholder="Search by email"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             />
           </div>
@@ -161,14 +157,14 @@ export default function SubscribersManagementPage() {
               className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
             >
               <Filter className="h-4 w-4 inline mr-2" />
-              应用筛选
+              Apply filters
             </button>
             <button
               onClick={exportToCSV}
               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
             >
               <Download className="h-4 w-4 inline mr-2" />
-              导出 CSV
+              Export CSV
             </button>
           </div>
         </div>
@@ -177,9 +173,9 @@ export default function SubscribersManagementPage() {
       {/* Table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="text-center py-12">
+          <div className="py-12 text-center">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent" />
-            <p className="mt-4 text-gray-600">加载中...</p>
+            <p className="mt-4 text-gray-600">Loading subscribers…</p>
           </div>
         ) : (
           <>
@@ -191,19 +187,19 @@ export default function SubscribersManagementPage() {
                       ID
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      邮箱
+                      Email
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      来源
+                      Source
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      状态
+                      Status
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      订阅时间
+                      Subscribed
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      操作
+                      Actions
                     </th>
                   </tr>
                 </thead>
@@ -225,26 +221,26 @@ export default function SubscribersManagementPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {sub.is_confirmed ? (
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            <Check className="h-3 w-3 mr-1" />
-                            已确认
+                            <Check className="mr-1 h-3 w-3" />
+                            Confirmed
                           </span>
                         ) : (
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                            <X className="h-3 w-3 mr-1" />
-                            未确认
+                            <X className="mr-1 h-3 w-3" />
+                            Pending
                           </span>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {new Date(sub.subscribed_at).toLocaleString('zh-CN')}
+                        {new Date(sub.subscribed_at).toLocaleString('en-US')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <button
                           onClick={() => handleToggleConfirm(sub)}
-                          className="text-primary-600 hover:text-primary-900 mr-3"
-                          title={sub.is_confirmed ? '取消确认' : '设为已确认'}
+                          className="mr-3 text-primary-600 hover:text-primary-900"
+                          title={sub.is_confirmed ? 'Mark as unconfirmed' : 'Mark as confirmed'}
                         >
-                          {sub.is_confirmed ? '取消确认' : '确认'}
+                          {sub.is_confirmed ? 'Undo' : 'Confirm'}
                         </button>
                         <button
                           onClick={() => handleDelete(sub.id)}
@@ -261,9 +257,7 @@ export default function SubscribersManagementPage() {
 
             {/* Pagination */}
             <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-              <div className="text-sm text-gray-600">
-                第 {page} 页，共 {totalPages} 页
-              </div>
+              <div className="text-sm text-gray-600">Page {page} of {totalPages}</div>
               <div className="flex gap-2">
                 <button
                   onClick={() => setPage(Math.max(1, page - 1))}
@@ -287,4 +281,3 @@ export default function SubscribersManagementPage() {
     </div>
   );
 }
-

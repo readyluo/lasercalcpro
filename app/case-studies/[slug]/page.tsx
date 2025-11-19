@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import { getCaseStudyBySlug } from '@/lib/db/case-studies';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
+import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 
 interface PageProps {
   params: { slug: string };
@@ -34,12 +36,30 @@ export default async function CaseStudyDetailPage({ params }: PageProps) {
     metrics = cs.key_metrics ? JSON.parse(cs.key_metrics) : null;
   } catch {}
 
+  const caseStudySchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CaseStudy',
+    name: cs.title,
+    url: `https://www.lasercalcpro.com/case-studies/${cs.slug}`,
+    datePublished: cs.published_at || undefined,
+    industry: cs.industry || undefined,
+    abstract: cs.results || undefined,
+    author: {
+      '@type': 'Organization',
+      name: 'LaserCalc Pro',
+      url: 'https://www.lasercalcpro.com',
+    },
+    inLanguage: 'en',
+  };
+
   return (
     <>
       <Navigation />
+      <SchemaMarkup schema={caseStudySchema} />
       <main className="min-h-screen bg-gradient-to-b from-white to-gray-50 py-12">
         <div className="container mx-auto px-4">
           <article className="mx-auto max-w-4xl">
+            <Breadcrumbs />
             {/* Hero */}
             <header className="mb-8 rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
               <h1 className="text-4xl font-bold text-gray-900 md:text-4xl">{cs.title}</h1>

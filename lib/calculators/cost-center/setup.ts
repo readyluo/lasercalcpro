@@ -2,13 +2,13 @@
  * Setup Time Estimator
  * 
  * Estimates setup and changeover time for laser cutting jobs.
- * Pure functions with industry-standard time components.
+ * Pure functions using shared setup time components from the constants module.
  */
 
 import type { SetupEstimatorInput } from '@/lib/validations/cost-center';
 import { 
-  SETUP_TIME_COMPONENTS, 
-  SETUP_REDUCTION_FACTORS,
+  // SETUP_TIME_COMPONENTS, // Reserved for future use
+  // SETUP_REDUCTION_FACTORS, // Reserved for future use
   calculateSetupTime as calcSetupTimeUtil,
   calculateSetupCostPerPart,
 } from '@/lib/calculators/constants/setup';
@@ -108,7 +108,7 @@ export function calculateSetupEstimate(input: SetupEstimatorInput): SetupEstimat
   // Operator experience
   if (input.operatorExperience === 'novice' || input.operatorExperience === 'intermediate') {
     recommendations.push(
-      'Training operators on efficient setup procedures can reduce setup time by 20-40%.'
+      'Training operators on consistent, efficient setup procedures can help reduce setup time and variability over the long run.'
     );
   }
   

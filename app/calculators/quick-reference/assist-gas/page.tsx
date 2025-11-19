@@ -5,30 +5,38 @@ import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
-import { generateFAQSchema } from '@/lib/seo/schema';
+import { generateFAQSchema, generateSoftwareApplicationSchema } from '@/lib/seo/schema';
 import Link from 'next/link';
-import { Wind, DollarSign, Info } from 'lucide-react';
+import { Wind, DollarSign, Info, Gauge, Workflow } from 'lucide-react';
 
 const gasComparison = [
   {
-    gas: 'Oxygen (O₂)',
+    gas: 'Oxygen (O2)',
     bestFor: 'Mild steel, carbon steel',
-    advantages: ['20-30% faster cutting', 'Lower gas cost ($0.10-0.30/m³)', 'Exothermic reaction adds heat'],
+    advantages: [
+      'Can enable higher cutting speeds in many setups',
+      'Often lower unit gas cost (for example, $0.10-0.30/m3 in some markets)',
+      'Exothermic reaction adds heat',
+    ],
     disadvantages: ['Oxidized (black) edges', 'Not suitable for stainless/aluminum', 'Requires post-processing for painted parts'],
-    typicalPressure: '0.5-2 bar',
-    consumption: '0.5-2 m³/hr',
+    typicalPressure: '0.5-2 bar (example range)',
+    consumption: '0.5-2 m3/hr (example range)',
   },
   {
-    gas: 'Nitrogen (N₂)',
+    gas: 'Nitrogen (N2)',
     bestFor: 'Stainless steel, aluminum, brass, copper',
-    advantages: ['Clean, oxide-free edges', 'No post-processing needed', 'Suitable for painted/coated parts'],
-    disadvantages: ['Higher cost ($0.50-2.00/m³)', '20-30% slower than O₂', 'High pressure required (12-20 bar)'],
-    typicalPressure: '12-20 bar',
-    consumption: '2-8 m³/hr',
+    advantages: ['Clean, oxide-free edges', 'Often reduces or removes post-processing', 'Suitable for painted/coated parts'],
+    disadvantages: [
+      'Higher unit cost in many contracts (for example, $0.50-2.00/m3)',
+      'May require slower feeds than O2 at similar edge quality',
+      'Typically run at elevated assist gas pressures (for example, 12-20 bar)',
+    ],
+    typicalPressure: '12-20 bar (example range)',
+    consumption: '2-8 m3/hr (example range)',
   },
   {
     gas: 'Air (Compressed)',
-    bestFor: 'Thin mild steel (<3mm), general purpose',
+    bestFor: 'Thin mild steel (<3 mm), general purpose',
     advantages: ['Lowest cost (compressor only)', 'Suitable for non-critical parts', 'No gas supply needed'],
     disadvantages: ['Limited thickness capability', 'Moderate edge quality', 'Requires oil-free compressor'],
     typicalPressure: '8-15 bar',
@@ -40,21 +48,26 @@ export default function AssistGasQuickReferencePage() {
   const faqSchema = generateFAQSchema([
     {
       question: 'When should I use nitrogen vs oxygen?',
-      answer: 'Use oxygen for mild steel when edge oxidation is acceptable - it cuts 20-30% faster and costs less. Use nitrogen for stainless steel, aluminum, or when you need clean, oxide-free edges for painting or welding.',
+      answer:
+        'For mild steel jobs where an oxidized edge is acceptable, oxygen is often used because it can enable higher cutting speeds and has a lower unit gas cost in many contracts. Nitrogen is more commonly used for stainless steel, aluminum, and parts that need clean, oxide-free edges for painting or welding. Always confirm with sample cuts and your own quality requirements.',
     },
     {
       question: 'Is on-site nitrogen generation worth it?',
-      answer: 'If you use more than 40-50 hours per week of nitrogen cutting, an on-site generator typically pays for itself in 2-3 years. Generators cost $30k-80k but reduce nitrogen cost by 50-70%.',
+      answer:
+        'Whether on-site nitrogen generation makes sense depends on your nitrogen hours, local gas and electricity prices, generator cost, and financing. Use your own consumption data together with an ROI or energy calculator and supplier proposals instead of relying on a single hour-per-week threshold or payback period. Typical generators on the market may cost on the order of $30k-80k, and many shops see lower unit nitrogen costs once they are properly utilized.',
     },
     {
       question: 'Can I use air instead of nitrogen?',
-      answer: 'Air works for thin mild steel (under 3mm) and non-critical applications. It provides moderate edge quality between oxygen and nitrogen. Requires oil-free compressed air at 8-15 bar.',
+      answer:
+        'Compressed air is sometimes used for thin mild steel and non-critical applications where moderate edge quality is acceptable. It often sits between oxygen and nitrogen in terms of edge appearance. Always follow your laser and compressor manufacturer guidance on allowable thicknesses and pressures, and use oil-free air where required.',
     },
   ]);
+  const softwareSchema = generateSoftwareApplicationSchema('Assist Gas Reference');
 
   return (
     <>
       <SchemaMarkup schema={faqSchema} />
+      <SchemaMarkup schema={softwareSchema} />
       <Navigation />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
@@ -153,7 +166,7 @@ export default function AssistGasQuickReferencePage() {
                     <td className="py-2 text-xs">High pressure needed</td>
                   </tr>
                   <tr className="border-b">
-                    <td className="py-2">Thin sheets (&lt;3mm)</td>
+                    <td className="py-2">Thin sheets (&lt;3 mm)</td>
                     <td className="py-2">Air</td>
                     <td className="py-2 text-right">$0.20-0.50</td>
                     <td className="py-2 text-xs">Compressor cost only</td>
@@ -162,7 +175,7 @@ export default function AssistGasQuickReferencePage() {
               </table>
             </div>
             <p className="mt-3 text-xs text-gray-600">
-              Costs assume bottled gas delivery. On-site generation reduces nitrogen cost by 50-70%.
+              Costs in this table assume bottled gas delivery and are illustrative only. On-site generation can reduce effective nitrogen unit cost in many scenarios; actual savings depend on your equipment, tariffs, and utilization.
             </p>
           </div>
 
@@ -183,19 +196,19 @@ export default function AssistGasQuickReferencePage() {
                 <h3 className="mb-3 font-semibold text-gray-900">Bottled Nitrogen Costs</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span>Cost per m³:</span>
+                    <span>Cost per m3:</span>
                     <span className="font-semibold">$0.50-2.00</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Typical consumption:</span>
-                    <span className="font-semibold">4 m³/hr</span>
+                    <span className="font-semibold">4 m3/hr</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Cost per hour:</span>
                     <span className="font-semibold">$2.00-8.00</span>
                   </div>
                   <div className="flex justify-between border-t pt-2 font-bold">
-                    <span>Annual cost (40 hrs/wk):</span>
+                    <span>Annual cost (example 40 hrs/wk):</span>
                     <span className="text-red-600">$4,160-16,640</span>
                   </div>
                 </div>
@@ -210,15 +223,15 @@ export default function AssistGasQuickReferencePage() {
                   </div>
                   <div className="flex justify-between">
                     <span>Operating cost:</span>
-                    <span className="font-semibold">$0.15-0.50/m³</span>
+                    <span className="font-semibold">$0.15-0.50/m3</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Annual operating:</span>
                     <span className="font-semibold">$1,248-4,160</span>
                   </div>
                   <div className="flex justify-between border-t pt-2 font-bold">
-                    <span>Typical payback:</span>
-                    <span className="text-green-600">2-3 years</span>
+                    <span>Example payback range:</span>
+                    <span className="text-green-600">varies with usage, pricing, and financing</span>
                   </div>
                 </div>
               </div>
@@ -226,9 +239,55 @@ export default function AssistGasQuickReferencePage() {
 
             <div className="mt-4 rounded-lg bg-primary-100 p-4">
               <p className="text-sm text-gray-800">
-                <strong>Rule of Thumb:</strong> If you use nitrogen more than 40 hours per week, on-site generation 
-                typically pays for itself within 2-3 years and saves 50-70% on gas costs long-term.
+                <strong>Planning Tip:</strong> Shops with sustained nitrogen usage sometimes find that on-site generation
+                becomes cost-effective over time. Use your own hours of nitrogen cutting, gas and electricity rates, and
+                generator quotes as inputs to an ROI or energy-cost calculator to estimate payback and long-term savings
+                instead of relying on a single rule-of-thumb threshold.
               </p>
+            </div>
+          </div>
+
+          {/* Flow & Pressure Reference */}
+          <div className="card mb-8">
+            <div className="mb-4 flex items-start gap-3">
+              <div className="rounded-full bg-blue-100 p-2">
+                <Gauge className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">Flow & Pressure Reference</h2>
+                <p className="mt-1 text-gray-700">Keep conversion factors handy when translating supplier data.</p>
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="rounded-lg bg-gray-50 p-4 text-sm">
+                <p className="font-semibold text-gray-900">Common conversions</p>
+                <ul className="mt-2 list-disc pl-5 text-gray-700">
+                  <li>1 bar = 14.5 psi (12 bar nitrogen = 174 psi).</li>
+                  <li>m3/hr = SCFH x 0.472; SCFH = m3/hr x 2.12.</li>
+                  <li>kg/cm2 roughly equals bar for quick mental math.</li>
+                </ul>
+                <p className="mt-2 text-gray-600">
+                  Validate flow references when comparing European spec sheets to US pricing.
+                </p>
+              </div>
+              <div className="rounded-lg bg-gray-50 p-4 text-sm">
+                <p className="font-semibold text-gray-900">Setup checklist</p>
+                <ul className="mt-2 list-disc pl-5 text-gray-700">
+                  <li>Log gas purity (99.5%+ for stainless) and dew point (-40 C or better).</li>
+                  <li>Confirm regulator Cv and hose ID match the required flow rate.</li>
+                  <li>
+                    Record nozzle size/focus inside your{' '}
+                    <Link
+                      href="/calculators/quick-reference/processing-parameters"
+                      className="text-primary-700 underline-offset-2 hover:underline"
+                    >
+                      processing parameter sheet
+                    </Link>{' '}
+                    for repeatability.
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
 
@@ -247,7 +306,7 @@ export default function AssistGasQuickReferencePage() {
               <div className="border-l-4 border-green-600 pl-4">
                 <h3 className="mb-2 text-lg font-semibold text-gray-900">1. Choose the Right Gas for Each Job</h3>
                 <p className="text-gray-700">
-                  Don't use expensive nitrogen when oxygen will work. For structural mild steel parts that will be 
+                  Do not use expensive nitrogen when oxygen will work. For structural mild steel parts that will be 
                   painted, the oxidized edge gets covered anyway. Save nitrogen for stainless, aluminum, and parts 
                   requiring clean edges.
                 </p>
@@ -256,25 +315,28 @@ export default function AssistGasQuickReferencePage() {
               <div className="border-l-4 border-green-600 pl-4">
                 <h3 className="mb-2 text-lg font-semibold text-gray-900">2. Optimize Gas Pressure</h3>
                 <p className="text-gray-700">
-                  Excessive pressure wastes gas without improving cut quality. Start at recommended pressure and 
-                  reduce incrementally until you see edge quality degradation, then add 1-2 bar back. This can 
-                  reduce consumption by 20-30%.
+                  Excessive pressure can waste gas without improving cut quality. Start from your machine or supplier
+                  recommended pressure, then adjust in small steps while checking edge quality and cut stability.
+                  Use flow meters or supplier guidance to understand how changes in pressure affect actual gas use for
+                  your setup.
                 </p>
               </div>
 
               <div className="border-l-4 border-green-600 pl-4">
                 <h3 className="mb-2 text-lg font-semibold text-gray-900">3. Fix Leaks Promptly</h3>
                 <p className="text-gray-700">
-                  A small leak in your gas system can waste $500-1000/year. Check all connections regularly with 
-                  leak detection spray. Common leak points: quick disconnects, regulators, and nozzle seals.
+                  Even small leaks in your gas system can accumulate into meaningful annual cost. Check connections
+                  regularly with leak detection spray and use your own gas pricing to estimate the financial impact.
+                  Common leak points include quick disconnects, regulators, and nozzle seals.
                 </p>
               </div>
 
               <div className="border-l-4 border-green-600 pl-4">
                 <h3 className="mb-2 text-lg font-semibold text-gray-900">4. Consider Bulk Gas Delivery</h3>
                 <p className="text-gray-700">
-                  If you use 5+ bottles per week, switch to bulk liquid nitrogen delivery. Cost per m³ drops by 
-                  30-50% compared to high-pressure cylinders. Requires on-site bulk tank (often provided by supplier).
+                  If your nitrogen consumption is consistently high, bulk liquid delivery may offer lower unit pricing
+                  than high-pressure cylinders. Discuss volume tiers, tank requirements, and long-term pricing with your
+                  gas supplier rather than relying on a single bottle-per-week threshold.
                 </p>
               </div>
 
@@ -288,21 +350,70 @@ export default function AssistGasQuickReferencePage() {
             </div>
           </div>
 
+          {/* Workflow Integration */}
+          <div className="card mb-8 bg-gradient-to-br from-primary-50 to-blue-50">
+            <div className="mb-4 flex items-start gap-3">
+              <div className="rounded-full bg-primary-100 p-2">
+                <Workflow className="h-6 w-6 text-primary-700" />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">Cost Workflow Checklist</h2>
+                <p className="mt-1 text-gray-700">
+                  Tie gas pricing to the calculators so every quote reflects real consumption.
+                </p>
+              </div>
+            </div>
+            <ol className="space-y-4 text-sm text-gray-800">
+              <li>
+                <span className="font-semibold text-gray-900">1. Capture contract pricing.</span> Store cylinder rental,
+                delivery fees, purity, and pressure requirements inside your sourcing log so operators and estimators
+                share the same assumptions.
+              </li>
+              <li>
+                <span className="font-semibold text-gray-900">2. Convert to hourly cost.</span> Feed flow (m3/hr) and
+                price per m3 into the{' '}
+                <Link
+                  href="/calculators/quick/hourly-rate"
+                  className="text-primary-700 underline-offset-2 hover:underline"
+                >
+                  Hourly Rate calculator
+                </Link>{' '}
+                or{' '}
+                <Link href="/calculators/energy" className="text-primary-700 underline-offset-2 hover:underline">
+                  Energy reference
+                </Link>{' '}
+                to keep shop-rate math aligned with energy usage.
+              </li>
+              <li>
+                <span className="font-semibold text-gray-900">3. Push per-part cost downstream.</span> Apply the hourly
+                gas cost inside the{' '}
+                <Link href="/calculators/laser-cutting" className="text-primary-700 underline-offset-2 hover:underline">
+                  Laser Cutting calculator
+                </Link>{' '}
+                or{' '}
+                <Link href="/calculators/quick/price-per-meter" className="text-primary-700 underline-offset-2 hover:underline">
+                  Price per Meter tool
+                </Link>{' '}
+                so final quotes show true margin impact.
+              </li>
+            </ol>
+          </div>
+
           {/* FAQ */}
           <div className="card mb-8">
             <h2 className="mb-6 text-2xl font-bold text-gray-900">Frequently Asked Questions</h2>
             <div className="space-y-4">
               <FAQItem
                 question="When should I use nitrogen vs oxygen?"
-                answer="Use oxygen for mild steel when edge oxidation is acceptable - it cuts 20-30% faster and costs less. Use nitrogen for stainless steel, aluminum, or when you need clean, oxide-free edges for painting or welding."
+                answer="For mild steel jobs where an oxidized edge is acceptable, oxygen is often used because it can enable higher cutting speeds and has a lower unit gas cost in many contracts. Nitrogen is more commonly used for stainless steel, aluminum, and parts that need clean, oxide-free edges for painting or welding. Always confirm with sample cuts and your own quality requirements."
               />
               <FAQItem
                 question="Is on-site nitrogen generation worth it?"
-                answer="If you use more than 40-50 hours per week of nitrogen cutting, an on-site generator typically pays for itself in 2-3 years. Generators cost $30k-80k but reduce nitrogen cost by 50-70%."
+                answer="Whether on-site nitrogen generation makes sense depends on your nitrogen hours, local gas and electricity prices, generator cost, and financing. Use your own consumption data together with an ROI or energy calculator and supplier proposals instead of relying on a single hour-per-week threshold or payback period. Typical generators on the market may cost on the order of $30k-80k, and many shops see lower unit nitrogen costs once they are properly utilized."
               />
               <FAQItem
                 question="Can I use air instead of nitrogen?"
-                answer="Air works for thin mild steel (under 3mm) and non-critical applications. It provides moderate edge quality between oxygen and nitrogen. Requires oil-free compressed air at 8-15 bar."
+                answer="Compressed air is sometimes used for thin mild steel and non-critical applications where moderate edge quality is acceptable. It often sits between oxygen and nitrogen in terms of edge appearance. Always follow your laser and compressor manufacturer guidance on allowable thicknesses and pressures, and use oil-free air where required."
               />
               <FAQItem
                 question="Why is nitrogen so expensive?"
@@ -384,5 +495,3 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
     </div>
   );
 }
-
-

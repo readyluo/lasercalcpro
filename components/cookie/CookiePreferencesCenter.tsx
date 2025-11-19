@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Cookie, Check, X, Settings, Shield } from 'lucide-react';
+import { Cookie, Check, Shield } from 'lucide-react';
 
 interface CookiePreferences {
   necessary: boolean;

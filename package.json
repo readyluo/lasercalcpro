@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "rm -rf .tests-dist && tsc -p tsconfig.test.json && node --test .tests-dist/tests/calculators.test.js .tests-dist/tests/admin/query.test.js && rm -rf .tests-dist",
     "type-check": "tsc --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\"",

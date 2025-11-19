@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   Plus, Edit, Trash2, Eye, Search, Filter, X,
   ChevronLeft, ChevronRight, FileText,
   CheckCircle, Clock, Archive
 } from 'lucide-react';
+import { buildArticleQuery } from '@/lib/admin/query';
 
 interface Article {
   id: number;
@@ -47,24 +48,19 @@ export default function ArticlesPage() {
   const [total, setTotal] = useState(0);
   const limit = 10;
 
-  useEffect(() => {
-    fetchArticles();
-  }, [currentPage, statusFilter, categoryFilter, searchTerm]);
-
-  const fetchArticles = async () => {
+  const fetchArticles = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({
-        page: currentPage.toString(),
-        limit: limit.toString(),
-        stats: currentPage === 1 ? 'true' : 'false',
+      const query = buildArticleQuery({
+        page: currentPage,
+        limit,
+        includeStats: currentPage === 1,
+        status: statusFilter || undefined,
+        category: categoryFilter || undefined,
+        search: searchTerm || undefined,
       });
 
-      if (statusFilter) params.append('status', statusFilter);
-      if (categoryFilter) params.append('category', categoryFilter);
-      if (searchTerm) params.append('search', searchTerm);
-
-      const response = await fetch(`/api/admin/articles?${params}`);
+      const response = await fetch(`/api/admin/articles?${query}`);
       const data = await response.json();
 
       if (data.success) {
@@ -80,10 +76,14 @@ export default function ArticlesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, statusFilter, categoryFilter, searchTerm, limit]);
+
+  useEffect(() => {
+    fetchArticles();
+  }, [fetchArticles]);
 
   const handleDelete = async (id: number) => {
-    if (!confirm('确定要删除这篇文章吗？此操作不可撤销。')) {
+    if (!confirm('Delete this article? This action cannot be undone.')) {
       return;
     }
 
@@ -96,11 +96,11 @@ export default function ArticlesPage() {
       if (response.ok) {
         fetchArticles();
       } else {
-        alert('删除失败，请重试');
+        alert('Unable to delete article. Please try again.');
       }
     } catch (error) {
       console.error('Delete failed:', error);
-      alert('删除失败，请重试');
+      alert('Unable to delete article. Please try again.');
     } finally {
       setDeleting(null);
     }
@@ -127,9 +127,9 @@ export default function ArticlesPage() {
     };
 
     const labels = {
-      published: '已发布',
-      draft: '草稿',
-      archived: '已归档',
+      published: 'Published',
+      draft: 'Draft',
+      archived: 'Archived',
     };
 
     return (
@@ -142,20 +142,20 @@ export default function ArticlesPage() {
 
   const getCategoryLabel = (category?: string) => {
     const labels: Record<string, string> = {
-      'tutorials': '教程',
-      'industry': '行业资讯',
-      'case-studies': '案例研究',
-      'news': '新闻',
+      'tutorials': 'Tutorials',
+      'industry': 'Industry',
+      'case-studies': 'Case Studies',
+      'news': 'News',
     };
     return category ? labels[category] || category : '-';
   };
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('zh-CN', {
+    return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
+      month: 'short',
+      day: 'numeric',
     });
   };
 
@@ -164,12 +164,8 @@ export default function ArticlesPage() {
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            文章管理
-          </h1>
-          <p className="text-gray-600">
-            管理博客文章和教程内容
-          </p>
+          <h1 className="mb-2 text-3xl font-bold text-gray-900">Articles</h1>
+          <p className="text-gray-600">Review, publish, and archive blog content.</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -177,21 +173,21 @@ export default function ArticlesPage() {
               const res = await fetch('/api/admin/articles/publish-due', { method: 'POST' });
               if (res.ok) {
                 fetchArticles();
-                alert('已发布到期文章');
+                alert('Scheduled drafts published successfully.');
               } else {
-                alert('发布失败，请重试');
+                alert('Publishing failed. Please try again.');
               }
             }}
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="rounded-lg border border-gray-300 px-4 py-2 transition-colors hover:bg-gray-50"
           >
-            发布到期文章
+            Publish scheduled drafts
           </button>
           <a
             href="/admin/articles/new"
-            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            className="flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-white transition-colors hover:bg-primary-700"
           >
             <Plus className="h-4 w-4" />
-            新建文章
+            New article
           </a>
         </div>
       </div>
@@ -201,7 +197,7 @@ export default function ArticlesPage() {
         <div className="mb-6 grid gap-4 md:grid-cols-4">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">总文章数</span>
+              <span className="text-sm text-gray-600">Total articles</span>
               <FileText className="h-4 w-4 text-blue-600" />
             </div>
             <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
@@ -209,7 +205,7 @@ export default function ArticlesPage() {
           
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">已发布</span>
+              <span className="text-sm text-gray-600">Published</span>
               <CheckCircle className="h-4 w-4 text-green-600" />
             </div>
             <div className="text-2xl font-bold text-gray-900">{stats.published}</div>
@@ -217,7 +213,7 @@ export default function ArticlesPage() {
           
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">草稿</span>
+              <span className="text-sm text-gray-600">Drafts</span>
               <Clock className="h-4 w-4 text-yellow-600" />
             </div>
             <div className="text-2xl font-bold text-gray-900">{stats.draft}</div>
@@ -225,7 +221,7 @@ export default function ArticlesPage() {
           
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">总浏览量</span>
+              <span className="text-sm text-gray-600">Total views</span>
               <Eye className="h-4 w-4 text-purple-600" />
             </div>
             <div className="text-2xl font-bold text-gray-900">{stats.totalViews.toLocaleString()}</div>
@@ -241,7 +237,7 @@ export default function ArticlesPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
               type="text"
-              placeholder="搜索文章标题、内容..."
+              placeholder="Search titles or excerpts…"
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -259,7 +255,7 @@ export default function ArticlesPage() {
             }`}
           >
             <Filter className="h-4 w-4" />
-            筛选
+            Filters
             {(statusFilter || categoryFilter) && (
               <span className="ml-1 px-2 py-0.5 bg-primary-600 text-white rounded-full text-xs">
                 {[statusFilter, categoryFilter].filter(Boolean).length}
@@ -273,7 +269,7 @@ export default function ArticlesPage() {
           <div className="mt-4 pt-4 border-t border-gray-200 grid gap-4 md:grid-cols-3">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                状态
+                Status
               </label>
               <select
                 value={statusFilter}
@@ -283,16 +279,16 @@ export default function ArticlesPage() {
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               >
-                <option value="">全部状态</option>
-                <option value="published">已发布</option>
-                <option value="draft">草稿</option>
-                <option value="archived">已归档</option>
+                <option value="">All statuses</option>
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+                <option value="archived">Archived</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                分类
+                Category
               </label>
               <select
                 value={categoryFilter}
@@ -302,11 +298,11 @@ export default function ArticlesPage() {
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               >
-                <option value="">全部分类</option>
-                <option value="tutorials">教程</option>
-                <option value="industry">行业资讯</option>
-                <option value="case-studies">案例研究</option>
-                <option value="news">新闻</option>
+                <option value="">All categories</option>
+                <option value="tutorials">Tutorials</option>
+                <option value="industry">Industry</option>
+                <option value="case-studies">Case Studies</option>
+                <option value="news">News</option>
               </select>
             </div>
 
@@ -316,7 +312,7 @@ export default function ArticlesPage() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
               >
                 <X className="h-4 w-4" />
-                清除筛选
+                Clear filters
               </button>
             </div>
           </div>
@@ -326,17 +322,17 @@ export default function ArticlesPage() {
       {/* Articles Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="text-center py-12">
+          <div className="py-12 text-center">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent" />
-            <p className="mt-4 text-gray-600">加载中...</p>
+            <p className="mt-4 text-gray-600">Loading articles…</p>
           </div>
         ) : articles.length === 0 ? (
-          <div className="text-center py-12">
-            <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <div className="py-12 text-center">
+            <FileText className="mx-auto mb-4 h-12 w-12 text-gray-400" />
             <p className="text-gray-600">
               {searchTerm || statusFilter || categoryFilter
-                ? '没有找到符合条件的文章'
-                : '还没有文章，点击"新建文章"开始创作'}
+                ? 'No articles match your filters.'
+                : 'No articles yet. Click “New article” to start publishing.'}
             </p>
           </div>
         ) : (
@@ -346,22 +342,22 @@ export default function ArticlesPage() {
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      标题
+                      Title
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      分类
+                      Category
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      状态
+                      Status
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      浏览量
+                      Views
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      更新时间
+                      Updated
                     </th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      操作
+                      Actions
                     </th>
                   </tr>
                 </thead>
@@ -404,7 +400,7 @@ export default function ArticlesPage() {
                           <a
                             href={`/admin/articles/${article.id}`}
                             className="text-primary-600 hover:text-primary-700 p-1"
-                            title="编辑"
+                            title="Edit article"
                           >
                             <Edit className="h-4 w-4" />
                           </a>
@@ -412,7 +408,7 @@ export default function ArticlesPage() {
                             onClick={() => handleDelete(article.id)}
                             disabled={deleting === article.id}
                             className="text-red-600 hover:text-red-700 p-1 disabled:opacity-50"
-                            title="删除"
+                            title="Delete article"
                           >
                             {deleting === article.id ? (
                               <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
@@ -432,7 +428,7 @@ export default function ArticlesPage() {
             {totalPages > 1 && (
               <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
                 <div className="text-sm text-gray-600">
-                  显示第 {(currentPage - 1) * limit + 1} - {Math.min(currentPage * limit, total)} 条，共 {total} 条
+                  Showing {(currentPage - 1) * limit + 1}‑{Math.min(currentPage * limit, total)} of {total} entries
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -443,7 +439,7 @@ export default function ArticlesPage() {
                     <ChevronLeft className="h-4 w-4" />
                   </button>
                   <span className="text-sm text-gray-600">
-                    第 {currentPage} / {totalPages} 页
+                    Page {currentPage} / {totalPages}
                   </span>
                   <button
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}

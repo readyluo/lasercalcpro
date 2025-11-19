@@ -167,7 +167,7 @@ export function allocateOverhead(input: OverheadAllocatorInput): OverheadAllocat
   allocatedJobs.forEach(job => {
     if (job.overheadPercent > 50) {
       recommendations.push(
-        `${job.jobName}: Overhead exceeds 50% of total cost. Review if allocation method is appropriate.`
+        `${job.jobName}: Overhead is more than 50% of the modeled total cost in this scenario. Check whether the chosen allocation method and inputs reflect how this job actually consumes resources.`
       );
     }
   });
@@ -225,13 +225,13 @@ export function calculateOverheadRate(
   
   let description: string;
   if (overheadRate < 30) {
-    description = 'Low overhead rate. Typical for lean operations.';
+    description = 'In this calculation, overhead accounts for less than 30% of the modeled direct costs.';
   } else if (overheadRate <= 60) {
-    description = 'Moderate overhead rate. Common in manufacturing.';
+    description = 'In this calculation, overhead is between roughly 30% and 60% of the modeled direct costs.';
   } else if (overheadRate <= 100) {
-    description = 'High overhead rate. Review cost structure.';
+    description = 'In this calculation, overhead makes up a relatively high share of the modeled direct costs; you may want to review major indirect cost items and allocation choices.';
   } else {
-    description = 'Very high overhead rate. Significant optimization opportunity.';
+    description = 'In this calculation, overhead represents a very large share of the modeled direct costs; consider checking your inputs and exploring potential changes to costs or utilization.';
   }
   
   return {

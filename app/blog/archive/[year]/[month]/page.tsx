@@ -1,8 +1,12 @@
 import type { Metadata } from 'next';
 import { Archive, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-import { getArticlesByYearMonth } from '@/lib/db/articles';
 import Image from 'next/image';
+import { getArticlesByYearMonth } from '@/lib/db/articles';
+import { Navigation } from '@/components/layout/Navigation';
+import { Footer } from '@/components/layout/Footer';
+import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 
 interface PageProps {
   params: {
@@ -52,44 +56,38 @@ export default async function BlogArchiveMonthPage({ params, searchParams }: Pag
     });
   };
 
+  const archiveSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `LaserCalc Pro Blog Archive - ${monthName} ${year}`,
+    url: `https://www.lasercalcpro.com/blog/archive/${year}/${String(month).padStart(2, '0')}`,
+    description: `Articles published in ${monthName} ${year} on LaserCalc Pro.`,
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex items-center gap-3 mb-4">
-            <Calendar className="h-8 w-8 text-primary-600" />
-            <h1 className="text-4xl font-bold text-gray-900">
-              {monthName} {year}
-            </h1>
+    <>
+      <Navigation />
+      <SchemaMarkup schema={archiveSchema} />
+      <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        <div className="border-b border-gray-200 bg-white">
+          <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+            <div className="mb-4 flex items-center gap-3">
+              <Calendar className="h-8 w-8 text-primary-600" />
+              <h1 className="text-4xl font-bold text-gray-900">
+                {monthName} {year}
+              </h1>
+            </div>
+            <p className="text-lg text-gray-600">
+              {total} {total === 1 ? 'article' : 'articles'} published
+            </p>
           </div>
-          <p className="text-lg text-gray-600">
-            {total} {total === 1 ? 'article' : 'articles'} published
-          </p>
         </div>
-      </div>
 
-      {/* Navigation Breadcrumb */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <nav className="flex items-center space-x-2 text-sm text-gray-600">
-          <Link href="/" className="hover:text-primary-600 transition-colors">
-            Home
-          </Link>
-          <span>/</span>
-          <Link href="/blog" className="hover:text-primary-600 transition-colors">
-            Blog
-          </Link>
-          <span>/</span>
-          <Link href="/blog/archive" className="hover:text-primary-600 transition-colors">
-            Archive
-          </Link>
-          <span>/</span>
-          <span className="text-gray-900 font-medium">{monthName} {year}</span>
-        </nav>
-      </div>
+        <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+          <Breadcrumbs />
+        </div>
 
-      {/* Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         {articles.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
             <Archive className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -155,18 +153,18 @@ export default async function BlogArchiveMonthPage({ params, searchParams }: Pag
                           </p>
                         )}
 
-                        {article.tags && article.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-2">
-                            {article.tags.map(tag => (
-                              <span
-                                key={tag}
-                                className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs"
-                              >
-                                #{tag}
-                              </span>
-                            ))}
-                          </div>
-                        )}
+                            {parseTags(article.tags).length > 0 && (
+                              <div className="flex flex-wrap gap-2">
+                                {parseTags(article.tags).map(tag => (
+                                  <span
+                                    key={tag}
+                                    className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs"
+                                  >
+                                    #{tag}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
                       </div>
                     </div>
                   </Link>
@@ -215,7 +213,21 @@ export default async function BlogArchiveMonthPage({ params, searchParams }: Pag
           </Link>
         </div>
       </div>
-    </div>
+      </main>
+      <Footer />
+    </>
   );
-}
 
+function parseTags(value: unknown): string[] {
+  if (!value) return [];
+  if (Array.isArray(value)) return value as string[];
+  if (typeof value === 'string') {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+}

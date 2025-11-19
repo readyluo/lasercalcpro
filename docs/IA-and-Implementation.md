@@ -40,7 +40,7 @@ Last updated: 2025-10-31
   - `lib/utils/*` helpers (edge-safe)
 
 - API
-  - `app/api/calculate/route.ts` POST (validated calculation trigger)
+  - `app/api/calculations/route.ts` POST (validated calculation trigger)
   - `app/api/calculators/[id]/route.ts` GET (history/item retrieval)
   - `app/api/subscribers/route.ts` POST (email subscribe)
 
@@ -75,13 +75,13 @@ Last updated: 2025-10-31
 - Inputs (validated by `laserCuttingSchema`): materialType, thickness, cuttingLength, laserPower, electricityRate, laborRate
 - Output: totalCost, unitCost, breakdown (material/electricity/labor/depreciation/gas), optional PDF export, save history
 - SEO metadata per repo rules; HowTo schema
-- API usage: POST `/api/calculate` with toolType `laser-cutting`
+- API usage: POST `/api/calculations` with toolType `laser-cutting`
 - DAO: writes to `calculations`
 
 ### C) CNC Machining Calculator `/calculators/cnc-machining`
 - Inputs: part size, material, machiningTime, setupTime, toolCost, batchSize
 - Output: detailed cost, batch discount suggestion, margin analysis
-- API usage: POST `/api/calculate` with toolType `cnc-machining`
+- API usage: POST `/api/calculations` with toolType `cnc-machining`
 
 ### D) ROI Calculator `/calculators/roi`
 - Inputs: machinePrice, monthlyVolume, pricePerPart, operatingCost, interestRate
@@ -114,7 +114,7 @@ Last updated: 2025-10-31
   - Only prepared statements; JSON fields stringified/parsed at boundary
 
 - API contracts
-  - POST `/api/calculate`
+  - POST `/api/calculations`
     - Request: `{ toolType: 'laser-cutting'|'cnc-machining'|'roi'|'energy-cost'|'material-yield', params: {...} }`
     - Response: `{ success: boolean, result: object } | { error, details? }`
   - GET `/api/calculators/[id]`
@@ -157,7 +157,7 @@ Last updated: 2025-10-31
 1. Schema `lib/validations/laser.ts` (Zod)
 2. Calculation engine `lib/calculators/laser.ts`
 3. Page UI `app/calculators/laser-cutting/page.tsx` + client form
-4. API `app/api/calculate/route.ts` (supports toolType)
+4. API `app/api/calculations/route.ts` (supports toolType)
 5. DAO save + history retrieval
 
 ### Batch 3 — CNC Calculator

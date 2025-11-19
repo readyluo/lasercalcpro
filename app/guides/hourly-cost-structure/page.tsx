@@ -1,8 +1,9 @@
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 import { generateMetadata } from '@/lib/seo/metadata';
-import { Calculator, TrendingUp, DollarSign, Zap, Wrench, Home, Users, Percent, ArrowRight, Info } from 'lucide-react';
+import { Calculator, TrendingUp, DollarSign, Zap, Wrench, Home, Users, ArrowRight, Info } from 'lucide-react';
 import Link from 'next/link';
 
 export const metadata = generateMetadata({
@@ -68,10 +69,7 @@ export default function HourlyCostStructurePage() {
   return (
     <>
       <Navigation />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }}
-      />
+      <SchemaMarkup schema={howToSchema} />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
@@ -478,7 +476,7 @@ export default function HourlyCostStructurePage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">3. Separate Setup from Run Time</h3>
-                    <p className="text-gray-700">Charge setup time separately or amortize over batch quantity. Don't hide setup costs in the hourly rate.</p>
+                    <p className="text-gray-700">Charge setup time separately or amortize over batch quantity. Don&apos;t hide setup costs in the hourly rate.</p>
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">4. Consider Utilization Rate</h3>
@@ -597,4 +595,3 @@ export default function HourlyCostStructurePage() {
     </>
   );
 }
-

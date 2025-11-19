@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { getAuthorBySlug, getAuthorArticles } from '@/lib/db/authors';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
+import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 
 interface PageProps {
   params: { slug: string };
@@ -41,12 +43,26 @@ export default async function AuthorPage({ params }: PageProps) {
     social = author.social_links ? JSON.parse(author.social_links) : null;
   } catch {}
 
+  const authorSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    mainEntity: {
+      '@type': 'Person',
+      name: author.name,
+      description: author.bio || undefined,
+      jobTitle: author.title || undefined,
+      url: `https://www.lasercalcpro.com/blog/author/${params.slug}`,
+    },
+  };
+
   return (
     <>
       <Navigation />
+      <SchemaMarkup schema={authorSchema} />
       <main className="min-h-screen bg-gradient-to-b from-white to-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
+            <Breadcrumbs />
             {/* Header */}
             <div className="mb-10 rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
               <div className="flex flex-col gap-6 sm:flex-row sm:items-center">

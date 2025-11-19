@@ -2,7 +2,7 @@
  * Pierce Time Estimator
  * 
  * Calculates piercing time and cost for laser cutting jobs.
- * Pure functions based on industry data.
+ * Pure functions built on shared piercing time and cost constants.
  */
 
 import type { PierceEstimatorInput } from '@/lib/validations/cost-center';
@@ -118,20 +118,20 @@ export function calculatePierceEstimate(input: PierceEstimatorInput): PierceEsti
   
   if (input.strategy === 'highPressure' && input.quality === 'max') {
     optimizationOpportunities.push(
-      'Using max quality with high-pressure piercing. Consider "typical" quality for 15-20% time savings if acceptable.'
+      'Using max quality with high-pressure piercing. If acceptable for your application, compare a "typical" quality scenario in this model to see the trade-off between time and quality.'
     );
   }
   
   // Material-specific recommendations
   if (input.material === 'stainless_steel' && input.thickness > 10) {
     recommendations.push(
-      'Thick stainless steel piercing is slow (2-8 seconds per hole). Ensure adequate gas pressure and optimal focus.'
+      'Thick stainless steel piercing can be relatively slow in practice. Ensure gas pressure, focus, and assist gas settings are appropriate for your machine, and validate times against your own production data.'
     );
   }
   
   if (input.material === 'copper_brass') {
     recommendations.push(
-      'Copper/brass requires high power for piercing. Ensure laser power is sufficient (6kW+ recommended for >3mm).'
+      'Copper/brass can require higher power and careful process settings for reliable piercing. Follow your machine supplier’s guidance on power and assist gas for the thicknesses you run, and confirm process windows with trials.'
     );
   }
   
@@ -151,7 +151,7 @@ export function calculatePierceEstimate(input: PierceEstimatorInput): PierceEsti
   // Gas cost optimization
   if (piercingGasCost > totalPiercingCost * 0.2) {
     optimizationOpportunities.push(
-      'Gas cost exceeds 20% of total piercing cost. Consider optimizing gas pressure or assist gas type.'
+      'In this scenario, gas cost represents a sizable share of the modeled piercing cost. Consider reviewing gas pressure, assist gas type, and cut parameters to see if alternative setups remain acceptable while reducing consumption.'
     );
   }
   

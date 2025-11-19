@@ -18,59 +18,59 @@ import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 
 // Programming complexity options
 const programmingOptions = [
-  { value: 'simple', label: 'Simple - Basic shapes, few features (5-15 min)' },
-  { value: 'moderate', label: 'Moderate - Standard parts with moderate complexity (15-30 min)' },
-  { value: 'complex', label: 'Complex - Intricate designs, multiple tool paths (30-60 min)' },
-  { value: 'veryComplex', label: 'Very Complex - Highly detailed, extensive programming (60+ min)' },
+  { value: 'simple', label: 'Simple - Basic shapes, few features' },
+  { value: 'moderate', label: 'Moderate - Standard parts with some complexity' },
+  { value: 'complex', label: 'Complex - Intricate designs, multiple tool paths' },
+  { value: 'veryComplex', label: 'Very Complex - Highly detailed, extensive programming' },
 ];
 
 // Material size options
 const materialSizeOptions = [
-  { value: 'small', label: 'Small - < 2ft × 2ft (Quick loading ~2-5 min)' },
-  { value: 'medium', label: 'Medium - 2-4ft × 2-4ft (Standard loading ~5-10 min)' },
-  { value: 'large', label: 'Large - 4-8ft × 4-8ft (Heavy loading ~10-20 min)' },
-  { value: 'xlarge', label: 'X-Large - > 8ft or crane required (30+ min)' },
+  { value: 'small', label: 'Small - Up to roughly 2ft x 2ft, quick to load' },
+  { value: 'medium', label: 'Medium - Around 2-4ft x 2-4ft, standard loading effort' },
+  { value: 'large', label: 'Large - Around 4-8ft x 4-8ft, heavier loading' },
+  { value: 'xlarge', label: 'X-Large - Very large sheets or plates, may need lifting aids' },
 ];
 
 // Machine preparation options
 const machineChangeOptions = [
-  { value: 'noChange', label: 'No Change - Same setup as previous job (0-2 min)' },
-  { value: 'nozzleChange', label: 'Nozzle Change - Replace cutting nozzle (5-10 min)' },
-  { value: 'gasChange', label: 'Gas Change - Switch assist gas type (3-8 min)' },
-  { value: 'focusAdjust', label: 'Focus Adjust - Calibrate focal length (5-15 min)' },
-  { value: 'fullSetup', label: 'Full Setup - Complete machine reconfiguration (20-45 min)' },
+  { value: 'noChange', label: 'No Change - Same setup as previous job' },
+  { value: 'nozzleChange', label: 'Nozzle Change - Replace cutting nozzle' },
+  { value: 'gasChange', label: 'Gas Change - Switch assist gas type' },
+  { value: 'focusAdjust', label: 'Focus Adjust - Calibrate focal length' },
+  { value: 'fullSetup', label: 'Full Setup - Complete machine reconfiguration' },
 ];
 
 // Inspection level options
 const inspectionOptions = [
-  { value: 'none', label: 'None - Skip first article inspection (0 min)' },
-  { value: 'quick', label: 'Quick - Visual check only (2-5 min)' },
-  { value: 'standard', label: 'Standard - Measure critical dimensions (5-15 min)' },
-  { value: 'detailed', label: 'Detailed - Full dimensional inspection (15-30 min)' },
+  { value: 'none', label: 'None - Skip additional first article inspection' },
+  { value: 'quick', label: 'Quick - Visual check only' },
+  { value: 'standard', label: 'Standard - Measure critical dimensions' },
+  { value: 'detailed', label: 'Detailed - Full dimensional inspection' },
 ];
 
 // Fixture complexity options
 const fixtureOptions = [
-  { value: 'none', label: 'None - No fixturing required (0 min)' },
-  { value: 'simple', label: 'Simple - Basic clamping or positioning (3-8 min)' },
-  { value: 'moderate', label: 'Moderate - Custom jigs or alignment tools (10-20 min)' },
-  { value: 'complex', label: 'Complex - Intricate fixturing systems (20-45 min)' },
+  { value: 'none', label: 'None - No fixturing required' },
+  { value: 'simple', label: 'Simple - Basic clamping or positioning' },
+  { value: 'moderate', label: 'Moderate - Custom jigs or alignment tools' },
+  { value: 'complex', label: 'Complex - Intricate fixturing systems' },
 ];
 
 // Operator experience options
 const operatorOptions = [
-  { value: 'novice', label: 'Novice - < 6 months experience (1.5× time)' },
-  { value: 'intermediate', label: 'Intermediate - 6-24 months experience (1.2× time)' },
-  { value: 'experienced', label: 'Experienced - 2-5 years experience (1.0× time)' },
-  { value: 'expert', label: 'Expert - 5+ years, highly skilled (0.8× time)' },
+  { value: 'novice', label: 'Novice - < 6 months experience; typically slower than baseline' },
+  { value: 'intermediate', label: 'Intermediate - 6-24 months experience; near baseline speed' },
+  { value: 'experienced', label: 'Experienced - 2-5 years experience; generally efficient' },
+  { value: 'expert', label: 'Expert - 5+ years, highly skilled; tends to be faster and more consistent' },
 ];
 
 // Job familiarity options
 const familiarityOptions = [
-  { value: 'firstTime', label: 'First Time - Never done before (1.4× time)' },
-  { value: 'occasional', label: 'Occasional - Done a few times (1.2× time)' },
-  { value: 'regular', label: 'Regular - Familiar with process (1.0× time)' },
-  { value: 'repeat', label: 'Repeat - Well-practiced routine (0.85× time)' },
+  { value: 'firstTime', label: 'First Time - Never done before; allow extra time for learning and checks' },
+  { value: 'occasional', label: 'Occasional - Done a few times; some familiarity' },
+  { value: 'regular', label: 'Regular - Familiar with process' },
+  { value: 'repeat', label: 'Repeat - Well-practiced routine with established steps' },
 ];
 
 export default function SetupEstimatorPage() {
@@ -92,7 +92,8 @@ export default function SetupEstimatorPage() {
   const faqSchema = generateFAQSchema([
     { 
       question: 'Why is setup time important?', 
-      answer: 'Setup time can represent 15-50% of total job time, especially for small batches. It directly impacts your profitability because you\'re paying labor without producing parts. Accurate setup estimation prevents under-quoting, helps with scheduling, and identifies opportunities for process improvement. For small batches, setup cost per part can exceed cutting cost.' 
+      answer:
+        'Setup time can be a significant portion of total job time, especially for small batches, because you are paying for preparation before parts are produced. Estimating it explicitly helps avoid under-quoting, supports scheduling, and can highlight where process changes might help. In some small-batch scenarios, setup cost per part may even be comparable to or higher than cutting cost; this estimator lets you explore that with your own inputs.'
     },
     { 
       question: 'How to reduce setup time?', 
@@ -104,15 +105,18 @@ export default function SetupEstimatorPage() {
     },
     {
       question: 'How does batch size affect setup cost per part?',
-      answer: 'Setup is a fixed cost spread across all parts in a batch. Larger batches dramatically reduce setup cost per part. For example, if setup takes 30 minutes and costs $30, the cost per part is $30 for 1 part, $3 for 10 parts, or $0.30 for 100 parts. This is why batching similar jobs is crucial for profitability.'
+      answer:
+        'Setup is a fixed cost spread across all parts in a batch, so larger batches reduce setup cost per part. For example, if you model 30 minutes of setup at $30 of labor cost, the cost per part would be $30 for 1 part, $3 for 10 parts, or $0.30 for 100 parts. This is only an illustration—use your own times and rates in the estimator to see how sensitive your jobs are to batch size.'
     },
     {
       question: 'What is the ideal batch size?',
-      answer: 'The ideal batch size balances setup efficiency with inventory costs. Generally, setup time should be 10-20% of total production time. Calculate this by dividing setup time by your target percentage (e.g., 30 min setup ÷ 0.15 = 200 min total, meaning you need enough parts to fill 170 minutes of cutting). Also consider customer requirements, storage space, and cash flow.'
+      answer:
+        'The ideal batch size balances setup efficiency with inventory, lead time, and cash flow. One approach is to choose a target share of total time for setup (this estimator uses a percentage parameter, such as 10% by default) and see how many parts you would need at a given cutting time per part. For example, if you assume 30 minutes of setup and target setup as 15% of total time, you would need around 200 minutes of cutting to reach that mix. Treat these percentages as planning aids rather than fixed rules, and adjust them to match your customers and operations.'
     },
     {
       question: 'How can operator experience affect setup time?',
-      answer: 'Operator experience significantly impacts setup efficiency. Novice operators may take 50-100% longer than experienced ones, making frequent mistakes and needing supervision. Expert operators work efficiently, anticipate issues, and know shortcuts. Invest in training to reduce setup times by 20-40% while improving quality and safety.'
+      answer:
+        'Operator experience can have a large effect on how long setup actually takes. Less-experienced operators often require more time for checks and adjustments, while very experienced operators are usually faster and encounter fewer interruptions. The experience levels in this estimator use relative multipliers as an internal assumption; compare the results with your own measured setup times to decide which level best matches your team.'
     }
   ]);
 
@@ -149,37 +153,19 @@ export default function SetupEstimatorPage() {
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
 
-          <div className="mb-8">
-            <h1 className="mb-2 text-4xl font-bold text-gray-900 md:text-5xl">Setup & Changeover Time Estimator</h1>
-            <p className="mb-4 text-lg text-gray-600">
-              Estimate total setup time, analyze per-part distribution, and identify optimization opportunities to improve profitability.
+          <div className="mb-4">
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">Setup & Changeover Time Estimator</h1>
+            <p className="text-base text-gray-600">
+              Estimate total setup time, analyze per-part distribution, and explore optimization opportunities.
             </p>
-            
-            {/* Quick Guide */}
-            <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
-              <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-blue-900">
-                <HelpCircle className="h-5 w-5" />
-                How to Use This Estimator
-              </h2>
-              <ol className="space-y-2 text-sm text-blue-800">
-                <li className="flex gap-2">
-                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">1</span>
-                  <span><strong>Job Complexity:</strong> Select programming complexity and material size based on your part requirements</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">2</span>
-                  <span><strong>Machine Setup:</strong> Choose machine preparation level and inspection requirements</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">3</span>
-                  <span><strong>Team Factors:</strong> Select fixture complexity, operator experience, and job familiarity</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">4</span>
-                  <span><strong>Analyze Results:</strong> Review setup breakdown, per-part costs, and optimization recommendations</span>
-                </li>
-              </ol>
-            </div>
+          </div>
+
+          {/* Disclaimer - Simplified */}
+          <div className="mb-4 border-l-4 border-cyan-500 bg-cyan-50 px-4 py-3">
+            <p className="text-sm text-cyan-900">
+              <Clock className="mr-2 inline h-4 w-4" />
+              <strong>Planning Tool:</strong> Results based on typical ranges. Actual setup times vary by operator skill, equipment, and standardization. Track your actual times for accuracy.
+            </p>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-2">
@@ -347,19 +333,22 @@ export default function SetupEstimatorPage() {
                     <div className="card bg-gradient-to-br from-green-50 to-emerald-50">
                       <div className="mb-4 flex items-center gap-2">
                         <Lightbulb className="h-6 w-6 text-green-600" />
-                        <h3 className="text-xl font-bold text-green-900">Optimal Batch Size Analysis</h3>
+                        <h3 className="text-xl font-bold text-green-900">Batch Size Scenario Analysis</h3>
                       </div>
-                      <p className="mb-4 text-sm text-green-700">Based on 10 min cutting time per part</p>
+                      <p className="mb-4 text-sm text-green-700">
+                        Based on an example assumption of 10 min cutting time per part; enter your own cutting time per part
+                        to re-model this analysis for your shop.
+                      </p>
                       <div className="grid gap-4 md:grid-cols-3">
                         <div className="rounded-lg bg-white p-4 shadow-sm">
-                          <p className="mb-1 text-sm font-medium text-gray-600">Recommended Batch Size</p>
+                          <p className="mb-1 text-sm font-medium text-gray-600">Modeled Batch Size (example)</p>
                           <p className="text-3xl font-bold text-green-700">{idealBatch.idealBatchSize}</p>
-                          <p className="mt-1 text-xs text-gray-500">parts per run</p>
+                          <p className="mt-1 text-xs text-gray-500">parts per run in this scenario</p>
                         </div>
                         <div className="rounded-lg bg-white p-4 shadow-sm">
                           <p className="mb-1 text-sm font-medium text-gray-600">Setup % of Total Time</p>
                           <p className="text-3xl font-bold text-green-700">{idealBatch.setupTimePercentage}%</p>
-                          <p className="mt-1 text-xs text-gray-500">optimal efficiency range</p>
+                          <p className="mt-1 text-xs text-gray-500">for this modeled batch and cutting-time assumption</p>
                         </div>
                         <div className="rounded-lg bg-white p-4 shadow-sm">
                           <p className="mb-1 text-sm font-medium text-gray-600">Total Batch Time</p>
@@ -376,8 +365,13 @@ export default function SetupEstimatorPage() {
                       <div className="mb-4 flex items-start gap-3">
                         <TrendingDown className="mt-1 h-6 w-6 flex-shrink-0 text-orange-600" />
                         <div>
-                          <h3 className="text-xl font-bold text-orange-900">Cost Reduction Opportunity</h3>
-                          <p className="text-sm text-orange-700">Potential savings by optimizing setup from {result.adjustedTotal.toFixed(1)} min to {Math.max(5, result.adjustedTotal * 0.6).toFixed(1)} min</p>
+                          <h3 className="text-xl font-bold text-orange-900">Modeled Cost Reduction Scenario</h3>
+                          <p className="text-sm text-orange-700">
+                            This example shows potential savings if setup time were reduced from {result.adjustedTotal.toFixed(1)} min to
+                            {" "}
+                            {Math.max(5, result.adjustedTotal * 0.6).toFixed(1)} min. Adjust the before/after times in your own analysis
+                            to match realistic improvements for your equipment and processes.
+                          </p>
                         </div>
                       </div>
                       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -389,7 +383,7 @@ export default function SetupEstimatorPage() {
                         <div className="rounded-lg bg-white p-4 shadow-sm">
                           <p className="mb-1 text-xs font-medium text-gray-600">Annual Time Savings</p>
                           <p className="text-2xl font-bold text-orange-700">{scenarioCompare.annualTimeSavings.toLocaleString()}</p>
-                          <p className="text-xs text-gray-500">minutes/year (200 setups)</p>
+                          <p className="text-xs text-gray-500">minutes/year (assuming 200 setups in this example)</p>
                         </div>
                         <div className="rounded-lg bg-white p-4 shadow-sm">
                           <p className="mb-1 text-xs font-medium text-gray-600">Cost Saved Per Setup</p>
@@ -399,12 +393,12 @@ export default function SetupEstimatorPage() {
                         <div className="rounded-lg bg-white p-4 shadow-sm">
                           <p className="mb-1 text-xs font-medium text-gray-600">Annual Cost Savings</p>
                           <p className="text-2xl font-bold text-orange-700">${scenarioCompare.annualCostSavings.toLocaleString()}</p>
-                          <p className="text-xs text-gray-500">potential savings</p>
+                          <p className="text-xs text-gray-500">potential savings in this modeled scenario</p>
                         </div>
                       </div>
                       <div className="mt-4 rounded-lg bg-white p-3">
                         <p className="text-sm text-gray-700">
-                          <strong>💡 How to achieve this:</strong> Standardize programs, batch similar jobs, improve operator training, 
+                          <strong>How to achieve this:</strong> Standardize programs, batch similar jobs, improve operator training, 
                           optimize fixture designs, and implement quick-change tooling systems.
                         </p>
                       </div>
@@ -500,14 +494,3 @@ function BreakdownWithBar({ label, value, total }: { label: string; value: numbe
     </div>
   );
 }
-
-function Stat({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="rounded-lg bg-gray-50 p-4">
-      <p className="text-sm text-gray-600">{label}</p>
-      <p className="text-lg font-semibold text-gray-900">{value}</p>
-    </div>
-  );
-}
-
-

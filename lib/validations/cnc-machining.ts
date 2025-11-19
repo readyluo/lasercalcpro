@@ -84,21 +84,25 @@ export const cncMachiningSchema = z.object({
 
 export type CNCMachiningInput = z.infer<typeof cncMachiningSchema>;
 
+// Default values for quick calculations
+// ⚠️ IMPORTANT: These are EXAMPLE VALUES ONLY for demonstration.
+// Actual values vary significantly by shop, region, equipment, and part complexity.
+// Users should input their own shop-specific data for accurate cost estimates.
 export const cncMachiningDefaults: Partial<CNCMachiningInput> = {
-  partLength: 100,
-  partWidth: 50,
-  partHeight: 25,
-  materialType: 'aluminum',
-  materialPrice: 5,
-  machiningTime: 2,
-  setupTime: 0.5,
-  batchSize: 1,
-  toolCost: 100,
-  toolLife: 100,
-  machineRate: 75,
-  laborRate: 30,
-  overheadRate: 15,
-};
+  partLength: 100,              // Example: 100mm (small to medium part)
+  partWidth: 50,                // Example: 50mm
+  partHeight: 25,               // Example: 25mm (suitable for 3-axis milling)
+  materialType: 'aluminum',     // Example: aluminum (easy to machine)
+  materialPrice: 5,             // Example: ~$5/kg (varies by alloy grade and market)
+  machiningTime: 2,             // Example: 2 hours cycle time (highly part-dependent)
+  setupTime: 0.5,               // Example: 30 minutes (varies by job complexity)
+  batchSize: 1,                 // Example: prototype/single piece
+  toolCost: 100,                // Example: set of carbide tools ($50-$200 typical)
+  toolLife: 100,                // Example: 100 parts per tool set (varies widely)
+  machineRate: 75,              // Example: mid-range 3-axis mill (range: $50-150/hr)
+  laborRate: 30,                // Example: skilled machinist (region and skill dependent)
+  overheadRate: 15,             // Example: 15% overhead (shop-specific, often 10-30%)
+}
 
 
 

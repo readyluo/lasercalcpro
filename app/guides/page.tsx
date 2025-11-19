@@ -1,6 +1,7 @@
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 import { generateMetadata } from '@/lib/seo/metadata';
 import { BookOpen, DollarSign, Target, Ruler, Clock, ArrowRight, Calculator, Zap } from 'lucide-react';
 import Link from 'next/link';
@@ -86,10 +87,26 @@ const guides = [
   },
 ];
 
+const guidesSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'LaserCalc Pro Guides Library',
+  url: 'https://www.lasercalcpro.com/guides',
+  description:
+    'Industry guides covering hourly cost structure, piercing strategies, kerf compensation, and finishing workflows for laser cutting professionals.',
+  hasPart: guides.map(guide => ({
+    '@type': 'TechArticle',
+    name: guide.title,
+    description: guide.description,
+    url: `https://www.lasercalcpro.com${guide.href}`,
+  })),
+};
+
 export default function GuidesPage() {
   return (
     <>
       <Navigation />
+      <SchemaMarkup schema={guidesSchema} />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
@@ -141,12 +158,115 @@ export default function GuidesPage() {
             </div>
           </div>
 
+          {/* Recommended Learning Paths */}
+          <div className="card mb-12 bg-gradient-to-br from-indigo-50 to-purple-50">
+            <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-gray-900">
+              <BookOpen className="h-6 w-6 text-indigo-600" />
+              Recommended learning paths
+            </h2>
+            <div className="grid gap-6 md:grid-cols-2">
+              {/* Beginner path */}
+              <div className="rounded-lg bg-white p-4">
+                <h3 className="mb-2 text-sm font-semibold text-gray-900">Beginner path: cost fundamentals</h3>
+                <p className="mb-3 text-sm text-gray-700">
+                  Start here if you are new to laser cutting cost analysis and want a clear picture of how hourly rates and
+                  material usage drive job pricing.
+                </p>
+                <ol className="space-y-2 text-sm text-gray-700">
+                  <li>
+                    1.{' '}
+                    <Link href="/guides/hourly-cost-structure" className="font-semibold text-primary-600 hover:underline">
+                      Hourly cost structure
+                    </Link>{' '}
+                    – understand depreciation, labor, energy, and overhead.
+                  </li>
+                  <li>
+                    2.{' '}
+                    <Link href="/guides/kerf-width-reference" className="font-semibold text-primary-600 hover:underline">
+                      Kerf width vs thickness & nozzle
+                    </Link>{' '}
+                    – see how kerf and compensation affect material utilization.
+                  </li>
+                  <li>
+                    3.{' '}
+                    <Link
+                      href="/guides/finishing-time-cheatsheet"
+                      className="font-semibold text-primary-600 hover:underline"
+                    >
+                      Finishing time cheat sheet
+                    </Link>{' '}
+                    – account for deburring, cleaning, and inspection time.
+                  </li>
+                </ol>
+                <p className="mt-3 border-t border-gray-200 pt-2 text-xs text-gray-600">
+                  Approximate time: ~30 minutes. Outcome: understand full job costing from hourly rate to finished part.
+                </p>
+              </div>
+
+              {/* Advanced path */}
+              <div className="rounded-lg bg-white p-4">
+                <h3 className="mb-2 text-sm font-semibold text-gray-900">Advanced path: process optimization</h3>
+                <p className="mb-3 text-sm text-gray-700">
+                  Use this path if you already know your cost structure and want to reduce cycle time and waste without
+                  sacrificing quality.
+                </p>
+                <ol className="space-y-2 text-sm text-gray-700">
+                  <li>
+                    1.{' '}
+                    <Link href="/guides/piercing-strategy" className="font-semibold text-primary-600 hover:underline">
+                      Piercing strategy
+                    </Link>{' '}
+                    – compare standard, soft, and ramp piercing for high-hole-count parts.
+                  </li>
+                  <li>
+                    2.{' '}
+                    <Link href="/guides/kerf-width-reference" className="font-semibold text-primary-600 hover:underline">
+                      Kerf width reference
+                    </Link>{' '}
+                    – fine-tune kerf compensation and nesting assumptions.
+                  </li>
+                  <li>
+                    3.{' '}
+                    <Link href="/guides/hourly-cost-structure" className="font-semibold text-primary-600 hover:underline">
+                      Hourly cost structure
+                    </Link>{' '}
+                    – close the loop with updated shop rates and overhead once improvements are in place.
+                  </li>
+                </ol>
+                <p className="mt-3 border-t border-gray-200 pt-2 text-xs text-gray-600">
+                  Approximate time: ~40 minutes. Outcome: identify where to focus to cut cost and time rather than guessing
+                  which lever matters most.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Guides Grid */}
           <div className="mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-8">Complete Guide Library</h2>
             <div className="grid lg:grid-cols-2 gap-8">
               {guides.map((guide) => {
                 const Icon = guide.icon;
+                const relatedLinks =
+                  guide.id === 'hourly-cost-structure'
+                    ? [
+                        { href: '/calculators/cost-center', label: 'Cost Center tools' },
+                        { href: '/calculators/laser-cutting', label: 'Laser Cutting cost' },
+                      ]
+                    : guide.id === 'piercing-strategy'
+                    ? [
+                        { href: '/calculators/cost-center/pierce-estimator', label: 'Pierce Estimator' },
+                        { href: '/calculators/laser-cutting', label: 'Laser Cutting cost' },
+                      ]
+                    : guide.id === 'kerf-width-reference'
+                    ? [
+                        { href: '/calculators/laser-cutting', label: 'Laser Cutting cost' },
+                        { href: '/calculators/material-utilization', label: 'Material Utilization' },
+                      ]
+                    : [
+                        { href: '/calculators/cost-center/finishing-guide', label: 'Finishing time guide' },
+                        { href: '/calculators/laser-cutting', label: 'Laser Cutting cost' },
+                      ];
                 return (
                   <Link
                     key={guide.id}
@@ -172,7 +292,7 @@ export default function GuidesPage() {
 
                     {/* Content */}
                     <div className="mb-6">
-                      <h4 className="font-semibold text-gray-900 mb-3">What You'll Learn:</h4>
+                      <h4 className="font-semibold text-gray-900 mb-3">What You&apos;ll Learn:</h4>
                       <ul className="grid grid-cols-1 gap-2">
                         {guide.topics.map((topic, index) => (
                           <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
@@ -181,6 +301,23 @@ export default function GuidesPage() {
                           </li>
                         ))}
                       </ul>
+                    </div>
+
+                    {/* Related calculators */}
+                    <div className="mb-4 border-t border-dashed border-gray-200 pt-3">
+                      <p className="mb-1 text-xs font-semibold text-gray-700">Related calculators:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {relatedLinks.map(link => (
+                          <Link
+                            key={link.href}
+                            href={link.href}
+                            className="inline-flex items-center gap-1 rounded-full bg-primary-50 px-2 py-1 text-xs font-semibold text-primary-700 hover:bg-primary-100"
+                          >
+                            <Calculator className="h-3 w-3" />
+                            <span>{link.label}</span>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
 
                     {/* Footer */}
@@ -277,4 +414,3 @@ export default function GuidesPage() {
     </>
   );
 }
-

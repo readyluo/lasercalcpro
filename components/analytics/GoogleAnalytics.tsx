@@ -1,42 +1,50 @@
+/* eslint-disable @next/next/no-before-interactive-script-outside-document */
+
 'use client';
 
 import { useEffect, useState } from 'react';
 import Script from 'next/script';
 
+const ENV_GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? null;
+
 export function GoogleAnalytics() {
-  const [gaId, setGaId] = useState<string | null>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [gaId, setGaId] = useState<string | null>(ENV_GA_ID);
+  const [resolved, setResolved] = useState<boolean>(Boolean(ENV_GA_ID));
 
   useEffect(() => {
-    // Use hardcoded GA4 ID
-    const GA_ID = 'G-Z1Q5K1N1WM';
-    
-    // Fetch GA4 ID from database via public API (optional override)
+    if (ENV_GA_ID) {
+      return;
+    }
+
+    let isMounted = true;
+
     const fetchGAId = async () => {
       try {
         const response = await fetch('/api/settings/public');
-        if (response.ok) {
-          const data = await response.json();
-          if (data.ga4MeasurementId) {
-            setGaId(data.ga4MeasurementId);
-            setLoaded(true);
-            return;
-          }
+        if (!response.ok) {
+          return;
+        }
+        const data = await response.json();
+        if (isMounted && data.ga4MeasurementId) {
+          setGaId(data.ga4MeasurementId);
         }
       } catch (error) {
         console.error('Failed to fetch GA4 settings:', error);
+      } finally {
+        if (isMounted) {
+          setResolved(true);
+        }
       }
-      
-      // Use hardcoded ID as primary fallback
-      setGaId(GA_ID);
-      setLoaded(true);
     };
 
     fetchGAId();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  // Don't render until we've checked for GA ID
-  if (!loaded || !gaId) {
+  if (!gaId || !resolved) {
     return null;
   }
 

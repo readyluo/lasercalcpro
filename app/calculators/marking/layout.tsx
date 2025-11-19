@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Laser Marking & Engraving Cost Calculator | Accurate Pricing Tool',
+  title: 'Laser Marking & Engraving Cost Calculator | Pricing Tool',
   description:
-    'Professional laser marking and engraving cost calculator. Calculate precise costs for annealing, deep engraving, etching, and coating removal. Get instant time estimates, cost breakdowns, and pricing recommendations for metal, plastic, wood, and more.',
+    'Professional laser marking and engraving cost calculator. Estimate costs for annealing, deep engraving, etching, and coating removal using your own inputs. Get time estimates, cost breakdowns, and pricing guidance for metal, plastic, wood, and more.',
   keywords: [
     'laser marking calculator',
     'laser engraving cost',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Laser Marking & Engraving Cost Calculator',
     description:
-      'Calculate precise costs for laser marking and engraving. Instant time estimates, cost breakdowns, and pricing recommendations.',
+      'Estimate costs for laser marking and engraving. Get time estimates, cost breakdowns, and pricing guidance to support your quotes.',
     type: 'website',
     url: 'https://lasercalcpro.com/calculators/marking',
   },

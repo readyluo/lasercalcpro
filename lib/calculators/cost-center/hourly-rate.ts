@@ -102,35 +102,35 @@ export function calculateHourlyRate(input: HourlyRateInput): HourlyRateResult {
   
   // Labor cost analysis
   if (laborPercent > 50) {
-    alerts.push('Labor cost exceeds 50% of total hourly rate');
+    alerts.push('Labor cost is more than 50% of the modeled hourly rate in this scenario.');
     recommendations.push('Consider automation or process optimization to reduce labor dependency');
   } else if (laborPercent < 25) {
-    alerts.push('Labor cost is unusually low (<25%)');
+    alerts.push('Labor cost is less than 25% of the modeled hourly rate in this scenario; check that all relevant labor and overhead items are included.');
   }
   
   // Energy cost analysis
   if (energyPercent > 10) {
-    alerts.push('Energy cost is high (>10% of total)');
+    alerts.push('Energy cost is more than 10% of the modeled hourly rate in this scenario.');
     recommendations.push('Review machine efficiency and consider energy-saving measures');
   }
   
   // Depreciation analysis
   if (depreciationPercent < 8) {
-    alerts.push('Equipment depreciation is low (<8%), may indicate under-utilization');
+    alerts.push('Equipment depreciation is less than 8% of the modeled hourly rate; review your utilization and lifespan assumptions.');
     recommendations.push('Consider increasing machine utilization to improve ROI');
   } else if (depreciationPercent > 20) {
-    alerts.push('Equipment depreciation is high (>20%), may indicate short lifespan assumption');
+    alerts.push('Equipment depreciation is more than 20% of the modeled hourly rate; review whether your lifespan assumption is too short for your use case.');
   }
   
   // Overhead analysis
   if (overheadPercent > 25) {
-    alerts.push('Overhead costs exceed 25% of total rate');
+    alerts.push('Overhead costs are more than 25% of the modeled hourly rate in this scenario.');
     recommendations.push('Review administrative costs and look for efficiency improvements');
   }
   
   // Facility cost analysis
   if (facilityPercent > 20) {
-    alerts.push('Facility costs are high (>20%)');
+    alerts.push('Facility costs are more than 20% of the modeled hourly rate in this scenario.');
     recommendations.push('Consider optimizing space utilization or negotiating rent');
   }
   
@@ -141,9 +141,9 @@ export function calculateHourlyRate(input: HourlyRateInput): HourlyRateResult {
   
   // Total rate analysis
   if (totalHourlyCost < 40) {
-    alerts.push('Total hourly rate is below industry average ($40-60/hr)');
+    alerts.push('Total hourly rate is below the lower band used in this tool for context; double-check that all cost components and realistic utilization have been included.');
   } else if (totalHourlyCost > 100) {
-    alerts.push('Total hourly rate is above industry average. Ensure pricing reflects this');
+    alerts.push('Total hourly rate is toward the high end of the bands used in this tool; ensure your pricing and value proposition reflect this level.');
   }
   
   // Utilization recommendation
@@ -221,25 +221,25 @@ export function compareToIndustryBenchmarks(totalHourlyCost: number): {
   if (totalHourlyCost < 40) {
     return {
       position: 'below',
-      description: 'Your hourly rate is below industry average ($45-70/hr)',
+      description: 'Your modeled hourly rate is below the lower contextual band used in this tool.',
       competitiveAdvantage: 'Strong cost advantage, but ensure quality and sustainability',
     };
   } else if (totalHourlyCost <= 70) {
     return {
       position: 'average',
-      description: 'Your hourly rate is within industry average range',
+      description: 'Your modeled hourly rate falls within the mid-range band used here for context.',
       competitiveAdvantage: 'Competitive positioning, focus on service differentiation',
     };
   } else if (totalHourlyCost <= 100) {
     return {
       position: 'above',
-      description: 'Your hourly rate is above industry average',
+      description: 'Your modeled hourly rate is above that mid-range band.',
       competitiveAdvantage: 'Premium positioning, emphasize quality and capabilities',
     };
   } else {
     return {
       position: 'premium',
-      description: 'Your hourly rate is significantly above industry average',
+      description: 'Your modeled hourly rate is at the high end of the contextual bands used here.',
       competitiveAdvantage: 'High-end positioning, must justify with exceptional quality/service',
     };
   }

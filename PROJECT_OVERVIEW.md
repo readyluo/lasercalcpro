@@ -79,7 +79,7 @@ LaserCalc Pro是一个面向全球制造业的专业成本计算器工具平台�
 ┌────────────────────┴───────────────────────────────────┐
 │                   API路由层                              │
 │  Next.js API Routes                                    │
-│  - /api/calculate | /api/subscribe | /api/analytics   │
+│  - /api/calculations | /api/subscribe | /api/analytics │
 └────────────────────┬───────────────────────────────────┘
                      │
 ┌────────────────────┴───────────────────────────────────┐
@@ -479,4 +479,3 @@ LaserCalc Pro是一个面向全球制造业的专业成本计算器工具平台�
 > 为制造业从业者提供最准确、最易用的成本计算工具，帮助他们做出更明智的商业决策。
 
 **Let's build something amazing! 🚀**
-

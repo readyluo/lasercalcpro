@@ -50,24 +50,35 @@ interface MarkingResult {
 
 function calculateMarking(input: MarkingCalculatorInput): MarkingResult | null {
   // Get base speed from table
+  // ⚠️ Speed table contains approximate reference values
+  // See MARKING_SPEED_TABLE comments for data limitations
   const baseSpeed = MARKING_SPEED_TABLE[input.materialType][input.markingMethod];
   
   if (baseSpeed === null) {
-    return null; // Invalid combination
+    return null; // Invalid combination (e.g., trying to anneal plastic)
   }
 
   // Adjust speed for depth (deeper = slower)
+  // ⚠️ Uses simplified exponential model (see DEPTH_SPEED_FACTOR comments)
+  // Actual depth effects are more complex and material-dependent
   const depthFactor = Math.pow(DEPTH_SPEED_FACTOR, input.markingDepth);
   const adjustedSpeed = baseSpeed * depthFactor;
 
   // Adjust for fill density (higher density = slower)
-  const densityFactor = 10 / input.fillDensity; // Normalized to 10 lines/mm
+  // ⚠️ Assumes linear relationship, which is simplified
+  // Higher density = darker/more solid marks but slower
+  // Lower density = faster but may appear incomplete
+  const baselineDensity = 10; // Normalized to 10 lines/mm as standard
+  const densityFactor = baselineDensity / input.fillDensity;
   const finalSpeed = adjustedSpeed * densityFactor;
 
   // Calculate marking time per piece
+  // Total time = (area / speed) × number of passes
   const markingTimePerPiece = (input.markingAreaMm2 / finalSpeed) * input.passes;
 
   // Setup time per piece (loading, positioning, unloading)
+  // ⚠️ Simplified model: smaller batches need more setup time per piece
+  // Actual setup depends on fixturing, part complexity, and automation
   const setupTimePerPiece = input.quantity > 100 ? 5 : input.quantity > 10 ? 8 : 12;
 
   const totalTimePerPiece = markingTimePerPiece + setupTimePerPiece;
@@ -96,11 +107,21 @@ function calculateMarking(input: MarkingCalculatorInput): MarkingResult | null {
   const costPerPiece = (totalTimePerPiece / 3600) * totalHourlyCost;
   const totalJobCost = costPerPiece * input.quantity;
 
-  // Material cost (negligible for marking)
-  const materialCostPerPiece = 0;
-
   // Recommended pricing with margin
-  const profitMargin = 0.35; // 35% margin
+  // ⚠️ Profit margin varies widely by market segment and service type:
+  // - High-volume serial numbering/part marking: typically 15-25%
+  // - Custom engraving/personalization services: often 40-60%
+  // - Industrial production part marking: typically 20-35%
+  // - Promotional items/gift engraving: may be 50-80% (lower volumes, higher value-add)
+  // - Rush/emergency service: may justify 50-100% premium
+  // 
+  // This calculator uses 35% as a middle-ground example for general marking services.
+  // Adjust your actual pricing based on:
+  // - Your market positioning and competition
+  // - Customer segment and relationship
+  // - Order volume and frequency
+  // - Turnaround time requirements
+  const profitMargin = 0.35; // 35% margin (example for mid-market positioning)
   const recommendedPrice = costPerPiece / (1 - profitMargin);
 
   // Efficiency metrics
@@ -164,6 +185,10 @@ export default function MarkingCalculatorPage() {
 
   const materialType = watch('materialType');
   const markingMethod = watch('markingMethod');
+  const fillDensity = watch('fillDensity');
+  const passes = watch('passes');
+  const markingDepth = watch('markingDepth');
+  const jobType = watch('jobType');
 
   const onSubmit = (data: MarkingCalculatorInput) => {
     const calcResult = calculateMarking(data);
@@ -173,6 +198,7 @@ export default function MarkingCalculatorPage() {
     } else {
       setIsInvalidCombination(false);
       setResult(calcResult);
+      document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -223,22 +249,22 @@ export default function MarkingCalculatorPage() {
     {
       question: 'How does marking depth affect processing time?',
       answer:
-        'Deeper marks require more laser passes or slower speeds, increasing processing time. The speed reduction is approximately 30% per mm of depth. For production efficiency, use the minimum depth needed for durability.',
+        'Deeper marks typically require more laser passes or slower speeds, which increases processing time. In this calculator, deeper depths reduce the modeled speed to reflect this effect. For production efficiency, use the minimum depth that still meets your durability requirements.',
     },
     {
       question: 'What laser power is recommended for marking?',
       answer:
-        '20-30W fiber lasers are ideal for most metal marking applications. 50-100W lasers are better for deep engraving or high-speed production. Lower power lasers are more cost-effective for standard marking jobs.',
+        'Fiber lasers in the tens of watts range are commonly used for many metal marking applications, while higher-power systems are often chosen for deep engraving or higher throughput. Always follow your equipment suppliers recommendations and enter the actual power you use into the calculator.',
     },
     {
       question: 'How to price laser marking services?',
       answer:
-        'Calculate your total hourly cost (depreciation, electricity, labor, overhead), determine pieces per hour, then add 30-40% profit margin. Consider market rates, job complexity, and setup time. Volume discounts typically range from 10-30%.',
+        'Start by calculating your total hourly cost (depreciation, electricity, labor, overhead) and how many pieces you can process per hour. Then choose a profit margin, any setup fees, and any volume discounts that match your market and risk level. Use this calculator to see how those assumptions affect your price per piece and total quote.',
     },
     {
       question: 'What is fill density in laser marking?',
       answer:
-        'Fill density refers to the number of marking lines per millimeter. Higher density (15-20 lines/mm) creates darker, more solid marks but takes longer. Lower density (5-10 lines/mm) is faster but may appear lighter.',
+        'Fill density refers to the number of marking lines per millimeter. Higher density creates darker, more solid marks but takes longer. Lower density is faster but may appear lighter. Adjust this value and re-run the calculator to see how it changes time and cost.',
     },
   ]);
 
@@ -249,24 +275,59 @@ export default function MarkingCalculatorPage() {
       <Navigation />
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center mb-4">
-              <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl shadow-lg">
-                <Calculator className="w-12 h-12 text-white" />
+          {/* When to use this calculator */}
+          <div className="mb-4 rounded-2xl bg-purple-50 border-l-4 border-purple-500 px-4 py-3">
+            <h2 className="text-sm font-semibold text-gray-900 mb-1">When to use this laser marking calculator</h2>
+            <div className="grid gap-3 md:grid-cols-2 text-xs text-gray-700">
+              <div>
+                <p className="font-semibold text-gray-900">
+                  ✓ Best suited for:
+                </p>
+                <ul className="ml-5 mt-1 list-disc space-y-1">
+                  <li>Metal and coated-metal part marking (text, logos, IDs)</li>
+                  <li>Standard fiber marking jobs with clear areas in mm²</li>
+                  <li>Depths in roughly the 0.05–0.3 mm range</li>
+                  <li>Comparing time and cost between different quality settings</li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">
+                  ✗ Not ideal for:
+                </p>
+                <ul className="ml-5 mt-1 list-disc space-y-1">
+                  <li>High-density QR codes or micro text</li>
+                  <li>Photo engraving and grayscale images</li>
+                  <li>Very deep engraving (&gt;0.5 mm) on hard materials</li>
+                  <li>Exotic materials (ceramics, some plastics) without test data</li>
+                </ul>
               </div>
             </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          </div>
+
+          {/* Header - Compact */}
+          <div className="mb-4">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Laser Marking & Engraving Cost Calculator
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Calculate precise costs for laser marking, engraving, and etching across all materials. 
-              Optimize pricing with real-time analysis of speed, power, and profitability. 
-              See our{' '}
-              <Link href="/calculators/quick-reference/processing-parameters" className="text-purple-600 hover:text-purple-700 underline">
+            <p className="text-base text-gray-600">
+              Estimate costs for laser marking, engraving, and etching. See{' '}
+              <Link href="/calculators/quick-reference/processing-parameters" className="text-purple-600 hover:underline">
                 processing parameters reference
-              </Link>{' '}
-              for detailed settings.
+              </Link>{' '}for detailed settings.
+            </p>
+          </div>
+
+          {/* Disclaimer - Simplified */}
+          <div className="mb-4 border-l-4 border-amber-500 bg-amber-50 px-4 py-3">
+            <p className="text-sm text-amber-900">
+              <Info className="mr-2 inline h-4 w-4" />
+              <strong>Estimates only:</strong> This calculator uses simplified speed tables for common fiber marking setups.
+              Actual time depends on laser type, power, beam quality, material condition, and detailed artwork. Treat results as
+              a starting point and validate with test runs on your own equipment before final quoting.
+            </p>
+            <p className="mt-1 text-xs text-amber-800">
+              Very low fill densities can produce incomplete marks, and very deep or multi-pass jobs may require more conservative
+              settings than this model assumes.
             </p>
           </div>
 
@@ -413,6 +474,24 @@ export default function MarkingCalculatorPage() {
                       <p className="mt-1 text-xs text-gray-500">
                         Higher = darker/slower
                       </p>
+                      {fillDensity !== undefined && fillDensity < 5 && (
+                        <div className="mt-2 bg-amber-50 border-l-4 border-amber-500 p-2 text-xs text-amber-800 flex gap-2">
+                          <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                          <span>
+                            Low fill density ({fillDensity} lines/mm) may produce faint or incomplete marks, especially for
+                            logos and codes. Many production jobs use around 8–12 lines/mm for solid appearance.
+                          </span>
+                        </div>
+                      )}
+                      {fillDensity !== undefined && fillDensity > 15 && (
+                        <div className="mt-2 bg-blue-50 border-l-4 border-blue-500 p-2 text-xs text-blue-800 flex gap-2">
+                          <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                          <span>
+                            Very high fill density ({fillDensity} lines/mm) can look excellent but will slow the job
+                            significantly. Check whether such a dark fill is really required for this application.
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     <div>
@@ -427,6 +506,15 @@ export default function MarkingCalculatorPage() {
                       />
                       {errors.passes && (
                         <p className="mt-1 text-sm text-red-600">{errors.passes.message}</p>
+                      )}
+                      {passes !== undefined && passes > 3 && (
+                        <div className="mt-2 bg-blue-50 border-l-4 border-blue-500 p-2 text-xs text-blue-800 flex gap-2">
+                          <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                          <span>
+                            Multiple passes ({passes}) can help with depth, but each extra pass usually adds less benefit than
+                            the first. If you regularly need many passes, consider higher power or adjusted artwork instead.
+                          </span>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -585,7 +673,7 @@ export default function MarkingCalculatorPage() {
             </div>
 
             {/* Results Panel */}
-            <div className="space-y-6">
+            <div id="results" className="space-y-6">
               {isInvalidCombination && (
                 <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
                   <div className="flex items-start">
@@ -673,13 +761,18 @@ export default function MarkingCalculatorPage() {
                       <TrendingUp className="w-6 h-6 mr-2 text-green-600" />
                       Pricing Recommendation
                     </h2>
+                    <p className="mb-3 text-sm text-gray-700">
+                      Prices here are calculated from your cost inputs together with an internal margin assumption in this tool.
+                      Treat them as a modeled starting point, and adjust based on your own quoting policies, customer segments,
+                      and risk level.
+                    </p>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center py-2">
                         <span className="text-gray-600">Profit Margin:</span>
                         <span className="font-semibold">{result.profitMargin}%</span>
                       </div>
                       <div className="flex justify-between items-center py-3 bg-white -mx-2 px-2 rounded-lg border-2 border-green-300">
-                        <span className="font-bold text-gray-900">Recommended Price/Piece:</span>
+                        <span className="font-bold text-gray-900">Modeled Price/Piece (based on your inputs):</span>
                         <span className="font-bold text-green-700 text-xl">${result.recommendedPrice}</span>
                       </div>
                       <div className="flex justify-between items-center py-2">
@@ -709,6 +802,61 @@ export default function MarkingCalculatorPage() {
                       <div className="flex justify-between items-center py-2">
                         <span className="text-gray-600">Utilization Rate:</span>
                         <span className="font-semibold">{result.utilizationRate}%</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quality vs Speed trade-offs */}
+                  <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl shadow-xl p-6">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center">
+                      <Info className="w-6 h-6 mr-2 text-purple-600" />
+                      Quality vs speed trade-offs
+                    </h2>
+                    <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-700">
+                      <div className="bg-white rounded-lg p-3">
+                        <p className="font-semibold text-gray-900 mb-2">Current quality settings</p>
+                        <ul className="list-disc ml-4 space-y-1 text-xs">
+                          <li>
+                            Fill density: {fillDensity} lines/mm
+                            {fillDensity !== undefined && fillDensity < 8 && (
+                              <span className="ml-1 text-amber-700">(may look light on some jobs)</span>
+                            )}
+                            {fillDensity !== undefined && fillDensity > 12 && (
+                              <span className="ml-1 text-blue-700">(extra dark, slower)</span>
+                            )}
+                          </li>
+                          <li>
+                            Marking depth: {markingDepth} mm
+                            {markingDepth !== undefined && markingDepth > 0.2 && (
+                              <span className="ml-1 text-amber-700">(deep mark – check if required)</span>
+                            )}
+                          </li>
+                          <li>
+                            Passes: {passes}
+                            {passes !== undefined && passes > 2 && (
+                              <span className="ml-1 text-blue-700">(multiple passes for depth)</span>
+                            )}
+                          </li>
+                          <li>Job type: {JOB_TYPE_LABELS[jobType]}</li>
+                        </ul>
+                      </div>
+                      <div className="bg-white rounded-lg p-3">
+                        <p className="font-semibold text-gray-900 mb-2">Ideas to adjust speed safely</p>
+                        <ul className="list-disc ml-4 space-y-1 text-xs">
+                          <li>
+                            For logos and text, many shops find 8–12 lines/mm a good balance between appearance and throughput.
+                          </li>
+                          <li>
+                            If depth is higher than your durability requirement, try a shallower depth and compare the new time
+                            and cost.
+                          </li>
+                          <li>
+                            When passes exceed 3, run trial marks to see whether extra passes visibly improve the result.
+                          </li>
+                          <li>
+                            Always record real cycle times and refine your own presets in this calculator over time.
+                          </li>
+                        </ul>
                       </div>
                     </div>
                   </div>
@@ -752,7 +900,7 @@ export default function MarkingCalculatorPage() {
                   Cost Reduction
                 </h3>
                 <ul className="text-sm text-green-800 space-y-1 ml-7">
-                  <li>• Maximize equipment utilization (2000+ hrs/year)</li>
+                  <li>• Aim for high annual equipment utilization that matches your workload</li>
                   <li>• Use off-peak electricity rates</li>
                   <li>• Regular maintenance prevents downtime</li>
                   <li>• Train operators for faster setup</li>
@@ -776,7 +924,7 @@ export default function MarkingCalculatorPage() {
                   Pricing Strategy
                 </h3>
                 <ul className="text-sm text-orange-800 space-y-1 ml-7">
-                  <li>• Offer volume discounts (10-30%)</li>
+                  <li>• Consider volume discounts for larger orders where appropriate</li>
                   <li>• Charge setup fees for small batches</li>
                   <li>• Premium pricing for rush jobs</li>
                   <li>• Bundle related marking services</li>

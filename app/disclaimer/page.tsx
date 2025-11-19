@@ -1,18 +1,40 @@
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
-import { AlertTriangle, Calculator, TrendingUp, Shield } from 'lucide-react';
+import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
+import { generateMetadata } from '@/lib/seo/metadata';
+import { AlertTriangle, Calculator, Shield } from 'lucide-react';
 
-export const metadata = {
-  title: 'Disclaimer - LaserCalc Pro',
-  description: 'Important disclaimer about the accuracy and limitations of our manufacturing cost calculators. Understand the proper use of calculation results.',
-  robots: 'index, follow',
+const LAST_UPDATED_TEXT = 'February 12, 2024';
+const LAST_UPDATED_ISO = '2024-02-12';
+
+export const metadata = generateMetadata({
+  title: 'Disclaimer | LaserCalc Pro',
+  description: 'Understand the calculation limits, professional-use guidance, and liability boundaries for every LaserCalc Pro estimator.',
+  keywords: ['LaserCalc Pro disclaimer', 'manufacturing calculator accuracy', 'laser cutting estimator limitations'],
+  alternates: { canonical: '/disclaimer' },
+});
+
+const disclaimerSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'LaserCalc Pro Disclaimer',
+  url: 'https://www.lasercalcpro.com/disclaimer',
+  datePublished: LAST_UPDATED_ISO,
+  dateModified: LAST_UPDATED_ISO,
+  description: 'Disclaimer covering calculator accuracy, liabilities, and professional verification requirements.',
+  isPartOf: {
+    '@type': 'WebSite',
+    name: 'LaserCalc Pro',
+    url: 'https://www.lasercalcpro.com',
+  },
 };
 
 export default function DisclaimerPage() {
   return (
     <>
       <Navigation />
+      <SchemaMarkup schema={disclaimerSchema} />
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs />
@@ -26,7 +48,7 @@ export default function DisclaimerPage() {
               Disclaimer
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-gray-600">
-              Important information about the use and limitations of our calculators
+              Last updated: {LAST_UPDATED_TEXT}
             </p>
           </div>
 
