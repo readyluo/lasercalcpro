@@ -104,11 +104,8 @@
   ],
 
   "functions": {
-    "api/**/*.ts": {
+    "app/api/**/route.ts": {
       "maxDuration": 10
-    },
-    "api/calculate/route.ts": {
-      "maxDuration": 15
     }
   },
   
