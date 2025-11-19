@@ -162,57 +162,16 @@ export default function WeldingCalculatorPage() {
       <SchemaMarkup schema={faqSchema} />
       <SchemaMarkup schema={softwareSchema} />
       <Navigation />
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           {/* Header - Compact */}
-          <div className="mb-4">
+          <div className="mb-6">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Laser Welding Cost Calculator
             </h1>
-            <p className="text-base text-gray-600">
+            <p className="text-sm text-gray-600">
               Estimate laser welding costs for different processes and materials.
-            </p>
-          </div>
-
-          {/* Disclaimer - Simplified */}
-          <div className="mb-4 border-l-4 border-orange-500 bg-orange-50 px-4 py-3">
-            <p className="text-sm text-orange-900">
-              <Flame className="mr-2 inline h-4 w-4" />
-              <strong>Estimates Only:</strong> Results are based on simplified welding models and assume consistent joint fit-up,
-              stable material properties, and typical shop practices. Actual costs depend on joint quality, material condition,
-              qualified procedures, and inspection level. Always test with your own welding procedures and compare against real
-              job data before committing quotes.
-            </p>
-          </div>
-
-          {/* When to choose laser welding */}
-          <div className="mb-8 card bg-gradient-to-br from-orange-50 to-red-50 border-l-4 border-orange-500">
-            <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-              <Flame className="h-5 w-5 text-orange-600" />
-              When to Choose Laser Welding
-            </h3>
-            <div className="grid md:grid-cols-2 gap-4 text-sm">
-              <div>
-                <p className="font-semibold text-green-700 mb-2">✓ Best for:</p>
-                <ul className="text-xs text-gray-700 space-y-1 ml-4">
-                  <li>• Thin to medium sections where distortion matters</li>
-                  <li>• High-precision parts and sealed joints</li>
-                  <li>• Dissimilar materials and hard-to-reach joints</li>
-                  <li>• High-volume, repeatable production</li>
-                </ul>
-              </div>
-              <div>
-                <p className="font-semibold text-amber-700 mb-2">⚠️ Traditional welding may be better when:</p>
-                <ul className="text-xs text-gray-700 space-y-1 ml-4">
-                  <li>• Fit-up gaps are large or inconsistent</li>
-                  <li>• Very thick sections (&gt;20 mm) dominate the job</li>
-                  <li>• Work is mostly field welding or repair</li>
-                  <li>• Lowest equipment cost is more important than speed</li>
-                </ul>
-              </div>
-            </div>
-            <p className="mt-3 pt-3 border-t border-orange-200 text-xs text-gray-600">
-              For capital decisions, combine this calculator with the ROI and Energy calculators to capture the full picture.
+              <span className="ml-2 text-xs text-orange-600">⚠️ Estimates only - verify against production data</span>
             </p>
           </div>
 
@@ -983,6 +942,54 @@ export default function WeldingCalculatorPage() {
                 <p className="text-sm text-gray-600">Energy cost reference tables</p>
               </Link>
             </div>
+          </div>
+
+          {/* When to Choose Laser Welding - Moved to bottom */}
+          <div className="mt-12 card bg-gradient-to-br from-orange-50 to-red-50 border-l-4 border-orange-500">
+            <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <Flame className="h-5 w-5 text-orange-600" />
+              When to Choose Laser Welding
+            </h3>
+            <div className="grid md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="font-semibold text-green-700 mb-2">✓ Best for:</p>
+                <ul className="text-sm text-gray-700 space-y-1.5 ml-4">
+                  <li>• Thin to medium sections where distortion matters</li>
+                  <li>• High-precision parts and sealed joints</li>
+                  <li>• Dissimilar materials and hard-to-reach joints</li>
+                  <li>• High-volume, repeatable production</li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-amber-700 mb-2">⚠️ Traditional welding may be better when:</p>
+                <ul className="text-sm text-gray-700 space-y-1.5 ml-4">
+                  <li>• Fit-up gaps are large or inconsistent</li>
+                  <li>• Very thick sections (&gt;20 mm) dominate the job</li>
+                  <li>• Work is mostly field welding or repair</li>
+                  <li>• Lowest equipment cost is more important than speed</li>
+                </ul>
+              </div>
+            </div>
+            <p className="mt-3 pt-3 border-t border-orange-200 text-sm text-gray-600">
+              For capital decisions, combine this calculator with the ROI and Energy calculators to capture the full picture.
+            </p>
+          </div>
+
+          {/* Detailed Disclaimer - Moved to bottom */}
+          <div className="mt-6 border-l-4 border-orange-500 bg-orange-50 px-6 py-4">
+            <h3 className="mb-2 text-base font-semibold text-orange-900">
+              <Flame className="mr-2 inline h-5 w-5" />
+              Important: Estimates Only
+            </h3>
+            <p className="text-sm text-orange-900 mb-2">
+              Results are based on simplified welding models and assume consistent joint fit-up,
+              stable material properties, and typical shop practices. Actual costs depend on joint quality, material condition,
+              qualified procedures, and inspection level.
+            </p>
+            <p className="text-sm text-orange-800">
+              Always test with your own welding procedures and compare against real
+              job data before committing quotes.
+            </p>
           </div>
         </div>
       </div>
